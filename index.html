@@ -854,14 +854,14 @@ async function cloudAfterLogin(user){
   const localChanged=localState&&Array.isArray(localState.chapters)&&(localState.chapters.some(x=>x.prep&&x.prep!=="Not Ready")||(localState.pyqs||[]).length>0||(localState.topics||[]).some(x=>x.status&&x.status!=="Not Started"));
   if(localChanged&&confirm("Cloud backup found. This browser also has local progress. Press OK to load the cloud copy, or Cancel to keep local progress and upload it instead.")){
    state=migrateState(cloudState);
-   if(data.data.countdownTarget&&/^\\d{4}-\\d{2}-\\d{2}$/.test(data.data.countdownTarget))localStorage.setItem("jee-countdown-target",data.data.countdownTarget);
+   if(data.data.countdownTarget&&/^\d{4}-\d{2}-\d{2}$/.test(data.data.countdownTarget))localStorage.setItem("jee-countdown-target",data.data.countdownTarget);
    localStorage.setItem(KEY,JSON.stringify(state));renderAll();renderDashboard();cloudMessage("Cloud backup restored to this browser.");
   }else if(localChanged){
    await cloudWriteNow();cloudMessage("Your local progress was uploaded to the cloud.");
   }else{
    state=migrateState(cloudState);
    localStorage.setItem(KEY,JSON.stringify(state));
-   if(data.data.countdownTarget&&/^\\d{4}-\\d{2}-\\d{2}$/.test(data.data.countdownTarget))localStorage.setItem("jee-countdown-target",data.data.countdownTarget);
+   if(data.data.countdownTarget&&/^\d{4}-\d{2}-\d{2}$/.test(data.data.countdownTarget))localStorage.setItem("jee-countdown-target",data.data.countdownTarget);
    renderAll();renderDashboard();cloudMessage("Cloud backup loaded successfully.");
   }
  }else{
@@ -886,7 +886,7 @@ async function cloudRestoreCloud(){
   if(error)throw error;
   if(!data||!data.data||!data.data.state)throw new Error("No cloud backup exists for this account yet.");
   psCloudApplying=true;state=migrateState(data.data.state);localStorage.setItem(KEY,JSON.stringify(state));
-  if(data.data.countdownTarget&&/^\\d{4}-\\d{2}-\\d{2}$/.test(data.data.countdownTarget))localStorage.setItem("jee-countdown-target",data.data.countdownTarget);
+  if(data.data.countdownTarget&&/^\d{4}-\d{2}-\d{2}$/.test(data.data.countdownTarget))localStorage.setItem("jee-countdown-target",data.data.countdownTarget);
   renderAll();renderDashboard();psCloudApplying=false;await cloudWriteNow();cloudMessage("Cloud backup restored and syllabus list updated.");
  }catch(e){psCloudApplying=false;cloudMessage(e.message||"Restore failed",true);}
 }async function cloudSignOut(){if(!psCloudClient)return;try{const {error}=await psCloudClient.auth.signOut();if(error)throw error;psCloudReady=false;psCloudUser=null;cloudGateView(false);document.getElementById("cloudGate").hidden=false;cloudStatus("signed out · saved locally");cloudMessage("Signed out. Your browser progress is still saved locally.");}catch(e){cloudMessage(e.message||"Sign out failed",true);}}
@@ -936,7 +936,7 @@ function loadState(){
   if(s&&Array.isArray(s.chapters)&&Array.isArray(s.topics)){
    if(Array.isArray(s.litmus)){
     const oldDefaults={"litmus-0":"2026-10-20","litmus-1":"2026-11-01","litmus-2":"2026-11-15","litmus-7":"2026-12-13"};
-    s.litmus.forEach(t=>{const old=oldDefaults[t.id];const match=String(t.id||"").match(/^litmus-(\\d+)$/);const base=match&&BASE.litmus[Number(match[1])];if(base&&old&&t.deadline===old)t.deadline=base.deadline;});
+    s.litmus.forEach(t=>{const old=oldDefaults[t.id];const match=String(t.id||"").match(/^litmus-(\d+)$/);const base=match&&BASE.litmus[Number(match[1])];if(base&&old&&t.deadline===old)t.deadline=base.deadline;});
    }
    const migrated=migrateState(s);
    try{localStorage.setItem(KEY,JSON.stringify(migrated));}catch(e){}
