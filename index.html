@@ -438,23 +438,24 @@ body.report-open,body.modal-open{overflow:hidden;overscroll-behavior:none}
 @media(prefers-reduced-motion:reduce){.report-modal,.countdown-date-editor{animation:none!important}.report-subject,.report-close,.ring-action{transition:none!important}}
 
 
-/* Cloud account setup */
-.cloud-gate{position:fixed;inset:0;z-index:99999;display:grid;place-items:center;padding:18px;background:rgba(11,29,46,.76);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
-.cloud-gate[hidden]{display:none}
-/* Authentication takes priority over the first-open animation. */
+/* Cloud sign-in is a true gate and pauses the animated welcome layer until auth completes. */
+.cloud-gate{position:fixed;inset:0;z-index:100000;display:grid;place-items:center;padding:18px;background:rgba(8,24,44,.74);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px)}
+.cloud-gate[hidden]{display:none!important}
 body.cloud-auth-pending .welcome-screen{visibility:hidden!important;opacity:0!important;pointer-events:none!important}
 body.cloud-auth-pending .welcome-screen *{animation-play-state:paused!important}
 body.cloud-auth-pending{overflow:hidden}
-.cloud-card{width:min(100%,470px);max-height:92vh;overflow:auto;background:#fff;border:1px solid #dce8f2;border-radius:22px;padding:24px;box-shadow:0 24px 90px #06172755;color:#243b49}
+.cloud-card{width:min(100%,480px);max-height:92vh;overflow:auto;background:#fff;border:1px solid #dbe7f3;border-radius:22px;padding:24px;box-shadow:0 24px 90px rgba(3,16,35,.38);color:#243b49}
 .cloud-card h2{font-size:25px;margin:0 0 7px;color:#173650}
-.cloud-card p{font-size:13px;line-height:1.55;color:#71828b;margin:0 0 18px}
+.cloud-card p{font-size:13px;line-height:1.55;color:#71828b;margin:0 0 16px}
 .cloud-card label{display:grid;gap:6px;font-size:11px;font-weight:800;color:#526b7b;margin:12px 0}
 .cloud-card input{width:100%}
 .cloud-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
-.cloud-message{font-size:12px;line-height:1.5;padding:10px 12px;border-radius:10px;background:#eef6ff;color:#285b83;margin-top:12px}
+.cloud-message{font-size:12px;line-height:1.5;padding:10px 12px;border-radius:10px;background:#eef6ff;color:#285b83;margin-top:12px;overflow-wrap:anywhere}
 .cloud-message.error{background:#fff0f1;color:#b33d4c}
-.cloud-status{font-size:11px;color:#d6e8f9;padding:0 8px}
+.cloud-status{font-size:11px;color:#d6e8f9;padding:0 8px;overflow-wrap:anywhere}
 .cloud-status b{color:#8ee9cb}
+.cloud-session-panel{padding:16px;border:1px solid #dbe7f3;border-radius:14px;background:#f4f9ff;margin:14px 0}
+@media(max-width:520px){.cloud-card{padding:19px;border-radius:18px}.cloud-actions button{flex:1}}
 
 </style>
 
@@ -496,8 +497,7 @@ body.cloud-auth-pending{overflow:hidden}
 .countdown-date-editor{margin-top:9px!important;border:1px solid rgba(132,225,255,.25)!important;border-radius:14px!important;padding:13px!important;background:rgba(2,15,34,.62)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.07)!important;color:#eefbff!important;position:relative;z-index:4}
 .countdown-date-editor label,.countdown-date-editor small{color:#d2ebff!important}
 .countdown-date-editor input{color:#082342!important;background:#f6fbff!important;border:1px solid #a9daf0!important;border-radius:9px!important;min-height:40px!important}
-.countdown-date-editor .small-btn{background:linear-gradient(135deg,#72efff,#58e0c3)!important;color:#062747!important;border:0!important;font-weight:900!important;border-radius:9px!important}
-.countdown-focus .hero-actions{margin-top:22px!important;gap:10px!important;flex-wrap:wrap!important}
+.countdown-date-editor .small-btn{background:linear-gradient(135deg,#72efff,#58e0c3)!important;color:#062747!important;border:0!important;font-weight:900!important;border-radius:9px!important}.countdown-focus .hero-actions{margin-top:22px!important;gap:10px!important;flex-wrap:wrap!important}
 .countdown-focus .hero-actions .btn.primary{background:linear-gradient(115deg,#81f1ff 0%,#61e5ce 100%)!important;color:#052846!important;border:1px solid rgba(206,255,255,.8)!important;font-weight:950!important;box-shadow:0 9px 22px rgba(67,226,219,.21),inset 0 1px 0 rgba(255,255,255,.75)!important}
 .countdown-focus .hero-actions .btn.primary:hover{transform:translateY(-2px);box-shadow:0 13px 26px rgba(67,226,219,.29),inset 0 1px 0 rgba(255,255,255,.8)!important}
 .countdown-focus .hero-actions .btn.ghost{background:rgba(255,255,255,.075)!important;color:#fff!important;border:1px solid rgba(211,239,255,.27)!important;font-weight:850!important}
@@ -656,41 +656,29 @@ body[data-readiness="ready"] .hero{background:radial-gradient(ellipse at 90% 5%,
 </head>
 <body data-active-page="dashboard" class="cloud-auth-pending">
 
-<div class="cloud-gate" id="cloudGate">
-  <section class="cloud-card" aria-labelledby="cloudTitle">
+<div class="cloud-gate" id="cloudGate" role="dialog" aria-modal="true" aria-labelledby="cloudTitle">
+  <section class="cloud-card">
     <div class="brandmark" style="width:44px;height:44px;margin-bottom:16px">P</div>
     <h2 id="cloudTitle">Connect Personal Space</h2>
-    <p>Sign in to sync your JEE chapters, PYQs, topic tests and LITMUS results across devices. Your Supabase publishable key is intended for browser use with the database security policies already configured.</p>
-    <div id="cloudSessionPanel" hidden style="padding:18px;border:1px solid rgba(255,255,255,.18);border-radius:16px;background:rgba(255,255,255,.08);margin:14px 0">
-      <h3 style="margin:0 0 8px;color:#fff">You're signed in</h3>
-      <p style="margin:0 0 8px">Cloud sync is connected for:</p>
-      <p id="cloudSessionEmail" style="margin:0 0 14px;font-weight:800;color:#7df1d6;overflow-wrap:anywhere"></p>
-      <p style="margin:0 0 14px;font-size:13px">Your sign-in session is active. You don't need to enter your password again just to open these settings.</p>
-      <div class="cloud-actions">
-        <button class="btn btn-blue" type="button" onclick="closeCloudSettings()">Back to planner</button>
-        <button class="btn btn-light" type="button" onclick="cloudSignOut()">Sign out</button>
-      </div>
+    <p>Sign in to sync your chapters, PYQs, topic tests, and LITMUS results across devices. Use your Supabase Project URL and Publishable key. Never enter a Secret or Service Role key here.</p>
+    <div id="cloudSessionPanel" class="cloud-session-panel" hidden>
+      <h3 style="margin:0 0 8px;color:#173650">You're signed in</h3>
+      <p style="margin:0 0 8px">Cloud sync account:</p>
+      <p id="cloudSessionEmail" style="margin:0 0 14px;font-weight:800;color:#167f72;overflow-wrap:anywhere"></p>
+      <div class="cloud-actions"><button class="btn btn-blue" type="button" onclick="closeCloudSettings()">Back to planner</button><button class="btn btn-light" type="button" onclick="cloudUploadLocal()">Upload local progress</button><button class="btn btn-light" type="button" onclick="cloudRestoreCloud()">Restore cloud backup</button><button class="btn btn-light" type="button" onclick="cloudSignOut()">Sign out</button></div>
     </div>
     <div id="cloudAuthForm">
-    <label>Supabase Project URL
-      <input id="cloudUrl" type="url" placeholder="https://your-project.supabase.co" autocomplete="url">
-    </label>
-    <label>Supabase publishable key
-      <input id="cloudKey" type="password" placeholder="sb_publishable_…" autocomplete="off">
-    </label>
-    <label>Email
-      <input id="cloudEmail" type="email" placeholder="you@example.com" autocomplete="email">
-    </label>
-    <label>Password
-      <input id="cloudPassword" type="password" placeholder="At least 6 characters" autocomplete="current-password">
-    </label>
-    <div class="cloud-actions">
-      <button class="btn btn-blue" type="button" onclick="cloudSignIn()">Sign in</button>
-      <button class="btn btn-light" type="button" onclick="cloudSignUp()">Create account</button>
-      <button class="btn btn-light" type="button" onclick="cloudOffline()">Use offline for now</button>
+      <label>Supabase Project URL<input id="cloudUrl" type="url" placeholder="https://your-project.supabase.co" autocomplete="url" spellcheck="false"></label>
+      <label>Supabase Publishable key<input id="cloudKey" type="password" placeholder="sb_publishable_…" autocomplete="off" spellcheck="false"></label>
+      <label>Email<input id="cloudEmail" type="email" placeholder="you@example.com" autocomplete="email"></label>
+      <label>Password<input id="cloudPassword" type="password" placeholder="Your account password" autocomplete="current-password"></label>
+      <div class="cloud-actions">
+        <button class="btn btn-blue" type="button" onclick="cloudSignIn()">Sign in</button>
+        <button class="btn btn-light" type="button" onclick="cloudSignUp()">Create account</button>
+        <button class="btn btn-light" type="button" onclick="cloudOffline()">Use offline</button>
+      </div>
     </div>
-    <div class="cloud-message" id="cloudMessage">Enter your Project URL and publishable key, then create an account or sign in. Don't use a secret or service_role key.</div>
-    </div>
+    <div class="cloud-message" id="cloudMessage" role="status" aria-live="polite">Enter your project URL and publishable key, then sign in or create an account.</div>
   </section>
 </div>
 
@@ -706,7 +694,7 @@ body[data-readiness="ready"] .hero{background:radial-gradient(ellipse at 90% 5%,
     <button data-page="pyq"><span class="ico" data-icon="file"></span>PYQ practice</button>
   </nav>
   <div class="sidebar-note" style="display:grid;gap:8px">
-    <div id="cloudStatus" class="cloud-status" style="padding:0;color:#d6e8f9">Cloud sync: <b>not connected</b></div>
+    <div id="cloudStatus" class="cloud-status">Cloud sync: <b>not connected</b></div>
     <button class="btn btn-light" type="button" onclick="openCloudSettings()" style="width:100%;font-size:11px;padding:9px 10px">Cloud login / sync settings</button>
     <span>Progress saves in this browser too.</span>
   </div>
@@ -838,35 +826,28 @@ function parseFlexibleDate(value){const raw=String(value||"").trim();if(!raw)ret
 
 const clone=x=>JSON.parse(JSON.stringify(x));
 let state=loadState();
-
 let psCloudClient=null, psCloudReady=false, psCloudUser=null, psCloudTimer=null, psCloudApplying=false;
-function cloudMessage(msg,isError=false){const el=document.getElementById('cloudMessage');if(el){el.textContent=msg;el.classList.toggle('error',!!isError)}}
-function cloudStatus(msg){const el=document.getElementById('cloudStatus');if(el)el.innerHTML='Cloud sync: <b>'+msg+'</b>'}
-function setCloudGateView(signedIn){
- const authForm=document.getElementById('cloudAuthForm');
- const sessionPanel=document.getElementById('cloudSessionPanel');
- if(authForm)authForm.hidden=!!signedIn;
- if(sessionPanel)sessionPanel.hidden=!signedIn;
- const emailLabel=document.getElementById('cloudSessionEmail');
- if(emailLabel)emailLabel.textContent=(psCloudUser&&psCloudUser.email)||'';
-}
-function closeCloudSettings(){document.getElementById('cloudGate').hidden=true;document.body.classList.remove('cloud-auth-pending');startWelcome();}
-function cloudOffline(){document.getElementById('cloudGate').hidden=true;document.body.classList.remove('cloud-auth-pending');cloudStatus('offline · saved on this browser');startWelcome();}
-function openCloudSettings(){cloudRestoreSavedConfig();document.body.classList.add('cloud-auth-pending');const signedIn=!!(psCloudReady&&psCloudUser);setCloudGateView(signedIn);const gate=document.getElementById('cloudGate');gate.hidden=false;if(!signedIn){const email=document.getElementById('cloudEmail');if(psCloudUser&&email&&!email.value)email.value=psCloudUser.email||'';}}
-async function cloudSignOut(){try{if(psCloudClient){const {error}=await psCloudClient.auth.signOut();if(error)throw error;}psCloudReady=false;psCloudUser=null;setCloudGateView(false);document.getElementById('cloudGate').hidden=false;cloudStatus('signed out · saved on this browser');cloudMessage('You have signed out. Your local browser data is still here; sign in again to resume cloud sync.');}catch(e){cloudMessage(e.message||'Could not sign out.',true);}}
-function cloudConfig(){return {url:document.getElementById('cloudUrl').value.trim().replace(/\/+$/,''),key:document.getElementById('cloudKey').value.trim(),email:document.getElementById('cloudEmail').value.trim(),password:document.getElementById('cloudPassword').value};}
-function cloudInitClient(){const c=cloudConfig();if(!c.url||!/^https:\/\/.+/.test(c.url)||!c.key){throw new Error('Enter the Project URL and publishable key first.');}if(!window.supabase||!window.supabase.createClient)throw new Error('Supabase library did not load. Check your internet connection and refresh.');localStorage.setItem('ps-supabase-url',c.url);localStorage.setItem('ps-supabase-key',c.key);if(!psCloudClient)psCloudClient=window.supabase.createClient(c.url,c.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});return psCloudClient;}
-async function cloudAuth(mode){try{const c=cloudConfig();if(!c.email||!c.password)throw new Error('Enter your email and password.');const client=cloudInitClient();cloudMessage(mode==='signup'?'Creating your account…':'Signing in…');const result=mode==='signup'?await client.auth.signUp({email:c.email,password:c.password}):await client.auth.signInWithPassword({email:c.email,password:c.password});if(result.error){const msg=String(result.error.message||'');if(mode==='signin'&&/invalid login credentials/i.test(msg))throw new Error('That email and password did not match. Your account may already exist, so do not keep creating accounts. Check the email/password, or use the password-reset option in Supabase if you forgot it.');throw result.error;}if(mode==='signup'&&!result.data.session){cloudMessage('Account created. Check your email to confirm it, then return here and sign in once.');return;}const user=result.data.user;if(!user)throw new Error('No user session returned. Try signing in again.');await cloudAfterLogin(user); }catch(e){cloudMessage(e.message||'Could not connect. Check the URL, key and login details.',true);}}
-function cloudSignIn(){return cloudAuth('signin')}
-function cloudSignUp(){return cloudAuth('signup')}
-async function cloudAfterLogin(user){psCloudUser=user;cloudStatus('loading your data…');cloudMessage('Signed in. Loading your saved study progress…');const {data,error}=await psCloudClient.from('study_data').select('data').eq('user_id',user.id).maybeSingle();if(error)throw error;
- if(data&&data.data&&data.data.state&&data.data.state.chapters){psCloudApplying=true;state=data.data.state;localStorage.setItem(KEY,JSON.stringify(state));if(data.data.countdownTarget&&/^\d{4}-\d{2}-\d{2}$/.test(data.data.countdownTarget))localStorage.setItem('jee-countdown-target',data.data.countdownTarget);renderAll();if(typeof renderDashboard==='function')renderDashboard();psCloudApplying=false;cloudMessage('Cloud progress loaded successfully.');}
- else {const hasLocal=!!(state&&state.chapters&&state.topics);if(hasLocal&&confirm('No cloud backup exists for this account yet. Upload the tracker currently open in this browser to your account? If your older progress is in a backup JSON, choose Cancel, restore it with the website’s Restore backup button, then sign in again.')){await cloudWriteNow();cloudMessage('Your current tracker was uploaded to the cloud.');}else{cloudMessage('Signed in, but no cloud data exists yet. Restore your personal-space-backup.json using the tracker’s Restore backup button, then make a change to sync it.');}}
- psCloudReady=true;setCloudGateView(true);document.getElementById('cloudGate').hidden=true;document.body.classList.remove('cloud-auth-pending');cloudStatus('connected · '+user.email);startWelcome(); }
-function queueCloudSave(){if(psCloudApplying||!psCloudReady||!psCloudClient||!psCloudUser)return;cloudStatus('saving…');clearTimeout(psCloudTimer);psCloudTimer=setTimeout(()=>cloudWriteNow().catch(e=>{cloudStatus('save failed');console.error(e);}),700);}
-async function cloudWriteNow(){if(!psCloudClient||!psCloudUser)return;const payload={state:state,countdownTarget:getCountdownTarget()};const {error}=await psCloudClient.from('study_data').upsert({user_id:psCloudUser.id,data:payload,updated_at:new Date().toISOString()},{onConflict:'user_id'});if(error)throw error;cloudStatus('synced just now');}
-function cloudRestoreSavedConfig(){const u=localStorage.getItem('ps-supabase-url');const k=localStorage.getItem('ps-supabase-key');if(u)document.getElementById('cloudUrl').value=u;if(k)document.getElementById('cloudKey').value=k;}
-
+let psCloudSettingsKey="ps-cloud-settings-v2";
+function cloudMessage(msg,isError=false){const el=document.getElementById("cloudMessage");if(el){el.textContent=msg;el.classList.toggle("error",!!isError)}}
+function cloudStatus(msg){const el=document.getElementById("cloudStatus");if(el)el.innerHTML="Cloud sync: <b>"+String(msg).replace(/[<>]/g,"")+"</b>"}
+function cloudGateView(signedIn){const form=document.getElementById("cloudAuthForm"),panel=document.getElementById("cloudSessionPanel"),email=document.getElementById("cloudSessionEmail");if(form)form.hidden=!!signedIn;if(panel)panel.hidden=!signedIn;if(email)email.textContent=(psCloudUser&&psCloudUser.email)||""}
+function openCloudSettings(){cloudRestoreSavedConfig();const gate=document.getElementById("cloudGate");gate.hidden=false;document.body.classList.add("cloud-auth-pending");cloudGateView(!!(psCloudReady&&psCloudUser));if(psCloudReady&&psCloudUser)cloudMessage("You're already signed in. Your session is saved; no password is needed to reopen settings.");}
+function closeCloudSettings(){const gate=document.getElementById("cloudGate");gate.hidden=true;document.body.classList.remove("cloud-auth-pending");if(!psCloudReady)cloudStatus("offline · saved on this browser");startWelcome();}
+function cloudOffline(){if(psCloudReady&&psCloudUser){closeCloudSettings();return;}document.getElementById("cloudGate").hidden=true;document.body.classList.remove("cloud-auth-pending");cloudStatus("offline · saved on this browser");cloudMessage("Offline mode. Your changes remain in this browser; cloud backup is not active.");startWelcome();}
+function cloudSettings(){return {url:document.getElementById("cloudUrl").value.trim().replace(/\/+$/,""),key:document.getElementById("cloudKey").value.trim()};}
+function cloudRestoreSavedConfig(){try{const saved=JSON.parse(localStorage.getItem(psCloudSettingsKey)||"{}");if(saved.url)document.getElementById("cloudUrl").value=saved.url;if(saved.key)document.getElementById("cloudKey").value=saved.key;}catch(e){}}
+function cloudCreateClient(){const cfg=cloudSettings();if(!/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(cfg.url))throw new Error("Paste the exact Project URL from Supabase (https://…supabase.co), without extra spaces or dots.");if(!cfg.key)throw new Error("Paste your Supabase Publishable key (sb_publishable_…). Do not use a Secret or Service Role key.");if(!window.supabase||!window.supabase.createClient)throw new Error("Supabase library did not load. Check your internet connection and refresh.");try{localStorage.setItem(psCloudSettingsKey,JSON.stringify(cfg));}catch(e){}if(psCloudClient&&psCloudClient.__psUrl!==cfg.url){try{psCloudClient.auth.signOut({scope:"local"});}catch(e){}psCloudClient=null;psCloudReady=false;psCloudUser=null;}if(!psCloudClient){psCloudClient=window.supabase.createClient(cfg.url,cfg.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storageKey:"ps-supabase-auth-v2"}});psCloudClient.__psUrl=cfg.url;}return psCloudClient;}
+async function cloudAuth(mode){try{const email=document.getElementById("cloudEmail").value.trim(),password=document.getElementById("cloudPassword").value;if(!email||!password)throw new Error("Enter your email and password.");const client=cloudCreateClient();cloudMessage(mode==="signup"?"Creating your account…":"Signing in…");const res=mode==="signup"?await client.auth.signUp({email,password}):await client.auth.signInWithPassword({email,password});if(res.error)throw res.error;if(mode==="signup"&&!res.data.session){cloudMessage("Account created. Check your email to confirm it, then return and sign in using the same account.");return;}if(!res.data.user)throw new Error("Supabase did not return an account. Try signing in again.");await cloudAfterLogin(res.data.user);}catch(e){cloudMessage((e&&e.message)||"Could not connect to Supabase.",true);cloudStatus("connection failed");}}
+function cloudSignIn(){return cloudAuth("signin")}function cloudSignUp(){return cloudAuth("signup")}
+async function cloudAfterLogin(user){psCloudUser=user;cloudStatus("checking backup…");cloudMessage("Signed in. Checking your cloud backup…");const {data,error}=await psCloudClient.from("study_data").select("data").eq("user_id",user.id).maybeSingle();if(error){psCloudReady=false;throw new Error("Signed in, but could not read cloud backup: "+error.message+". Check the study_data table and its RLS policies.");}
+ if(data&&data.data&&data.data.state&&Array.isArray(data.data.state.chapters)){const cloudState=data.data.state;const localRaw=localStorage.getItem(KEY);let localState=null;try{localState=JSON.parse(localRaw||"null")}catch(e){}const localChanged=localState&&Array.isArray(localState.chapters)&&(localState.chapters.some(x=>x.prep&&x.prep!=="Not Ready")||(localState.pyqs||[]).length>0||(localState.topics||[]).some(x=>x.status&&x.status!=="Not Started"));if(localChanged&&confirm("Cloud backup found. This browser also has local progress. Press OK to load the cloud copy, or Cancel to keep local progress and upload it instead.")){state=cloudState;if(data.data.countdownTarget&&/^\d{4}-\d{2}-\d{2}$/.test(data.data.countdownTarget))localStorage.setItem("jee-countdown-target",data.data.countdownTarget);localStorage.setItem(KEY,JSON.stringify(state));renderAll();renderDashboard();cloudMessage("Cloud backup restored to this browser.");}else if(localChanged){await cloudWriteNow();cloudMessage("Your local progress was uploaded to the cloud.");}else{state=cloudState;localStorage.setItem(KEY,JSON.stringify(state));if(data.data.countdownTarget&&/^\d{4}-\d{2}-\d{2}$/.test(data.data.countdownTarget))localStorage.setItem("jee-countdown-target",data.data.countdownTarget);renderAll();renderDashboard();cloudMessage("Cloud backup loaded successfully.");}}
+ else {const hasLocal=!!(state&&Array.isArray(state.chapters)&&Array.isArray(state.topics));if(hasLocal&&confirm("This account has no cloud backup yet. Upload the planner currently open in this browser? Choose Cancel if you first need to restore your personal-space-backup.json.")){await cloudWriteNow();cloudMessage("Your current planner was uploaded to the cloud.");}else{cloudMessage("Signed in, but no cloud backup exists yet. Restore your backup JSON first, then use Upload local progress in Cloud settings.");}}
+ psCloudReady=true;psCloudUser=user;cloudGateView(true);document.getElementById("cloudGate").hidden=true;document.body.classList.remove("cloud-auth-pending");cloudStatus("connected · "+user.email);startWelcome();}
+function queueCloudSave(){if(psCloudApplying||!psCloudReady||!psCloudClient||!psCloudUser)return;cloudStatus("saving…");clearTimeout(psCloudTimer);psCloudTimer=setTimeout(()=>cloudWriteNow().catch(e=>{cloudStatus("save failed");cloudMessage("Cloud save failed: "+(e.message||"unknown error"),true);console.error("Cloud save failed",e);}),650);}
+async function cloudWriteNow(){if(!psCloudClient||!psCloudUser)throw new Error("Sign in to enable cloud saving.");const payload={state:state,countdownTarget:getCountdownTarget()};const {error}=await psCloudClient.from("study_data").upsert({user_id:psCloudUser.id,data:payload,updated_at:new Date().toISOString()},{onConflict:"user_id"});if(error)throw error;cloudStatus("synced just now");}
+async function cloudUploadLocal(){try{await cloudWriteNow();cloudMessage("Local progress successfully uploaded to your cloud account.");}catch(e){cloudMessage(e.message||"Upload failed",true);}}
+async function cloudRestoreCloud(){if(!psCloudClient||!psCloudUser){cloudMessage("Sign in first to restore cloud backup.",true);return;}if(!confirm("Replace this browser's tracker with the cloud backup? This won't delete the cloud copy."))return;try{const {data,error}=await psCloudClient.from("study_data").select("data").eq("user_id",psCloudUser.id).maybeSingle();if(error)throw error;if(!data||!data.data||!data.data.state)throw new Error("No cloud backup exists for this account yet.");psCloudApplying=true;state=data.data.state;localStorage.setItem(KEY,JSON.stringify(state));if(data.data.countdownTarget&&/^\d{4}-\d{2}-\d{2}$/.test(data.data.countdownTarget))localStorage.setItem("jee-countdown-target",data.data.countdownTarget);renderAll();renderDashboard();psCloudApplying=false;cloudMessage("Cloud backup restored.");}catch(e){psCloudApplying=false;cloudMessage(e.message||"Restore failed",true);}}
+async function cloudSignOut(){if(!psCloudClient)return;try{const {error}=await psCloudClient.auth.signOut();if(error)throw error;psCloudReady=false;psCloudUser=null;cloudGateView(false);document.getElementById("cloudGate").hidden=false;cloudStatus("signed out · saved locally");cloudMessage("Signed out. Your browser progress is still saved locally.");}catch(e){cloudMessage(e.message||"Sign out failed",true);}}
 let modalContext=null;
 function initialState(){
  const chapters=[];
@@ -876,8 +857,7 @@ function initialState(){
  return {chapters,topics,litmus,pyqs:[]};
 }
 function loadState(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.chapters&&s.topics){if(Array.isArray(s.litmus)){const oldDefaults={"litmus-0":"2026-10-20","litmus-1":"2026-11-01","litmus-2":"2026-11-15","litmus-7":"2026-12-13"};s.litmus.forEach(t=>{const old=oldDefaults[t.id];const match=String(t.id||"").match(/^litmus-(\d+)$/);const base=match&&BASE.litmus[Number(match[1])];if(base&&old&&t.deadline===old)t.deadline=base.deadline;});}return s;}}catch(e){}return initialState();}
-function saveState(){if(!Array.isArray(state.pyqs))state.pyqs=[];localStorage.setItem(KEY,JSON.stringify(state));renderAll();if(psCloudReady&&psCloudUser)queueCloudSave();}
-
+function saveState(){if(!Array.isArray(state.pyqs))state.pyqs=[];localStorage.setItem(KEY,JSON.stringify(state));renderAll();if(psCloudReady&&psCloudUser&&!psCloudApplying)queueCloudSave();}
 function go(page){
  document.body.dataset.activePage=page;
  if(page==="chapters")document.body.dataset.activeSubject=(currentChapterSubject||"Physics").toLowerCase();
@@ -1016,8 +996,7 @@ function setChapterYear(year){
 }
 function renderChapters(){
  const sub=currentChapterSubject||"Physics";
- const status=document.getElementById("chapterStatus").value;
- const q=document.getElementById("chapterSearch").value.toLowerCase().trim();
+ const status=document.getElementById("chapterStatus").value; const q=document.getElementById("chapterSearch").value.toLowerCase().trim();
  document.querySelectorAll(".subject-tab").forEach(b=>{
   const active=b.dataset.subject===sub;b.classList.toggle("active",active);b.setAttribute("aria-pressed",String(active));
  });
@@ -1230,7 +1209,7 @@ function moveNavGlass(button,animate=true){
  if(animate){indicator.classList.remove("gel-pulse");void indicator.offsetWidth;indicator.classList.add("gel-pulse");setTimeout(()=>indicator.classList.remove("gel-pulse"),560);}
 }
 function dismissWelcome(skipped=false){const screen=document.getElementById("welcomeScreen");if(!screen||screen.classList.contains("is-leaving"))return;screen.classList.add("is-leaving");try{sessionStorage.setItem("jee-hq-intro-seen","1");}catch(e){}setTimeout(()=>{screen.style.display="none";},520);}
-function startWelcome(){const screen=document.getElementById("welcomeScreen");if(!screen)return;const gate=document.getElementById("cloudGate");if(gate&&!gate.hidden){document.body.classList.add("cloud-auth-pending");return;}document.body.classList.remove("cloud-auth-pending");let seen=false;try{seen=sessionStorage.getItem("jee-hq-intro-seen")==="1";}catch(e){}if(seen){screen.style.display="none";return;}screen.style.display="grid";screen.classList.remove("is-leaving");screen.style.visibility="visible";screen.style.opacity="1";screen.addEventListener("click",e=>{if(e.target===screen||e.target.classList.contains("welcome-aura"))dismissWelcome(true);},{once:true});const skip=screen.querySelector(".welcome-enter");if(skip)skip.addEventListener("keydown",e=>{if(e.key==="Escape")dismissWelcome(true);},{once:true});setTimeout(()=>dismissWelcome(false),2600);}
+function startWelcome(){const screen=document.getElementById("welcomeScreen");if(!screen)return;const gate=document.getElementById("cloudGate");if(gate&&!gate.hidden){document.body.classList.add("cloud-auth-pending");return;}document.body.classList.remove("cloud-auth-pending");let seen=false;try{seen=sessionStorage.getItem("jee-hq-intro-seen")==="1";}catch(e){}if(seen){screen.style.display="none";return;}screen.addEventListener("click",e=>{if(e.target===screen||e.target.classList.contains("welcome-aura"))dismissWelcome(true);});const skip=screen.querySelector(".welcome-enter");if(skip)skip.addEventListener("keydown",e=>{if(e.key==="Escape")dismissWelcome(true);});setTimeout(()=>dismissWelcome(false),2600);}
 
 let reportKind="",reportAttemptFilter="all";
 function openReport(title,subtitle,body){const back=document.getElementById("reportBackdrop");if(!back)return;document.getElementById("reportTitle").textContent=title;document.getElementById("reportSubtitle").textContent=subtitle;document.getElementById("reportBody").innerHTML=body;back.hidden=false;document.body.classList.add("report-open");const close=back.querySelector(".report-close");if(close)close.focus();}
@@ -1451,12 +1430,11 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!document.getElemen
 })();
 
 
-cloudRestoreSavedConfig();
-(async()=>{try{const url=localStorage.getItem('ps-supabase-url'),key=localStorage.getItem('ps-supabase-key');if(url&&key&&window.supabase){psCloudClient=window.supabase.createClient(url,key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});const {data}=await psCloudClient.auth.getSession();if(data&&data.session&&data.session.user){await cloudAfterLogin(data.session.user);}}}catch(e){console.error('Cloud session restore failed',e);}})();
 renderAll();
 requestAnimationFrame(()=>moveNavGlass(document.querySelector("nav button.active[data-page]"),false));
 window.addEventListener("resize",()=>moveNavGlass(document.querySelector("nav button.active[data-page]"),false),{passive:true});
-startWelcome();
+cloudRestoreSavedConfig();
+(async()=>{try{const cfg=cloudSettings();if(cfg.url&&cfg.key&&window.supabase){psCloudClient=window.supabase.createClient(cfg.url,cfg.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storageKey:"ps-supabase-auth-v2"}});psCloudClient.__psUrl=cfg.url;const {data,error}=await psCloudClient.auth.getSession();if(error)throw error;if(data&&data.session&&data.session.user){await cloudAfterLogin(data.session.user);return;}}cloudGateView(false);document.getElementById("cloudGate").hidden=false;document.body.classList.add("cloud-auth-pending");}catch(e){console.error("Session restore failed",e);cloudMessage("Could not restore your saved session: "+(e.message||"unknown error"),true);document.getElementById("cloudGate").hidden=false;document.body.classList.add("cloud-auth-pending");}})();
 </script>
 </body>
 </html>
