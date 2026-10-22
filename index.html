@@ -1526,4 +1526,6 @@ cloudRestoreSavedConfig();
 (async()=>{try{const cfg=cloudSettings();if(cfg.url&&cfg.key&&window.supabase){psCloudClient=window.supabase.createClient(cfg.url,cfg.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storageKey:"ps-supabase-auth-v2"}});psCloudClient.__psUrl=cfg.url;const {data,error}=await psCloudClient.auth.getSession();if(error)throw error;if(data&&data.session&&data.session.user){await cloudAfterLogin(data.session.user);return;}}cloudGateView(false);document.getElementById("cloudGate").hidden=false;document.body.classList.add("cloud-auth-pending");}catch(e){console.error("Session restore failed",e);cloudMessage("Could not restore your saved session: "+(e.message||"unknown error"),true);document.getElementById("cloudGate").hidden=false;document.body.classList.add("cloud-auth-pending");}})();
 </script>
 </body>
+
+<!-- Pages rebuild refresh: 2026-10-23 -->
 </html>
