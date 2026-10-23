@@ -980,7 +980,7 @@ async function cloudAfterLogin(user){
   const cloudState=data.data.state;
   const localRaw=localStorage.getItem(KEY);
   let localState=null;try{localState=JSON.parse(localRaw||"null")}catch(e){}
-  const localChanged=localState&&Array.isArray(localState.chapters)&&(localState.chapters.some(x=>x.prep&&x.prep!=="Not Ready")||(localState.pyqs||[]).length>0||(localState.topics||[]).some(x=>x.status&&x.status!=="Not Started"));
+  const localChanged=!!(localState&&Array.isArray(localState.chapters)&&JSON.stringify(migrateState(localState))!==JSON.stringify(migrateState(cloudState)));
   if(localChanged&&confirm("Cloud backup found. This browser also has local progress. Press OK to load the cloud copy, or Cancel to keep local progress and upload it instead.")){
    state=migrateState(cloudState);
    if(data.data.countdownTarget&&/^\d{4}-\d{2}-\d{2}$/.test(data.data.countdownTarget))localStorage.setItem("jee-countdown-target",data.data.countdownTarget);
