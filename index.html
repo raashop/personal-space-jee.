@@ -855,6 +855,46 @@ main>.page>.section-head p { color:#71869a!important; opacity:1!important; }
  #reportBackdrop .needs-work-subject-grid { grid-template-columns:minmax(0,1fr)!important; }
 }
 </style>
+<style id="personal-space-final-smoothness-pass">
+/* One quick modal entrance; no expensive blur layer or dozens of staggered row animations. */
+#reportBackdrop:not([hidden]) .report-modal:not(.report-modal-measuring){
+ animation:psReportEnter .24s cubic-bezier(.2,.7,.25,1) both!important;
+ transform-origin:center top!important;
+}
+@keyframes psReportEnter{
+ from{opacity:0;transform:translate3d(0,6px,0) scale(.995)}
+ to{opacity:1;transform:translate3d(0,0,0) scale(1)}
+}
+#reportBackdrop,.report-backdrop{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+#reportBackdrop .report-stagger,#reportBackdrop .report-stagger-in{animation:none!important;transition:none!important;transform:none!important;opacity:1!important}
+.report-modal-head,.litmus-next,.countdown-date-editor{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+#page-dashboard .hero{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.chapter-list{transition:none!important}
+.chapter-list.chapter-revealing .chapter-row{animation:none!important;animation-delay:0ms!important}
+button,.metric,.panel,.subject-card,.launch-card,.chapter-row,.litmus-card,.planned-modal-item,
+.report-close,.subject-tab,.year-tab,.status-chip,.checkpoint,.small-btn,.quicklink{
+ transition-property:transform,border-color,background-color,color,opacity!important;
+ transition-duration:.16s!important;
+ transition-timing-function:cubic-bezier(.2,.7,.25,1)!important;
+}
+.metric:hover,.panel:hover,.subject-card:hover,.launch-card:hover,.chapter-row:hover,.table-wrap:hover{
+ box-shadow:0 8px 20px rgba(31,65,92,.075)!important;
+}
+nav .nav-glass-indicator{transition:transform .28s cubic-bezier(.2,.7,.25,1),width .2s ease,height .2s ease,opacity .14s ease!important;box-shadow:0 4px 12px rgba(26,89,141,.1)!important}
+#modalBackdrop,.planned-modal-backdrop,.cloud-gate{backdrop-filter:blur(3px)!important;-webkit-backdrop-filter:blur(3px)!important}
+@media(max-width:720px){
+ .ps-fluid-ribbon-c{display:none!important}
+ .report-modal-head{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+}
+@media(hover:none){
+ .metric:hover,.panel:hover,.subject-card:hover,.launch-card:hover,.chapter-row:hover,.table-wrap:hover{transform:none!important}
+}
+@media(prefers-reduced-motion:reduce){
+ #reportBackdrop:not([hidden]) .report-modal:not(.report-modal-measuring),
+ .page.page-transition,.chapter-list.chapter-revealing .chapter-row,
+ .ps-fluid-colorwash,.ps-fluid-ribbon{animation:none!important;transition:none!important}
+}
+</style>
 </head>
 <body data-active-page="dashboard" class="cloud-auth-pending">
 
@@ -1254,7 +1294,18 @@ function loadState(){
  }catch(e){}
  return initialState();
 }
-function saveState(){if(!Array.isArray(state.pyqs))state.pyqs=[];localStorage.setItem(KEY,JSON.stringify(state));renderAll();if(psCloudReady&&psCloudUser&&!psCloudApplying)queueCloudSave();}
+function saveState(){
+ if(!Array.isArray(state.pyqs))state.pyqs=[];
+ localStorage.setItem(KEY,JSON.stringify(state));
+ const activePage=document.body.dataset.activePage||"dashboard";
+ // Keep the dashboard summaries current, but don't rebuild every hidden section for each click.
+ renderDashboard();
+ if(activePage==="chapters")renderChapters();
+ else if(activePage==="topic")renderTopics();
+ else if(activePage==="litmus")renderLitmus();
+ else if(activePage==="pyq")renderPyq();
+ if(psCloudReady&&psCloudUser&&!psCloudApplying)queueCloudSave();
+}
 let clearNeedsWorkChapterFiltersOnReturn=false;
 function go(page){
  const activePage=document.body.dataset.activePage;
@@ -1398,15 +1449,11 @@ let currentChapterSubject="Physics";
 let currentChapterYear="all";
 let chapterSwitchTimer=null;
 function chapterReveal(fn){
+ if(chapterSwitchTimer){clearTimeout(chapterSwitchTimer);chapterSwitchTimer=null;}
  const list=document.getElementById("chapterList");
- if(chapterSwitchTimer)clearTimeout(chapterSwitchTimer);
+ if(list)list.classList.remove("chapter-revealing","chapter-swapping");
  fn();
  renderChapters();
- if(!list||window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
- list.classList.remove("chapter-revealing");
- void list.offsetWidth;
- list.classList.add("chapter-revealing");
- chapterSwitchTimer=setTimeout(()=>list.classList.remove("chapter-revealing"),480);
 }
 function setChapterSubject(subject){
  if(!BASE.subjects[subject])return;
@@ -1830,13 +1877,11 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!document.getElemen
     const ready=(state.chapters||[]).filter(c=>c.prep==='Exam Ready').length;
     return `<div class="readiness-spotlight"><div class="readiness-spotlight-ring"><svg viewBox="0 0 160 160" aria-hidden="true"><defs><linearGradient id="spotlightReadinessGradient" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#64e7ff"/><stop offset=".53" stop-color="#328bff"/><stop offset="1" stop-color="#35d6a7"/></linearGradient></defs><circle class="readiness-spotlight-track" cx="80" cy="80" r="68"/><circle class="readiness-spotlight-arc" cx="80" cy="80" r="68" style="--spotlight-offset:${offset};stroke-dasharray:${circumference};stroke-dashoffset:${circumference}"/></svg><div class="readiness-spotlight-number"><strong>${pc}%</strong><span>CHAPTERS READY</span></div></div><div class="readiness-spotlight-copy"><span class="eyebrow">YOUR READINESS</span><h4>${pc===100?'Exam-ready momentum.':pc===0?'Your starting point.':'Progress you can build on.'}</h4><p><b>${ready} of ${total}</b> chapters are marked Exam Ready. This report breaks down every subject, revision checkpoint, PYQ status and preparation level.</p></div></div>`;
   }
-  // Override report opening/closing so scrolling stays inside the modal and the panel expands from its trigger.
+  // Open the report in one quick motion instead of measuring and staggering every row.
   openReport=function(title,subtitle,reportHtml){
     if(!backdrop||!modal)return;
     priorFocus=document.activeElement;
-    const origin=getSourceRect();
-    let content=reportHtml;
-    if(reportKind==='readiness')content=readinessSpotlight()+content;
+    const content=reportKind==='readiness'?readinessSpotlight()+reportHtml:reportHtml;
     document.getElementById('reportTitle').textContent=title;
     document.getElementById('reportSubtitle').textContent=subtitle;
     const reportBody=document.getElementById('reportBody');
@@ -1844,40 +1889,19 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!document.getElemen
     modal.classList.toggle('readiness-report',reportKind==='readiness');
     modal.classList.toggle('needs-work-report',reportKind==='needswork');
     modal.classList.toggle('attempts-report',reportKind==='attempts');
+    modal.classList.remove('report-modal-measuring');
+    modal.style.removeProperty('--report-origin-x');
+    modal.style.removeProperty('--report-origin-y');
     backdrop.dataset.reportKind=reportKind||'generic';
-    modal.classList.add('report-modal-measuring');
-    backdrop.hidden=false;modal.scrollTop=0;
+    backdrop.hidden=false;
+    modal.scrollTop=0;
     lockBackground();
-    // Measure the final, untransformed panel before the expand-from-trigger animation starts.
     requestAnimationFrame(()=>{
-      const rect=modal.getBoundingClientRect();
-      modal.style.setProperty('--report-origin-x',`${origin.left+origin.width/2-rect.left}px`);
-      modal.style.setProperty('--report-origin-y',`${origin.top+origin.height/2-rect.top}px`);
-      modal.classList.remove('report-modal-measuring');
-      void modal.offsetWidth;
-      const close=backdrop.querySelector('.report-close');if(close)close.focus({preventScroll:true});
+      const close=backdrop.querySelector('.report-close');
+      if(close)close.focus({preventScroll:true});
       if(reportKind==='readiness'){
         const arc=reportBody.querySelector('.readiness-spotlight-arc');
         if(arc)requestAnimationFrame(()=>{arc.style.strokeDashoffset=arc.style.getPropertyValue('--spotlight-offset')});
-      }
-      if(!reduceMotion){
-        const direct=[...reportBody.children];
-        direct.forEach((el,i)=>{
-          el.classList.add('report-stagger');
-          const delay=reportKind==='readiness'?(i===0?330:1080+(i-1)*125):(reportKind==='needswork'?440+i*105:360+i*72);
-          el.style.setProperty('--report-delay',`${delay}ms`);
-        });
-        const detailSelector=reportKind==='needswork'?'.needs-work-subject,.needs-work-row,.needs-work-footnote':'.report-summary,.report-subject,.report-hygiene,.report-status-card,.report-chapter-row,.report-show-all,.report-note,.report-attempt';
-        [...reportBody.querySelectorAll(detailSelector)].forEach((el,i)=>{
-          if(el.classList.contains('report-stagger'))return;
-          el.classList.add('report-stagger');
-          const perParent=[...el.parentElement.querySelectorAll(':scope > '+el.tagName+'.'+Array.from(el.classList).join('.'))].indexOf(el);
-          const delay=reportKind==='needswork'?(el.classList.contains('needs-work-subject')?620+(i*90):760+Math.min(i,8)*45):(reportKind==='readiness'?1260+Math.min(i,12)*48:500+Math.min(i,8)*42);
-          el.style.setProperty('--report-delay',`${delay}ms`);
-        });
-        requestAnimationFrame(()=>requestAnimationFrame(()=>{reportBody.querySelectorAll('.report-stagger').forEach(el=>el.classList.add('report-stagger-in'));}));
-      }else{
-        reportBody.querySelectorAll('*').forEach(el=>el.classList.add('report-stagger-in'));
       }
     });
   };
