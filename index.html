@@ -994,7 +994,7 @@ main>.page>.section-head p { color:#71869a!important; opacity:1!important; }
 
   <section class="page" id="page-topic">
     <div class="section-head"><div><h3>Chapter topic tests</h3><p>Plan a test, set its date, then record your score after attempting it.</p></div><button class="btn btn-blue" onclick="openPlannedTopicModal()">+ Plan test</button></div>
-    <div class="toolbar"><select id="topicFilter" onchange="renderTopics()"><option value="all">All statuses</option><option>Not Started</option><option>Planned</option><option>Attempted</option><option>Needs Retest</option></select><select id="topicSubjectFilter" onchange="renderTopics()"><option>All subjects</option><option>Physics</option><option>Chemistry</option><option>Mathematics</option></select><input class="search" id="topicSearch" placeholder="Search tests or chapters…" oninput="renderTopics()"/></div>
+    <div class="toolbar"><select id="topicFilter" onchange="renderTopics()"><option value="all">All statuses</option><option>Not Started</option><option>Planned</option><option>Attempted</option><option>Needs Retest</option></select><select id="topicSubjectFilter" onchange="renderTopics()"><option>All subjects</option><option>Physics</option><option>Chemistry</option><option>Mathematics</option></select><div class="chapter-search-wrap"><input class="search" id="topicSearch" placeholder="Search tests or chapters…" oninput="renderTopics()" autocomplete="off"/><button type="button" class="chapter-search-clear" id="topicSearchClear" onclick="clearTopicSearch()" aria-label="Clear topic test search" title="Clear search" hidden>×</button></div></div>
     <div class="table-wrap"><table><thead><tr><th>Subject / chapter</th><th>Status</th><th>Planned date</th><th>Last attempt</th><th>Score</th><th></th></tr></thead><tbody id="topicRows"></tbody></table></div>
   </section>
 
@@ -1221,7 +1221,7 @@ let modalContext=null;
 function initialState(){
  const chapters=[];
  Object.entries(BASE.subjects).forEach(([subject,list])=>list.forEach(x=>chapters.push({...x,prep:"Not Ready",r1:false,r2:false,r3:false,notes:false,pyq:false,topicAttempted:false,latestDate:"",marks:"",outOf:"",difficulty:""})));
- const topics=chapters.map((c,i)=>({id:"topic-"+i,subject:c.subject,chapter:c.chapter,name:c.chapter+" Topic Test",source:"Chapter topic test",status:"Not Started",plannedDate:"",actualDate:"",marks:"",outOf:"",difficulty:"",notes:"",custom:false}));
+ const topics=chapters.map((c,i)=>({id:"topic-"+i,subject:c.subject,chapter:c.chapter,name:c.chapter+" Topic Test",source:"Chapter topic test",status:"Not Started",plannedDate:"",actualDate:"",marks:"",outOf:"100",difficulty:"",notes:"",custom:false}));
  const litmus=BASE.litmus.map((t,i)=>({...t,id:"litmus-"+i,status:"Not Started",actualDate:"",marks:"",outOf:"",notes:""}));
  return {chapters,topics,litmus,pyqs:[]};
 }
@@ -1248,6 +1248,21 @@ function migrateState(saved){
   const template=defaults.topics.find(t=>t.subject===ch.subject&&t.chapter===ch.chapter)||{};
   topics.push({...template,id,subject:ch.subject,chapter:ch.chapter,name:ch.chapter+" Topic Test",source:"Chapter topic test",status:"Not Started",plannedDate:"",actualDate:"",marks:"",outOf:"",difficulty:"",notes:"",custom:false});
  });
+ const normalizedTopics=topics.map(t=>{
+  const oldMax=Number(t.outOf)||100,oldMarks=Number(t.marks);
+  let marks=t.marks;
+  if(oldMax>100&&t.marks!==""&&t.marks!==null&&t.marks!==undefined&&Number.isFinite(oldMarks)&&oldMarks>100){
+   marks=String(Math.round(oldMarks/oldMax*100*10)/10);
+  }
+  return {...t,marks,outOf:String(oldMax>100?100:(t.outOf||100))};
+ });
+ chapters.forEach(ch=>{
+  const oldMax=Number(ch.outOf),oldMarks=Number(ch.marks);
+  if(oldMax>100){
+   if(ch.marks!==""&&Number.isFinite(oldMarks)&&oldMarks>100)ch.marks=String(Math.round(oldMarks/oldMax*100*10)/10);
+   ch.outOf="100";
+  }
+ });
  const defaultLitmusIds=new Set(defaults.litmus.map(t=>t.id));
  const savedLitmus=Array.isArray(saved.litmus)?saved.litmus:[];
  const litmus=defaults.litmus.map(def=>{
@@ -1255,7 +1270,7 @@ function migrateState(saved){
   return old?{...def,...old,syllabus:def.syllabus}:def;
  });
  savedLitmus.filter(t=>t&&!defaultLitmusIds.has(t.id)).forEach(t=>litmus.push(t));
- return {...defaults,...saved,chapters,topics,litmus,pyqs:Array.isArray(saved.pyqs)?saved.pyqs:[]};
+ return {...defaults,...saved,chapters,topics:normalizedTopics,litmus,pyqs:Array.isArray(saved.pyqs)?saved.pyqs:[]};
 }
 function loadState(){
  try{
@@ -1547,18 +1562,30 @@ function renderPlannedTests(){
  const cards=items.map(t=>{const delta=Math.round((new Date(t.plannedDate+'T00:00:00')-new Date(todayISO()+'T00:00:00'))/86400000);const due=delta<0?Math.abs(delta)+' days overdue':delta===0?'Due today':delta===1?'Tomorrow':'In '+delta+' days';return '<button type="button" class="planned-test-card" onclick="editTopic(\''+escapeAttr(t.id)+'\')" style="text-align:left;cursor:pointer"><small>'+escapeHTML(t.subject)+' · '+due+'</small><strong>'+escapeHTML(t.name||t.chapter+' Topic Test')+'</strong><span>'+escapeHTML(t.chapter)+' · '+escapeHTML(formatDateForInput(t.plannedDate))+'</span></button>'}).join('');
  holder.innerHTML='<section class="planned-tests-panel"><div class="planned-tests-head"><div><h4>Planned tests</h4><p>'+(items.length?'Upcoming tests with dates saved.':'Choose a planned date and it will appear here.')+'</p></div><button class="small-btn" type="button" onclick="openPlannedTopicModal()">+ Plan test</button></div>'+(cards?'<div class="planned-test-grid">'+cards+'</div>':'<div class="empty" style="padding:14px 8px">No planned tests yet. Choose a planned date in a topic test row or use “Plan test”.</div>')+'</section>';
 }
+function clearTopicSearch(){
+ const input=document.getElementById("topicSearch");if(!input)return;
+ input.value="";
+ renderTopics();
+ input.focus({preventScroll:true});
+}
 function renderTopics(){
  renderPlannedTests();
- const f=document.getElementById("topicFilter").value,sub=document.getElementById("topicSubjectFilter").value,q=document.getElementById("topicSearch").value.toLowerCase();
+ const searchInput=document.getElementById("topicSearch"),clearSearchButton=document.getElementById("topicSearchClear");
+ const f=document.getElementById("topicFilter").value,sub=document.getElementById("topicSubjectFilter").value,q=searchInput.value.toLowerCase();
+ if(clearSearchButton)clearSearchButton.hidden=!searchInput.value.trim();
  const items=state.topics.filter(t=>(f==="all"||t.status===f)&&(sub==="All subjects"||t.subject===sub)&&(t.name+" "+t.chapter+" "+t.subject).toLowerCase().includes(q));
- document.getElementById("topicRows").innerHTML=items.map(t=>`<tr class="test-row" data-item-id="${t.id}"><td><b>${escapeHTML(t.name)}</b><br><small>${escapeHTML(t.subject)} · ${escapeHTML(t.chapter)}</small></td><td><select class="inline-status" aria-label="Test status" onchange="quickTopicStatus('${t.id}',this.value)">${["Not Started","Planned","Attempted","Needs Retest"].map(x=>`<option ${t.status===x?'selected':''}>${x}</option>`).join("")}</select></td><td><input class="inline-date date-text-input" type="text" inputmode="numeric" placeholder="DD/MM/YYYY" aria-label="Planned date (DD/MM/YYYY)" value="${formatDateForInput(t.plannedDate||defaultPlanDate())}" onchange="quickTopicDateText('${t.id}',this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}"/></td><td>${t.actualDate||"—"}</td><td><div class="score-edit"><input type="number" min="0" step="any" placeholder="Score" aria-label="Score" value="${t.marks||''}" onchange="quickTopicScore('${t.id}','marks',this.value)"/><span>/</span><input type="number" min="1" step="any" aria-label="Maximum score" value="${t.outOf||300}" onchange="quickTopicScore('${t.id}','outOf',this.value)"/></div></td><td><div class="topic-actions"><span class="score-hint">Score auto-saves</span><button class="small-btn" onclick="editTopic('${t.id}')">More</button></div></td></tr>`).join("")||`<tr><td colspan="6" class="empty">No topic tests found.</td></tr>`;
+ document.getElementById("topicRows").innerHTML=items.map(t=>`<tr class="test-row" data-item-id="${t.id}"><td><b>${escapeHTML(t.name)}</b><br><small>${escapeHTML(t.subject)} · ${escapeHTML(t.chapter)}</small></td><td><select class="inline-status" aria-label="Test status" onchange="quickTopicStatus('${t.id}',this.value)">${["Not Started","Planned","Attempted","Needs Retest"].map(x=>`<option ${t.status===x?'selected':''}>${x}</option>`).join("")}</select></td><td><input class="inline-date date-text-input" type="text" inputmode="numeric" placeholder="DD/MM/YYYY" aria-label="Planned date (DD/MM/YYYY)" value="${formatDateForInput(t.plannedDate||defaultPlanDate())}" onchange="quickTopicDateText('${t.id}',this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}"/></td><td>${t.actualDate||"—"}</td><td><div class="score-edit"><input type="number" min="0" max="100" step="any" placeholder="Score" aria-label="Score (out of 100)" value="${t.marks||''}" onchange="quickTopicScore('${t.id}','marks',this.value)"/><span>/</span><input type="number" min="1" max="100" step="any" aria-label="Maximum score (out of 100)" value="${t.outOf||100}" onchange="quickTopicScore('${t.id}','outOf',this.value)"/></div></td><td><div class="topic-actions"><span class="score-hint">Score auto-saves</span><button class="small-btn" onclick="editTopic('${t.id}')">More</button></div></td></tr>`).join("")||`<tr><td colspan="6" class="empty">No topic tests found.</td></tr>`;
 }
 function quickTopicScore(id,key,value){
- const t=state.topics.find(x=>x.id===id);if(!t)return;t[key]=value;
- // The exam maximum is prefilled at 300; mirror that default into saved data as well.
- if(key==='marks'&&(!t.outOf||Number(t.outOf)<=0))t.outOf='300';
- if(t.marks!==''&&t.marks!==undefined&&Number(t.marks)>=0&&Number(t.outOf||300)>0){t.status='Attempted';if(!t.actualDate)t.actualDate=todayISO();syncTopicToChapter(t);}
- persistInlineScore('topicRows',id,t,2,3);toast('Score saved.');
+ const t=state.topics.find(x=>x.id===id);if(!t)return;
+ const currentMax=Number(t.outOf||100),nextValue=value===""?null:Number(value);
+ if(key==="marks"&&nextValue!==null&&(!Number.isFinite(nextValue)||nextValue<0||nextValue>Math.min(100,currentMax))){toast("Topic-test marks must be between 0 and "+Math.min(100,currentMax)+".");renderTopics();return;}
+ if(key==="outOf"&&(!Number.isFinite(nextValue)||nextValue<1||nextValue>100)){toast("Topic tests are scored out of 100.");renderTopics();return;}
+ if(key==="outOf"&&t.marks!==""&&Number(t.marks)>nextValue){toast("The maximum score cannot be lower than the marks already entered.");renderTopics();return;}
+ t[key]=value;
+ if(key==="marks"&&(!t.outOf||Number(t.outOf)<=0))t.outOf="100";
+ if(t.marks!==""&&t.marks!==undefined&&Number(t.marks)>=0&&Number(t.outOf||100)>0){t.status="Attempted";if(!t.actualDate)t.actualDate=todayISO();syncTopicToChapter(t);}
+ persistInlineScore("topicRows",id,t,2,3);toast("Score saved.");
 }
 function markTopicAttempted(id){const t=state.topics.find(x=>x.id===id);if(!t)return;t.status='Attempted';if(!t.actualDate)t.actualDate=todayISO();syncTopicToChapter(t);saveState();toast('Topic test marked attempted.');}
 function quickLitmusScore(id,key,value){
@@ -1579,7 +1606,7 @@ function markLitmusAttempted(id){const t=state.litmus.find(x=>x.id===id);if(!t)r
 function quickTopicDate(id,date){const t=state.topics.find(x=>x.id===id);if(!t)return;t.plannedDate=date;saveState();toast("Planned date saved.");}
 function quickTopicDateText(id,value){const t=state.topics.find(x=>x.id===id);if(!t)return;const parsed=parseFlexibleDate(value);if(parsed===null){toast("Enter the date as DD/MM/YYYY, e.g. 21/11/2026.");renderTopics();return;}t.plannedDate=parsed;saveState();toast(parsed?`Planned date saved: ${formatDateForInput(parsed)}.`:"Planned date cleared.");}
 function quickTopicStatus(id,status){const t=state.topics.find(x=>x.id===id);if(!t)return;t.status=status;if(status==="Attempted"&&!t.actualDate)t.actualDate=todayISO();syncTopicToChapter(t);saveState();toast("Test status updated.");}
-function quickLogTopic(id){const t=state.topics.find(x=>x.id===id);if(!t)return;openModal("Quick test result",[{name:"marks",label:"Marks scored",type:"number",value:t.marks||"",min:0,step:"any",required:true},{name:"outOf",label:"Out of",type:"number",value:t.outOf||"300",min:1,step:"any",required:true}],{type:"quicktopic",id});}
+function quickLogTopic(id){const t=state.topics.find(x=>x.id===id);if(!t)return;openModal("Quick test result",[{name:"marks",label:"Marks scored (out of 100)",type:"number",value:t.marks||"",min:0,max:100,step:"any",required:true},{name:"outOf",label:"Maximum marks",type:"number",value:t.outOf||"100",min:1,max:100,step:"any",required:true}],{type:"quicktopic",id});}
 function refreshLitmusSummary(today=todayISO()){
  const attempted=state.litmus.filter(t=>t.status==="Attempted").length;
  const review=state.litmus.filter(t=>t.status==="Needs Review").length;
@@ -1644,10 +1671,10 @@ function renderAll(){
 }
 function escapeHTML(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
 function escapeAttr(s){return String(s).replace(/\\/g,"\\\\").replace(/'/g,"\\'")}
-function openModal(title,fields,context){modalContext=context;document.getElementById("modalTitle").textContent=title;const holder=document.getElementById("modalFields");holder.innerHTML=fields.map(f=>{let el;if(f.type==="select"){el=`<select name="${f.name}" ${f.required?"required":""}>${f.options.map(o=>`<option value="${escapeHTML(o.value)}" ${String(o.value)===String(f.value)?"selected":""}>${escapeHTML(o.label)}</option>`).join("")}</select>`}else if(f.type==="textarea"){el=`<textarea name="${f.name}" rows="${f.rows||4}" ${f.required?"required":""}>${escapeHTML(f.value||"")}</textarea>`}else if(f.type==="dateText"){el=`<input name="${f.name}" type="text" inputmode="numeric" placeholder="DD/MM/YYYY" class="date-text-input" value="${escapeHTML(f.value??"")}" ${f.required?"required":""} />`}else{el=`<input name="${f.name}" type="${f.type||"text"}" value="${escapeHTML(f.value??"")}" ${f.required?"required":""} ${f.min!==undefined?`min="${f.min}"`:""} ${f.step?`step="${f.step}"`:""} />`}return `<label class="${f.full?"full":""}">${f.label}${el}</label>`}).join("");document.getElementById("modalBackdrop").classList.add("show");document.body.classList.add("modal-open");document.querySelector("#modalBackdrop .modal").scrollTop=0}
+function openModal(title,fields,context){modalContext=context;document.getElementById("modalTitle").textContent=title;const holder=document.getElementById("modalFields");holder.innerHTML=fields.map(f=>{let el;if(f.type==="select"){el=`<select name="${f.name}" ${f.required?"required":""}>${f.options.map(o=>`<option value="${escapeHTML(o.value)}" ${String(o.value)===String(f.value)?"selected":""}>${escapeHTML(o.label)}</option>`).join("")}</select>`}else if(f.type==="textarea"){el=`<textarea name="${f.name}" rows="${f.rows||4}" ${f.required?"required":""}>${escapeHTML(f.value||"")}</textarea>`}else if(f.type==="dateText"){el=`<input name="${f.name}" type="text" inputmode="numeric" placeholder="DD/MM/YYYY" class="date-text-input" value="${escapeHTML(f.value??"")}" ${f.required?"required":""} />`}else{el=`<input name="${f.name}" type="${f.type||"text"}" value="${escapeHTML(f.value??"")}" ${f.required?"required":""} ${f.min!==undefined?`min="${f.min}"`:""} ${f.max!==undefined?`max="${f.max}"`:""} ${f.step?`step="${f.step}"`:""} />`}return `<label class="${f.full?"full":""}">${f.label}${el}</label>`}).join("");document.getElementById("modalBackdrop").classList.add("show");document.body.classList.add("modal-open");document.querySelector("#modalBackdrop .modal").scrollTop=0}
 function closeModal(){document.getElementById("modalBackdrop").classList.remove("show");document.body.classList.remove("modal-open");modalContext=null}
 function valuesFromForm(){return Object.fromEntries(new FormData(document.getElementById("modalForm")).entries())}
-function saveModal(e){e.preventDefault();const v=valuesFromForm();if(modalContext.type==="topic"||modalContext.type==="newtopic"){const parsed=parseFlexibleDate(v.plannedDate);if(parsed===null){toast("Enter planned date as DD/MM/YYYY, e.g. 21/11/2026.");document.querySelector("#modalFields [name=plannedDate]")?.focus();return;}v.plannedDate=parsed;}if(modalContext.type==="chapter"){const c=state.chapters.find(x=>x.subject===modalContext.subject&&x.chapter===modalContext.chapter);Object.assign(c,{prep:v.prep,r1:v.r1==="true",r2:v.r2==="true",r3:v.r3==="true",notes:v.notes==="true",pyq:v.pyq==="true"});}
+function saveModal(e){e.preventDefault();const v=valuesFromForm();if(["topic","newtopic","quicktopic"].includes(modalContext.type)){const max=Number(v.outOf||100),marks=v.marks===""?null:Number(v.marks);if(!Number.isFinite(max)||max<1||max>100||(marks!==null&&(!Number.isFinite(marks)||marks<0||marks>max))){toast("Topic tests are scored out of 100; marks must fit within the maximum.");document.querySelector('#modalFields [name="marks"]')?.focus();return;}v.outOf=String(max);}if(modalContext.type==="topic"||modalContext.type==="newtopic"){const parsed=parseFlexibleDate(v.plannedDate);if(parsed===null){toast("Enter planned date as DD/MM/YYYY, e.g. 21/11/2026.");document.querySelector("#modalFields [name=plannedDate]")?.focus();return;}v.plannedDate=parsed;}if(modalContext.type==="chapter"){const c=state.chapters.find(x=>x.subject===modalContext.subject&&x.chapter===modalContext.chapter);Object.assign(c,{prep:v.prep,r1:v.r1==="true",r2:v.r2==="true",r3:v.r3==="true",notes:v.notes==="true",pyq:v.pyq==="true"});}
 if(modalContext.type==="topic"){const t=state.topics.find(x=>x.id===modalContext.id);Object.assign(t,{name:v.name,subject:v.subject,chapter:v.chapter,status:v.status,plannedDate:v.plannedDate,actualDate:v.actualDate,marks:v.marks,outOf:v.outOf,difficulty:v.difficulty,notes:v.notes});syncTopicToChapter(t);}
 if(modalContext.type==="quicktopic"){const t=state.topics.find(x=>x.id===modalContext.id);Object.assign(t,{marks:v.marks,outOf:v.outOf,status:"Attempted",actualDate:todayISO()});syncTopicToChapter(t);}
 if(modalContext.type==="litmus"){const t=state.litmus.find(x=>x.id===modalContext.id);Object.assign(t,{name:v.name,deadline:v.deadline,syllabus:v.syllabus,status:v.status,actualDate:v.actualDate,marks:v.marks,outOf:v.outOf,notes:v.notes});}
@@ -1678,19 +1705,19 @@ function topicForm(t,creating){openModal(creating?"Add custom topic test":"Edit 
 {name:"status",label:"Status",type:"select",value:t.status,options:["Not Started","Planned","Attempted","Needs Retest"].map(x=>({value:x,label:x}))},
 {name:"plannedDate",label:"Planned date (DD/MM/YYYY)",type:"dateText",value:formatDateForInput(t.plannedDate||defaultPlanDate())},
 {name:"actualDate",label:"Actual test date",type:"date",value:t.actualDate},
-{name:"marks",label:"Marks scored",type:"number",value:t.marks,min:0,step:"any"},
-{name:"outOf",label:"Maximum marks",type:"number",value:t.outOf,min:0,step:"any"},
+{name:"marks",label:"Marks scored (out of 100)",type:"number",value:t.marks,min:0,max:100,step:"any"},
+{name:"outOf",label:"Maximum marks",type:"number",value:t.outOf||"100",min:1,max:100,step:"any"},
 {name:"difficulty",label:"Difficulty",type:"select",value:t.difficulty,options:["","Easy","Medium","Hard"].map(x=>({value:x,label:x||"Not set"}))},
 {name:"notes",label:"Notes",type:"textarea",value:t.notes,full:true}
 ],creating?{type:"newtopic"}:{type:"topic",id:t.id})}
-function openTopicModal(){topicForm({name:"My custom test",subject:"Physics",chapter:state.chapters[0].chapter,status:"Not Started",plannedDate:"",actualDate:"",marks:"",outOf:"",difficulty:"",notes:""},true)}
-function openPlannedTopicModal(){topicForm({name:"Planned topic test",subject:"Physics",chapter:state.chapters[0].chapter,status:"Planned",plannedDate:formatDateForInput(defaultPlanDate()),actualDate:"",marks:"",outOf:"",difficulty:"",notes:""},true)}
+function openTopicModal(){topicForm({name:"My custom test",subject:"Physics",chapter:state.chapters[0].chapter,status:"Not Started",plannedDate:"",actualDate:"",marks:"",outOf:"100",difficulty:"",notes:""},true)}
+function openPlannedTopicModal(){topicForm({name:"Planned topic test",subject:"Physics",chapter:state.chapters[0].chapter,status:"Planned",plannedDate:formatDateForInput(defaultPlanDate()),actualDate:"",marks:"",outOf:"100",difficulty:"",notes:""},true)}
 function quickTopic(subject,chapter){
  const same=(a,b)=>String(a||"").trim().toLowerCase()===String(b||"").trim().toLowerCase();
  let t=state.topics.find(x=>same(x.subject,subject)&&same(x.chapter,chapter));
  const c=state.chapters.find(x=>same(x.subject,subject)&&same(x.chapter,chapter));
  if(!t){
-  t={id:"topic-linked-"+Date.now(),subject:subject,chapter:chapter,name:chapter+" Topic Test",source:"Chapter topic test",status:"Not Started",plannedDate:"",actualDate:"",marks:"",outOf:"",difficulty:"",notes:"",custom:false};
+  t={id:"topic-linked-"+Date.now(),subject:subject,chapter:chapter,name:chapter+" Topic Test",source:"Chapter topic test",status:"Not Started",plannedDate:"",actualDate:"",marks:"",outOf:"100",difficulty:"",notes:"",custom:false};
   state.topics.unshift(t);
   try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}
  }
@@ -1788,8 +1815,9 @@ function renderAttemptsReport(){
  (state.litmus||[]).filter(t=>t.status==="Attempted"||t.actualDate).forEach(t=>all.push({kind:"litmus",name:t.name,date:t.actualDate||"",deadline:t.deadline,marks:t.marks,outOf:t.outOf,status:t.status,id:t.id}));
  all.sort((a,b)=>(b.date||"").localeCompare(a.date||"")||(b.deadline||"").localeCompare(a.deadline||""));
  const items=reportAttemptFilter==="all"?all:all.filter(t=>t.kind===reportAttemptFilter);
- const topics=all.filter(t=>t.kind==="topic").length,litmus=all.filter(t=>t.kind==="litmus").length,scored=all.filter(t=>t.marks!==""&&t.marks!==undefined&&Number(t.outOf||300)>0).length;
- const rows=items.map(t=>{const has=t.marks!==""&&t.marks!==undefined&&t.marks!==null&&Number(t.marks)>=0&&Number(t.outOf||300)>0;const out=Number(t.outOf||300);const marks=has?Number(t.marks):null;const pc=has?Math.round(marks/out*100):null;const dt=t.date?new Date(t.date+"T00:00:00").toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"}):"Attempt date not recorded";return `<article class="report-attempt"><div><h4>${escapeHTML(t.name)}</h4><p>${t.kind==="topic"?`${escapeHTML(t.subject||"")} · ${escapeHTML(t.chapter||"")}`:"LITMUS test series"}</p><div class="report-attempt-meta"><span class="report-attempt-tag ${t.kind}">${t.kind==="topic"?"TOPIC TEST":"LITMUS"}</span><span class="report-attempt-tag">${dt}</span>${t.status==="Attempted"?`<span class="report-attempt-tag topic">ATTEMPTED</span>`:`<span class="report-attempt-tag">${escapeHTML(t.status||"Logged")}</span>`}</div></div><div class="report-score"><strong>${has?`${Number.isInteger(marks)?marks:marks.toFixed(1)}<small style="display:inline;font-size:12px;color:#8799a9;font-weight:650"> / ${out}</small>`:"—"}</strong><span>${has?`${pc}% · marks recorded`:"Marks not entered"}</span><button type="button" class="report-show-all" style="margin:7px 0 0 auto" onclick="openAttemptInTracker('${t.kind}','${t.id}')">Open test ↗</button></div></article>`}).join("");
+ const topicMax=t=>Number(t.outOf||(t.kind==="topic"?100:300));
+ const topics=all.filter(t=>t.kind==="topic").length,litmus=all.filter(t=>t.kind==="litmus").length,scored=all.filter(t=>t.marks!==""&&t.marks!==undefined&&topicMax(t)>0).length;
+ const rows=items.map(t=>{const out=topicMax(t);const has=t.marks!==""&&t.marks!==undefined&&t.marks!==null&&Number(t.marks)>=0&&out>0;const marks=has?Number(t.marks):null;const pc=has?Math.round(marks/out*100):null;const dt=t.date?new Date(t.date+"T00:00:00").toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"}):"Attempt date not recorded";return `<article class="report-attempt"><div><h4>${escapeHTML(t.name)}</h4><p>${t.kind==="topic"?`${escapeHTML(t.subject||"")} · ${escapeHTML(t.chapter||"")}`:"LITMUS test series"}</p><div class="report-attempt-meta"><span class="report-attempt-tag ${t.kind}">${t.kind==="topic"?"TOPIC TEST":"LITMUS"}</span><span class="report-attempt-tag">${dt}</span>${t.status==="Attempted"?`<span class="report-attempt-tag topic">ATTEMPTED</span>`:`<span class="report-attempt-tag">${escapeHTML(t.status||"Logged")}</span>`}</div></div><div class="report-score"><strong>${has?`${Number.isInteger(marks)?marks:marks.toFixed(1)}<small style="display:inline;font-size:12px;color:#8799a9;font-weight:650"> / ${out}</small>`:"—"}</strong><span>${has?`${pc}% · marks recorded`:"Marks not entered"}</span><button type="button" class="report-show-all" style="margin:7px 0 0 auto" onclick="openAttemptInTracker('${t.kind}','${t.id}')">Open test ↗</button></div></article>`}).join("");
  const body=`<div class="report-summary-grid"><div class="report-summary"><small>All attempts</small><strong>${all.length}</strong><span>Topic + LITMUS tests</span></div><div class="report-summary"><small>Topic tests</small><strong>${topics}</strong><span>Chapter-level attempts</span></div><div class="report-summary"><small>LITMUS tests</small><strong>${litmus}</strong><span>Part tests and full mocks</span></div><div class="report-summary"><small>Scores entered</small><strong>${scored}</strong><span>With marks saved</span></div></div><div class="report-attempt-filters"><button class="report-filter ${reportAttemptFilter==="all"?"active":""}" onclick="openAttemptsReport('all')">All attempts (${all.length})</button><button class="report-filter ${reportAttemptFilter==="topic"?"active":""}" onclick="openAttemptsReport('topic')">Topic tests (${topics})</button><button class="report-filter ${reportAttemptFilter==="litmus"?"active":""}" onclick="openAttemptsReport('litmus')">LITMUS (${litmus})</button></div><div class="report-attempt-list">${rows||`<div class="report-empty"><strong>No attempts in this view yet</strong><p>Mark a topic test or LITMUS paper as Attempted, then enter your marks. The score and date will appear here automatically.</p></div>`}</div><div class="report-note">Scores are read from your saved tracker records. When a test has no mark entered, it is listed as “Marks not entered” rather than treating it as zero.</div>`;
  openReport("Your test attempts",`${all.length} tests attempted or logged · ${scored} with marks saved`,body);
 }
