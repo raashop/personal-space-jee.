@@ -459,9 +459,7 @@ body.cloud-auth-pending{overflow:hidden}
 
 
 /* Planner polish: time-aware accents and lower-cost motion */
-body[data-time-theme="day"]{--accent:#3878e8;--accent-secondary:#38bfa8;--accent-soft:rgba(56,120,232,.11);--accent-edge:rgba(56,120,232,.28);--ambient-a:rgba(100,164,255,.16);--ambient-b:rgba(75,215,186,.09);--glow:rgba(56,120,232,.12)}
-body[data-time-theme="evening"]{--accent:#8b75ed;--accent-secondary:#52c9dc;--accent-soft:rgba(139,117,237,.13);--accent-edge:rgba(139,117,237,.3);--ambient-a:rgba(139,117,237,.14);--ambient-b:rgba(82,201,220,.09);--glow:rgba(139,117,237,.13)}
-body[data-time-theme="night"]{--accent:#65a9ff;--accent-secondary:#58d6bf;--accent-soft:rgba(101,169,255,.14);--accent-edge:rgba(101,169,255,.32);--ambient-a:rgba(50,103,185,.16);--ambient-b:rgba(41,156,145,.08);--glow:rgba(101,169,255,.12)}
+body[data-time-theme="day"],body[data-time-theme="evening"],body[data-time-theme="night"]{--accent:#111827;--accent-secondary:#111827;--accent-soft:#f5f6f7;--accent-edge:#dfe3e8;--ambient-a:rgba(15,23,42,.025);--ambient-b:rgba(15,23,42,.015);--glow:rgba(15,23,42,.025)}
 .ring-action{position:relative;isolation:isolate;overflow:visible;transition:transform .62s cubic-bezier(.2,.75,.2,1)!important;will-change:transform}
 .ring-action:hover{transform:translateY(-2px) scale(1.025)!important;filter:none!important}
 .ring-action:before{content:"";position:absolute;inset:-13px;border-radius:50%;border:1px solid var(--accent-edge);opacity:0;transform:scale(.9);pointer-events:none;transition:opacity .34s ease,transform .58s cubic-bezier(.2,.75,.2,1)}
@@ -518,6 +516,33 @@ body[data-time-theme="night"]{--accent:#65a9ff;--accent-secondary:#58d6bf;--acce
 .planned-modal-footer{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding-top:17px;margin-top:16px;border-top:1px solid #e1ebf4}
 @media(max-width:560px){.planned-modal-backdrop{padding:10px}.planned-modal-body{padding:15px}.planned-modal-stats{gap:6px}.planned-modal-stat{padding:9px}.planned-modal-stat strong{font-size:20px}.planned-modal-item{grid-template-columns:42px minmax(0,1fr);gap:9px}.planned-modal-due{grid-column:2;justify-self:start}.planned-modal-hero{padding:19px}.planned-modal-art{width:45px;height:45px;flex-basis:45px}}
 @media(prefers-reduced-motion:reduce){.planned-modal,.planned-modal-item{animation:none!important;transition:none!important;transform:none!important}}
+.planned-launch-card{border:1px solid #e1e5e9!important;background:#fff!important;box-shadow:0 3px 12px rgba(15,23,42,.035)!important}
+.planned-launch-card .launch-icon{background:#f4f5f6!important;color:#111827!important;border:1px solid #e5e7eb!important;border-radius:12px}
+.planned-count-badge{background:#f3f4f6!important;border:1px solid #e5e7eb!important;color:#111827!important}
+.planned-modal-backdrop{background:rgba(15,23,42,.42)!important;backdrop-filter:blur(8px)!important;-webkit-backdrop-filter:blur(8px)!important}
+.planned-modal{border:1px solid #e5e7eb!important;background:#fff!important;box-shadow:0 24px 72px rgba(15,23,42,.2)!important}
+.planned-modal-hero{background:#fff!important;color:#111827!important;border-bottom:1px solid #e5e7eb}
+.planned-modal-hero:after{display:none!important}
+.planned-modal-hero p{color:#667085!important}
+.planned-modal-art{background:#f5f6f7!important;border:1px solid #e5e7eb!important;color:#111827!important;box-shadow:none!important}
+.planned-modal-close{background:#f3f4f6!important;color:#111827!important;border:1px solid #e5e7eb!important}
+.planned-modal-stat{background:#fff!important;border:1px solid #e5e7eb!important}
+.planned-modal-stat small{color:#667085!important}
+.planned-modal-stat strong{color:#111827!important}
+.planned-modal-date{background:#f3f4f6!important;color:#111827!important}
+.planned-modal-item{background:#fff!important;border-color:#e5e7eb!important}
+.planned-modal-item:hover{background:#fafafa!important;border-color:#cbd0d7!important;box-shadow:0 5px 14px rgba(15,23,42,.05)!important}
+.planned-modal-item h4{color:#111827!important}
+.planned-modal-item p{color:#667085!important}
+.planned-modal-due{background:#f3f4f6!important;color:#374151!important}
+.planned-modal-empty{background:#fff!important;border-color:#d1d5db!important}
+.planned-modal-empty h4{color:#111827!important}
+.planned-modal-empty p{color:#667085!important}
+.planned-modal-footer{border-top-color:#e5e7eb!important}
+.planned-test-card{background:#fff!important;border-color:#e5e7eb!important}
+.planned-test-card small{color:#667085!important}
+.planned-test-card strong{color:#111827!important}
+.planned-test-card span{color:#667085!important}
 </style>
 
 <style id="personal-space-final-finish">
@@ -789,7 +814,7 @@ body[data-readiness="ready"] .hero{background:radial-gradient(ellipse at 90% 5%,
       <div class="metric"><div class="metric-top"><div class="metric-icon" style="background:var(--blue2);color:var(--blue)"><span data-icon="book"></span></div><label>CHAPTERS READY</label></div><strong id="readyMetric">0 / 48</strong><small>Marked exam ready</small></div>
       <button class="metric metric-clickable" type="button" onclick="openAttemptsReport()" aria-label="View all attempted tests and scores"><div class="metric-top"><div class="metric-icon" style="background:linear-gradient(135deg,#e2f7ed,#e9f3ff);color:var(--green)"><span data-icon="checkCircle"></span></div><label>TEST ATTEMPTS</label><span class="metric-arrow">↗</span></div><strong id="testMetric">0</strong><small id="testMetricHint">Topic tests · LITMUS tests · click to view marks</small></button>
       <button class="metric metric-clickable" type="button" onclick="openNeedsWork()" aria-label="Open chapters that need work"><div class="metric-top"><div class="metric-icon" style="background:var(--coral2);color:var(--coral)"><span data-icon="rotate"></span></div><label>CHAPTERS NEED WORK</label></div><strong id="needsWorkMetric">0</strong><small>Needs focused revision <span class="metric-arrow">↗</span></small></button>
-      <div class="metric"><div class="metric-top"><div class="metric-icon" style="background:#f0ebff;color:var(--purple)"><span data-icon="file"></span></div><label>PYQ SETS</label></div><strong id="pyqMetric">0</strong><small>Completed</small></div>
+      
     </div>
     <div class="section-head"><div><h3>Your subject progress</h3><p>Physics, Chemistry and Maths — at a glance.</p></div></div>
     <div class="subject-grid" id="subjectCards"></div>
@@ -1620,8 +1645,6 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!document.getElemen
 
 
 
-function applyTimeTheme(){const hour=new Date().getHours();document.body.dataset.timeTheme=hour>=6&&hour<16?"day":hour>=16&&hour<20?"evening":"night";}
-applyTimeTheme();document.addEventListener("visibilitychange",()=>{if(!document.hidden)applyTimeTheme()});
 renderAll();
 requestAnimationFrame(()=>moveNavGlass(document.querySelector("nav button.active[data-page]"),false));
 window.addEventListener("resize",()=>moveNavGlass(document.querySelector("nav button.active[data-page]"),false),{passive:true});
