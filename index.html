@@ -543,6 +543,23 @@ body[data-time-theme="day"],body[data-time-theme="evening"],body[data-time-theme
 .planned-test-card small{color:#667085!important}
 .planned-test-card strong{color:#111827!important}
 .planned-test-card span{color:#667085!important}
+.planned-dashboard-panel{margin:18px 0 24px;padding:20px;border:1px solid #e3e6ea;border-radius:18px;background:#fff;box-shadow:0 4px 16px rgba(17,24,39,.035)}
+.planned-dashboard-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:15px}
+.planned-dashboard-kicker{font-size:9px;font-weight:900;letter-spacing:.13em;color:#737b86}
+.planned-dashboard-head h3{margin:5px 0 4px;color:#17191d;font-size:19px;letter-spacing:-.025em}
+.planned-dashboard-head p{margin:0;color:#737b86;font-size:12px;line-height:1.5}
+.planned-dashboard-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.planned-dashboard-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.planned-dashboard-item{display:grid;grid-template-columns:46px minmax(0,1fr);align-items:center;gap:11px;min-width:0;padding:12px;border:1px solid #e6e8eb;border-radius:13px;background:#fff;color:#17191d;text-align:left;cursor:pointer;transition:border-color .18s,background .18s}
+.planned-dashboard-item:hover{border-color:#c7ccd2;background:#fafafa}
+.planned-dashboard-date{display:grid;place-items:center;align-content:center;min-height:46px;border-radius:11px;background:#f4f5f6;color:#17191d}
+.planned-dashboard-date b{font-size:17px;line-height:1.1}.planned-dashboard-date small{margin-top:3px;color:#68707b;font-size:9px;font-weight:800;text-transform:uppercase}
+.planned-dashboard-item strong{display:block;overflow:hidden;color:#17191d;font-size:12px;text-overflow:ellipsis;white-space:nowrap}
+.planned-dashboard-item small{display:block;margin-top:4px;color:#737b86;font-size:10px}
+.planned-dashboard-due{display:inline-block;margin-top:5px;padding:3px 6px;border:1px solid #e5e7eb;border-radius:99px;color:#4b5563;font-size:9px;font-weight:800}
+.planned-dashboard-empty{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:15px;border:1px dashed #d9dde2;border-radius:14px;background:#fafafa}
+.planned-dashboard-empty strong{display:block;color:#17191d;font-size:12px}.planned-dashboard-empty p{margin:4px 0 0;color:#737b86;font-size:11px;line-height:1.5}
+@media(max-width:800px){.planned-dashboard-list{grid-template-columns:1fr}.planned-dashboard-head{align-items:flex-start}.planned-dashboard-panel{padding:15px}}
 </style>
 
 <style id="personal-space-final-finish">
@@ -816,6 +833,10 @@ body[data-readiness="ready"] .hero{background:radial-gradient(ellipse at 90% 5%,
       <button class="metric metric-clickable" type="button" onclick="openNeedsWork()" aria-label="Open chapters that need work"><div class="metric-top"><div class="metric-icon" style="background:var(--coral2);color:var(--coral)"><span data-icon="rotate"></span></div><label>CHAPTERS NEED WORK</label></div><strong id="needsWorkMetric">0</strong><small>Needs focused revision <span class="metric-arrow">↗</span></small></button>
       
     </div>
+<section class="planned-dashboard-panel" id="plannedDashboardPanel">
+ <div class="planned-dashboard-head"><div><div class="planned-dashboard-kicker">YOUR TEST SCHEDULE</div><h3>Planned tests</h3><p>See your upcoming test plan and dates here, without leaving the dashboard.</p></div><div class="planned-dashboard-actions"><button type="button" class="btn btn-light" onclick="openPlannedTestsModal()">View all</button><button type="button" class="btn btn-blue" onclick="openPlannedTopicModal()">+ Plan test</button></div></div>
+ <div id="dashboardPlannedList"></div>
+</section>
     <div class="section-head"><div><h3>Your subject progress</h3><p>Physics, Chemistry and Maths — at a glance.</p></div></div>
     <div class="subject-grid" id="subjectCards"></div>
     
@@ -825,7 +846,7 @@ body[data-readiness="ready"] .hero{background:radial-gradient(ellipse at 90% 5%,
       <button class="launch-card" onclick="go('topic')"><span class="arrow">↗</span><span class="launch-icon" style="background:#e5f6ed;color:#27845f"><span data-icon="checkCircle"></span></span><strong>Topic tests</strong><small>Plan chapter tests and record marks</small></button>
       <button class="launch-card" onclick="go('litmus')"><span class="arrow">↗</span><span class="launch-icon" style="background:#fff0f1;color:#d96c79"><span data-icon="calendar"></span></span><strong>LITMUS series</strong><small>Deadlines and syllabus at a glance</small></button>
       
-      <button class="launch-card planned-launch-card" onclick="openPlannedTestsModal()"><span class="arrow">↗</span><span class="launch-icon" style="background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent-edge)"><span data-icon="calendar"></span></span><strong>Planned tests <span class="planned-count-badge" id="dashboardPlannedCount">0</span></strong><small id="dashboardPlannedHint">Schedule chapter tests and see what is coming up</small></button>
+      
     </div>
     <div class="section-head"><div><h3>Keep your data safe</h3><p>Back up your progress or restore it on this browser.</p></div></div>
     <div class="panel" style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap"><div><h3>Progress backup</h3><div class="desc" style="margin:5px 0 0">Saved in this browser. Export a backup once in a while.</div></div><div style="display:flex;gap:8px"><button class="btn btn-light" onclick="document.getElementById('importFile').click()">Restore backup</button><button class="btn btn-blue" onclick="exportData()">Download backup ↗</button></div></div>
@@ -850,7 +871,7 @@ body[data-readiness="ready"] .hero{background:radial-gradient(ellipse at 90% 5%,
   </section>
 
   <section class="page" id="page-topic">
-    <div class="section-head"><div><h3>Chapter topic tests</h3><p>Plan a test, set its date, then record your score after attempting it.</p><button class="small-btn" style="margin-top:8px" onclick="openTopicModal()">+ Add custom test</button></div><button class="btn btn-blue" onclick="openPlannedTopicModal()">+ Plan test</button></div>
+    <div class="section-head"><div><h3>Chapter topic tests</h3><p>Plan a test, set its date, then record your score after attempting it.</p></div><button class="btn btn-blue" onclick="openPlannedTopicModal()">+ Plan test</button></div>
     <div class="toolbar"><select id="topicFilter" onchange="renderTopics()"><option value="all">All statuses</option><option>Not Started</option><option>Planned</option><option>Attempted</option><option>Needs Retest</option></select><select id="topicSubjectFilter" onchange="renderTopics()"><option>All subjects</option><option>Physics</option><option>Chemistry</option><option>Mathematics</option></select><input class="search" id="topicSearch" placeholder="Search tests or chapters…" oninput="renderTopics()"/></div>
     <div class="table-wrap"><table><thead><tr><th>Subject / chapter</th><th>Status</th><th>Planned date</th><th>Last attempt</th><th>Score</th><th></th></tr></thead><tbody id="topicRows"></tbody></table></div>
   </section>
@@ -902,7 +923,7 @@ body[data-readiness="ready"] .hero{background:radial-gradient(ellipse at 90% 5%,
 </div>
 <div class="modal-backdrop" id="modalBackdrop" onclick="if(event.target===this)closeModal()"><div class="modal"><div class="modal-head"><h3 id="modalTitle">Edit</h3><button class="small-btn" onclick="closeModal()">✕ Close</button></div><form id="modalForm" onsubmit="saveModal(event)"><div class="form-grid" id="modalFields"></div><div class="modal-actions"><button type="button" class="btn btn-light" onclick="closeModal()">Cancel</button><button type="submit" class="btn btn-blue">Save changes</button></div></form></div></div>
 <div class="report-backdrop" id="reportBackdrop" hidden onclick="if(event.target===this)closeReport()"><section class="report-modal" role="dialog" aria-modal="true" aria-labelledby="reportTitle"><div class="report-modal-head"><div><div class="eyebrow" id="reportEyebrow">PERSONAL SPACE · INSIGHTS</div><h3 id="reportTitle">Study report</h3><p id="reportSubtitle">Your saved progress, all in one place.</p></div><button type="button" class="report-close" onclick="closeReport()" aria-label="Close report">×</button></div><div id="reportBody" class="report-body"></div></section></div>
-<div class="planned-modal-backdrop" id="plannedTestsModal" hidden onclick="if(event.target===this)closePlannedTestsModal()"><section class="planned-modal" role="dialog" aria-modal="true" aria-labelledby="plannedModalTitle"><div class="planned-modal-hero"><div class="planned-modal-hero-row"><div><div class="planned-modal-art" aria-hidden="true">▦</div><h3 id="plannedModalTitle">Planned tests</h3><p>Your upcoming study sessions, dates and countdowns — all together. Choose a test to edit its plan.</p></div><button type="button" class="planned-modal-close" onclick="closePlannedTestsModal()" aria-label="Close planned tests">×</button></div></div><div class="planned-modal-body"><div class="planned-modal-stats" id="plannedModalStats"></div><div id="plannedModalList" class="planned-modal-list"></div><div class="planned-modal-footer"><button type="button" class="btn btn-light" onclick="closePlannedTestsModal();go(\'topic\')">Open full test planner ↗</button><button type="button" class="btn btn-blue" onclick="closePlannedTestsModal();openPlannedTopicModal()">+ Plan a test</button></div></div></section></div>
+<div class="planned-modal-backdrop" id="plannedTestsModal" hidden onclick="if(event.target===this)closePlannedTestsModal()"><section class="planned-modal" role="dialog" aria-modal="true" aria-labelledby="plannedModalTitle"><div class="planned-modal-hero"><div class="planned-modal-hero-row"><div><div class="planned-modal-art" aria-hidden="true">▦</div><h3 id="plannedModalTitle">Planned tests</h3><p>Your upcoming study sessions, dates and countdowns — all together. Choose a test to edit its plan.</p></div><button type="button" class="planned-modal-close" onclick="closePlannedTestsModal()" aria-label="Close planned tests">×</button></div></div><div class="planned-modal-body"><div class="planned-modal-stats" id="plannedModalStats"></div><div id="plannedModalList" class="planned-modal-list"></div><div class="planned-modal-footer"><button type="button" class="btn btn-blue" onclick="closePlannedTestsModal();openPlannedTopicModal()">+ Plan a test</button></div></div></section></div>
 <input type="file" id="importFile" accept=".json,application/json" style="display:none" onchange="importData(event)"/>
 <div class="toast" id="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1151,10 +1172,25 @@ function renderPlannedTestsModal(){
   const day=valid?dt.toLocaleDateString("en-IN",{day:"2-digit"}):"—",mon=valid?dt.toLocaleDateString("en-IN",{month:"short"}):"No date";
   const delta=iso?Math.round((new Date(iso+"T00:00:00")-new Date(today+"T00:00:00"))/86400000):null;
   const due=delta===null?"Date needed":delta<0?Math.abs(delta)+"d overdue":delta===0?"Today":delta===1?"Tomorrow":delta+"d left";
-  return '<button type="button" class="planned-modal-item" onclick="closePlannedTestsModal();go(\\\'topic\\\');editTopic(\\\''+escapeAttr(t.id)+'\\\')"><span class="planned-modal-date"><b>'+day+'</b><small>'+mon+'</small></span><span><h4>'+escapeHTML(t.name||t.chapter+" Topic Test")+'</h4><p>'+escapeHTML(t.subject)+' · '+escapeHTML(t.chapter)+'</p></span><span class="planned-modal-due">'+due+'</span></button>';
+  return '<button type="button" class="planned-modal-item" onclick="closePlannedTestsModal();editTopic(\\\''+escapeAttr(t.id)+'\\\')"><span class="planned-modal-date"><b>'+day+'</b><small>'+mon+'</small></span><span><h4>'+escapeHTML(t.name||t.chapter+" Topic Test")+'</h4><p>'+escapeHTML(t.subject)+' · '+escapeHTML(t.chapter)+'</p></span><span class="planned-modal-due">'+due+'</span></button>';
  }).join("");
 }
+function renderDashboardPlannedTests(){
+ const holder=document.getElementById("dashboardPlannedList");if(!holder)return;
+ const today=todayISO();
+ const items=(state.topics||[]).filter(t=>t.status==="Planned").sort((a,b)=>String(a.plannedDate||"9999-99-99").localeCompare(String(b.plannedDate||"9999-99-99")));
+ if(!items.length){holder.innerHTML='<div class="planned-dashboard-empty"><div><strong>No planned tests yet</strong><p>Choose “Plan test” to add a chapter, test date and notes. Your saved plan will appear here.</p></div><button type="button" class="btn btn-light" onclick="openPlannedTopicModal()">+ Plan test</button></div>';return;}
+ const html=items.slice(0,3).map(t=>{
+  const iso=String(t.plannedDate||""),date=iso?new Date(iso+"T00:00:00"):null,valid=date&&!Number.isNaN(date.getTime());
+  const day=valid?date.toLocaleDateString("en-IN",{day:"2-digit"}):"—",month=valid?date.toLocaleDateString("en-IN",{month:"short"}):"No date";
+  const delta=iso?Math.round((new Date(iso+"T00:00:00")-new Date(today+"T00:00:00"))/86400000):null;
+  const due=delta===null?"Date needed":delta<0?Math.abs(delta)+" days overdue":delta===0?"Today":delta===1?"Tomorrow":delta+" days left";
+  return '<button type="button" class="planned-dashboard-item" onclick="editTopic(\\\''+escapeAttr(t.id)+'\\\')"><span class="planned-dashboard-date"><b>'+day+'</b><small>'+month+'</small></span><span><strong>'+escapeHTML(t.name||t.chapter+" Topic Test")+'</strong><small>'+escapeHTML(t.subject)+" · "+escapeHTML(t.chapter)+'</small><span class="planned-dashboard-due">'+due+'</span></span></button>';
+ }).join("");
+ holder.innerHTML='<div class="planned-dashboard-list">'+html+'</div>'+(items.length>3?'<div style="margin-top:12px"><button type="button" class="small-btn" onclick="openPlannedTestsModal()">View all '+items.length+' planned tests ↗</button></div>':"");
+}
 function renderDashboard(){
+ renderDashboardPlannedTests();
  const ready=state.chapters.filter(c=>c.prep==="Exam Ready").length;
  const pc=pct(ready,state.chapters.length);
  document.body.dataset.readiness=pc>=100?"ready":pc>=60?"strong":pc>=25?"building":"starting";
