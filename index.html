@@ -818,9 +818,9 @@ body[data-readiness="ready"] .hero{background:radial-gradient(ellipse at 90% 5%,
   </section>
 
   <section class="page" id="page-pyq">
-    <div class="section-head"><div><h3>Previous-year questions</h3><p>Track practice by chapter and year. Accuracy is calculated from correct ÷ attempted.</p></div><button class="btn btn-blue" onclick="openPyqModal()">+ Log PYQ practice</button></div>
+    <div class="section-head"><div><h3>Previous-year questions</h3><p>Track practice by chapter and year. Accuracy is calculated from correct ÷ attempted.</p></div><div class="pyq-toolbar-primary"><button class="btn btn-blue" type="button" onclick="openPyqModal()">+ Log PYQ practice</button></div></div>
     <div class="pyq-summary" id="pyqSummary"></div>
-    <div class="toolbar"><select id="pyqFilter" onchange="renderPyq()"><option value="all">All statuses</option><option>Not Started</option><option>In Progress</option><option>Completed</option><option>Redo</option></select><select id="pyqSubjectFilter" onchange="renderPyq()"><option value="all">All subjects</option><option>Physics</option><option>Chemistry</option><option>Mathematics</option></select><input class="search" id="pyqSearch" placeholder="Search PYQ records…" oninput="renderPyq()"/><button class="btn btn-blue" type="button" onclick="openPyqModal()">+ Log practice</button></div>
+    <div class="toolbar"><select id="pyqFilter" onchange="renderPyq()"><option value="all">All statuses</option><option>Not Started</option><option>In Progress</option><option>Completed</option><option>Redo</option></select><select id="pyqSubjectFilter" onchange="renderPyq()"><option value="all">All subjects</option><option>Physics</option><option>Chemistry</option><option>Mathematics</option></select><input class="search" id="pyqSearch" placeholder="Search PYQ records…" oninput="renderPyq()"/></div>
     <div class="table-wrap"><table><thead><tr><th>Date</th><th>Subject / chapter</th><th>Year / source</th><th>Questions</th><th>Correct</th><th>Accuracy</th><th>Status</th><th></th></tr></thead><tbody id="pyqRows"></tbody></table></div>
   </section>
 </main>
@@ -975,6 +975,8 @@ function loadState(){
 }
 function saveState(){if(!Array.isArray(state.pyqs))state.pyqs=[];localStorage.setItem(KEY,JSON.stringify(state));renderAll();if(psCloudReady&&psCloudUser&&!psCloudApplying)queueCloudSave();}
 function go(page){
+ if(!document.getElementById("page-"+page))return;
+ if(document.body.dataset.activePage===page && document.getElementById("page-"+page).classList.contains("active")){if(page==="topic")renderTopics();return;}
  document.body.dataset.activePage=page;
  if(page==="chapters")document.body.dataset.activeSubject=(currentChapterSubject||"Physics").toLowerCase();
  const next=document.getElementById("page-"+page);
@@ -1547,6 +1549,9 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!document.getElemen
 })();
 
 
+
+function applyTimeTheme(){const hour=new Date().getHours();document.body.dataset.timeTheme=hour>=6&&hour<16?"day":hour>=16&&hour<20?"evening":"night";}
+applyTimeTheme();document.addEventListener("visibilitychange",()=>{if(!document.hidden)applyTimeTheme()});
 renderAll();
 requestAnimationFrame(()=>moveNavGlass(document.querySelector("nav button.active[data-page]"),false));
 window.addEventListener("resize",()=>moveNavGlass(document.querySelector("nav button.active[data-page]"),false),{passive:true});
