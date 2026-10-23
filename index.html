@@ -841,7 +841,8 @@ body[data-readiness="ready"] .hero{background:radial-gradient(ellipse at 90% 5%,
     <div class="metric-grid dashboard-metrics">
       <div class="metric"><div class="metric-top"><div class="metric-icon" style="background:var(--blue2);color:var(--blue)"><span data-icon="book"></span></div><label>CHAPTERS READY</label></div><strong id="readyMetric">0 / 48</strong><small>Marked exam ready</small></div>
       <button class="metric metric-clickable" type="button" onclick="openAttemptsReport()" aria-label="View all attempted tests and scores"><div class="metric-top"><div class="metric-icon" style="background:linear-gradient(135deg,#e2f7ed,#e9f3ff);color:var(--green)"><span data-icon="checkCircle"></span></div><label>TEST ATTEMPTS</label><span class="metric-arrow">↗</span></div><strong id="testMetric">0</strong><small id="testMetricHint">Topic tests · LITMUS tests · click to view marks</small></button>
-      <button class="metric metric-clickable" type="button" onclick="openNeedsWork()" aria-label="Open chapters that need work"><div class="metric-top"><div class="metric-icon" style="background:var(--coral2);color:var(--coral)"><span data-icon="rotate"></span></div><label>CHAPTERS NEED WORK</label></div><strong id="needsWorkMetric">0</strong><small>Needs focused revision <span class="metric-arrow">↗</span></small></button>\n      <button class="metric metric-clickable planned-metric" type="button" onclick="openPlannedTestsModal()" aria-label="View and plan tests"><div class="metric-top"><div class="metric-icon" style="background:#f3f4f6;color:#111827;border:1px solid #e5e7eb"><span data-icon="calendar"></span></div><label>PLANNED TESTS</label></div><strong id="plannedMetricCount">0</strong><small id="plannedMetricHint">Click to plan a test</small></button>
+      <button class="metric metric-clickable" type="button" onclick="openNeedsWork()" aria-label="Open chapters that need work"><div class="metric-top"><div class="metric-icon" style="background:var(--coral2);color:var(--coral)"><span data-icon="rotate"></span></div><label>CHAPTERS NEED WORK</label></div><strong id="needsWorkMetric">0</strong><small>Needs focused revision <span class="metric-arrow">↗</span></small></button>
+      <button class="metric metric-clickable planned-metric" type="button" onclick="openPlannedTestsModal()" aria-label="View and plan tests"><div class="metric-top"><div class="metric-icon" style="background:#f3f4f6;color:#111827;border:1px solid #e5e7eb"><span data-icon="calendar"></span></div><label>PLANNED TESTS</label></div><strong id="plannedMetricCount">0</strong><small id="plannedMetricHint">Click to plan a test</small></button>
       
     </div>
 
@@ -956,7 +957,7 @@ async function openCloudSettings(){
  cloudRestoreSavedConfig();const gate=document.getElementById("cloudGate");gate.hidden=false;document.body.classList.add("cloud-auth-pending");
  if(psCloudReady&&psCloudUser){cloudGateView(true);cloudMessage("Cloud session is active; your password is not needed again.");return;}
  cloudGateView(false);
- try{const cfg=cloudSettings();if(cfg.url&&cfg.key&&window.supabase){psCloudClient=window.supabase.createClient(cfg.url,cfg.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storageKey:"ps-supabase-auth-v2"}});psCloudClient.__psUrl=cfg.url;const result=await psCloudClient.auth.getSession();if(result.error)throw result.error;if(result.data&&result.data.session&&result.data.session.user){await cloudAfterLogin(result.data.session.user);gate.hidden=false;document.body.classList.add("cloud-auth-pending");cloudGateView(!!psCloudUser);cloudMessage(psCloudBackupAvailable?"Cloud session restored. Your account remains signed in.":"Signed in; cloud backup is unavailable, but local progress is safe.",!psCloudBackupAvailable);return;}}}
+ try{const cfg=cloudSettings();if(cfg.url&&cfg.key&&window.supabase){psCloudClient=window.supabase.createClient(cfg.url,cfg.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storageKey:"ps-supabase-auth-v2"}});psCloudClient.__psUrl=cfg.url;psCloudClient.__psKey=cfg.key;const result=await psCloudClient.auth.getSession();if(result.error)throw result.error;if(result.data&&result.data.session&&result.data.session.user){await cloudAfterLogin(result.data.session.user);gate.hidden=false;document.body.classList.add("cloud-auth-pending");cloudGateView(!!psCloudUser);cloudMessage(psCloudBackupAvailable?"Cloud session restored. Your account remains signed in.":"Signed in; cloud backup is unavailable, but local progress is safe.",!psCloudBackupAvailable);return;}}}
  catch(e){console.error("Cloud session resume failed",e);cloudMessage("Could not resume cloud sync. Your local progress is still saved. "+(e.message||""),true)}
  cloudGateView(!!psCloudUser);
 }
@@ -969,23 +970,45 @@ function cloudOffline(){
 }
 function cloudSettings(){return {url:document.getElementById("cloudUrl").value.trim().replace(/\/+$/,""),key:document.getElementById("cloudKey").value.trim()};}
 function cloudRestoreSavedConfig(){try{const saved=JSON.parse(localStorage.getItem(psCloudSettingsKey)||"{}");if(saved.url)document.getElementById("cloudUrl").value=saved.url;if(saved.key)document.getElementById("cloudKey").value=saved.key;}catch(e){}}
-function cloudCreateClient(){const cfg=cloudSettings();if(!/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(cfg.url))throw new Error("Paste the exact Project URL from Supabase (https://…supabase.co), without extra spaces or dots.");if(!cfg.key)throw new Error("Paste your Supabase Publishable key (sb_publishable_…). Do not use a Secret or Service Role key.");if(!window.supabase||!window.supabase.createClient)throw new Error("Supabase library did not load. Check your internet connection and refresh.");try{localStorage.setItem(psCloudSettingsKey,JSON.stringify(cfg));}catch(e){}if(psCloudClient&&psCloudClient.__psUrl!==cfg.url){psCloudClient=null;psCloudReady=false;psCloudBackupAvailable=false;psCloudUser=null;}if(!psCloudClient){psCloudClient=window.supabase.createClient(cfg.url,cfg.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storageKey:"ps-supabase-auth-v2"}});psCloudClient.__psUrl=cfg.url;}return psCloudClient;}
+function cloudCreateClient(){
+ const cfg=cloudSettings();
+ if(!/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(cfg.url))throw new Error("Paste the exact Project URL from Supabase (https://…supabase.co), without extra spaces or dots.");
+ if(!cfg.key)throw new Error("Paste your Supabase Publishable key (sb_publishable_…). Do not use a Secret or Service Role key.");
+ if(/^sb_secret_/i.test(cfg.key))throw new Error("That is a Supabase Secret key. Use the Publishable key instead.");
+ if(!window.supabase||!window.supabase.createClient)throw new Error("Supabase library did not load. Check your internet connection and refresh.");
+ try{localStorage.setItem(psCloudSettingsKey,JSON.stringify(cfg));}catch(e){}
+ const configChanged=psCloudClient&&(psCloudClient.__psUrl!==cfg.url||psCloudClient.__psKey!==cfg.key);
+ if(configChanged){psCloudClient=null;psCloudReady=false;psCloudBackupAvailable=false;psCloudUser=null;}
+ if(!psCloudClient){
+  psCloudClient=window.supabase.createClient(cfg.url,cfg.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storageKey:"ps-supabase-auth-v2"}});
+  psCloudClient.__psUrl=cfg.url;psCloudClient.__psKey=cfg.key;
+ }
+ return psCloudClient;
+}
 async function cloudAuth(mode){
  try{
   const email=document.getElementById("cloudEmail").value.trim(),password=document.getElementById("cloudPassword").value;
   if(!email||!password)throw new Error("Enter your email and password.");
-  const client=cloudCreateClient();cloudMessage(mode==="signup"?"Creating your account…":"Signing in…");
+  try{localStorage.removeItem(psOfflineModeKey)}catch(e){}
+  const client=cloudCreateClient();
+  cloudMessage(mode==="signup"?"Creating your account…":"Signing in…");
+  cloudStatus(mode==="signup"?"creating account…":"signing in…");
   const res=mode==="signup"?await client.auth.signUp({email,password}):await client.auth.signInWithPassword({email,password});
   if(res.error)throw res.error;
-  if(mode==="signup"&&!res.data.session){cloudMessage("Account created. Check your email to confirm it, then return and sign in using the same account.");return;}
+  if(mode==="signup"&&!res.data.session){cloudMessage("Account created. Check your email to confirm it, then return and sign in using the same account.");cloudStatus("email confirmation required");return;}
   if(!res.data.user)throw new Error("Supabase did not return an account. Try signing in again.");
-  try{localStorage.removeItem(psOfflineModeKey)}catch(e){}
   await cloudAfterLogin(res.data.user);
  }catch(e){
-  const msg=(e&&e.message)||"Could not connect to Supabase.";
-  let local=false;try{local=!!localStorage.getItem(KEY)}catch(x){}
-  if(local){cloudOffline();cloudMessage("Cloud sign-in failed: "+msg+". Your planner is still available locally. For cloud sync, check the correct Supabase Project URL and Publishable key in Cloud settings; do not use a Secret or Service Role key.",true);}
-  else{cloudMessage(msg,true);cloudStatus("connection failed");}
+  const raw=(e&&e.message)||"Could not connect to Supabase.";
+  let msg=raw;
+  if(/invalid api key|invalid api/i.test(raw))msg="Supabase rejected this API key for the supplied Project URL. Copy the Project URL and Publishable key from the same Supabase project.";
+  else if(/failed to fetch|networkerror|load failed/i.test(raw))msg="Could not reach Supabase. Check the Project URL and internet connection.";
+  cloudGateView(false);
+  const gate=document.getElementById("cloudGate");if(gate)gate.hidden=false;
+  document.body.classList.add("cloud-auth-pending");
+  cloudStatus("connection failed");
+  cloudMessage("Cloud sign-in failed: "+msg+". Your existing planner is still saved locally. Correct the Project URL and Publishable key and retry, or choose Use offline to continue without cloud sync.",true);
+  console.error("Cloud sign-in failed",e);
  }
 }
 function cloudSignIn(){return cloudAuth("signin")}function cloudSignUp(){return cloudAuth("signup")}
@@ -1287,7 +1310,7 @@ function renderChapters(){
   const color=c.subject==="Physics"?"#2c8fff":c.subject==="Chemistry"?"#24bc91":"#806bff";
   const prep=[["Not Ready","not"],["In Progress","progressing"],["Needs Work","needs"],["Exam Ready","ready"]];
   const checkpoints=[["r1","Rev 1"],["r2","Rev 2"],["r3","Rev 3"],["notes","Notes"],["pyq","PYQs"]];
-  const testLabel=c.topicAttempted?`<button type="button" class="badge green" data-test-action onclick="quickTopic(\'${c.subject}\',\'${escapeAttr(c.chapter)}\')">${uiIcon("checkCircle",12)} Test attempted · Test log ↗</button>`:`<button type="button" class="badge" data-test-action onclick="quickTopic(\'${c.subject}\',\'${escapeAttr(c.chapter)}\')">${uiIcon("circle",12)} No test yet · Plan test ↗</button>`;
+  const testLabel=c.topicAttempted?`<button type="button" class="badge green" data-test-action onclick="quickTopic('${escapeAttr(c.subject)}','${escapeAttr(c.chapter)}')">${uiIcon("checkCircle",12)} Test attempted · Test log ↗</button>`:`<button type="button" class="badge" data-test-action onclick="quickTopic('${escapeAttr(c.subject)}','${escapeAttr(c.chapter)}')">${uiIcon("circle",12)} No test yet · Plan test ↗</button>`;
   return `<div class="chapter-row" style="--row-i:${i};--row-delay:${Math.min(i,10)*13}ms;--chapter-color:${color};border-left:3px solid ${color}">
     <div class="chapter-top"><div class="chapter-name"><h4>${escapeHTML(c.chapter)}</h4><div class="chapter-meta"><span class="class-pill">${c.class?escapeHTML(c.class):"Class not set"}</span><span class="chapter-subject-label">${c.subject}</span></div></div><button class="small-btn" title="Open full chapter details" onclick="editChapter('${c.subject}','${escapeAttr(c.chapter)}')">More ⋯</button></div>
     <div class="chapter-status-strip">${prep.map(([label,cls])=>`<button class="status-chip ${c.prep===label?"selected "+cls:""}" onclick="setPrep('${c.subject}','${escapeAttr(c.chapter)}','${label}')">${label==="Not Ready"?uiIcon("circle",13):label==="In Progress"?uiIcon("target",13):label==="Needs Work"?uiIcon("rotate",13):uiIcon("checkCircle",13)} ${label}</button>`).join("")}</div>
@@ -1747,7 +1770,7 @@ cloudRestoreSavedConfig();
   let offline=false;try{offline=localStorage.getItem(psOfflineModeKey)==="1"}catch(e){}
   if(offline){cloudGateView(false);document.getElementById("cloudGate").hidden=true;document.body.classList.remove("cloud-auth-pending");cloudStatus("offline · saved on this browser");cloudMessage("Offline mode restored. Your planner is loaded from this browser.");startWelcome();return;}
   const cfg=cloudSettings();
-  if(cfg.url&&cfg.key&&window.supabase){psCloudClient=window.supabase.createClient(cfg.url,cfg.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storageKey:"ps-supabase-auth-v2"}});psCloudClient.__psUrl=cfg.url;const result=await psCloudClient.auth.getSession();if(result.error)throw result.error;if(result.data&&result.data.session&&result.data.session.user){await cloudAfterLogin(result.data.session.user);return;}}
+  if(cfg.url&&cfg.key&&window.supabase){psCloudClient=window.supabase.createClient(cfg.url,cfg.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storageKey:"ps-supabase-auth-v2"}});psCloudClient.__psUrl=cfg.url;psCloudClient.__psKey=cfg.key;const result=await psCloudClient.auth.getSession();if(result.error)throw result.error;if(result.data&&result.data.session&&result.data.session.user){await cloudAfterLogin(result.data.session.user);return;}}
   if(resumeLocalWorkspace("No active cloud session was found."))return;
   cloudGateView(false);document.getElementById("cloudGate").hidden=false;document.body.classList.add("cloud-auth-pending");
  }catch(e){
