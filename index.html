@@ -968,7 +968,7 @@ async function cloudAfterLogin(user){
  psCloudUser=user;
  cloudStatus("checking backup…");
  cloudMessage("Signed in. Checking your cloud backup…");
- const {data,error}=await psCloudClient.from("study_data").select("data").eq("user_id",user.id).maybeSingle();
+ let data=null,error=null;try{const result=await psCloudClient.from("study_data").select("data").eq("user_id",user.id).maybeSingle();data=result.data;error=result.error}catch(e){error=e;}
  if(error){
   psCloudReady=true;psCloudBackupAvailable=false;psCloudUser=user;cloudGateView(true);
   const gate=document.getElementById("cloudGate");if(gate)gate.hidden=true;document.body.classList.remove("cloud-auth-pending");
@@ -994,7 +994,7 @@ async function cloudAfterLogin(user){
    renderAll();renderDashboard();cloudMessage("Cloud backup loaded successfully.");
   }
  }else{
-  const hasLocal=!!(state&&Array.isArray(state.chapters)&&Array.isArray(state.topics));
+  const hasLocal=!!(state&&Array.isArray(state.chapters)&&Array.isArray(state.topics)&&(state.chapters.some(x=>x.prep&&x.prep!=="Not Ready")||(state.pyqs||[]).length>0||(state.topics||[]).some(x=>x.status&&x.status!=="Not Started"||x.marks!==""||x.actualDate)));
   if(hasLocal&&confirm("This account has no cloud backup yet. Upload the planner currently open in this browser? Choose Cancel if you first need to restore your personal-space-backup.json.")){
    await cloudWriteNow();cloudMessage("Your current planner was uploaded to the cloud.");
   }else{
@@ -1172,7 +1172,7 @@ function renderPlannedTestsModal(){
   const day=valid?dt.toLocaleDateString("en-IN",{day:"2-digit"}):"—",mon=valid?dt.toLocaleDateString("en-IN",{month:"short"}):"No date";
   const delta=iso?Math.round((new Date(iso+"T00:00:00")-new Date(today+"T00:00:00"))/86400000):null;
   const due=delta===null?"Date needed":delta<0?Math.abs(delta)+"d overdue":delta===0?"Today":delta===1?"Tomorrow":delta+"d left";
-  return '<button type="button" class="planned-modal-item" onclick="closePlannedTestsModal();editTopic(\\\''+escapeAttr(t.id)+'\\\')"><span class="planned-modal-date"><b>'+day+'</b><small>'+mon+'</small></span><span><h4>'+escapeHTML(t.name||t.chapter+" Topic Test")+'</h4><p>'+escapeHTML(t.subject)+' · '+escapeHTML(t.chapter)+'</p></span><span class="planned-modal-due">'+due+'</span></button>';
+  return '<button type="button" class="planned-modal-item" onclick="closePlannedTestsModal();editTopic(&quot;'+escapeAttr(t.id)+'&quot;)"><span class="planned-modal-date"><b>'+day+'</b><small>'+mon+'</small></span><span><h4>'+escapeHTML(t.name||t.chapter+" Topic Test")+'</h4><p>'+escapeHTML(t.subject)+' · '+escapeHTML(t.chapter)+'</p></span><span class="planned-modal-due">'+due+'</span></button>';
  }).join("");
 }
 function renderDashboardPlannedTests(){
@@ -1185,7 +1185,7 @@ function renderDashboardPlannedTests(){
   const day=valid?date.toLocaleDateString("en-IN",{day:"2-digit"}):"—",month=valid?date.toLocaleDateString("en-IN",{month:"short"}):"No date";
   const delta=iso?Math.round((new Date(iso+"T00:00:00")-new Date(today+"T00:00:00"))/86400000):null;
   const due=delta===null?"Date needed":delta<0?Math.abs(delta)+" days overdue":delta===0?"Today":delta===1?"Tomorrow":delta+" days left";
-  return '<button type="button" class="planned-dashboard-item" onclick="editTopic(\\\''+escapeAttr(t.id)+'\\\')"><span class="planned-dashboard-date"><b>'+day+'</b><small>'+month+'</small></span><span><strong>'+escapeHTML(t.name||t.chapter+" Topic Test")+'</strong><small>'+escapeHTML(t.subject)+" · "+escapeHTML(t.chapter)+'</small><span class="planned-dashboard-due">'+due+'</span></span></button>';
+  return '<button type="button" class="planned-dashboard-item" onclick="editTopic(&quot;'+escapeAttr(t.id)+'&quot;)"><span class="planned-dashboard-date"><b>'+day+'</b><small>'+month+'</small></span><span><strong>'+escapeHTML(t.name||t.chapter+" Topic Test")+'</strong><small>'+escapeHTML(t.subject)+' · '+escapeHTML(t.chapter)+'</small><span class="planned-dashboard-due">'+due+'</span></span></button>';
  }).join("");
  holder.innerHTML='<div class="planned-dashboard-list">'+html+'</div>'+(items.length>3?'<div style="margin-top:12px"><button type="button" class="small-btn" onclick="openPlannedTestsModal()">View all '+items.length+' planned tests ↗</button></div>':"");
 }
