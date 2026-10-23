@@ -864,6 +864,15 @@ main>.page>.section-head p { color:#71869a!important; opacity:1!important; }
  #plannedTestsModal>.planned-modal{max-height:calc(100dvh - 24px)!important;margin-block:auto!important}
 }
 </style>
+<style id="chapter-search-one-click-clear">
+.chapter-search-wrap{position:relative;display:flex;flex:1 1 220px;min-width:220px;max-width:100%}
+.chapter-search-wrap .search{width:100%;min-width:0;flex:1 1 auto;padding-right:40px}
+.chapter-search-clear{position:absolute;right:7px;top:50%;transform:translateY(-50%);display:grid;place-items:center;width:27px;height:27px;padding:0;border:1px solid transparent;border-radius:8px;background:transparent;color:#657f94;font-size:21px;line-height:1;font-weight:500;transition:background .16s ease,color .16s ease,border-color .16s ease}
+.chapter-search-clear:hover{background:var(--accent-soft);color:var(--accent);border-color:var(--accent-edge)}
+.chapter-search-clear:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.chapter-search-clear[hidden]{display:none!important}
+@media(max-width:720px){.chapter-search-wrap{min-width:0;width:100%;flex-basis:100%}}
+</style>
 </head>
 <body data-active-page="dashboard" class="cloud-auth-pending">
 
@@ -979,7 +988,7 @@ main>.page>.section-head p { color:#71869a!important; opacity:1!important; }
         <button class="year-tab" type="button" data-year="Class 12" aria-pressed="false" onclick="setChapterYear('Class 12')"><span>Class 12</span><small id="class12Count">8</small></button>
       </div>
     </div>
-    <div class="toolbar"><input class="search" id="chapterSearch" placeholder="Find a chapter in this subject…" oninput="renderChapters()"/><select id="chapterStatus" onchange="renderChapters()"><option value="all">All preparation levels</option><option>Not Ready</option><option>In Progress</option><option>Needs Work</option><option>Exam Ready</option></select></div>
+    <div class="toolbar"><div class="chapter-search-wrap"><input class="search" id="chapterSearch" placeholder="Find a chapter in this subject…" oninput="renderChapters()" autocomplete="off"/><button type="button" class="chapter-search-clear" id="chapterSearchClear" onclick="clearChapterSearch()" aria-label="Clear chapter search" title="Clear search" hidden>×</button></div><select id="chapterStatus" onchange="renderChapters()"><option value="all">All preparation levels</option><option>Not Ready</option><option>In Progress</option><option>Needs Work</option><option>Exam Ready</option></select></div>
     <div class="sub" id="chapterSummary"></div><div class="chapter-list" id="chapterList"></div>
   </section>
 
@@ -1488,10 +1497,20 @@ function setChapterYear(year){
   });
  });
 }
+function clearChapterSearch(){
+ const input=document.getElementById("chapterSearch");
+ if(!input)return;
+ input.value="";
+ renderChapters();
+ input.focus({preventScroll:true});
+}
 function renderChapters(){
  const sub=currentChapterSubject||"Physics";
  const status=document.getElementById("chapterStatus").value;
- const q=document.getElementById("chapterSearch").value.toLowerCase().trim();
+ const searchInput=document.getElementById("chapterSearch");
+ const q=searchInput.value.toLowerCase().trim();
+ const clearSearchButton=document.getElementById("chapterSearchClear");
+ if(clearSearchButton)clearSearchButton.hidden=!searchInput.value.trim();
  document.querySelectorAll(".subject-tab").forEach(b=>{
   const active=b.dataset.subject===sub;b.classList.toggle("active",active);b.setAttribute("aria-pressed",String(active));
  });
