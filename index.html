@@ -485,6 +485,10 @@ body[data-time-theme="night"]{--accent:#65a9ff;--accent-secondary:#58d6bf;--acce
 @media(max-width:720px){.planned-test-grid{grid-template-columns:1fr}.ring-action:before{inset:-7px}}
 @media(prefers-reduced-motion:reduce){.ring-action,.ring-action:before,.report-backdrop:not([hidden]) .report-modal,.report-stagger-in,.planned-tests-panel{animation:none!important;transition:none!important;transform:none!important;opacity:1!important}}
 
+
+.planned-launch-card{border-color:var(--accent-edge);background:linear-gradient(145deg,rgba(255,255,255,.98),var(--accent-soft))!important;box-shadow:0 6px 20px var(--accent-soft),inset 0 1px 0 white!important}
+.planned-launch-card .launch-icon{border-radius:13px}
+.planned-count-badge{display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;min-width:22px;height:22px;padding:0 6px;margin-left:5px;border-radius:99px;background:var(--accent-soft);border:1px solid var(--accent-edge);color:var(--accent);font-size:10px;font-weight:900}
 </style>
 
 <style id="personal-space-final-finish">
@@ -767,6 +771,7 @@ body[data-readiness="ready"] .hero{background:radial-gradient(ellipse at 90% 5%,
       <button class="launch-card" onclick="go('topic')"><span class="arrow">↗</span><span class="launch-icon" style="background:#e5f6ed;color:#27845f"><span data-icon="checkCircle"></span></span><strong>Topic tests</strong><small>Plan chapter tests and record marks</small></button>
       <button class="launch-card" onclick="go('litmus')"><span class="arrow">↗</span><span class="launch-icon" style="background:#fff0f1;color:#d96c79"><span data-icon="calendar"></span></span><strong>LITMUS series</strong><small>Deadlines and syllabus at a glance</small></button>
       <button class="launch-card" onclick="go('pyq')"><span class="arrow">↗</span><span class="launch-icon" style="background:#f0ebff;color:#7862c8"><span data-icon="file"></span></span><strong>PYQ practice</strong><small>Log question practice by chapter and year</small></button>
+      <button class="launch-card planned-launch-card" onclick="go('topic');document.getElementById('plannedTestsPanel')?.scrollIntoView({block:'start',behavior:'auto'})"><span class="arrow">↗</span><span class="launch-icon" style="background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent-edge)"><span data-icon="calendar"></span></span><strong>Planned tests <span class="planned-count-badge" id="dashboardPlannedCount">0</span></strong><small id="dashboardPlannedHint">Schedule chapter tests and see what is coming up</small></button>
     </div>
     <div class="section-head"><div><h3>Keep your data safe</h3><p>Back up your progress or restore it on this browser.</p></div></div>
     <div class="panel" style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap"><div><h3>Progress backup</h3><div class="desc" style="margin:5px 0 0">Saved in this browser. Export a backup once in a while.</div></div><div style="display:flex;gap:8px"><button class="btn btn-light" onclick="document.getElementById('importFile').click()">Restore backup</button><button class="btn btn-blue" onclick="exportData()">Download backup ↗</button></div></div>
@@ -1060,6 +1065,10 @@ function focusNextLitmus(){
 }
 
 function renderDashboardPlannedTests(){
+ const countEl=document.getElementById("dashboardPlannedCount"),hintEl=document.getElementById("dashboardPlannedHint");
+ const plannedCount=(state.topics||[]).filter(t=>t.status==="Planned").length;
+ if(countEl)countEl.textContent=String(plannedCount);
+ if(hintEl)hintEl.textContent=plannedCount?plannedCount+" test"+(plannedCount===1?"":"s")+" planned · view dates and scores":"Schedule chapter tests and see what is coming up";
  const holder=document.getElementById("dashboardPlannedTestsPanel");if(!holder)return;
  const today=todayISO();
  const items=(state.topics||[]).filter(t=>(t.status==="Planned"||t.status==="Not Started")&&t.plannedDate&&t.plannedDate>=today).sort((a,b)=>String(a.plannedDate).localeCompare(String(b.plannedDate))).slice(0,3);
