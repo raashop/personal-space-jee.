@@ -1703,6 +1703,13 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!document.getElemen
 renderAll();
 requestAnimationFrame(()=>moveNavGlass(document.querySelector("nav button.active[data-page]"),false));
 window.addEventListener("resize",()=>moveNavGlass(document.querySelector("nav button.active[data-page]"),false),{passive:true});
+function resumeLocalWorkspace(reason){
+ let hasSavedPlanner=false;try{hasSavedPlanner=!!localStorage.getItem(KEY)}catch(e){}if(!hasSavedPlanner)return false;
+ try{localStorage.setItem(psOfflineModeKey,"1")}catch(e){}
+ psCloudReady=false;psCloudBackupAvailable=false;psCloudUser=null;
+ const gate=document.getElementById("cloudGate");if(gate)gate.hidden=true;document.body.classList.remove("cloud-auth-pending");
+ cloudStatus("offline · saved on this browser");cloudMessage(reason+" Your existing local planner has been kept and remains editable. Use Cloud login / sync settings when you want to reconnect.");startWelcome();return true;
+}
 cloudRestoreSavedConfig();
 (async()=>{
  try{
@@ -1710,11 +1717,13 @@ cloudRestoreSavedConfig();
   if(offline){cloudGateView(false);document.getElementById("cloudGate").hidden=true;document.body.classList.remove("cloud-auth-pending");cloudStatus("offline · saved on this browser");cloudMessage("Offline mode restored. Your planner is loaded from this browser.");startWelcome();return;}
   const cfg=cloudSettings();
   if(cfg.url&&cfg.key&&window.supabase){psCloudClient=window.supabase.createClient(cfg.url,cfg.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storageKey:"ps-supabase-auth-v2"}});psCloudClient.__psUrl=cfg.url;const result=await psCloudClient.auth.getSession();if(result.error)throw result.error;if(result.data&&result.data.session&&result.data.session.user){await cloudAfterLogin(result.data.session.user);return;}}
+  if(resumeLocalWorkspace("No active cloud session was found."))return;
   cloudGateView(false);document.getElementById("cloudGate").hidden=false;document.body.classList.add("cloud-auth-pending");
  }catch(e){
   console.error("Session restore failed",e);
   let offline=false;try{offline=localStorage.getItem(psOfflineModeKey)==="1"}catch(x){}
   if(offline){document.getElementById("cloudGate").hidden=true;document.body.classList.remove("cloud-auth-pending");cloudStatus("offline · saved on this browser");startWelcome();return;}
+  if(resumeLocalWorkspace("Cloud session restoration failed."))return;
   cloudMessage("Could not restore cloud sign-in. Your local progress is still saved; retry cloud login or choose Use offline. "+(e.message||""),true);document.getElementById("cloudGate").hidden=false;document.body.classList.add("cloud-auth-pending");
  }
 })();
