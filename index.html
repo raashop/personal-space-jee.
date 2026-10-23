@@ -653,6 +653,100 @@ main>.page>.section-head p{color:#b3c4d8}
 @media(max-width:380px){#page-dashboard .hero{grid-template-columns:minmax(0,1fr) 82px!important;padding:13px 10px!important}#page-dashboard .hero .ring{width:76px!important;height:76px!important}#page-dashboard .hero .ring strong{font-size:18px!important}#page-dashboard .countdown-focus .countdown strong{font-size:47px!important}#page-dashboard .countdown-focus .countdown-labels{padding-left:8px!important}#page-dashboard .countdown-focus .countdown-context{max-width:128px;font-size:8px!important}}
 @media(prefers-reduced-motion:reduce){#page-dashboard .hero .ring,#page-dashboard .hero .ring-arc{transition:none!important}}
 </style>
+<style id="personal-space-smooth-stable-final">
+/* Fixed OG palette across all pages; no tab-specific recoloring. */
+:root{
+ --navy:#173650!important;--blue:#2f83cf!important;--blue2:#eaf3ff!important;
+ --green:#24966e!important;--green2:#e4f6ec!important;--coral:#d96c79!important;--coral2:#fff0f1!important;
+ --amber:#b77924!important;--amber2:#fff5df!important;--purple:#7657c8!important;--teal:#2f7d83!important;
+ --ink:#243b49!important;--muted:#71869a!important;--line:#e1eaf0!important;--bg:#f6f9fc!important;--white:#fff!important;
+ --accent:#3f8fd4!important;--accent-secondary:#63cdbd!important;--accent-soft:rgba(63,143,212,.12)!important;
+ --accent-edge:rgba(98,170,222,.34)!important;--ambient-a:rgba(80,155,220,.15)!important;
+ --ambient-b:rgba(78,193,180,.10)!important;--glow:rgba(74,151,219,.17)!important;
+}
+body[data-active-page],body[data-active-page="chapters"][data-active-subject]{
+ --accent:#3f8fd4!important;--accent-secondary:#63cdbd!important;--accent-soft:rgba(63,143,212,.12)!important;
+ --accent-edge:rgba(98,170,222,.34)!important;--ambient-a:rgba(80,155,220,.15)!important;
+ --ambient-b:rgba(78,193,180,.10)!important;--glow:rgba(74,151,219,.17)!important;
+}
+html{scroll-behavior:auto!important;overflow-x:clip}
+body{color:#243b49!important;background:#f6f9fc!important;transition:none!important}
+body:before,body:after{transition:none!important;filter:none!important}
+body:after{opacity:.22!important}
+.app{background:transparent!important}
+main{color:#243b49!important;background:rgba(246,249,252,.87)!important}
+main .topbar h2,main .section-head h3,main .panel h3,main .subject-card h4,main .chapter-row h4,
+main .launch-card strong,main .litmus-hero-copy h3,main .litmus-list-head h4{color:#173650!important}
+main .topbar .sub,main .section-head p,main .desc,main .subject-card p,main .launch-card small{color:#71869a!important}
+main .eyebrow,main .topbar .eyebrow{color:#2f83cf!important}
+main .today{color:#71869a!important;background:#fff!important;border-color:#e1eaf0!important}
+
+/* Previous simple R mark: no new badge/tile, glow or hover flash. */
+.sidebar .brandmark{width:34px!important;height:34px!important;flex:0 0 34px!important;background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;padding:0!important;overflow:visible!important;transition:none!important}
+.sidebar .brandmark img{display:block!important;width:100%!important;height:100%!important;object-fit:contain!important;filter:none!important;border-radius:0!important}
+.sidebar .brandmark:hover{filter:none!important;box-shadow:none!important}
+.welcome-mark{width:58px!important;height:58px!important;padding:0!important;overflow:visible!important;background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;animation:none!important;filter:none!important}
+.welcome-mark img{display:block!important;width:100%!important;height:100%!important;object-fit:contain!important;border-radius:0!important;filter:none!important}
+
+/* More measured nav/page transitions. */
+nav .nav-glass-indicator{transition:transform .32s cubic-bezier(.22,.61,.36,1),width .22s ease,height .22s ease,opacity .16s ease!important;box-shadow:0 5px 16px rgba(26,89,141,.12)!important}
+nav .nav-glass-indicator.gel-pulse{animation:none!important}
+nav button,button,.subject-card,.launch-card,.chapter-row,.ring-action{transition-duration:.18s!important;transition-timing-function:cubic-bezier(.22,.61,.36,1)!important}
+.page.page-transition{animation:pageEnterStable .18s ease-out both!important}
+.report-stagger{transition-duration:.18s!important;transition-delay:0ms!important;will-change:auto!important}
+body[data-active-page] .hero,body[data-active-page] .sidebar,body[data-active-page] main{transition:background-color .18s ease!important}
+
+/* Readable PYQ summary tiles on the restored light UI. */
+.pyq-summary{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px!important;margin:0 0 15px!important;background:transparent!important;border:0!important;box-shadow:none!important;color:#243b49!important}
+.pyq-summary-card{min-width:0!important;padding:13px 14px!important;border:1px solid #e1eaf0!important;border-radius:14px!important;background:rgba(255,255,255,.94)!important;box-shadow:0 3px 12px rgba(31,65,92,.04)!important}
+.pyq-summary-card small{display:block!important;color:#71869a!important;font-size:10px!important;font-weight:800!important;line-height:1.4!important}
+.pyq-summary-card strong{display:block!important;color:#173650!important;font-size:25px!important;line-height:1.1!important;margin-top:7px!important}
+@media(max-width:720px){.pyq-summary{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}.pyq-summary-card{padding:11px!important}.pyq-summary-card strong{font-size:22px!important}}
+
+/* Restore the report-ring geometry that had lost its stylesheet. Prevents SVG becoming a black disc. */
+.readiness-spotlight{display:flex!important;align-items:center!important;justify-content:center!important;gap:22px!important;padding:18px 20px 22px!important;margin:0 0 10px!important;border-radius:18px!important;background:linear-gradient(145deg,#fbfdff,#f0f6fb)!important;border:1px solid #dfebf4!important;overflow:hidden!important;box-shadow:none!important}
+.readiness-spotlight-ring{position:relative!important;flex:0 0 158px!important;width:158px!important;height:158px!important;min-width:158px!important;min-height:158px!important;max-width:158px!important;max-height:158px!important;display:grid!important;place-items:center!important;background:transparent!important;border:0!important;border-radius:0!important;filter:none!important;animation:none!important}
+.readiness-spotlight-ring svg{position:absolute!important;inset:0!important;display:block!important;width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;overflow:visible!important;transform:rotate(-90deg)!important;background:transparent!important;fill:none!important}
+.readiness-spotlight-ring circle{fill:none!important}
+.readiness-spotlight-track,.readiness-spotlight-arc{fill:none!important;stroke-width:8!important;stroke-linecap:round!important}
+.readiness-spotlight-track{stroke:#dfeaf4!important}
+.readiness-spotlight-arc{stroke:url(#spotlightReadinessGradient)!important;filter:none!important;transition:stroke-dashoffset .45s ease!important}
+.readiness-spotlight-number{position:relative!important;z-index:1!important;display:flex!important;flex-direction:column!important;align-items:center!important;gap:4px!important;text-align:center!important}
+.readiness-spotlight-number strong{font-size:34px!important;line-height:1!important;color:#173650!important;letter-spacing:-.06em!important}
+.readiness-spotlight-number span{font-size:8px!important;letter-spacing:.11em!important;color:#71869a!important;font-weight:850!important}
+.readiness-spotlight-copy{min-width:0!important;max-width:550px!important}
+.readiness-spotlight-copy .eyebrow{font-size:9px!important;letter-spacing:.15em!important;color:#2f83cf!important}
+.readiness-spotlight-copy h4{font-size:clamp(18px,2.3vw,25px)!important;color:#173650!important;line-height:1.16!important;margin:8px 0!important}
+.readiness-spotlight-copy p{font-size:11px!important;line-height:1.65!important;color:#688097!important}
+@media(max-width:720px){.readiness-spotlight{flex-direction:column!important;text-align:center!important;gap:12px!important;padding:15px 12px 17px!important}.readiness-spotlight-ring{flex:0 0 132px!important;width:132px!important;height:132px!important;min-width:132px!important;min-height:132px!important;max-width:132px!important;max-height:132px!important}.readiness-spotlight-number strong{font-size:30px!important}}
+
+/* Subtle low-cost liquid motion; the mouse-follow glow moves independently. */
+.ps-fluid-backdrop{contain:paint!important}
+.ps-fluid-colorwash{animation-duration:58s!important;opacity:.62!important;filter:none!important}
+.ps-fluid-ribbon-a{animation-duration:58s!important;opacity:.31!important}
+.ps-fluid-ribbon-b{animation-duration:67s!important;opacity:.24!important}
+.ps-fluid-ribbon-c{animation-duration:74s!important;opacity:.18!important}
+.ps-fluid-colorwash,.ps-fluid-ribbon-a,.ps-fluid-ribbon-b,.ps-fluid-ribbon-c{filter:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+
+/* One quiet, light glass slab around the timer AND ring; no glossy highlights. */
+#page-dashboard .hero{background:rgba(255,255,255,.36)!important;border:1px solid rgba(255,255,255,.78)!important;border-bottom-color:rgba(180,202,221,.5)!important;box-shadow:0 10px 26px rgba(25,65,98,.055),inset 0 1px 0 rgba(255,255,255,.55)!important;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+#page-dashboard .hero:before{background:linear-gradient(115deg,rgba(255,255,255,.22),rgba(255,255,255,.04) 55%,rgba(95,165,220,.05))!important}
+#page-dashboard .countdown-focus{color:#173650!important}
+#page-dashboard .countdown-focus>.eyebrow{color:#347db9!important}
+#page-dashboard .countdown-focus .countdown strong{color:#173650!important;background:none!important;-webkit-text-fill-color:#173650!important;text-shadow:none!important}
+#page-dashboard .countdown-focus .countdown-labels{border-left-color:rgba(54,112,157,.22)!important}
+#page-dashboard .countdown-focus .days-caption{color:#5b829f!important}
+#page-dashboard .countdown-focus .countdown-target{color:#24445a!important;background:rgba(229,239,248,.48)!important;border-color:rgba(72,126,170,.24)!important}
+#page-dashboard .countdown-focus .countdown-target span:first-child{color:#24445a!important}
+#page-dashboard .countdown-focus .countdown-context{color:#647d90!important}
+#page-dashboard .hero .ring{background:transparent!important;box-shadow:none!important}
+#page-dashboard .hero .ring:before{background:rgba(255,255,255,.11)!important;border-color:rgba(89,132,167,.22)!important}
+#page-dashboard .hero .ring-track{stroke:rgba(62,103,138,.22)!important}
+#page-dashboard .hero .ring-arc{filter:none!important}
+#page-dashboard .hero .ring strong{color:#173650!important;text-shadow:none!important}
+#page-dashboard .hero .ring span{color:#5e7c92!important}
+@media(prefers-reduced-motion:reduce){.ps-fluid-colorwash,.ps-fluid-ribbon-a,.ps-fluid-ribbon-b,.ps-fluid-ribbon-c{animation:none!important}nav .nav-glass-indicator,.page.page-transition,.ring-arc{transition:none!important}}
+</style>
 </head>
 <body data-active-page="dashboard" class="cloud-auth-pending">
 
@@ -1731,22 +1825,16 @@ cloudRestoreSavedConfig();
 
 <script id="personal-space-fluid-pointer">
 (() => {
-  const root=document.documentElement, glow=document.getElementById("psFluidMouseGlow");
-  const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const coarse=matchMedia("(pointer: coarse)").matches;
-  if(!glow||reduce||coarse)return;
-  let tx=innerWidth*.5,ty=innerHeight*.5,x=tx,y=ty,raf=0;
-  const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+  const glow=document.getElementById("psFluidMouseGlow");
+  if(!glow||matchMedia("(prefers-reduced-motion: reduce)").matches||matchMedia("(pointer: coarse)").matches)return;
+  let targetX=innerWidth*.5,targetY=innerHeight*.5,x=targetX,y=targetY,raf=0;
   function frame(){
-    const dx=tx-x,dy=ty-y;x+=dx*.085;y+=dy*.085;
-    root.style.setProperty("--ps-glow-x",x.toFixed(1)+"px");root.style.setProperty("--ps-glow-y",y.toFixed(1)+"px");
-    const px=clamp((x/Math.max(1,innerWidth)-.5)*34,-17,17),py=clamp((y/Math.max(1,innerHeight)-.5)*28,-14,14);
-    root.style.setProperty("--ps-fluid-x1",(px*.22).toFixed(2)+"px");root.style.setProperty("--ps-fluid-y1",(py*.22).toFixed(2)+"px");
-    root.style.setProperty("--ps-fluid-x2",(px*.55).toFixed(2)+"px");root.style.setProperty("--ps-fluid-y2",(py*.55).toFixed(2)+"px");
-    if(Math.abs(dx)>.5||Math.abs(dy)>.5)raf=requestAnimationFrame(frame);else raf=0;
+    x+=(targetX-x)*.16;y+=(targetY-y)*.16;
+    glow.style.transform="translate3d("+x.toFixed(1)+"px,"+y.toFixed(1)+"px,0) translate(-50%,-50%)";
+    if(Math.abs(targetX-x)>.25||Math.abs(targetY-y)>.25)raf=requestAnimationFrame(frame);else raf=0;
   }
-  function move(e){tx=e.clientX;ty=e.clientY;if(!raf)raf=requestAnimationFrame(frame)}
-  function reset(){tx=innerWidth*.5;ty=innerHeight*.5;if(!raf)raf=requestAnimationFrame(frame)}
+  function move(e){targetX=e.clientX;targetY=e.clientY;if(!raf)raf=requestAnimationFrame(frame)}
+  function reset(){targetX=innerWidth*.5;targetY=innerHeight*.5;if(!raf)raf=requestAnimationFrame(frame)}
   addEventListener("pointermove",move,{passive:true});addEventListener("pointerleave",reset,{passive:true});addEventListener("resize",reset,{passive:true});
 })();
 </script>
