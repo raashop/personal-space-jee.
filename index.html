@@ -560,6 +560,14 @@ body[data-time-theme="day"],body[data-time-theme="evening"],body[data-time-theme
 .planned-dashboard-empty{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:15px;border:1px dashed #d9dde2;border-radius:14px;background:#fafafa}
 .planned-dashboard-empty strong{display:block;color:#17191d;font-size:12px}.planned-dashboard-empty p{margin:4px 0 0;color:#737b86;font-size:11px;line-height:1.5}
 @media(max-width:800px){.planned-dashboard-list{grid-template-columns:1fr}.planned-dashboard-head{align-items:flex-start}.planned-dashboard-panel{padding:15px}}
+.launch-grid .planned-dashboard-panel{grid-column:1/-1;margin:0 0 2px;padding:17px;border:1px solid #e3e6ea;border-radius:14px;background:#fff;box-shadow:none}
+.launch-grid .planned-dashboard-head{align-items:center;margin-bottom:12px;gap:12px}
+.launch-grid .planned-dashboard-head h3{font-size:16px;margin:3px 0}
+.launch-grid .planned-dashboard-head p{font-size:11px}
+.launch-grid .planned-dashboard-kicker{font-size:8px}
+.launch-grid .planned-dashboard-empty{padding:11px 13px;background:#fafafa}
+.launch-grid .planned-dashboard-list{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media(max-width:760px){.launch-grid .planned-dashboard-list{grid-template-columns:1fr}.launch-grid .planned-dashboard-head{align-items:flex-start}}
 </style>
 
 <style id="personal-space-final-finish">
@@ -833,15 +841,16 @@ body[data-readiness="ready"] .hero{background:radial-gradient(ellipse at 90% 5%,
       <button class="metric metric-clickable" type="button" onclick="openNeedsWork()" aria-label="Open chapters that need work"><div class="metric-top"><div class="metric-icon" style="background:var(--coral2);color:var(--coral)"><span data-icon="rotate"></span></div><label>CHAPTERS NEED WORK</label></div><strong id="needsWorkMetric">0</strong><small>Needs focused revision <span class="metric-arrow">↗</span></small></button>
       
     </div>
-<section class="planned-dashboard-panel" id="plannedDashboardPanel">
- <div class="planned-dashboard-head"><div><div class="planned-dashboard-kicker">YOUR TEST SCHEDULE</div><h3>Planned tests</h3><p>See your upcoming test plan and dates here, without leaving the dashboard.</p></div><div class="planned-dashboard-actions"><button type="button" class="btn btn-light" onclick="openPlannedTestsModal()">View all</button><button type="button" class="btn btn-blue" onclick="openPlannedTopicModal()">+ Plan test</button></div></div>
- <div id="dashboardPlannedList"></div>
-</section>
+
     <div class="section-head"><div><h3>Your subject progress</h3><p>Physics, Chemistry and Maths — at a glance.</p></div></div>
     <div class="subject-grid" id="subjectCards"></div>
     
     <div class="section-head"><div><h3>Your study tools</h3><p>Jump straight into what you need.</p></div></div>
     <div class="launch-grid">
+<section class="planned-dashboard-panel" id="plannedDashboardPanel">
+ <div class="planned-dashboard-head"><div><div class="planned-dashboard-kicker">YOUR TEST SCHEDULE</div><h3>Planned tests</h3><p>See your upcoming test plan and dates here, without leaving the dashboard.</p></div><div class="planned-dashboard-actions"><button type="button" class="btn btn-light" onclick="openPlannedTestsModal()">View all</button><button type="button" class="btn btn-blue" onclick="openPlannedTopicModal()">+ Plan test</button></div></div>
+ <div id="dashboardPlannedList"></div>
+</section>
       <button class="launch-card" onclick="go('chapters')"><span class="arrow">↗</span><span class="launch-icon" style="background:#f0ebff;color:#7862c8"><span data-icon="book"></span></span><strong>Chapter tracker</strong><small>Preparation, revisions and chapter tests</small></button>
       <button class="launch-card" onclick="go('topic')"><span class="arrow">↗</span><span class="launch-icon" style="background:#e5f6ed;color:#27845f"><span data-icon="checkCircle"></span></span><strong>Topic tests</strong><small>Plan chapter tests and record marks</small></button>
       <button class="launch-card" onclick="go('litmus')"><span class="arrow">↗</span><span class="launch-icon" style="background:#fff0f1;color:#d96c79"><span data-icon="calendar"></span></span><strong>LITMUS series</strong><small>Deadlines and syllabus at a glance</small></button>
