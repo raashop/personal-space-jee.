@@ -1338,7 +1338,16 @@ function dismissWelcome(skipped=false){const screen=document.getElementById("wel
 function startWelcome(){const screen=document.getElementById("welcomeScreen");if(!screen)return;const gate=document.getElementById("cloudGate");if(gate&&!gate.hidden){document.body.classList.add("cloud-auth-pending");return;}document.body.classList.remove("cloud-auth-pending");let seen=false;try{seen=sessionStorage.getItem("jee-hq-intro-seen")==="1";}catch(e){}if(seen){screen.style.display="none";return;}screen.addEventListener("click",e=>{if(e.target===screen||e.target.classList.contains("welcome-aura"))dismissWelcome(true);});const skip=screen.querySelector(".welcome-enter");if(skip)skip.addEventListener("keydown",e=>{if(e.key==="Escape")dismissWelcome(true);});setTimeout(()=>dismissWelcome(false),2600);}
 
 let reportKind="",reportAttemptFilter="all";
-function openReport(title,subtitle,body){const back=document.getElementById("reportBackdrop");if(!back)return;document.getElementById("reportTitle").textContent=title;document.getElementById("reportSubtitle").textContent=subtitle;document.getElementById("reportBody").innerHTML=body;back.hidden=false;document.body.classList.add("report-open");const close=back.querySelector(".report-close");if(close)close.focus();}
+function openReport(title,subtitle,body){
+ const back=document.getElementById("reportBackdrop"),modal=back&&back.querySelector(".report-modal");if(!back||!modal)return;
+ const origin=reportKind==="readiness"?document.getElementById("overallRing"):document.activeElement;
+ const rect0=origin&&origin.getBoundingClientRect?origin.getBoundingClientRect():{left:innerWidth/2,top:innerHeight/2,width:0,height:0};
+ document.getElementById("reportTitle").textContent=title;document.getElementById("reportSubtitle").textContent=subtitle;document.getElementById("reportBody").innerHTML=body;
+ modal.classList.add("report-modal-measuring");back.hidden=false;document.body.classList.add("report-open");
+ requestAnimationFrame(()=>{const rect=modal.getBoundingClientRect();modal.style.setProperty("--report-origin-x",(rect0.left+rect0.width/2-rect.left)+"px");modal.style.setProperty("--report-origin-y",(rect0.top+rect0.height/2-rect.top)+"px");modal.classList.remove("report-modal-measuring");void modal.offsetWidth;const close=back.querySelector(".report-close");if(close)close.focus({preventScroll:true});
+ if(!window.matchMedia("(prefers-reduced-motion: reduce)").matches){[...document.getElementById("reportBody").children].forEach((el,i)=>{el.classList.add("report-stagger","report-stagger-in");el.style.setProperty("--report-delay",Math.min(i*65,390)+"ms")});}
+ });
+}
 function closeReport(){const back=document.getElementById("reportBackdrop");if(back)back.hidden=true;document.body.classList.remove("report-open");}
 function chapterStatusLabel(status){return status==="Not Ready"?"Not ready":status;}
 function openChapterByName(subject,chapter){closeReport();currentChapterSubject=subject;currentChapterYear="all";go("chapters");document.getElementById("chapterSearch").value=chapter;document.getElementById("chapterStatus").value="all";document.querySelectorAll(".year-tab").forEach(b=>{const active=b.dataset.year==="all";b.classList.toggle("active",active);b.setAttribute("aria-pressed",String(active));});document.body.dataset.activeSubject=subject.toLowerCase();renderChapters();}
