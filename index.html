@@ -568,6 +568,9 @@ body[data-time-theme="day"],body[data-time-theme="evening"],body[data-time-theme
 .launch-grid .planned-dashboard-empty{padding:11px 13px;background:#fafafa}
 .launch-grid .planned-dashboard-list{grid-template-columns:repeat(3,minmax(0,1fr))}
 @media(max-width:760px){.launch-grid .planned-dashboard-list{grid-template-columns:1fr}.launch-grid .planned-dashboard-head{align-items:flex-start}}
+.planned-metric .metric-icon{background:#f3f4f6!important;color:#111827!important;border:1px solid #e5e7eb!important}
+.planned-metric:hover{border-color:#d1d5db!important;background:#fff!important}
+.planned-metric #plannedMetricHint{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 </style>
 
 <style id="personal-space-final-finish">
@@ -838,7 +841,7 @@ body[data-readiness="ready"] .hero{background:radial-gradient(ellipse at 90% 5%,
     <div class="metric-grid dashboard-metrics">
       <div class="metric"><div class="metric-top"><div class="metric-icon" style="background:var(--blue2);color:var(--blue)"><span data-icon="book"></span></div><label>CHAPTERS READY</label></div><strong id="readyMetric">0 / 48</strong><small>Marked exam ready</small></div>
       <button class="metric metric-clickable" type="button" onclick="openAttemptsReport()" aria-label="View all attempted tests and scores"><div class="metric-top"><div class="metric-icon" style="background:linear-gradient(135deg,#e2f7ed,#e9f3ff);color:var(--green)"><span data-icon="checkCircle"></span></div><label>TEST ATTEMPTS</label><span class="metric-arrow">↗</span></div><strong id="testMetric">0</strong><small id="testMetricHint">Topic tests · LITMUS tests · click to view marks</small></button>
-      <button class="metric metric-clickable" type="button" onclick="openNeedsWork()" aria-label="Open chapters that need work"><div class="metric-top"><div class="metric-icon" style="background:var(--coral2);color:var(--coral)"><span data-icon="rotate"></span></div><label>CHAPTERS NEED WORK</label></div><strong id="needsWorkMetric">0</strong><small>Needs focused revision <span class="metric-arrow">↗</span></small></button>
+      <button class="metric metric-clickable" type="button" onclick="openNeedsWork()" aria-label="Open chapters that need work"><div class="metric-top"><div class="metric-icon" style="background:var(--coral2);color:var(--coral)"><span data-icon="rotate"></span></div><label>CHAPTERS NEED WORK</label></div><strong id="needsWorkMetric">0</strong><small>Needs focused revision <span class="metric-arrow">↗</span></small></button>\n      <button class="metric metric-clickable planned-metric" type="button" onclick="openPlannedTestsModal()" aria-label="View and plan tests"><div class="metric-top"><div class="metric-icon" style="background:#f3f4f6;color:#111827;border:1px solid #e5e7eb"><span data-icon="calendar"></span></div><label>PLANNED TESTS</label></div><strong id="plannedMetricCount">0</strong><small id="plannedMetricHint">Click to plan a test</small></button>
       
     </div>
 
@@ -847,10 +850,7 @@ body[data-readiness="ready"] .hero{background:radial-gradient(ellipse at 90% 5%,
     
     <div class="section-head"><div><h3>Your study tools</h3><p>Jump straight into what you need.</p></div></div>
     <div class="launch-grid">
-<section class="planned-dashboard-panel" id="plannedDashboardPanel">
- <div class="planned-dashboard-head"><div><div class="planned-dashboard-kicker">YOUR TEST SCHEDULE</div><h3>Planned tests</h3><p>See your upcoming test plan and dates here, without leaving the dashboard.</p></div><div class="planned-dashboard-actions"><button type="button" class="btn btn-light" onclick="openPlannedTestsModal()">View all</button><button type="button" class="btn btn-blue" onclick="openPlannedTopicModal()">+ Plan test</button></div></div>
- <div id="dashboardPlannedList"></div>
-</section>
+
       <button class="launch-card" onclick="go('chapters')"><span class="arrow">↗</span><span class="launch-icon" style="background:#f0ebff;color:#7862c8"><span data-icon="book"></span></span><strong>Chapter tracker</strong><small>Preparation, revisions and chapter tests</small></button>
       <button class="launch-card" onclick="go('topic')"><span class="arrow">↗</span><span class="launch-icon" style="background:#e5f6ed;color:#27845f"><span data-icon="checkCircle"></span></span><strong>Topic tests</strong><small>Plan chapter tests and record marks</small></button>
       <button class="launch-card" onclick="go('litmus')"><span class="arrow">↗</span><span class="launch-icon" style="background:#fff0f1;color:#d96c79"><span data-icon="calendar"></span></span><strong>LITMUS series</strong><small>Deadlines and syllabus at a glance</small></button>
@@ -953,7 +953,6 @@ function cloudMessage(msg,isError=false){const el=document.getElementById("cloud
 function cloudStatus(msg){const el=document.getElementById("cloudStatus");if(el)el.innerHTML="Cloud sync: <b>"+String(msg).replace(/[<>]/g,"")+"</b>"}
 function cloudGateView(signedIn){const form=document.getElementById("cloudAuthForm"),panel=document.getElementById("cloudSessionPanel"),email=document.getElementById("cloudSessionEmail");if(form)form.hidden=!!signedIn;if(panel)panel.hidden=!signedIn;if(email)email.textContent=(psCloudUser&&psCloudUser.email)||""}
 async function openCloudSettings(){
- try{localStorage.removeItem(psOfflineModeKey)}catch(e){}
  cloudRestoreSavedConfig();const gate=document.getElementById("cloudGate");gate.hidden=false;document.body.classList.add("cloud-auth-pending");
  if(psCloudReady&&psCloudUser){cloudGateView(true);cloudMessage("Cloud session is active; your password is not needed again.");return;}
  cloudGateView(false);
@@ -970,8 +969,25 @@ function cloudOffline(){
 }
 function cloudSettings(){return {url:document.getElementById("cloudUrl").value.trim().replace(/\/+$/,""),key:document.getElementById("cloudKey").value.trim()};}
 function cloudRestoreSavedConfig(){try{const saved=JSON.parse(localStorage.getItem(psCloudSettingsKey)||"{}");if(saved.url)document.getElementById("cloudUrl").value=saved.url;if(saved.key)document.getElementById("cloudKey").value=saved.key;}catch(e){}}
-function cloudCreateClient(){const cfg=cloudSettings();if(!/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(cfg.url))throw new Error("Paste the exact Project URL from Supabase (https://…supabase.co), without extra spaces or dots.");if(!cfg.key)throw new Error("Paste your Supabase Publishable key (sb_publishable_…). Do not use a Secret or Service Role key.");if(!window.supabase||!window.supabase.createClient)throw new Error("Supabase library did not load. Check your internet connection and refresh.");try{localStorage.setItem(psCloudSettingsKey,JSON.stringify(cfg));}catch(e){}if(psCloudClient&&psCloudClient.__psUrl!==cfg.url){try{psCloudClient.auth.signOut({scope:"local"});}catch(e){}psCloudClient=null;psCloudReady=false;psCloudUser=null;}if(!psCloudClient){psCloudClient=window.supabase.createClient(cfg.url,cfg.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storageKey:"ps-supabase-auth-v2"}});psCloudClient.__psUrl=cfg.url;}return psCloudClient;}
-async function cloudAuth(mode){try{const email=document.getElementById("cloudEmail").value.trim(),password=document.getElementById("cloudPassword").value;if(!email||!password)throw new Error("Enter your email and password.");const client=cloudCreateClient();cloudMessage(mode==="signup"?"Creating your account…":"Signing in…");const res=mode==="signup"?await client.auth.signUp({email,password}):await client.auth.signInWithPassword({email,password});if(res.error)throw res.error;if(mode==="signup"&&!res.data.session){cloudMessage("Account created. Check your email to confirm it, then return and sign in using the same account.");return;}if(!res.data.user)throw new Error("Supabase did not return an account. Try signing in again.");try{localStorage.removeItem(psOfflineModeKey)}catch(e){}await cloudAfterLogin(res.data.user);}catch(e){cloudMessage((e&&e.message)||"Could not connect to Supabase.",true);cloudStatus("connection failed");}}
+function cloudCreateClient(){const cfg=cloudSettings();if(!/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(cfg.url))throw new Error("Paste the exact Project URL from Supabase (https://…supabase.co), without extra spaces or dots.");if(!cfg.key)throw new Error("Paste your Supabase Publishable key (sb_publishable_…). Do not use a Secret or Service Role key.");if(!window.supabase||!window.supabase.createClient)throw new Error("Supabase library did not load. Check your internet connection and refresh.");try{localStorage.setItem(psCloudSettingsKey,JSON.stringify(cfg));}catch(e){}if(psCloudClient&&psCloudClient.__psUrl!==cfg.url){psCloudClient=null;psCloudReady=false;psCloudBackupAvailable=false;psCloudUser=null;}if(!psCloudClient){psCloudClient=window.supabase.createClient(cfg.url,cfg.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storageKey:"ps-supabase-auth-v2"}});psCloudClient.__psUrl=cfg.url;}return psCloudClient;}
+async function cloudAuth(mode){
+ try{
+  const email=document.getElementById("cloudEmail").value.trim(),password=document.getElementById("cloudPassword").value;
+  if(!email||!password)throw new Error("Enter your email and password.");
+  const client=cloudCreateClient();cloudMessage(mode==="signup"?"Creating your account…":"Signing in…");
+  const res=mode==="signup"?await client.auth.signUp({email,password}):await client.auth.signInWithPassword({email,password});
+  if(res.error)throw res.error;
+  if(mode==="signup"&&!res.data.session){cloudMessage("Account created. Check your email to confirm it, then return and sign in using the same account.");return;}
+  if(!res.data.user)throw new Error("Supabase did not return an account. Try signing in again.");
+  try{localStorage.removeItem(psOfflineModeKey)}catch(e){}
+  await cloudAfterLogin(res.data.user);
+ }catch(e){
+  const msg=(e&&e.message)||"Could not connect to Supabase.";
+  let local=false;try{local=!!localStorage.getItem(KEY)}catch(x){}
+  if(local){cloudOffline();cloudMessage("Cloud sign-in failed: "+msg+". Your planner is still available locally. For cloud sync, check the correct Supabase Project URL and Publishable key in Cloud settings; do not use a Secret or Service Role key.",true);}
+  else{cloudMessage(msg,true);cloudStatus("connection failed");}
+ }
+}
 function cloudSignIn(){return cloudAuth("signin")}function cloudSignUp(){return cloudAuth("signup")}
 async function cloudAfterLogin(user){
  psCloudUser=user;
@@ -1185,18 +1201,13 @@ function renderPlannedTestsModal(){
  }).join("");
 }
 function renderDashboardPlannedTests(){
- const holder=document.getElementById("dashboardPlannedList");if(!holder)return;
+ const count=document.getElementById("plannedMetricCount"),hint=document.getElementById("plannedMetricHint");
+ if(!count||!hint)return;
  const today=todayISO();
  const items=(state.topics||[]).filter(t=>t.status==="Planned").sort((a,b)=>String(a.plannedDate||"9999-99-99").localeCompare(String(b.plannedDate||"9999-99-99")));
- if(!items.length){holder.innerHTML='<div class="planned-dashboard-empty"><div><strong>No planned tests yet</strong><p>Choose “Plan test” to add a chapter, test date and notes. Your saved plan will appear here.</p></div><button type="button" class="btn btn-light" onclick="openPlannedTopicModal()">+ Plan test</button></div>';return;}
- const html=items.slice(0,3).map(t=>{
-  const iso=String(t.plannedDate||""),date=iso?new Date(iso+"T00:00:00"):null,valid=date&&!Number.isNaN(date.getTime());
-  const day=valid?date.toLocaleDateString("en-IN",{day:"2-digit"}):"—",month=valid?date.toLocaleDateString("en-IN",{month:"short"}):"No date";
-  const delta=iso?Math.round((new Date(iso+"T00:00:00")-new Date(today+"T00:00:00"))/86400000):null;
-  const due=delta===null?"Date needed":delta<0?Math.abs(delta)+" days overdue":delta===0?"Today":delta===1?"Tomorrow":delta+" days left";
-  return '<button type="button" class="planned-dashboard-item" onclick="editTopic(&quot;'+escapeAttr(t.id)+'&quot;)"><span class="planned-dashboard-date"><b>'+day+'</b><small>'+month+'</small></span><span><strong>'+escapeHTML(t.name||t.chapter+" Topic Test")+'</strong><small>'+escapeHTML(t.subject)+' · '+escapeHTML(t.chapter)+'</small><span class="planned-dashboard-due">'+due+'</span></span></button>';
- }).join("");
- holder.innerHTML='<div class="planned-dashboard-list">'+html+'</div>'+(items.length>3?'<div style="margin-top:12px"><button type="button" class="small-btn" onclick="openPlannedTestsModal()">View all '+items.length+' planned tests ↗</button></div>':"");
+ count.textContent=String(items.length);
+ const next=items.find(t=>t.plannedDate&&t.plannedDate>=today)||items.find(t=>t.plannedDate)||null;
+ hint.textContent=!items.length?"Click to plan a test":next?(next.chapter+" · "+formatDateForInput(next.plannedDate)):(items.length+" planned · set a date");
 }
 function renderDashboard(){
  renderDashboardPlannedTests();
@@ -1429,7 +1440,18 @@ function topicForm(t,creating){openModal(creating?"Add custom topic test":"Edit 
 ],creating?{type:"newtopic"}:{type:"topic",id:t.id})}
 function openTopicModal(){topicForm({name:"My custom test",subject:"Physics",chapter:state.chapters[0].chapter,status:"Not Started",plannedDate:"",actualDate:"",marks:"",outOf:"",difficulty:"",notes:""},true)}
 function openPlannedTopicModal(){topicForm({name:"Planned topic test",subject:"Physics",chapter:state.chapters[0].chapter,status:"Planned",plannedDate:formatDateForInput(defaultPlanDate()),actualDate:"",marks:"",outOf:"",difficulty:"",notes:""},true)}
-function quickTopic(subject,chapter){const t=state.topics.find(x=>x.subject===subject&&x.chapter===chapter);go("topic");if(t)editTopic(t.id)}
+function quickTopic(subject,chapter){
+ const same=(a,b)=>String(a||"").trim().toLowerCase()===String(b||"").trim().toLowerCase();
+ let t=state.topics.find(x=>same(x.subject,subject)&&same(x.chapter,chapter));
+ const c=state.chapters.find(x=>same(x.subject,subject)&&same(x.chapter,chapter));
+ if(!t){
+  t={id:"topic-linked-"+Date.now(),subject:subject,chapter:chapter,name:chapter+" Topic Test",source:"Chapter topic test",status:"Not Started",plannedDate:"",actualDate:"",marks:"",outOf:"",difficulty:"",notes:"",custom:false};
+  state.topics.unshift(t);
+  try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}
+ }
+ if((t.status==="Attempted")||(c&&c.topicAttempted)){quickLogTopic(t.id);return;}
+ topicForm({...t,name:t.name||chapter+" Topic Test",status:"Planned",plannedDate:t.plannedDate||defaultPlanDate()},false);
+}
 function editLitmus(id){const t=state.litmus.find(x=>x.id===id);openModal("Edit LITMUS test",[
 {name:"name",label:"Test name",value:t.name,required:true},{name:"deadline",label:"Deadline",type:"date",value:t.deadline},
 {name:"syllabus",label:"Syllabus / coverage",type:"textarea",value:t.syllabus,full:true},
