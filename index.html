@@ -869,6 +869,8 @@ main>.page>.section-head p { color:#71869a!important; opacity:1!important; }
 #reportBackdrop .report-stagger,#reportBackdrop .report-stagger-in{animation:none!important;transition:none!important;transform:none!important;opacity:1!important}
 .report-modal-head,.litmus-next,.countdown-date-editor{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
 #page-dashboard .hero{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.page.page-transition{animation:psPageEnter .16s cubic-bezier(.2,.7,.25,1) both!important}
+@keyframes psPageEnter{from{opacity:.94;transform:translate3d(0,4px,0)}to{opacity:1;transform:translate3d(0,0,0)}}
 .chapter-list{transition:none!important}
 .chapter-list.chapter-revealing .chapter-row{animation:none!important;animation-delay:0ms!important}
 button,.metric,.panel,.subject-card,.launch-card,.chapter-row,.litmus-card,.planned-modal-item,
