@@ -1169,7 +1169,7 @@ function renderDashboard(){
  const pc=pct(ready,state.chapters.length);
  document.body.dataset.readiness=pc>=100?"ready":pc>=60?"strong":pc>=25?"building":"starting";
  const grad=document.querySelector("#readinessGradient");
- if(grad){const stops=grad.querySelectorAll("stop");const palette=pc>=100?["#d8b8ff","#7de3cb"]:pc>=60?["#c9a5ff","#82e9dc"]:pc>=25?["#bd98ff","#8bdff6"]:["#d4b2ff","#98e9ff"];if(stops[0])stops[0].setAttribute("stop-color",palette[0]);if(stops[1])stops[1].setAttribute("stop-color",palette[1]);}
+ if(grad){const stops=grad.querySelectorAll("stop");const palette=pc>=100?["#80e2c5","#51cbb1"]:pc>=60?["#69d0ed","#47c4ba"]:pc>=25?["#5aaaf0","#48d0c2"]:["#579df2","#51c9c2"];if(stops[0])stops[0].setAttribute("stop-color",palette[0]);if(stops[1])stops[1].setAttribute("stop-color",palette[1]);}
  const ring=document.getElementById("overallRing");const arc=document.getElementById("ringArc");const circumference=2*Math.PI*69.5;arc.style.strokeDasharray=String(circumference);arc.style.strokeDashoffset=String(circumference*(1-pc/100));ring.setAttribute("aria-label",`Chapter readiness ${pc} percent`);
  document.getElementById("overallPct").textContent=pc+"%";
  const countdownTarget=getCountdownTarget();const targetDate=new Date(countdownTarget+"T00:00:00");document.getElementById("daysLeft").textContent=Math.max(0,Math.ceil((targetDate-new Date())/86400000));document.getElementById("countdownDateLabel").textContent=targetDate.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}).toUpperCase();const dateInput=document.getElementById("countdownTargetInput");if(dateInput)dateInput.value=countdownTarget;
