@@ -1165,7 +1165,7 @@ function renderPlannedTests(){
  const holder=document.getElementById('plannedTestsPanel');if(!holder)return;
  const items=(state.topics||[]).filter(t=>(t.status==='Planned'||t.status==='Not Started')&&t.plannedDate).sort((a,b)=>String(a.plannedDate).localeCompare(String(b.plannedDate))).slice(0,6);
  const cards=items.map(t=>{const delta=Math.round((new Date(t.plannedDate+'T00:00:00')-new Date(todayISO()+'T00:00:00'))/86400000);const due=delta<0?Math.abs(delta)+' days overdue':delta===0?'Due today':delta===1?'Tomorrow':'In '+delta+' days';return '<button type="button" class="planned-test-card" onclick="editTopic(\''+escapeAttr(t.id)+'\')" style="text-align:left;cursor:pointer"><small>'+escapeHTML(t.subject)+' · '+due+'</small><strong>'+escapeHTML(t.name||t.chapter+' Topic Test')+'</strong><span>'+escapeHTML(t.chapter)+' · '+escapeHTML(formatDateForInput(t.plannedDate))+'</span></button>'}).join('');
- holder.innerHTML='<section class="planned-tests-panel"><div class="planned-tests-head"><div><h4>Planned tests</h4><p>'+(items.length?'Upcoming tests with dates saved.':'Choose a planned date and it will appear here.')+'</p></div><button class="small-btn" type="button" onclick="openTopicModal()">+ Plan test</button></div>'+(cards?'<div class="planned-test-grid">'+cards+'</div>':'<div class="empty" style="padding:14px 8px">No planned tests yet. Choose a planned date in a topic test row or use “Plan test”.</div>')+'</section>';
+ holder.innerHTML='<section class="planned-tests-panel"><div class="planned-tests-head"><div><h4>Planned tests</h4><p>'+(items.length?'Upcoming tests with dates saved.':'Choose a planned date and it will appear here.')+'</p></div><button class="small-btn" type="button" onclick="openPlannedTopicModal()">+ Plan test</button></div>'+(cards?'<div class="planned-test-grid">'+cards+'</div>':'<div class="empty" style="padding:14px 8px">No planned tests yet. Choose a planned date in a topic test row or use “Plan test”.</div>')+'</section>';
 }
 function renderTopics(){
  renderPlannedTests();
@@ -1301,6 +1301,7 @@ function topicForm(t,creating){openModal(creating?"Add custom topic test":"Edit 
 {name:"notes",label:"Notes",type:"textarea",value:t.notes,full:true}
 ],creating?{type:"newtopic"}:{type:"topic",id:t.id})}
 function openTopicModal(){topicForm({name:"My custom test",subject:"Physics",chapter:state.chapters[0].chapter,status:"Not Started",plannedDate:"",actualDate:"",marks:"",outOf:"",difficulty:"",notes:""},true)}
+function openPlannedTopicModal(){topicForm({name:"Planned topic test",subject:"Physics",chapter:state.chapters[0].chapter,status:"Planned",plannedDate:formatDateForInput(defaultPlanDate()),actualDate:"",marks:"",outOf:"",difficulty:"",notes:""},true)}
 function quickTopic(subject,chapter){const t=state.topics.find(x=>x.subject===subject&&x.chapter===chapter);go("topic");if(t)editTopic(t.id)}
 function editLitmus(id){const t=state.litmus.find(x=>x.id===id);openModal("Edit LITMUS test",[
 {name:"name",label:"Test name",value:t.name,required:true},{name:"deadline",label:"Deadline",type:"date",value:t.deadline},
