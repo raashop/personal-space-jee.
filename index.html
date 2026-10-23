@@ -948,7 +948,7 @@ async function openCloudSettings(){
  cloudRestoreSavedConfig();const gate=document.getElementById("cloudGate");gate.hidden=false;document.body.classList.add("cloud-auth-pending");
  if(psCloudReady&&psCloudUser){cloudGateView(true);cloudMessage("Cloud session is active; your password is not needed again.");return;}
  cloudGateView(false);
- try{const cfg=cloudSettings();if(cfg.url&&cfg.key&&window.supabase){psCloudClient=window.supabase.createClient(cfg.url,cfg.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storageKey:"ps-supabase-auth-v2"}});psCloudClient.__psUrl=cfg.url;const result=await psCloudClient.auth.getSession();if(result.error)throw result.error;if(result.data&&result.data.session&&result.data.session.user){await cloudAfterLogin(result.data.session.user);return;}}}
+ try{const cfg=cloudSettings();if(cfg.url&&cfg.key&&window.supabase){psCloudClient=window.supabase.createClient(cfg.url,cfg.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storageKey:"ps-supabase-auth-v2"}});psCloudClient.__psUrl=cfg.url;const result=await psCloudClient.auth.getSession();if(result.error)throw result.error;if(result.data&&result.data.session&&result.data.session.user){await cloudAfterLogin(result.data.session.user);gate.hidden=false;document.body.classList.add("cloud-auth-pending");cloudGateView(!!psCloudUser);cloudMessage(psCloudBackupAvailable?"Cloud session restored. Your account remains signed in.":"Signed in; cloud backup is unavailable, but local progress is safe.",!psCloudBackupAvailable);return;}}}
  catch(e){console.error("Cloud session resume failed",e);cloudMessage("Could not resume cloud sync. Your local progress is still saved. "+(e.message||""),true)}
  cloudGateView(!!psCloudUser);
 }
