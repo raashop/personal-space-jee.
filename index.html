@@ -760,6 +760,7 @@ body[data-readiness="ready"] .hero{background:radial-gradient(ellipse at 90% 5%,
     </div>
     <div class="section-head"><div><h3>Your subject progress</h3><p>Physics, Chemistry and Maths — at a glance.</p></div></div>
     <div class="subject-grid" id="subjectCards"></div>
+    <div id="dashboardPlannedTestsPanel"></div>
     <div class="section-head"><div><h3>Your study tools</h3><p>Jump straight into what you need.</p></div></div>
     <div class="launch-grid">
       <button class="launch-card" onclick="go('chapters')"><span class="arrow">↗</span><span class="launch-icon" style="background:#f0ebff;color:#7862c8"><span data-icon="book"></span></span><strong>Chapter tracker</strong><small>Preparation, revisions and chapter tests</small></button>
@@ -1057,7 +1058,21 @@ function focusNextLitmus(){
  renderLitmus();
  const card=document.querySelector(`[data-item-id="${next.id}"]`);if(card)card.scrollIntoView({behavior:"smooth",block:"center"});
 }
+
+function renderDashboardPlannedTests(){
+ const holder=document.getElementById("dashboardPlannedTestsPanel");if(!holder)return;
+ const today=todayISO();
+ const items=(state.topics||[]).filter(t=>(t.status==="Planned"||t.status==="Not Started")&&t.plannedDate&&t.plannedDate>=today).sort((a,b)=>String(a.plannedDate).localeCompare(String(b.plannedDate))).slice(0,3);
+ const cards=items.map(t=>{
+  const days=Math.round((new Date(t.plannedDate+"T00:00:00")-new Date(today+"T00:00:00"))/86400000);
+  const when=days===0?"Today":days===1?"Tomorrow":"In "+days+" days";
+  return '<button type="button" class="planned-test-card" onclick="go(\'topic\');editTopic(\''+escapeAttr(t.id)+'\')" style="text-align:left;cursor:pointer"><small>'+escapeHTML(t.subject)+' · '+when+'</small><strong>'+escapeHTML(t.name||t.chapter+" Topic Test")+'</strong><span>'+escapeHTML(t.chapter)+' · '+escapeHTML(formatDateForInput(t.plannedDate))+'</span></button>';
+ }).join("");
+ holder.innerHTML='<section class="planned-tests-panel"><div class="planned-tests-head"><div><h4>Coming up</h4><p>'+ (items.length?"Your next planned topic tests.":"Your planned tests will appear here after you assign dates in Topic tests.") +'</p></div><button class="small-btn" type="button" onclick="go(\'topic\')">Open planner ↗</button></div>'+(cards?'<div class="planned-test-grid">'+cards+'</div>':'')+'</section>';
+}
+
 function renderDashboard(){
+ renderDashboardPlannedTests();
  const ready=state.chapters.filter(c=>c.prep==="Exam Ready").length;
  const pc=pct(ready,state.chapters.length);
  document.body.dataset.readiness=pc>=100?"ready":pc>=60?"strong":pc>=25?"building":"starting";
