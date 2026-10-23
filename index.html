@@ -489,6 +489,35 @@ body[data-time-theme="night"]{--accent:#65a9ff;--accent-secondary:#58d6bf;--acce
 .planned-launch-card{border-color:var(--accent-edge);background:linear-gradient(145deg,rgba(255,255,255,.98),var(--accent-soft))!important;box-shadow:0 6px 20px var(--accent-soft),inset 0 1px 0 white!important}
 .planned-launch-card .launch-icon{border-radius:13px}
 .planned-count-badge{display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;min-width:22px;height:22px;padding:0 6px;margin-left:5px;border-radius:99px;background:var(--accent-soft);border:1px solid var(--accent-edge);color:var(--accent);font-size:10px;font-weight:900}
+.planned-launch-card{border-color:var(--accent-edge)!important;background:linear-gradient(145deg,#fff,var(--accent-soft))!important;box-shadow:0 8px 24px var(--accent-soft),inset 0 1px 0 #fff!important}
+.planned-modal-backdrop{position:fixed;inset:0;z-index:1300;display:grid;place-items:center;padding:20px;background:rgba(8,22,39,.56);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.planned-modal-backdrop[hidden]{display:none!important}
+.planned-modal{width:min(760px,100%);max-height:min(86vh,850px);overflow:auto;border:1px solid rgba(224,239,252,.95);border-radius:25px;background:linear-gradient(150deg,#fff 0%,#f7fbff 64%,var(--accent-soft) 100%);box-shadow:0 30px 100px rgba(3,22,42,.35);animation:plannedModalIn .48s cubic-bezier(.16,1,.3,1) both}
+@keyframes plannedModalIn{from{opacity:0;transform:translateY(18px) scale(.965)}to{opacity:1;transform:translateY(0) scale(1)}}
+.planned-modal-hero{position:relative;overflow:hidden;padding:23px 25px 22px;background:linear-gradient(115deg,#173650,#245879 56%,#397da0);color:white}
+.planned-modal-hero:after{content:"";position:absolute;right:-30px;top:-80px;width:260px;height:260px;border:1px solid rgba(255,255,255,.18);border-radius:50%;box-shadow:0 0 0 24px rgba(255,255,255,.045),0 0 0 52px rgba(255,255,255,.035)}
+.planned-modal-hero-row{position:relative;z-index:1;display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.planned-modal-art{display:grid;place-items:center;flex:0 0 54px;width:54px;height:54px;border:1px solid rgba(255,255,255,.35);border-radius:17px;background:rgba(255,255,255,.14);font-size:26px;box-shadow:inset 0 1px 0 rgba(255,255,255,.25)}
+.planned-modal-hero h3{margin:12px 0 5px;font-size:clamp(22px,4vw,30px);letter-spacing:-.04em}
+.planned-modal-hero p{margin:0;max-width:480px;font-size:12px;line-height:1.6;color:rgba(255,255,255,.78)}
+.planned-modal-close{position:relative;z-index:2;flex:0 0 auto;width:35px;height:35px;border-radius:12px;color:#fff;background:rgba(255,255,255,.15);font-size:22px}
+.planned-modal-body{padding:20px 24px 24px}
+.planned-modal-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:18px}
+.planned-modal-stat{padding:12px;border:1px solid #e0ebf5;border-radius:15px;background:rgba(255,255,255,.85)}
+.planned-modal-stat small{display:block;font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:#70889d}
+.planned-modal-stat strong{display:block;margin-top:6px;color:#173650;font-size:24px;letter-spacing:-.04em}
+.planned-modal-list{display:grid;gap:9px}
+.planned-modal-item{display:grid;grid-template-columns:46px minmax(0,1fr) auto;align-items:center;gap:12px;padding:12px;border:1px solid #dfeaf4;border-radius:15px;background:rgba(255,255,255,.9);text-align:left;cursor:pointer;transition:transform .2s,border-color .2s,box-shadow .2s}
+.planned-modal-item:hover{transform:translateY(-1px);border-color:var(--accent-edge);box-shadow:0 8px 20px rgba(32,79,118,.07)}
+.planned-modal-date{display:grid;place-items:center;align-content:center;min-height:46px;border-radius:12px;background:var(--accent-soft);color:var(--accent)}
+.planned-modal-date b{font-size:17px;line-height:1.15}.planned-modal-date small{font-size:9px;font-weight:900;text-transform:uppercase}
+.planned-modal-item h4{margin:0;color:#173650;font-size:12px}.planned-modal-item p{margin:4px 0 0;color:#72869a;font-size:10px}
+.planned-modal-due{padding:5px 8px;border-radius:99px;background:#edf7f2;color:#27845f;font-size:9px;font-weight:900;white-space:nowrap}
+.planned-modal-empty{padding:24px 16px;text-align:center;border:1px dashed #c9dae8;border-radius:16px;background:rgba(255,255,255,.7)}
+.planned-modal-empty .empty-art{font-size:29px;margin-bottom:7px}.planned-modal-empty h4{margin:0;color:#173650}.planned-modal-empty p{max-width:360px;margin:6px auto 13px;color:#70859a;font-size:11px;line-height:1.5}
+.planned-modal-footer{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding-top:17px;margin-top:16px;border-top:1px solid #e1ebf4}
+@media(max-width:560px){.planned-modal-backdrop{padding:10px}.planned-modal-body{padding:15px}.planned-modal-stats{gap:6px}.planned-modal-stat{padding:9px}.planned-modal-stat strong{font-size:20px}.planned-modal-item{grid-template-columns:42px minmax(0,1fr);gap:9px}.planned-modal-due{grid-column:2;justify-self:start}.planned-modal-hero{padding:19px}.planned-modal-art{width:45px;height:45px;flex-basis:45px}}
+@media(prefers-reduced-motion:reduce){.planned-modal,.planned-modal-item{animation:none!important;transition:none!important;transform:none!important}}
 </style>
 
 <style id="personal-space-final-finish">
@@ -848,6 +877,7 @@ body[data-readiness="ready"] .hero{background:radial-gradient(ellipse at 90% 5%,
 </div>
 <div class="modal-backdrop" id="modalBackdrop" onclick="if(event.target===this)closeModal()"><div class="modal"><div class="modal-head"><h3 id="modalTitle">Edit</h3><button class="small-btn" onclick="closeModal()">✕ Close</button></div><form id="modalForm" onsubmit="saveModal(event)"><div class="form-grid" id="modalFields"></div><div class="modal-actions"><button type="button" class="btn btn-light" onclick="closeModal()">Cancel</button><button type="submit" class="btn btn-blue">Save changes</button></div></form></div></div>
 <div class="report-backdrop" id="reportBackdrop" hidden onclick="if(event.target===this)closeReport()"><section class="report-modal" role="dialog" aria-modal="true" aria-labelledby="reportTitle"><div class="report-modal-head"><div><div class="eyebrow" id="reportEyebrow">PERSONAL SPACE · INSIGHTS</div><h3 id="reportTitle">Study report</h3><p id="reportSubtitle">Your saved progress, all in one place.</p></div><button type="button" class="report-close" onclick="closeReport()" aria-label="Close report">×</button></div><div id="reportBody" class="report-body"></div></section></div>
+<div class="planned-modal-backdrop" id="plannedTestsModal" hidden onclick="if(event.target===this)closePlannedTestsModal()"><section class="planned-modal" role="dialog" aria-modal="true" aria-labelledby="plannedModalTitle"><div class="planned-modal-hero"><div class="planned-modal-hero-row"><div><div class="planned-modal-art" aria-hidden="true">▦</div><h3 id="plannedModalTitle">Planned tests</h3><p>Your upcoming study sessions, dates and countdowns — all together. Choose a test to edit its plan.</p></div><button type="button" class="planned-modal-close" onclick="closePlannedTestsModal()" aria-label="Close planned tests">×</button></div></div><div class="planned-modal-body"><div class="planned-modal-stats" id="plannedModalStats"></div><div id="plannedModalList" class="planned-modal-list"></div><div class="planned-modal-footer"><button type="button" class="btn btn-light" onclick="closePlannedTestsModal();go(\'topic\')">Open full test planner ↗</button><button type="button" class="btn btn-blue" onclick="closePlannedTestsModal();openPlannedTopicModal()">+ Plan a test</button></div></div></section></div>
 <input type="file" id="importFile" accept=".json,application/json" style="display:none" onchange="importData(event)"/>
 <div class="toast" id="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1064,6 +1094,22 @@ function focusNextLitmus(){
  const card=document.querySelector(`[data-item-id="${next.id}"]`);if(card)card.scrollIntoView({behavior:"smooth",block:"center"});
 }
 
+function openPlannedTestsModal(){renderPlannedTestsModal();const back=document.getElementById("plannedTestsModal");if(!back)return;back.hidden=false;document.body.classList.add("report-open");const close=back.querySelector(".planned-modal-close");if(close)close.focus({preventScroll:true});}
+function closePlannedTestsModal(){const back=document.getElementById("plannedTestsModal");if(back)back.hidden=true;document.body.classList.remove("report-open");}
+function renderPlannedTestsModal(){
+ const stats=document.getElementById("plannedModalStats"),list=document.getElementById("plannedModalList");if(!stats||!list)return;
+ const today=todayISO(),all=(state.topics||[]).filter(t=>t.status==="Planned").sort((a,b)=>String(a.plannedDate||"9999-99-99").localeCompare(String(b.plannedDate||"9999-99-99")));
+ const upcoming=all.filter(t=>t.plannedDate&&t.plannedDate>=today).length,overdue=all.filter(t=>t.plannedDate&&t.plannedDate<today).length;
+ stats.innerHTML='<div class="planned-modal-stat"><small>Planned tests</small><strong>'+all.length+'</strong></div><div class="planned-modal-stat"><small>Upcoming</small><strong>'+upcoming+'</strong></div><div class="planned-modal-stat"><small>Past due</small><strong>'+overdue+'</strong></div>';
+ if(!all.length){list.innerHTML='<div class="planned-modal-empty"><div class="empty-art">🗓️</div><h4>Your plan starts here</h4><p>Schedule a chapter test with a date, then it will show up here with its countdown.</p><button type="button" class="btn btn-blue" onclick="closePlannedTestsModal();openPlannedTopicModal()">Plan your first test</button></div>';return;}
+ list.innerHTML=all.map(t=>{
+  const iso=String(t.plannedDate||""),dt=iso?new Date(iso+"T00:00:00"):null,valid=dt&&!Number.isNaN(dt.getTime());
+  const day=valid?dt.toLocaleDateString("en-IN",{day:"2-digit"}):"—",mon=valid?dt.toLocaleDateString("en-IN",{month:"short"}):"No date";
+  const delta=iso?Math.round((new Date(iso+"T00:00:00")-new Date(today+"T00:00:00"))/86400000):null;
+  const due=delta===null?"Date needed":delta<0?Math.abs(delta)+"d overdue":delta===0?"Today":delta===1?"Tomorrow":delta+"d left";
+  return '<button type="button" class="planned-modal-item" onclick="closePlannedTestsModal();go(\\\'topic\\\');editTopic(\\\''+escapeAttr(t.id)+'\\\')"><span class="planned-modal-date"><b>'+day+'</b><small>'+mon+'</small></span><span><h4>'+escapeHTML(t.name||t.chapter+" Topic Test")+'</h4><p>'+escapeHTML(t.subject)+' · '+escapeHTML(t.chapter)+'</p></span><span class="planned-modal-due">'+due+'</span></button>';
+ }).join("");
+}
 function renderDashboardPlannedTests(){
  const countEl=document.getElementById("dashboardPlannedCount"),hintEl=document.getElementById("dashboardPlannedHint");
  const plannedCount=(state.topics||[]).filter(t=>t.status==="Planned").length;
