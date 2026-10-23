@@ -793,7 +793,7 @@ body[data-readiness="ready"] .hero{background:radial-gradient(ellipse at 90% 5%,
     </div>
     <div class="section-head"><div><h3>Your subject progress</h3><p>Physics, Chemistry and Maths — at a glance.</p></div></div>
     <div class="subject-grid" id="subjectCards"></div>
-    <div id="dashboardPlannedTestsPanel"></div>
+    
     <div class="section-head"><div><h3>Your study tools</h3><p>Jump straight into what you need.</p></div></div>
     <div class="launch-grid">
       <button class="launch-card" onclick="go('chapters')"><span class="arrow">↗</span><span class="launch-icon" style="background:#f0ebff;color:#7862c8"><span data-icon="book"></span></span><strong>Chapter tracker</strong><small>Preparation, revisions and chapter tests</small></button>
@@ -825,8 +825,8 @@ body[data-readiness="ready"] .hero{background:radial-gradient(ellipse at 90% 5%,
   </section>
 
   <section class="page" id="page-topic">
-    <div class="section-head"><div><h3>Chapter topic tests</h3><p>One row per chapter is preloaded. Add your own custom tests too.</p></div><button class="btn btn-blue" onclick="openTopicModal()">+ Add custom test</button></div>
-    <div id="plannedTestsPanel"></div><div class="toolbar"><select id="topicFilter" onchange="renderTopics()"><option value="all">All statuses</option><option>Not Started</option><option>Planned</option><option>Attempted</option><option>Needs Retest</option></select><select id="topicSubjectFilter" onchange="renderTopics()"><option>All subjects</option><option>Physics</option><option>Chemistry</option><option>Mathematics</option></select><input class="search" id="topicSearch" placeholder="Search tests or chapters…" oninput="renderTopics()"/></div>
+    <div class="section-head"><div><h3>Chapter topic tests</h3><p>Plan a test, set its date, then record your score after attempting it.</p><button class="small-btn" style="margin-top:8px" onclick="openTopicModal()">+ Add custom test</button></div><button class="btn btn-blue" onclick="openPlannedTopicModal()">+ Plan test</button></div>
+    <div class="toolbar"><select id="topicFilter" onchange="renderTopics()"><option value="all">All statuses</option><option>Not Started</option><option>Planned</option><option>Attempted</option><option>Needs Retest</option></select><select id="topicSubjectFilter" onchange="renderTopics()"><option>All subjects</option><option>Physics</option><option>Chemistry</option><option>Mathematics</option></select><input class="search" id="topicSearch" placeholder="Search tests or chapters…" oninput="renderTopics()"/></div>
     <div class="table-wrap"><table><thead><tr><th>Subject / chapter</th><th>Status</th><th>Planned date</th><th>Last attempt</th><th>Score</th><th></th></tr></thead><tbody id="topicRows"></tbody></table></div>
   </section>
 
@@ -1110,24 +1110,7 @@ function renderPlannedTestsModal(){
   return '<button type="button" class="planned-modal-item" onclick="closePlannedTestsModal();go(\\\'topic\\\');editTopic(\\\''+escapeAttr(t.id)+'\\\')"><span class="planned-modal-date"><b>'+day+'</b><small>'+mon+'</small></span><span><h4>'+escapeHTML(t.name||t.chapter+" Topic Test")+'</h4><p>'+escapeHTML(t.subject)+' · '+escapeHTML(t.chapter)+'</p></span><span class="planned-modal-due">'+due+'</span></button>';
  }).join("");
 }
-function renderDashboardPlannedTests(){
- const countEl=document.getElementById("dashboardPlannedCount"),hintEl=document.getElementById("dashboardPlannedHint");
- const plannedCount=(state.topics||[]).filter(t=>t.status==="Planned").length;
- if(countEl)countEl.textContent=String(plannedCount);
- if(hintEl)hintEl.textContent=plannedCount?plannedCount+" test"+(plannedCount===1?"":"s")+" planned · view dates and scores":"Schedule chapter tests and see what is coming up";
- const holder=document.getElementById("dashboardPlannedTestsPanel");if(!holder)return;
- const today=todayISO();
- const items=(state.topics||[]).filter(t=>(t.status==="Planned"||t.status==="Not Started")&&t.plannedDate&&t.plannedDate>=today).sort((a,b)=>String(a.plannedDate).localeCompare(String(b.plannedDate))).slice(0,3);
- const cards=items.map(t=>{
-  const days=Math.round((new Date(t.plannedDate+"T00:00:00")-new Date(today+"T00:00:00"))/86400000);
-  const when=days===0?"Today":days===1?"Tomorrow":"In "+days+" days";
-  return '<button type="button" class="planned-test-card" onclick="go(\'topic\');editTopic(\''+escapeAttr(t.id)+'\')" style="text-align:left;cursor:pointer"><small>'+escapeHTML(t.subject)+' · '+when+'</small><strong>'+escapeHTML(t.name||t.chapter+" Topic Test")+'</strong><span>'+escapeHTML(t.chapter)+' · '+escapeHTML(formatDateForInput(t.plannedDate))+'</span></button>';
- }).join("");
- holder.innerHTML='<section class="planned-tests-panel"><div class="planned-tests-head"><div><h4>Coming up</h4><p>'+ (items.length?"Your next planned topic tests.":"Your planned tests will appear here after you assign dates in Topic tests.") +'</p></div><button class="small-btn" type="button" onclick="go(\'topic\')">Open planner ↗</button></div>'+(cards?'<div class="planned-test-grid">'+cards+'</div>':'')+'</section>';
-}
-
 function renderDashboard(){
- renderDashboardPlannedTests();
  const ready=state.chapters.filter(c=>c.prep==="Exam Ready").length;
  const pc=pct(ready,state.chapters.length);
  document.body.dataset.readiness=pc>=100?"ready":pc>=60?"strong":pc>=25?"building":"starting";
