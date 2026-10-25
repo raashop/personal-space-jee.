@@ -103,16 +103,34 @@
     document.querySelector("#channel-name a, ytd-channel-name a, #owner #channel-name a")?.textContent || ""
   ).trim();
 
+  function bestChapterMatch(sourceText) {
+    if (!sourceText) return null;
+    const matches = [];
+    for (const item of CHAPTERS) {
+      for (const term of [...new Set([item[1], ...item[2]])]) {
+        const needle = normalizeText(term);
+        if (needle.length >= 4 && sourceText.includes(needle)) {
+          matches.push({ item, score: needle.length });
+        }
+      }
+    }
+    if (!matches.length) return null;
+    matches.sort((a, b) => b.score - a.score);
+    const best = matches[0];
+    const ambiguous = matches.some(candidate =>
+      candidate.score === best.score &&
+      (candidate.item[0] !== best.item[0] || candidate.item[1] !== best.item[1])
+    );
+    return ambiguous ? null : best.item;
+  }
+
   function classify(title, channel) {
-    const rawText = title + " " + channel;
-    const text = normalizeText(rawText);
-    if (EXCLUDE.some(word => text.includes(normalizeText(word)))) return null;
-    const chapter = CHAPTERS.find(item => [item[1], ...item[2]].some(term => text.includes(normalizeText(term))));
-    if (!chapter) return null;
-    const hinted = JEE_HINTS.some(term => text.includes(normalizeText(term)));
-    const academicFormat = /\b(lecture|one shot|revision|pyq|question|questions|numerical|concept|chapter|part\s*\d|session\s*\d|neet|jee)\b/.test(normalizeText(title));
-    // A known chapter phrase is enough to count as a match; title/channel hints are too strict for real lecture titles.
-    return { subject: chapter[0], chapter: chapter[1] };
+    const titleText = normalizeText(title);
+    const channelText = normalizeText(channel);
+    if (EXCLUDE.some(word => titleText.includes(normalizeText(word)))) return null;
+    // Prefer chapter phrases in the title, and select the longest match.
+    const chapter = bestChapterMatch(titleText) || bestChapterMatch(channelText);
+    return chapter ? { subject: chapter[0], chapter: chapter[1] } : null;
   }
 
   function waitForVideo() {
