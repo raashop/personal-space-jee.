@@ -1911,6 +1911,15 @@ td strong {
 #page-telegram .telegram-card-footer a:hover{text-decoration:underline}
 @media(max-width:760px){#page-telegram .telegram-lecture-list{grid-template-columns:1fr}}
 
+
+#chapterAllocationPanel .allocation-chapter{padding:11px 0;border-bottom:1px solid var(--line,#e6e8ee)}
+#chapterAllocationPanel .allocation-chapter:last-child{border-bottom:0}
+#chapterAllocationPanel .allocation-meta{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-top:5px;color:var(--muted,#737887);font-size:12px}
+#chapterAllocationPanel .allocation-bar{height:5px;background:var(--line,#e6e8ee);border-radius:99px;overflow:hidden;margin-top:8px}
+#chapterAllocationPanel .allocation-bar span{display:block;height:100%;border-radius:99px;background:var(--accent,#2784d8)}
+#chapterAllocationPanel .allocation-note{font-size:12px;color:var(--muted,#737887);line-height:1.5;margin-top:10px}
+@media(max-width:980px){.dashboard-main-stack[style*="grid-template-columns"]{grid-template-columns:1fr!important}}
+
 </style>
 <link rel="stylesheet" href="./edge.css?v=20261025-layout3">
 </head>
@@ -1981,11 +1990,18 @@ td strong {
   <div class="subject-grid" id="subjectCards"></div>
 
   <div class="dashboard-main-layout">
-   <div class="dashboard-main-stack">
+   <div class="dashboard-main-stack" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start">
     <section class="panel dashboard-coming-panel">
      <div class="dashboard-panel-head"><div><h2>Coming Up</h2><p>Your next topic tests and LITMUS deadlines.</p></div><span class="planned-count-badge"><strong id="upcomingCount">0</strong><span>up next</span></span></div>
      <div class="planned-next-note" id="plannedMetricHintSecondary">Your upcoming tests will appear here.</div>
      <div class="upcoming-list" id="upcomingList"></div>
+    </section>
+    <section class="panel" id="chapterAllocationPanel">
+     <div class="dashboard-panel-head"><div><h2>Chapter Allocation</h2><p>What to focus on before your next test.</p></div><span class="planned-count-badge">SMART PLAN</span></div>
+     <label for="allocationTestSelect" class="field-label" style="display:block;margin:12px 0 6px">Choose a planned topic test</label>
+     <select id="allocationTestSelect" class="control" style="width:100%" onchange="renderChapterAllocation()"><option value="">No planned topic tests</option></select>
+     <div id="chapterAllocationResults" style="margin-top:14px"><div class="empty">Create a topic test with chapters and a date to get a chapter workload estimate.</div></div>
+     <button type="button" class="small-btn" style="margin-top:12px" onclick="go('topic')">Manage topic tests ↗</button>
     </section>
    </div>
    <aside class="dashboard-side-stack">
@@ -3142,7 +3158,39 @@ function openReadinessStatus(status){
 document.addEventListener("keydown",event=>{
  if(event.key==="Escape")closeReadinessReport();
 });
+function chapterAllocationHours(chapter){
+ const name=String(chapter.chapter||"").toLowerCase();
+ const subject=chapter.subject||"";
+ const heavyTerms=["optics","rotational","electrostatics","magnetic","electromagnetic","calculus","integration","coordinate geometry","organic","hydrocarbon","thermodynamics","equilibrium","kinetics","probability","complex numbers","conic"];
+ const mediumTerms=["current electricity","waves","oscillation","chemical bonding","mole","solutions","sequence","series","matrices","determinant","vectors","3d","kinematics","work energy"];
+ let hours=heavyTerms.some(k=>name.includes(k))?4.5:mediumTerms.some(k=>name.includes(k))?3:2;
+ if(subject==="Mathematics")hours+=0.5;
+ if(chapter.prep==="Not Ready")hours+=1.5;
+ else if(chapter.prep==="Needs Work")hours+=1;
+ else if(chapter.prep==="In Progress")hours+=0.5;
+ else if(chapter.prep==="Exam Ready")hours=Math.max(0.75,hours*0.35);
+ return Math.round(hours*2)/2;
+}
+function renderChapterAllocation(){
+ const select=document.getElementById("allocationTestSelect"),results=document.getElementById("chapterAllocationResults");
+ if(!select||!results)return;
+ const today=new Date();today.setHours(0,0,0,0);
+ const tests=(state.topics||[]).filter(t=>t.status==="Planned"&&t.plannedDate&&t.plannedDate>=today.toISOString().slice(0,10)&&topicChapters(t).length).sort((a,b)=>a.plannedDate.localeCompare(b.plannedDate));
+ const previous=select.value;
+ select.innerHTML=tests.map(t=>'<option value="'+escapeAttr(t.id)+'">'+escapeHTML(topicDisplayName(t)+' · '+formatNiceDate(t.plannedDate))+'</option>').join("")||'<option value="">No planned topic tests</option>';
+ if(tests.some(t=>t.id===previous))select.value=previous;
+ const test=tests.find(t=>t.id===select.value)||tests[0];
+ if(!test){results.innerHTML='<div class="empty">Create a planned topic test with selected chapters and a date. The workload estimate will appear here.</div>';return;}
+ const chapters=topicChapters(test).map(name=>state.chapters.find(c=>c.subject===test.subject&&c.chapter===name)||{subject:test.subject,chapter:name,prep:"Not Ready"}).map(c=>({...c,hours:chapterAllocationHours(c)})).sort((a,b)=>b.hours-a.hours);
+ const date=new Date(test.plannedDate+"T00:00:00");const days=Math.max(1,Math.ceil((date-today)/86400000));const total=chapters.reduce((n,c)=>n+c.hours,0);
+ const daily=Math.round(total/days*10)/10;const testShare=Math.min(80,Math.max(55,Math.round(total/(days*6.5)*100)));
+ const extra=Math.max(0,Math.round(days*6.5-total));
+ results.innerHTML='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px"><div class="mini-stat"><strong>'+days+'</strong><small>days left</small></div><div class="mini-stat"><strong>'+total+'h</strong><small>estimated chapter work</small></div></div>'+
+ chapters.map(c=>'<div class="allocation-chapter"><div style="font-weight:700">'+escapeHTML(chapterDisplayName(c.subject,c.chapter))+'</div><div class="allocation-meta"><span>'+escapeHTML(c.subject)+' · '+escapeHTML(c.prep||"Not Ready")+'</span><strong>'+c.hours+' hours · ~'+Math.max(1,Math.ceil(c.hours/2.5))+' study blocks</strong></div><div class="allocation-bar"><span style="width:'+Math.round(c.hours/Math.max(...chapters.map(x=>x.hours),1)*100)+'%"></span></div></div>').join("")+
+ '<div class="allocation-note"><strong>Balanced recommendation:</strong> aim for about '+daily+' hours per day on these test chapters. Keep roughly 1/3 of your available study time for ongoing JEE syllabus progress, unless the workload is too high. Estimated remaining capacity across '+days+' days: about '+extra+' hours for other syllabus, revision and a buffer. These are rule-based estimates; no AI API is connected yet.</div>';
+}
 function renderDashboard(){
+ renderChapterAllocation();
  if(typeof updateDashboardTaskChapters==="function")updateDashboardTaskChapters();
  const chapters=Array.isArray(state.chapters)?state.chapters:[];
  const ready=chapters.filter(c=>c.prep==="Exam Ready").length;
