@@ -1854,6 +1854,50 @@ td strong {
     transition-duration:.01ms!important
   }
 }
+
+/* Focused layouts for the YouTube and Telegram utility pages */
+#page-lectures,#page-telegram{width:100%;max-width:1120px;margin:0 auto;padding-bottom:28px;min-width:0}
+#page-lectures .page-hero,#page-telegram .page-hero{align-items:center;padding:clamp(16px,2.5vw,24px);background:linear-gradient(120deg,#fff 0%,#f4fbf7 100%);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);margin-bottom:16px}
+#page-lectures .page-hero h2,#page-telegram .page-hero h2{font-size:clamp(22px,2.3vw,28px);line-height:1.15}
+#page-lectures .page-hero p,#page-telegram .page-hero p{max-width:680px;font-size:12px;line-height:1.65}
+#page-lectures .dashboard-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0 0 16px}
+#page-lectures .stat-card{min-width:0;padding:17px 18px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(145deg,#fff,#f8fcf9);box-shadow:0 5px 16px #244f3c07}
+#page-lectures .stat-label{display:block;font-size:10px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+#page-lectures .stat-card strong{display:block;font-size:clamp(23px,2.5vw,31px);line-height:1.1;letter-spacing:-.05em;color:var(--ink);overflow-wrap:anywhere}
+#page-lectures .stat-card small{display:block;margin-top:7px;font-size:10px;line-height:1.5;color:var(--muted)}
+#page-lectures .panel,#page-telegram .panel{padding:clamp(15px,2.4vw,22px);margin-top:14px}
+#page-lectures .panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+#page-lectures .panel-head h3,#page-telegram .panel h3{font-size:15px;margin:0 0 5px}
+#page-lectures .panel-head p{font-size:11px;line-height:1.6;color:var(--muted);margin:0}
+#psLectureSyncStatus{font-size:11px;padding:13px 15px;border-radius:13px;background:#f0f8f3;color:#426e57;border:1px solid #dceee3;overflow-wrap:anywhere}
+#psLectureSyncStatus[data-state="error"]{background:#fff5f3;border-color:#f2d7d2;color:#934d43}
+#page-lectures .empty-state{padding:24px 18px;text-align:center;border:1px dashed #d8e7dd;border-radius:14px;background:#f9fcfa;color:var(--muted);font-size:12px;line-height:1.7}
+#page-lectures .lecture-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#page-lectures .list-row{padding:14px;border:1px solid var(--line);border-radius:14px;background:#fff;min-width:0;overflow-wrap:anywhere}
+#page-lectures .list-row strong{font-size:12px;line-height:1.55}
+#page-lectures .list-row small{font-size:10px;color:var(--muted);line-height:1.6}
+#page-lectures .howto-list,#page-telegram .howto-list{padding-left:22px;margin:12px 0 0;color:var(--muted);font-size:11px;line-height:1.9}
+#page-lectures .howto-list li,#page-telegram .howto-list li{padding-left:3px;margin:4px 0}
+#page-lectures code,#page-telegram code{background:#f0f5f2;padding:2px 5px;border-radius:5px;font-size:.95em;overflow-wrap:anywhere}
+#page-telegram .panel>p{font-size:11px;line-height:1.7}
+#page-telegram #psTelegramForm{max-width:760px}
+#page-telegram #psTelegramForm label{display:grid;gap:7px;font-size:11px;font-weight:750;color:#526b5f;line-height:1.5}
+#page-telegram #psTelegramForm input,#page-telegram #psTelegramForm select{width:100%;max-width:100%;min-height:42px;background:#fff}
+#page-telegram #psTelegramPreview{overflow-wrap:anywhere;font-size:11px;line-height:1.7}
+#page-telegram .telegram-step{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--line)}
+#page-telegram .telegram-step:last-child{border-bottom:0}
+#page-telegram .telegram-step-num{width:27px;height:27px;flex:none;display:grid;place-items:center;border-radius:9px;background:#e6f5ec;color:#237852;font-weight:850;font-size:11px}
+@media(max-width:760px){
+ #page-lectures .dashboard-grid{grid-template-columns:1fr;gap:9px}
+ #page-lectures .stat-card{padding:14px 15px}
+ #page-lectures .lecture-list{grid-template-columns:1fr}
+ #page-lectures .page-hero,#page-telegram .page-hero{align-items:flex-start;flex-direction:column}
+ #page-lectures .panel-head{flex-direction:column}
+ #page-lectures .panel-head>div:last-child{width:100%}
+ #page-lectures .panel-head>div:last-child .btn{flex:1}
+ #page-telegram .modal-actions{flex-wrap:wrap;justify-content:flex-start}
+}
+
 </style>
 <link rel="stylesheet" href="./edge.css?v=20261025-layout3">
 </head>
@@ -2063,12 +2107,10 @@ td strong {
   </div>
   <div class="panel" style="margin-top:16px">
    <h3>How it works</h3>
-   <ol style="line-height:1.9;color:var(--muted);padding-left:22px">
-    <li>In Telegram, open the JEE lecture post and copy its link, or copy the lecture title.</li>
-    <li>Paste the title/link above; choose the subject/chapter if automatic matching misses it.</li>
-    <li>Preview the suggested match and confirm before a chapter status changes.</li>
-    <li>The lecture appears in your planner's imported lecture list.</li>
-   </ol>
+   <div class="telegram-step"><span class="telegram-step-num">1</span><div><strong>Copy the lecture details</strong><div class="helper-note">In Telegram, open the JEE lecture post and copy its message link or exact title.</div></div></div>
+   <div class="telegram-step"><span class="telegram-step-num">2</span><div><strong>Paste and match</strong><div class="helper-note">Fill in the title above. A message link is optional. If the subject or chapter is ambiguous, select them manually.</div></div></div>
+   <div class="telegram-step"><span class="telegram-step-num">3</span><div><strong>Review before saving</strong><div class="helper-note">Choose “Match lecture & preview” and check the suggested chapter before confirming any progress change.</div></div></div>
+   <div class="telegram-step"><span class="telegram-step-num">4</span><div><strong>Import only what you need</strong><div class="helper-note">For a file import, use the sample CSV format or a JSON file with a lectures array. Avoid uploading a full Telegram export containing private messages.</div></div></div>
    <p class="helper-note">Telegram bots cannot see your entire account history. This workflow imports only information you explicitly paste or upload. Never enter your Telegram login code, password, session string, API hash or bot token here.</p>
   </div>
  </section>
@@ -4111,8 +4153,8 @@ function renderYoutubeLectures(){
  if(chapterCount)chapterCount.textContent=chapters.size;
  const list=document.getElementById("psLectureList");
  if(!list)return;
- if(!rows.length){list.className="empty-state";list.textContent="No lecture records yet. Install the extension and import its first export.";return;}
- list.className="";
+ if(!rows.length){list.className="empty-state";list.textContent="No lecture records yet. Connect the extension once above, then play a recognized JEE lecture. Import backup is optional.";return;}
+ list.className="lecture-list";
  list.innerHTML=rows.slice().sort((a,b)=>String(b.lastWatchedAt||"").localeCompare(String(a.lastWatchedAt||""))).map(row=>{
   const title=escapeHTML(row.title||"Untitled lecture");
   const subject=escapeHTML(row.subject||"Unmatched subject");
@@ -4175,6 +4217,7 @@ function setYoutubeSyncStatus(message,isError=false){
  const node=document.getElementById("psLectureSyncStatus");
  if(!node)return;
  node.textContent=message;
+ node.dataset.state=isError?"error":"ok";
  node.style.borderColor=isError?"#e8b9b9":"";
 }
 let youtubeSyncReceived=false;
