@@ -1877,7 +1877,7 @@ function openModal(title,fields,context){
 }
 function closeModal(){document.getElementById("modalBackdrop").classList.remove("show");document.body.classList.remove("modal-open");modalContext=null}
 function valuesFromForm(){const form=document.getElementById("modalForm"),result=Object.fromEntries(new FormData(form).entries());if(form.querySelector("[data-chapter-picker]"))result.chapters=Array.from(form.querySelectorAll('input[name="chapters"]:checked')).map(el=>el.value);return result}
-function saveModal(e){e.preventDefault();const v=valuesFromForm();if(["topic","newtopic"].includes(modalContext.type)){const eligible=new Set(state.chapters.filter(c=>c.subject===v.subject).map(c=>c.chapter));const picked=Array.isArray(v.chapters)?v.chapters:[v.chapter].filter(Boolean);v.chapters=[...new Set(picked.filter(ch=>eligible.has(ch)))];if(!v.chapters.length){toast("Select at least one topic for this test.");document.querySelector("#modalFields [data-chapter-picker]")?.scrollIntoView({behavior:"smooth",block:"center"});return;}v.chapter=v.chapters[0];}if(["topic","newtopic","quicktopic"].includes(modalContext.type)){const max=Number(v.outOf||100),marks=v.marks===""?null:Number(v.marks);if(!Number.isFinite(max)||max<1||max>100||(marks!==null&&(!Number.isFinite(marks)||marks<0||marks>max))){toast("Topic tests are scored out of 100; marks must fit within the maximum.");document.querySelector('#modalFields [name="marks"]')?.focus();return;}v.outOf=String(max);}if(modalContext.type==="topic"||modalContext.type==="newtopic"){const parsed=parseFlexibleDate(v.plannedDate);if(parsed===null){toast("Enter planned date as DD/MM/YYYY, e.g. 21/11/2026.");document.querySelector("#modalFields [name=plannedDate]")?.focus();return;}v.plannedDate=parsed;}if(modalContext.type==="chapter"){const c=state.chapters.find(x=>x.subject===modalContext.subject&&x.chapter===modalContext.chapter);Object.assign(c,{prep:v.prep,r1:v.r1==="true",r2:v.r2==="true",r3:v.r3==="true",notes:v.notes==="true",pyq:v.pyq==="true"});}
+function saveModal(e){e.preventDefault();const v=valuesFromForm();if(["topic","newtopic"].includes(modalContext.type)){const eligible=new Set(state.chapters.filter(c=>c.subject===v.subject).map(c=>c.chapter));const picked=Array.isArray(v.chapters)?v.chapters:[v.chapter].filter(Boolean);v.chapters=[...new Set(picked.filter(ch=>eligible.has(ch)))];if(!v.chapters.length){toast("Select at least one topic for this test.");document.querySelector("#modalFields [data-chapter-picker]")?.scrollIntoView({behavior:"smooth",block:"center"});return;}v.chapter=v.chapters[0];const nameInput=document.querySelector("#modalFields [name=name]");if(nameInput&&nameInput.dataset.autoName==="true")v.name=generatedTopicTestName(v.subject,v.chapters);}if(["topic","newtopic","quicktopic"].includes(modalContext.type)){const max=Number(v.outOf||100),marks=v.marks===""?null:Number(v.marks);if(!Number.isFinite(max)||max<1||max>100||(marks!==null&&(!Number.isFinite(marks)||marks<0||marks>max))){toast("Topic tests are scored out of 100; marks must fit within the maximum.");document.querySelector('#modalFields [name="marks"]')?.focus();return;}v.outOf=String(max);}if(modalContext.type==="topic"||modalContext.type==="newtopic"){const parsed=parseFlexibleDate(v.plannedDate);if(parsed===null){toast("Enter planned date as DD/MM/YYYY, e.g. 21/11/2026.");document.querySelector("#modalFields [name=plannedDate]")?.focus();return;}v.plannedDate=parsed;}if(modalContext.type==="chapter"){const c=state.chapters.find(x=>x.subject===modalContext.subject&&x.chapter===modalContext.chapter);Object.assign(c,{prep:v.prep,r1:v.r1==="true",r2:v.r2==="true",r3:v.r3==="true",notes:v.notes==="true",pyq:v.pyq==="true"});}
 if(modalContext.type==="topic"){const t=state.topics.find(x=>x.id===modalContext.id);if(t){const previous={subject:t.subject,chapters:topicChapters(t)};Object.assign(t,{name:v.name,subject:v.subject,chapter:v.chapter,chapters:v.chapters,status:v.status,plannedDate:v.plannedDate,actualDate:v.actualDate,marks:v.marks,outOf:v.outOf,difficulty:v.difficulty,notes:v.notes});syncTopicToChapter(t,previous);}}
 if(modalContext.type==="quicktopic"){const t=state.topics.find(x=>x.id===modalContext.id);Object.assign(t,{marks:v.marks,outOf:v.outOf,status:"Attempted",actualDate:todayISO()});syncTopicToChapter(t);}
 if(modalContext.type==="litmus"){const t=state.litmus.find(x=>x.id===modalContext.id);Object.assign(t,{name:v.name,deadline:v.deadline,syllabus:v.syllabus,status:v.status,actualDate:v.actualDate,marks:v.marks,outOf:v.outOf,notes:v.notes});}
@@ -1893,6 +1893,20 @@ if(modalContext.type==="pyq"||modalContext.type==="editpyq"){
 closeModal();saveState();toast("Saved. Your dashboard is updated.");}
 function topicChapters(t){const chapters=Array.isArray(t&&t.chapters)&&t.chapters.length?t.chapters:[t&&t.chapter].filter(Boolean);return [...new Set(chapters.filter(Boolean))]}
 function topicChapterLabel(t){return topicChapters(t).map(ch=>chapterDisplayName(t.subject,ch)).join(", ")}
+function generatedTopicTestName(subject,chapters){
+ const labels=[...new Set((chapters||[]).filter(Boolean))].map(ch=>chapterDisplayName(subject,ch));
+ return labels.length?"Topic Test — "+labels.join(" + "):"Topic Test";
+}
+function syncTopicTestNameFromPicker(force=false){
+ const nameInput=document.querySelector('#modalFields [name="name"]');
+ const subjectInput=document.querySelector('#modalFields select[name="subject"]');
+ const picker=document.querySelector("#modalFields [data-chapter-picker]");
+ if(!nameInput||!subjectInput||!picker)return;
+ if(nameInput.dataset.autoName!=="true"&&!force)return;
+ const chosen=Array.from(picker.querySelectorAll('input[name="chapters"]:checked')).map(el=>el.value);
+ nameInput.value=generatedTopicTestName(subjectInput.value,chosen);
+ nameInput.dataset.autoName="true";
+}
 function syncTopicToChapter(t,previous){
  const targets=[];
  const addTargets=(subject,list)=>{(list||[]).forEach(chapter=>{const key=subject+"::"+chapter;if(!targets.some(x=>x.key===key))targets.push({key,subject,chapter});});};
@@ -1925,8 +1939,10 @@ function renderTopicChapterPicker(subject,selected){
 function topicForm(t,creating){
  const chosen=Array.isArray(t.chapters)&&t.chapters.length?t.chapters:[t.chapter].filter(Boolean);
  const chapterOptions=state.chapters.filter(c=>c.subject===t.subject).map(c=>({value:c.chapter,label:chapterDisplayName(c.subject,c.chapter)}));
- openModal(creating?"Add custom topic test":"Edit topic test",[
-  {name:"name",label:"Test name",value:topicDisplayName(t),required:true},
+ const currentName=topicDisplayName(t);
+ const autoName=creating||!t.name||t.name==="Planned topic test"||t.name==="My custom test"||t.name==="Topic Test"||t.name===((t.chapter||"")+" Topic Test")||t.name===currentName;
+ openModal(creating?"Plan topic test":"Edit topic test",[
+  {name:"name",label:"Test name",value:autoName?generatedTopicTestName(t.subject,chosen):currentName,required:true},
   {name:"subject",label:"Subject",type:"select",value:t.subject,options:["Physics","Chemistry","Mathematics"].map(x=>({value:x,label:x}))},
   {name:"chapters",label:"Topics included",type:"multiCheckbox",value:chosen,options:chapterOptions,full:true},
   {name:"status",label:"Status",type:"select",value:t.status,options:["Not Started","Planned","Attempted","Needs Retest"].map(x=>({value:x,label:x}))},
@@ -1938,7 +1954,17 @@ function topicForm(t,creating){
   {name:"notes",label:"Notes",type:"textarea",value:t.notes,full:true}
  ],creating?{type:"newtopic"}:{type:"topic",id:t.id});
  const subject=document.querySelector('#modalFields select[name="subject"]');
- if(subject)subject.addEventListener("change",()=>renderTopicChapterPicker(subject.value,[]));
+ const nameInput=document.querySelector('#modalFields [name="name"]');
+ const picker=document.querySelector("#modalFields [data-chapter-picker]");
+ if(nameInput){
+  nameInput.dataset.autoName=String(autoName);
+  nameInput.addEventListener("input",()=>{nameInput.dataset.autoName="false";});
+ }
+ if(picker)picker.addEventListener("change",()=>syncTopicTestNameFromPicker());
+ if(subject)subject.addEventListener("change",()=>{
+  renderTopicChapterPicker(subject.value,[]);
+  syncTopicTestNameFromPicker(true);
+ });
 }
 function openTopicModal(){topicForm({name:"My custom test",subject:"Physics",chapter:state.chapters[0].chapter,status:"Not Started",plannedDate:"",actualDate:"",marks:"",outOf:"100",difficulty:"",notes:""},true)}
 function openPlannedTopicModal(){topicForm({name:"Planned topic test",subject:"Physics",chapter:state.chapters[0].chapter,status:"Planned",plannedDate:formatDateForInput(defaultPlanDate()),actualDate:"",marks:"",outOf:"100",difficulty:"",notes:""},true)}
