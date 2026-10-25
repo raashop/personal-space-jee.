@@ -1,5 +1,7 @@
 const STORE = "psJeeLectureRecordsV1";
 const STATUS_KEY = "psJeeLectureTrackerStatusV1";
+const TELEGRAM_STATUS_KEY = "psJeeTelegramTrackerStatusV1";
+const TELEGRAM_STORE = "psJeeTelegramLectureRecordsV1";
 const PLANNER_CONFIG_KEY = "psJeePlannerConfigV1";
 const LAST_SYNC_KEY = "psJeePlannerLastSyncV1";
 const SCRIPT_ID = "ps-jee-planner-auto-sync-v1";
@@ -10,6 +12,10 @@ const statusPanel = document.getElementById("trackerStatus");
 const statusMessage = document.getElementById("statusMessage");
 const statusTitle = document.getElementById("statusTitle");
 const statusUpdated = document.getElementById("statusUpdated");
+const telegramStatusPanel = document.getElementById("telegramTrackerStatus");
+const telegramStatusMessage = document.getElementById("telegramStatusMessage");
+const telegramStatusTitle = document.getElementById("telegramStatusTitle");
+const telegramStatusUpdated = document.getElementById("telegramStatusUpdated");
 const plannerUrlInput = document.getElementById("plannerUrl");
 const connectButton = document.getElementById("connectPlanner");
 const disconnectButton = document.getElementById("disconnectPlanner");
@@ -119,9 +125,17 @@ async function disconnectPlanner() {
   }
 }
 async function refresh() {
-  const data = await chrome.storage.local.get([STORE, STATUS_KEY, PLANNER_CONFIG_KEY, LAST_SYNC_KEY]);
+  const data = await chrome.storage.local.get([STORE, STATUS_KEY, TELEGRAM_STATUS_KEY, TELEGRAM_STORE, PLANNER_CONFIG_KEY, LAST_SYNC_KEY]);
   const rows = Array.isArray(data[STORE]) ? data[STORE] : [];
   const status = data[STATUS_KEY];
+  const telegramStatus = data[TELEGRAM_STATUS_KEY];
+  const telegramRows = Array.isArray(data[TELEGRAM_STORE]) ? data[TELEGRAM_STORE] : [];
+  if (telegramStatusPanel) {
+    telegramStatusPanel.className = "tracker-status " + (telegramStatus?.type === "tracking" ? "type-tracking" : telegramStatus?.type === "error" ? "type-error" : telegramStatus?.type === "unmatched" ? "type-unmatched" : "type-waiting");
+    telegramStatusMessage.textContent = telegramStatus?.message || "Open Telegram Web in this browser and play a lecture video to test detection.";
+    telegramStatusTitle.textContent = telegramStatus?.title ? "Video/post: " + telegramStatus.title : "";
+    telegramStatusUpdated.textContent = telegramStatus?.updatedAt ? "Telegram Web · " + new Date(telegramStatus.updatedAt).toLocaleTimeString() + " · " + telegramRows.length + " records" : "";
+  }
   count.textContent = rows.length;
   document.getElementById("time").textContent = rows.length
     ? "Stored on this browser · " + fmt(rows.reduce((sum, row) => sum + (row.watchedSeconds || 0), 0)) + " total"
