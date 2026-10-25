@@ -143,95 +143,183 @@
     return chapter ? { subject: chapter[0], chapter: chapter[1] } : null;
   }
 
-  function waitForVideo() {
-    const id = videoId();
-    const video = document.querySelector("video");
-    if (!video || !id) {
-      reportStatus("waiting", "Tracker is ready. Open a YouTube video page to begin tracking.", videoTitle());
-      setTimeout(waitForVideo, 1800);
-      return;
-    }
+  let activeSession = null;
+  let playerObserver = null;
+  let routeTimer = null;
 
-    let activeVideo = video;
-    let activeId = id;
-    let lastUrl = location.href;
-    let lastTime = activeVideo.currentTime || 0;
-    let busy = false;
-    reportStatus("checking", "YouTube player found. Checking the title against JEE chapter names…", videoTitle(), null, activeId);
-
-    // One lightweight polling loop per tab. Never change the page, player styles,
-    // playback state, or reload YouTube. Rebind the reference on SPA navigation.
-    const trackerTimer = setInterval(async () => {
-      const currentUrl = location.href;
-      if (currentUrl !== lastUrl) {
-        lastUrl = currentUrl;
-        activeId = videoId();
-        activeVideo = document.querySelector("video");
-        lastTime = activeVideo?.currentTime || 0;
-        if (!activeId || !activeVideo) {
-          reportStatus("waiting", "Waiting for YouTube's next video player…", videoTitle(), null, activeId || "");
-          return;
-        }
-        reportStatus("checking", "YouTube player found. Checking the title against JEE chapter names…", videoTitle(), null, activeId);
-      }
-      if (busy || !activeVideo || !activeId || !activeVideo.isConnected) return;
-      busy = true;
+  function flushSession(session) {
+    if (!session || !session.match || session.pendingSeconds < 0.25 || session.saving) return;
+    session.saving = true;
+    const secondsToSave = session.pendingSeconds;
+    session.pendingSeconds = 0;
+    (async () => {
       try {
-        const title = videoTitle();
-        const channel = channelName();
-        const match = classify(title, channel);
-        const now = activeVideo.currentTime || 0;
-        const delta = Math.max(0, Math.min(6, now - lastTime));
-        lastTime = now;
-
-        if (!match) {
-          reportStatus("unmatched", "Player found, but the title/channel did not match a known JEE chapter phrase. This tracker uses titles, not transcripts.", title, null, activeId);
-          return;
-        }
-        if (activeVideo.paused || activeVideo.ended) {
-          reportStatus("matched-paused", "Recognized " + match.subject + " · " + match.chapter + ". Press Play to record watch time.", title, match, activeId);
-          return;
-        }
-        if (delta <= 0) {
-          reportStatus("matched-waiting", "Recognized " + match.subject + " · " + match.chapter + ". Waiting for playback time to advance…", title, match, activeId);
-          return;
-        }
-
         const stored = await chrome.storage.local.get(STORE);
         const rows = Array.isArray(stored[STORE]) ? stored[STORE] : [];
-        const existing = rows.find(row => row.videoId === activeId);
-        const record = existing || {
-          videoId: activeId,
-          url: "https://www.youtube.com/watch?v=" + activeId,
-          title,
-          channel,
-          subject: match.subject,
-          chapter: match.chapter,
-          watchedSeconds: 0,
-          durationSeconds: Math.round(activeVideo.duration || 0),
-          firstWatchedAt: new Date().toISOString(),
+        const existing = rows.find(row => row.videoId === session.id);
+        const duration = Math.round(session.video.duration || existing?.durationSeconds || 0);
+        const record = {
+          ...(existing || {}),
+          videoId: session.id,
+          url: "https://www.youtube.com/watch?v=" + session.id,
+          title: session.title,
+          channel: session.channel,
+          subject: session.match.subject,
+          chapter: session.match.chapter,
+          watchedSeconds: Math.min(duration || Infinity, (Number(existing?.watchedSeconds) || 0) + secondsToSave),
+          durationSeconds: duration,
+          firstWatchedAt: existing?.firstWatchedAt || new Date().toISOString(),
           lastWatchedAt: new Date().toISOString(),
           classification: "title-match"
         };
-        record.title = title;
-        record.channel = channel;
-        record.subject = match.subject;
-        record.chapter = match.chapter;
-        record.durationSeconds = Math.round(activeVideo.duration || record.durationSeconds || 0);
-        record.watchedSeconds = Math.min(record.durationSeconds || Infinity, (record.watchedSeconds || 0) + delta);
-        record.lastWatchedAt = new Date().toISOString();
-        const updated = [record, ...rows.filter(row => row.videoId !== activeId)].slice(0, 500);
+        const updated = [record, ...rows.filter(row => row.videoId !== session.id)].slice(0, 500);
         await chrome.storage.local.set({ [STORE]: updated });
-        reportStatus("tracking", "Tracking watch time for " + match.subject + " · " + match.chapter + ".", title, match, activeId);
+        reportStatus("tracking", "Tracking watch time for " + session.match.subject + " · " + session.match.chapter + ".", session.title, session.match, session.id);
       } catch (error) {
-        reportStatus("error", "Tracker error: " + String(error?.message || error), videoTitle(), null, activeId);
+        reportStatus("error", "Tracker error: " + String(error?.message || error), session.title, null, session.id);
       } finally {
-        busy = false;
+        session.saving = false;
+        // Playback might have continued during the write; save the remainder later.
       }
-    }, 5000);
-    window.addEventListener("pagehide", () => clearInterval(trackerTimer), { once: true });
+    })();
   }
 
-  reportStatus("loaded", "Tracker script loaded on a YouTube page. Looking for the video player…", videoTitle());
-  waitForVideo();
+  function detachActiveSession() {
+    const session = activeSession;
+    if (!session) return;
+    flushSession(session);
+    session.video.removeEventListener("timeupdate", session.onTimeUpdate);
+    session.video.removeEventListener("seeking", session.onSeeking);
+    session.video.removeEventListener("play", session.onPlay);
+    session.video.removeEventListener("pause", session.onPause);
+    session.video.removeEventListener("ended", session.onPause);
+    activeSession = null;
+  }
+
+  function watchForPlayer() {
+    if (playerObserver) playerObserver.disconnect();
+    if (!videoId() || document.querySelector("video")) {
+      bindCurrentVideo();
+      return;
+    }
+    playerObserver = new MutationObserver(() => {
+      if (videoId() && document.querySelector("video")) {
+        playerObserver?.disconnect();
+        playerObserver = null;
+        bindCurrentVideo();
+      }
+    });
+    if (document.documentElement) {
+      playerObserver.observe(document.documentElement, { childList: true, subtree: true });
+    }
+  }
+
+  function bindCurrentVideo() {
+    const id = videoId();
+    const video = document.querySelector("video");
+
+    if (!id) {
+      if (activeSession) detachActiveSession();
+      if (playerObserver) {
+        playerObserver.disconnect();
+        playerObserver = null;
+      }
+      reportStatus("waiting", "Tracker is ready. Open a YouTube video to begin tracking.", videoTitle());
+      return;
+    }
+
+    if (!video) {
+      if (activeSession) detachActiveSession();
+      reportStatus("waiting", "Waiting for YouTube's video player…", videoTitle(), null, id);
+      watchForPlayer();
+      return;
+    }
+
+    if (activeSession?.id === id && activeSession.video === video) return;
+
+    detachActiveSession();
+    if (playerObserver) {
+      playerObserver.disconnect();
+      playerObserver = null;
+    }
+
+    const title = videoTitle();
+    const channel = channelName();
+    const match = classify(title, channel);
+    const session = {
+      id, video, title, channel, match,
+      lastTime: video.currentTime || 0,
+      pendingSeconds: 0,
+      saving: false,
+      seeking: false,
+      onTimeUpdate: null,
+      onSeeking: null,
+      onPlay: null,
+      onPause: null
+    };
+    activeSession = session;
+
+    if (!match) {
+      reportStatus("unmatched", "Video detected, but its title/channel did not match a known JEE chapter. Nothing is recorded for this video.", title, null, id);
+      return;
+    }
+
+    reportStatus(
+      video.paused ? "matched-paused" : "matched-waiting",
+      "Recognized " + match.subject + " · " + match.chapter + (video.paused ? ". Press Play to record watch time." : ". Watching playback time."),
+      title, match, id
+    );
+
+    session.onSeeking = () => {
+      session.seeking = true;
+      session.lastTime = video.currentTime || 0;
+    };
+    session.onTimeUpdate = () => {
+      const now = video.currentTime || 0;
+      const delta = now - session.lastTime;
+      session.lastTime = now;
+      if (session.seeking) {
+        session.seeking = false;
+        return;
+      }
+      // Count advancing playback only. Ignore seeks, jumps and backward scrubbing.
+      if (!video.paused && !video.ended && delta > 0 && delta <= 3.5) {
+        session.pendingSeconds += delta;
+        if (session.pendingSeconds >= 5) flushSession(session);
+      }
+    };
+    session.onPlay = () => {
+      session.lastTime = video.currentTime || 0;
+      reportStatus("matched-waiting", "Recognized " + match.subject + " · " + match.chapter + ". Recording while the video plays.", title, match, id);
+    };
+    session.onPause = () => {
+      session.lastTime = video.currentTime || 0;
+      flushSession(session);
+      reportStatus("matched-paused", "Recognized " + match.subject + " · " + match.chapter + ". Playback paused.", title, match, id);
+    };
+
+    video.addEventListener("timeupdate", session.onTimeUpdate, { passive: true });
+    video.addEventListener("seeking", session.onSeeking, { passive: true });
+    video.addEventListener("play", session.onPlay, { passive: true });
+    video.addEventListener("pause", session.onPause, { passive: true });
+    video.addEventListener("ended", session.onPause, { passive: true });
+  }
+
+  function scheduleRebind() {
+    if (routeTimer) clearTimeout(routeTimer);
+    routeTimer = setTimeout(() => {
+      routeTimer = null;
+      bindCurrentVideo();
+    }, 350);
+  }
+
+  // YouTube's SPA navigation events let us switch videos without reloading
+  // the page or continuously polling/mutating the player.
+  document.addEventListener("yt-navigate-finish", scheduleRebind);
+  document.addEventListener("yt-page-data-updated", scheduleRebind);
+  window.addEventListener("popstate", scheduleRebind);
+  window.addEventListener("pageshow", scheduleRebind);
+
+  reportStatus("loaded", "Lecture Tracker ready. Waiting for a YouTube video.", videoTitle());
+  bindCurrentVideo();
 })();
