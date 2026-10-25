@@ -1304,18 +1304,20 @@ function migrateState(saved){
 
  const topics=oldTopics.map(t=>{
   const names=Array.isArray(t.chapters)&&t.chapters.length?t.chapters:[t.chapter].filter(Boolean);
-  const mappedNames=[];
+  const mappedNames=[];let wasRemapped=false;
   names.forEach(name=>{
    if(defaultKeys.has(plannerChapterKey({subject:t.subject,chapter:name}))){mappedNames.push(name);return;}
    const targets=legacyChapterTargets(t.subject,name);
-   if(targets&&targets.length){targets.forEach(target=>{if(defaultKeys.has(plannerChapterKey({subject:t.subject,chapter:target})))mappedNames.push(target);});}
+   if(targets&&targets.length){wasRemapped=true;targets.forEach(target=>{if(defaultKeys.has(plannerChapterKey({subject:t.subject,chapter:target})))mappedNames.push(target);});}
    else mappedNames.push(name);
   });
   const unique=[...new Set(mappedNames)];
   if(!unique.length)return t;
   const oldChapter=t.chapter,oldDefaultName=t.custom!==true&&String(t.name||"")===oldChapter+" Topic Test";
+  const isUntouchedDefault=wasRemapped&&oldDefaultName&&t.status==="Not Started"&&!t.plannedDate&&!t.actualDate&&(t.marks===""||t.marks===null||t.marks===undefined)&&!t.notes&&!t.difficulty;
+  if(isUntouchedDefault)return null;
   return {...t,chapter:unique[0],chapters:unique,name:oldDefaultName&&unique.length===1?unique[0]+" Topic Test":t.name};
- });
+ }).filter(Boolean);
  const topicIds=new Set(topics.map(t=>String(t&&t.id||"")));
  defaults.chapters.forEach(ch=>{
   const hasDefault=topics.some(t=>t&&t.subject===ch.subject&&topicChapters(t).includes(ch.chapter)&&String(t.name||"")===ch.chapter+" Topic Test"&&t.custom!==true);
@@ -1327,8 +1329,7 @@ function migrateState(saved){
   topics.push({...template,id,subject:ch.subject,chapter:ch.chapter,chapters:[ch.chapter],name:ch.chapter+" Topic Test",source:"Chapter topic test",status:"Not Started",plannedDate:"",actualDate:"",marks:"",outOf:"100",difficulty:"",notes:"",custom:false});
  });
  const normalizedTopics=topics.map(t=>{
-  const oldMax=Number(t.outOf)||100,oldMarks=Number(t.marks);
-  let marks=t.marks;
+  const oldMax=Number(t.outOf)||100,oldMarks=Number(t.marks);let marks=t.marks;
   if(oldMax>100&&t.marks!==""&&t.marks!==null&&t.marks!==undefined&&Number.isFinite(oldMarks))marks=String(Math.round(oldMarks/oldMax*100*10)/10);
   return {...t,marks,outOf:String(oldMax>100?100:(t.outOf||100))};
  });
@@ -1346,12 +1347,10 @@ function migrateState(saved){
  const litmus=defaults.litmus.map(def=>{const old=savedLitmus.find(t=>t&&t.id===def.id);return old?{...def,...old,syllabus:def.syllabus}:def;});
  savedLitmus.filter(t=>t&&!defaultLitmusIds.has(t.id)).forEach(t=>litmus.push(t));
  const pyqs=(Array.isArray(saved.pyqs)?saved.pyqs:[]).map(p=>{
-  const names=Array.isArray(p.chapters)&&p.chapters.length?p.chapters:[p.chapter].filter(Boolean);
-  let target;
+  const names=Array.isArray(p.chapters)&&p.chapters.length?p.chapters:[p.chapter].filter(Boolean);let target;
   for(const name of names){
    if(defaultKeys.has(plannerChapterKey({subject:p.subject,chapter:name}))){target=name;break;}
-   const options=legacyChapterTargets(p.subject,name)||[];
-   target=options.find(ch=>defaultKeys.has(plannerChapterKey({subject:p.subject,chapter:ch})));
+   const options=legacyChapterTargets(p.subject,name)||[];target=options.find(ch=>defaultKeys.has(plannerChapterKey({subject:p.subject,chapter:ch})));
    if(target)break;
   }
   return target?{...p,chapter:target}:p;
