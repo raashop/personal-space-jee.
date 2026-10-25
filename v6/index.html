@@ -1884,35 +1884,55 @@ td strong {
   <div class="top-actions"><div class="today-chip" id="todayText">Today</div><button class="icon-button" title="Backup and settings" onclick="openSettings()" aria-label="Backup and settings">⚙</button></div>
  </header>
  <section class="page active" id="page-dashboard">
-  <div class="hero">
-   <div class="hero-main">
-    <div class="hero-eyebrow">JEE MAIN · SESSION 2027</div>
-    <h2>A little progress, every day.</h2>
-    <p>Your syllabus, test practice and revisions—together in one calm space. Pick up from where you left off.</p>
-    <div class="hero-actions"><button class="btn btn-primary" onclick="go('chapters')">Continue chapters <span>↗</span></button><button class="btn btn-secondary" onclick="go('topic')">Plan a test <span>＋</span></button></div>
-   </div>
-   <div class="hero-side"><div class="hero-progress-wrap"><div class="progress-ring" id="overallRing" role="img" aria-label="Overall syllabus progress"><svg viewBox="0 0 132 132" aria-hidden="true"><circle class="ring-track" cx="66" cy="66" r="58"/><circle class="ring-value" id="ringArc" cx="66" cy="66" r="58"/></svg><span class="ring-center"><strong id="overallPct">0%</strong><span>done</span></span></div><div class="hero-mini"><div class="countdown-stat"><span class="countdown-label">JEE MAIN · SESSION 1</span><strong id="daysLeft">—</strong><span class="countdown-unit">days to go</span><span class="countdown-date" id="countdownDateLabel">Target · 20 Jan 2027</span><button class="countdown-edit" type="button" onclick="setCountdownTarget()">Set my exam date ↗</button></div><div class="hero-chapters-stat"><strong id="doneHero">0</strong><span>chapters done</span></div></div></div></div>
-  </div>
-  <div class="metric-grid">
-   <div class="metric"><div class="metric-head"><div class="metric-icon" style="background:var(--green-soft);color:var(--green)">✓</div><label>CHAPTERS DONE</label></div><strong id="readyMetric">0 / 54</strong><small>Marked done in your tracker</small></div>
+  <div class="metric-grid dashboard-kpis">
+   <article class="metric dashboard-countdown-card"><div class="metric-head"><div class="metric-icon" style="background:var(--green-soft);color:var(--green)">◷</div><label>JEE MAIN COUNTDOWN</label></div><strong id="daysLeft">—</strong><small id="countdownDateLabel">Target · 20 Jan 2027</small><button class="countdown-edit" type="button" onclick="setCountdownTarget()">Set exam date ↗</button></article>
+   <article class="metric"><div class="metric-head"><div class="metric-icon" style="background:var(--green-soft);color:var(--green)">✓</div><label>CHAPTERS DONE</label></div><strong id="readyMetric">0 / 54</strong><small>Marked done in your tracker</small></article>
    <button class="metric metric-click" onclick="openAttemptReport()"><div class="metric-head"><div class="metric-icon" style="background:var(--blue-soft);color:var(--blue)">↗</div><label>TEST ATTEMPTS</label></div><strong id="testMetric">0</strong><small id="testMetricHint">Topic tests and LITMUS · view scores</small></button>
    <button class="metric metric-click" onclick="go('chapters');document.getElementById('chapterStatus').value='Needs Work';renderChapters()"><div class="metric-head"><div class="metric-icon" style="background:var(--orange-soft);color:var(--orange)">↻</div><label>NEEDS WORK</label></div><strong id="needsWorkMetric">0</strong><small>Chapters to revisit</small></button>
-   <button class="metric metric-click" onclick="go('topic');document.getElementById('topicFilter').value='Planned';renderTopics()"><div class="metric-head"><div class="metric-icon" style="background:var(--violet-soft);color:var(--violet)">▦</div><label>PLANNED TESTS</label></div><strong id="plannedMetricCount">0</strong><small id="plannedMetricHint">Add dates to your plan</small></button>
   </div>
-  <div class="section-head"><div><h2>Subject progress</h2><p>One clear view of Physics, Chemistry and Mathematics.</p></div></div>
-  <div class="subject-grid" id="subjectCards"></div>
+
+  <div class="dashboard-primary-grid">
+   <section class="panel dashboard-progress-panel">
+    <div class="dashboard-panel-head"><div><h2>Overall syllabus progress</h2><p>One clear view of your JEE preparation.</p></div><button class="btn btn-secondary" onclick="go('chapters')">Chapter planner ↗</button></div>
+    <div class="dashboard-progress-content">
+     <div class="dashboard-overall-ring">
+      <div class="progress-ring" id="overallRing" role="img" aria-label="Overall syllabus progress"><svg viewBox="0 0 132 132" aria-hidden="true"><circle class="ring-track" cx="66" cy="66" r="58"/><circle class="ring-value" id="ringArc" cx="66" cy="66" r="58"/></svg><span class="ring-center"><strong id="overallPct">0%</strong><span>complete</span></span></div>
+      <div class="dashboard-done-label"><strong id="doneHero">0</strong><span>chapters done</span></div>
+     </div>
+     <div class="dashboard-subject-column"><div class="dashboard-mini-label">SUBJECT BREAKDOWN</div><div class="subject-grid" id="subjectCards"></div></div>
+    </div>
+   </section>
+
+   <section class="panel dashboard-plan-panel">
+    <div class="dashboard-panel-head"><div><h2>Today's plan</h2><p>Small, realistic tasks beat an overwhelming list.</p></div><button class="btn btn-quiet" onclick="go('daily')">Daily journal ↗</button></div>
+    <div class="dashboard-plan-meta" id="dashboardPlanMeta">Build a small, realistic plan for today.</div>
+    <div class="dashboard-task-preview" id="dashboardTodayPlan"><div class="dashboard-plan-empty"><strong>Your day is still open.</strong><span>Add one clear task to get started.</span></div></div>
+    <div class="dashboard-plan-footer"><button class="btn btn-secondary" onclick="go('daily');openDailyTaskModal()">＋ Add a task</button><button class="small-btn" onclick="go('daily')">View all tasks ↗</button></div>
+   </section>
+  </div>
+
+  <section class="panel dashboard-quick-panel">
+   <div class="dashboard-panel-head"><div><h2>Quick actions</h2><p>Pick up the next useful step without searching through pages.</p></div></div>
+   <div class="dashboard-quick-grid">
+    <button class="dashboard-quick-action" onclick="go('daily')"><span class="dashboard-quick-icon quick-green">◷</span><span><strong>Start focus timer</strong><small>Open a focused study block</small></span><span class="quick-arrow">↗</span></button>
+    <button class="dashboard-quick-action" onclick="go('daily');openStudySessionModal()"><span class="dashboard-quick-icon quick-blue">＋</span><span><strong>Log study session</strong><small>Record what you studied</small></span><span class="quick-arrow">↗</span></button>
+    <button class="dashboard-quick-action" onclick="go('topic');openPlannedTopicModal()"><span class="dashboard-quick-icon quick-violet">▦</span><span><strong>Plan a topic test</strong><small>Use chapter-aware tests</small></span><span class="quick-arrow">↗</span></button>
+    <button class="dashboard-quick-action" onclick="go('pyq');openPyqModal()"><span class="dashboard-quick-icon quick-orange">✎</span><span><strong>Practice PYQs</strong><small>Log a previous-year set</small></span><span class="quick-arrow">↗</span></button>
+   </div>
+  </section>
+
   <div class="dashboard-bottom">
-   <section class="panel"><h3>Coming up</h3><div class="panel-sub">Your next planned chapter tests and the nearest LITMUS deadline.</div><div class="upcoming-list" id="upcomingList"></div></section>
-   <section class="panel focus-panel"><span class="focus-chip">YOUR NEXT FOCUS</span><h3 id="focusTitle">Start with one chapter.</h3><p id="focusBody">Choose a chapter you want to move forward today. A small, specific goal is easier to begin.</p><div class="focus-stats"><div class="focus-stat"><strong id="focusNeeds">0</strong><small>need work</small></div><div class="focus-stat"><strong id="focusActive">0</strong><small>in progress</small></div></div><button class="btn btn-primary" onclick="go('chapters')">Open chapter tracker ↗</button></section>
+   <section class="panel"><div class="dashboard-panel-head"><div><h2>Coming up</h2><p class="panel-sub">Your next topic tests and LITMUS deadlines.</p></div><div class="planned-count-badge"><strong id="plannedMetricCount">0</strong><span>planned tests</span></div></div><div class="planned-next-note" id="plannedMetricHint">Add dates to your plan</div><div class="upcoming-list" id="upcomingList"></div></section>
+   <section class="panel focus-panel"><span class="focus-chip">YOUR NEXT FOCUS</span><h3 id="focusTitle">Start with one chapter.</h3><p id="focusBody">Choose a small concept to move forward today.</p><div class="focus-stats"><div class="focus-stat"><strong id="focusNeeds">0</strong><small>need work</small></div><div class="focus-stat"><strong id="focusActive">0</strong><small>in progress</small></div></div><button class="btn btn-primary" onclick="go('chapters')">Open chapter tracker ↗</button></section>
   </div>
-  
-  <section class="pulse-panel" id="dailyPulse">
+
+  <details class="dashboard-more-details"><summary>Daily recap and data backup</summary>
+   <section class="pulse-panel" id="dailyPulse">
     <div><div class="pulse-top"><div><h3>Yesterday, in review</h3><p id="pulseYesterdayMeta">Look back on your last study day.</p></div><span class="badge blue">DAILY RECAP</span></div><div class="pulse-number" id="pulseYesterdayTitle">Yesterday is ready to review</div><button class="pulse-link" onclick="openYesterday()">Open yesterday's log ↗</button></div>
     <div><div class="pulse-top"><div><h3>Today, so far</h3><p id="pulseTodayMeta">Your tasks and actual study time.</p></div><span class="badge green">TODAY</span></div><div class="pulse-number" id="pulseTodayTitle">Set your first task</div><div id="dailyPulseTasks"></div><button class="pulse-link" onclick="go('daily')">Open daily plan ↗</button></div>
-  </section>
-  
-  <div class="section-head"><div><h2>Progress backup</h2><p>Your records belong to you. Keep a copy outside this browser too.</p></div></div>
-  <section class="panel"><div class="settings-row"><div style="flex:1;min-width:190px"><h3>Local data backup</h3><div class="panel-sub" style="margin-bottom:0">Export chapter status, topic tests, LITMUS results and PYQ sessions as JSON.</div></div><button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">Restore backup</button><button class="btn btn-primary" onclick="exportData()">Download backup ↓</button></div></section>
+   </section>
+   <section class="panel dashboard-backup-panel"><div class="settings-row"><div style="flex:1;min-width:190px"><h3>Local data backup</h3><div class="panel-sub" style="margin-bottom:0">Export chapter status, topic tests, LITMUS results and PYQ sessions as JSON.</div></div><button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">Restore backup</button><button class="btn btn-primary" onclick="exportData()">Download backup ↓</button></div></section>
+  </details>
  </section>
  <section class="page" id="page-chapters">
   <div class="page-hero"><div><h2>Chapter tracker</h2><p>Work through your syllabus with preparation states, revision checkpoints and test results. Each subject has its own focused view.</p></div><button class="btn btn-secondary" onclick="resetChapterFilters()">Reset filters ↺</button></div>
@@ -2724,6 +2744,21 @@ return s==="Physics"?"#eaf3fb":s==="Chemistry"?"#e5f5ed":"#f0edfb";
 function chapterSymbol(s){
 return s==="Physics"?"ϟ":s==="Chemistry"?"⚗":"∑";
 }
+function renderDashboardPlanPreview(){
+ const list=document.getElementById("dashboardTodayPlan");
+ if(!list)return;
+ const date=typeof todayISO==="function"?todayISO():new Date().toISOString().slice(0,10);
+ const tasks=(Array.isArray(state.dailyTasks)?state.dailyTasks:[]).filter(t=>String(t.date||date)===date).sort((a,b)=>Number(Boolean(a.done))-Number(Boolean(b.done)));
+ const done=tasks.filter(t=>t.done).length;
+ const meta=document.getElementById("dashboardPlanMeta");
+ if(meta)meta.textContent=tasks.length?done+" of "+tasks.length+" tasks complete":"Build a small, realistic plan for today.";
+ list.innerHTML=tasks.slice(0,4).map(t=>{
+ const taskId=escapeAttr(t.id||"");
+ const subject=String(t.subject||"General")+(t.chapter?" · "+chapterDisplayName(t.subject,t.chapter):"");
+ return '<article class="dashboard-task-row '+(t.done?"is-done":"")+'"><button type="button" class="dashboard-task-toggle '+(t.done?"checked":"")+'" aria-label="'+(t.done?"Mark task incomplete":"Mark task complete")+'" onclick="toggleDailyTask(\\'"+taskId+"\\')">'+(t.done?"✓":"")+'</button><div class="dashboard-task-copy"><strong>'+escapeHTML(t.title||"Untitled task")+'</strong><small>'+escapeHTML(subject)+(t.estimate?" · "+Number(t.estimate)+" min":"")+'</small></div><span class="dashboard-task-state">'+(t.done?"Done":"To do")+'</span></article>';
+ }).join("")||'<div class="dashboard-plan-empty"><strong>Your day is still open.</strong><span>Add one clear task and give yourself a next step.</span></div>';
+ if(tasks.length>4)list.insertAdjacentHTML("beforeend",'<button type="button" class="dashboard-plan-more" onclick="go(\\'daily\\')">+'+(tasks.length-4)+' more tasks · Open daily journal ↗</button>');
+}
 function renderDashboard(){
  const chapters=state.chapters||[],ready=chapters.filter(c=>c.prep==="Exam Ready").length,total=chapters.length,work=chapters.filter(c=>c.prep==="Needs Work").length,active=chapters.filter(c=>c.prep==="In Progress").length;
  const pc=pct(ready,total),circ=2*Math.PI*58;
@@ -2778,6 +2813,7 @@ document.getElementById("focusTitle").textContent=focus?chapterDisplayName(focus
 document.getElementById("focusBody").textContent=focus?"A good next step: "+focus.subject+" · "+focus.class+". Update the status and checkpoints once you've studied, then practise its topic test.":"Your tracker is fully marked done. Keep the habit by reviewing scores and maintaining revision." ;
 document.getElementById("focusNeeds").textContent=work;
 document.getElementById("focusActive").textContent=active;
+renderDashboardPlanPreview();
 }
 function setChapterSubject(subject){
 if(!BASE.subjects[subject])return;
