@@ -25,7 +25,7 @@
   const dayMinutes = date => sum(sessionsFor(date));
   const isStudyDay = date => dayMinutes(date)>0 || tasksFor(date).some(t=>t.done);
   const subjectNames = ["Physics","Chemistry","Mathematics"];
-  let timerInterval=null,timerEnd=0,timerInitial=0,timerStarted=0,timerChosen=25,timerRunning=false;
+  let timerInterval=null,timerEnd=0,timerInitial=0,timerStarted=0,timerChosen=25,timerRunning=false,activeMistakeTab="all";
 
   const dailyMarkup = `
   <section class="page" id="page-daily">
@@ -112,6 +112,18 @@
     if(!selected.value)selected.value=todayISO();
     const date=selected.value,items=sessionsFor(date).sort((a,b)=>String(b.createdAt||"").localeCompare(String(a.createdAt||""))),tasks=tasksFor(date),done=tasks.filter(t=>t.done).length,minutes=sum(items);
     const target=Number(state.studyGoals.dailyMinutes)||180,review=dateReview(date);
+    const journalStudyTime=byId("journalStudyTime");
+    if(journalStudyTime)journalStudyTime.textContent=(minutes/60).toFixed(minutes%60===0?0:1)+"h";
+    const journalTaskCount=byId("journalTaskCount");
+    if(journalTaskCount)journalTaskCount.textContent=done+" / "+tasks.length;
+    const journalSessionCount=byId("journalSessionCount");
+    if(journalSessionCount)journalSessionCount.textContent=items.length+" session"+(items.length===1?"":"s");
+    const journalTargetLabel=byId("journalTargetLabel");
+    if(journalTargetLabel)journalTargetLabel.textContent=minutes+" / "+target+" min";
+    const journalTargetFill=byId("journalTargetFill");
+    if(journalTargetFill)journalTargetFill.style.width=Math.min(100,Math.round(minutes/target*100))+"%";
+    const journalFocusQuality=byId("journalFocusQuality");
+    if(journalFocusQuality)journalFocusQuality.textContent=review.focus?"Focus "+review.focus+"/5":"Focus not rated";
     byId("dailyStats").innerHTML=[
       ["Study time",Math.floor(minutes/60)?Math.floor(minutes/60)+"h "+minutes%60+"m":minutes+" min",Math.min(100,Math.round(minutes/target*100))+"% of daily target"],
       ["Focus sessions",items.length,"Recorded study blocks"],
@@ -237,10 +249,29 @@
   };
 
   function mistakeDue(m){return m.status!=="Mastered"&&m.reviewDate&&m.reviewDate<=todayISO();}
-  function renderMistakeCard(m){
+  function renderMistakeRow(m){
     const due=mistakeDue(m);
-    return '<article class="mistake-card '+(due?'mistake-overdue':'')+'"><div class="mistake-card-head"><span class="mistake-type">'+escapeHTML(m.errorType||"Concept gap")+'</span><span class="badge '+(m.status==="Mastered"?"green":due?"orange":"blue")+'">'+escapeHTML(m.status||"Needs Review")+'</span></div><h3>'+escapeHTML(m.title||"Untitled mistake")+'</h3><div class="mistake-meta">'+escapeHTML(m.subject||"General")+(m.chapter?' · '+escapeHTML(chapterDisplayName(m.subject,m.chapter)):'')+' · Logged '+escapeHTML(niceDay(m.date||todayISO()))+'</div>'+(m.prompt?'<div class="mistake-detail"><small>QUESTION / CONTEXT</small><p>'+escapeHTML(m.prompt)+'</p></div>':'')+(m.reason?'<div class="mistake-detail"><small>WHY I MISSED IT</small><p>'+escapeHTML(m.reason)+'</p></div>':'')+(m.takeaway?'<div class="mistake-takeaway"><small>CORRECT TAKEAWAY</small><p>'+escapeHTML(m.takeaway)+'</p></div>':'')+'<div class="mistake-card-footer"><span class="mistake-next-review">'+(m.status==="Mastered"?"Mastered ✓":due?"Review now · "+niceDay(m.reviewDate):"Next review · "+niceDay(m.reviewDate||addDays(todayISO(),1)))+'</span><div class="actions-cell"><select class="control mistake-status-control" aria-label="Mistake status" onchange="quickMistakeStatus(\''+escapeAttr(m.id)+'\',this.value)">'+["Needs Review","Reviewing","Mastered"].map(x=>'<option '+(m.status===x?'selected':'')+'>'+x+'</option>').join("")+'</select><button class="small-btn" onclick="openMistakeModal(\''+escapeAttr(m.id)+'\')">Edit</button><button class="small-btn" onclick="deleteMistake(\''+escapeAttr(m.id)+'\')">Delete</button></div></div></article>';
+    const chapter=m.chapter?chapterDisplayName(m.subject,m.chapter):"";
+    const note=String(m.takeaway||m.reason||m.prompt||"No review note yet.");
+    const status=m.status||"Needs Review";
+    const statusOptions=["Needs Review","Reviewing","Mastered"].map(x=>'<option '+(status===x?'selected':'')+'>'+x+'</option>').join("");
+    return '<tr class="mistake-table-row '+(due?'is-due':'')+'">'+
+      '<td class="mistake-title-cell"><strong>'+escapeHTML(m.title||"Untitled mistake")+'</strong><small>'+escapeHTML(m.subject||"General")+(chapter?' · '+escapeHTML(chapter):'')+'</small></td>'+
+      '<td><span class="mistake-type-pill type-'+escapeHTML(String(m.errorType||"Concept gap").toLowerCase().replace(/[^a-z]+/g,"-"))+'">'+escapeHTML(m.errorType||"Concept gap")+'</span></td>'+
+      '<td class="mistake-notes-cell">'+escapeHTML(note.length>110?note.slice(0,107)+"…":note)+'</td>'+
+      '<td class="mistake-review-date">'+(status==="Mastered"?"—":escapeHTML(niceDay(m.reviewDate||addDays(todayISO(),1))))+(due?'<small>Due now</small>':'')+'</td>'+
+      '<td><select class="mistake-status-chip '+(status==="Mastered"?"mastered":status==="Reviewing"?"reviewing":"to-review")+'" aria-label="Mistake review status" onchange="quickMistakeStatus(\''+escapeAttr(m.id)+'\',this.value)">'+statusOptions+'</select></td>'+
+      '<td><div class="mistake-row-actions"><button class="mistake-edit-btn" type="button" onclick="openMistakeModal(\''+escapeAttr(m.id)+'\')">Edit</button><button class="mistake-delete-btn" type="button" onclick="deleteMistake(\''+escapeAttr(m.id)+'\')">×</button></div></td>'+
+    '</tr>';
   }
+  window.setMistakeTab=function(tab){
+    activeMistakeTab=["all","review","mastered","chapter"].includes(tab)?tab:"all";
+    document.querySelectorAll("[data-mistake-tab]").forEach(button=>button.classList.toggle("active",button.dataset.mistakeTab===activeMistakeTab));
+    const status=byId("mistakeStatusFilter");
+    if(status)status.value="all";
+    renderMistakes();
+  };
+
   window.openMistakeModal=function(id){
     const old=id?state.studyMistakes.find(m=>m.id===id):null,sub=old&&old.subject||currentChapterSubject,chapterOpts=state.chapters.filter(c=>c.subject===sub);
     openModal(old?"Edit mistake":"Log a mistake for review",[
@@ -270,14 +301,32 @@
   };
   window.deleteMistake=function(id){if(!confirm("Delete this mistake entry?"))return;state.studyMistakes=state.studyMistakes.filter(x=>x.id!==id);saveState();renderMistakes();toast("Mistake removed.");};
   window.renderMistakes=function(){
-    ensure();const all=state.studyMistakes||[],f=byId("mistakeStatusFilter").value,sub=byId("mistakeSubjectFilter").value,q=byId("mistakeSearch").value.toLowerCase().trim(),today=todayISO();
+    ensure();
+    const all=state.studyMistakes||[];
+    const f=byId("mistakeStatusFilter").value;
+    const sub=byId("mistakeSubjectFilter").value;
+    const type=byId("mistakeTypeFilter")?byId("mistakeTypeFilter").value:"all";
+    const q=byId("mistakeSearch").value.toLowerCase().trim();
     const due=all.filter(m=>mistakeDue(m)).sort((a,b)=>String(a.reviewDate).localeCompare(String(b.reviewDate)));
     byId("mistakeStats").innerHTML=[["Mistakes logged",all.length],["Due for review",due.length],["Being reviewed",all.filter(m=>m.status==="Reviewing").length],["Mastered",all.filter(m=>m.status==="Mastered").length]].map((x,i)=>'<div class="daily-stat"><small>'+x[0]+'</small><strong>'+x[1]+'</strong><div class="daily-stat-foot"><span>'+(i===0?"Every error becomes useful data":i===1?"Date arrived or passed":i===2?"Keep practising recall":"Cleared from the queue")+'</span></div></div>').join("");
+    if(byId("mistakeAllCount"))byId("mistakeAllCount").textContent=all.length;
+    if(byId("mistakeReviewCount"))byId("mistakeReviewCount").textContent=all.filter(m=>m.status!=="Mastered").length;
+    if(byId("mistakeMasteredCount"))byId("mistakeMasteredCount").textContent=all.filter(m=>m.status==="Mastered").length;
     byId("mistakeDueBadge").textContent=due.length+" due";
     byId("mistakeDueList").innerHTML=due.slice(0,5).map(m=>'<div class="due-mistake-row"><div><strong>'+escapeHTML(m.title)+'</strong><small>'+escapeHTML(m.subject||"General")+(m.chapter?' · '+escapeHTML(chapterDisplayName(m.subject,m.chapter)):'')+' · '+niceDay(m.reviewDate)+'</small></div><button class="btn btn-quiet" onclick="quickMistakeStatus(\''+escapeAttr(m.id)+'\',\'Reviewing\')">Review now ↗</button></div>').join("")||'<div class="empty">Nothing is due right now. Log a mistake after your next test, then revisit it on its scheduled date.</div>';
-    const items=all.filter(m=>(f==="all"||m.status===f)&&(sub==="all"||m.subject===sub)&&(String(m.title)+" "+String(m.prompt)+" "+String(m.reason)+" "+String(m.takeaway)+" "+String(m.subject)+" "+String(m.chapter)).toLowerCase().includes(q)).sort((a,b)=>String(a.reviewDate||"9999").localeCompare(String(b.reviewDate||"9999")));
-    byId("mistakeList").innerHTML=items.map(renderMistakeCard).join("")||'<div class="empty"><strong>Your mistake bank is empty.</strong>After a topic test or PYQ set, record the question, why you missed it, and the one idea you want to remember.</div>';
+    let items=all.filter(m=>{
+      const matchesStatus=f==="all"||m.status===f;
+      const matchesTab=activeMistakeTab==="all"||(activeMistakeTab==="review"&&m.status!=="Mastered")||(activeMistakeTab==="mastered"&&m.status==="Mastered")||activeMistakeTab==="chapter";
+      const matchesSubject=sub==="all"||m.subject===sub;
+      const matchesType=type==="all"||m.errorType===type;
+      const haystack=(String(m.title)+" "+String(m.prompt)+" "+String(m.reason)+" "+String(m.takeaway)+" "+String(m.subject)+" "+String(m.chapter)).toLowerCase();
+      return matchesStatus&&matchesTab&&matchesSubject&&matchesType&&haystack.includes(q);
+    });
+    if(activeMistakeTab==="chapter")items.sort((a,b)=>(String(a.subject)+" "+String(a.chapter)).localeCompare(String(b.subject)+" "+String(b.chapter)));
+    else items.sort((a,b)=>String(a.reviewDate||"9999").localeCompare(String(b.reviewDate||"9999")));
+    byId("mistakeList").innerHTML=items.map(renderMistakeRow).join("")||'<tr><td colspan="6"><div class="empty">No mistakes match these filters. Add a mistake after your next test or PYQ session.</div></td></tr>';
   };
+
   window.renderRevisionQueue=function(){
     const holder=byId("revisionQueue");if(!holder)return;
     const mistakes=(state.studyMistakes||[]).filter(m=>mistakeDue(m)).slice(0,3).map(m=>({title:m.title,sub:"Mistake review · "+(m.subject||"General"),subject:m.subject,chapter:m.chapter,id:m.id,kind:"mistake"}));
