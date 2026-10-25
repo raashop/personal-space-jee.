@@ -188,8 +188,12 @@
         }
         const signature=context.msgId+"|"+context.title+"|"+match.chapter;
         if(signature!==lastContext){lastContext=signature;const key=context.msgId||context.url+"|"+context.title;let hash=2166136261;for(let i=0;i<key.length;i++)hash=Math.imul(hash^key.charCodeAt(i),16777619);recordId="tgweb-"+(hash>>>0).toString(36);}
-        if(video.paused||video.ended||delta<=0){
-          report("matched-paused","Recognized "+match.subject+" · "+match.chapter+". Press Play; recorded time increases while the video plays.",{title:context.title,subject:match.subject,chapter:match.chapter,videoId:recordId});
+        if(video.paused||video.ended){
+          report("matched-paused","Recognized "+match.subject+" · "+match.chapter+". Video is paused; press Play to record watch time.",{title:context.title,subject:match.subject,chapter:match.chapter,videoId:recordId});
+          return;
+        }
+        if(delta<=0){
+          report("playing-waiting","Recognized "+match.subject+" · "+match.chapter+". Video is playing; waiting for playback time to advance.",{title:context.title,subject:match.subject,chapter:match.chapter,videoId:recordId});
           return;
         }
         const data=await chrome.storage.local.get(STORE);
@@ -201,7 +205,8 @@
         report("tracking","Tracking Telegram playback · "+match.subject+" · "+match.chapter+".",{title:context.title,subject:match.subject,chapter:match.chapter,videoId:recordId,watchedSeconds:row.watchedSeconds});
       }catch(error){report("error","Telegram tracker error: "+String(error?.message||error));}
     };
-    video.addEventListener("play",()=>{lastTime=video.currentTime||0;report("playing","Telegram video is playing. Checking lecture title and chapter.");});
+    video.addEventListener("play",()=>{lastTime=video.currentTime||0;report("playing","Telegram video is playing. Checking lecture title and chapter.");tick();});
+    video.addEventListener("timeupdate",tick);
     video.addEventListener("pause",tick);
     const timer=setInterval(()=>{if(!video.isConnected){clearInterval(timer);return;}tick();},3000);
     tick();
