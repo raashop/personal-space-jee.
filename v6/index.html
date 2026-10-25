@@ -329,7 +329,6 @@ function saveState(){
  try{localStorage.setItem(KEY,JSON.stringify(state));document.getElementById("syncStatus").textContent=cloudReady?"Cloud sync enabled":"Saved on this device";document.getElementById("syncDetail").textContent=cloudReady?"Changes sync automatically.":"Your progress autosaves as you work.";}catch(e){toast("Could not save locally. Export a backup to avoid losing changes.");}
  renderDashboard();if(currentPage==="chapters")renderChapters();else if(currentPage==="topic")renderTopics();else if(currentPage==="litmus")renderLitmus();else if(currentPage==="pyq")renderPyq();if(cloudReady&&!cloudApplying)queueCloudSave();
 }
-function todayISO(){return new Date().toLocaleDateString("en-CA");}
 function escapeHTML(x){return String(x??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));}
 function escapeAttr(x){return String(x??"").replace(/\\/g,"\\\\").replace(/'/g,"\\'");}
 function pct(a,b){return b?Math.round(a/b*100):0;}
