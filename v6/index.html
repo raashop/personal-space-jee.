@@ -4110,10 +4110,13 @@ return;
 }
  if(ctx.type==="chapter"){
 const c=state.chapters.find(x=>x.subject===ctx.subject&&x.chapter===ctx.chapter);
-if(c)Object.assign(c,{
-prep:v.prep,statusTouched:true,prepUpdatedAt:new Date().toISOString(),r1:v.r1==="true",r2:v.r2==="true",r3:v.r3==="true",notes:v.notes==="true",pyq:v.pyq==="true",difficulty:v.difficulty||"",latestDate:v.latestDate||"",marks:v.marks??"",outOf:v.outOf??""
+if(c){
+const preparationChanged=c.prep!==v.prep;
+Object.assign(c,{
+prep:v.prep,statusTouched:true,r1:v.r1==="true",r2:v.r2==="true",r3:v.r3==="true",notes:v.notes==="true",pyq:v.pyq==="true",difficulty:v.difficulty||"",latestDate:v.latestDate||"",marks:v.marks??"",outOf:v.outOf??""
+});
+if(preparationChanged)c.prepUpdatedAt=new Date().toISOString();
 }
-);
 }
  if(ctx.type==="topic"){
 const t=state.topics.find(x=>x.id===ctx.id);
