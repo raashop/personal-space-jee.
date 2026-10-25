@@ -52,3 +52,4 @@ jobs:
         run: |
           supabase functions deploy chapter-allocation --project-ref "$SUPABASE_PROJECT_REF"
           supabase functions deploy course-progress --project-ref "$SUPABASE_PROJECT_REF"
+          supabase functions deploy telegram-course-analysis --project-ref "$SUPABASE_PROJECT_REF"
