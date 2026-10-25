@@ -2100,9 +2100,20 @@ td strong {
 <input type="file" id="psLectureImportFile" accept=".json,application/json" hidden onchange="importYoutubeLectures(event)">
 <section class="page" id="page-telegram">
   <div class="page-hero"><div><h2>Telegram lecture import</h2><p>Bring in only the JEE lecture posts you choose. Your private chats are not scanned.</p></div><button type="button" class="btn btn-primary" onclick="document.getElementById('psTelegramFile').click()">Import JSON / CSV ↑</button></div>
-  <div class="panel">
-   <h3>Quick import</h3>
-   <p class="helper-note">Paste the Telegram post link and its lecture title below. We'll match it to the JEE syllabus and let you confirm before changing chapter progress.</p>
+  <div class="panel" style="border:1px solid #cfe8d9;background:linear-gradient(135deg,#f8fcf9,#fff)">
+   <h3>Automatic tracking in Telegram Web</h3>
+   <p class="helper-note">The Personal Space extension can detect a playable video in Telegram Web, record its playback time, and sync a matched lecture here. It works in Brave on the Telegram website, not inside the Telegram Android app.</p>
+   <ol class="howto-list">
+    <li>Update the Personal Space extension to version 1.3.0 or newer by loading the latest <code>youtube-tracker</code> folder.</li>
+    <li>Open <code>https://web.telegram.org/</code> in this same Brave profile and open the channel/post containing the lecture video.</li>
+    <li>Play the video for 30–60 seconds. The extension's <strong>Telegram Web status</strong> should show whether it recognized the nearby caption/title.</li>
+    <li>Keep this planner open. A recognized lecture with recorded watch time should appear below automatically. If the post caption doesn't name a chapter, use the manual form as a fallback.</li>
+   </ol>
+   <p class="helper-note">The extension inspects the visible post text around the video only; it does not read private chats in the background or send your Telegram login/session data. Chapter matching is title/caption-based, so some posts may need manual matching.</p>
+  </div>
+  <div class="panel" style="margin-top:16px">
+   <h3>Manual import fallback</h3>
+   <p class="helper-note">If automatic detection cannot read a caption or match a chapter, paste the Telegram post link and lecture title below. We'll match it to the JEE syllabus and let you confirm before changing chapter progress.</p>
    <form id="psTelegramForm" style="display:grid;gap:12px;margin-top:14px">
     <label>Telegram message link (optional)<input id="psTelegramUrl" class="control" type="url" placeholder="https://t.me/channel/123"></label>
     <label>Lecture title<input id="psTelegramTitle" class="control" type="text" placeholder="e.g. Chemical Kinetics One Shot for JEE Main" required></label>
