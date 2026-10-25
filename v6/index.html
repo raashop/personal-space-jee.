@@ -1893,9 +1893,9 @@ td strong {
      <strong id="daysLeft">—</strong>
      <div class="countdown-labels">
       <div class="days-caption">DAYS LEFT</div>
-      <button type="button" class="countdown-target" onclick="changeCountdownTarget()" title="Choose the countdown target date" aria-expanded="false" aria-controls="countdownDateEditor"><span id="countdownDateLabel">20 JAN 2027</span><span class="edit-date-icon" aria-hidden="true">✎</span></button>
+      <button type="button" class="countdown-target" onclick="changeCountdownTarget()" title="Choose the countdown target date" aria-expanded="false" aria-controls="countdownDateEditor"><span id="countdownDateLabel">30 JAN 2027</span><span class="edit-date-icon" aria-hidden="true">✎</span></button>
       <small class="countdown-context">Personal countdown · editable</small>
-      <div class="countdown-date-editor" id="countdownDateEditor" hidden><label for="countdownTargetInput">Countdown target date</label><div class="countdown-editor-row"><input id="countdownTargetInput" type="date" value="2027-01-20" aria-label="Countdown target date"><button class="small-btn" type="button" onclick="saveCountdownTarget()">Save date</button></div><small>Your selected date is saved in this browser.</small></div>
+      <div class="countdown-date-editor" id="countdownDateEditor" hidden><label for="countdownTargetInput">Countdown target date</label><div class="countdown-editor-row"><input id="countdownTargetInput" type="date" value="2027-01-30" aria-label="Countdown target date"><button class="small-btn" type="button" onclick="saveCountdownTarget()">Save date</button></div><small>Your selected date is saved in this browser.</small></div>
      </div>
     </div>
     <div class="hero-actions"><button class="btn primary" onclick="go('chapters')">Open Chapter Planner <span aria-hidden="true">→</span></button><button class="btn ghost" onclick="go('topic')">Topic Tests</button></div>
@@ -2003,6 +2003,7 @@ td strong {
    <button type="button" class="topic-tab" data-topic-tab="attempted" onclick="setTopicTab('attempted')">Attempted</button>
    <button type="button" class="topic-tab" data-topic-tab="analysis" onclick="setTopicTab('analysis')">Analysis</button>
   </div>
+  <div class="topic-analysis-summary" id="topicAnalysisSummary" hidden></div>
   <div class="topic-summary-line" id="topicSummary"></div>
   <div class="table-card topic-table-card"><div class="table-scroll"><table class="topic-table"><thead><tr><th>Test Name</th><th>Chapters / Topics</th><th>Date</th><th>Score</th><th>Actions</th></tr></thead><tbody id="topicRows"></tbody></table></div></div>
  </section>
@@ -2772,10 +2773,10 @@ day:"numeric",month:"short",year:"numeric"
 function getCountdownTarget(){
 try{
 const saved=localStorage.getItem("jee-countdown-target");
-return !saved||saved==="2027-01-30"?"2027-01-20":saved
+return saved&&/^\d{4}-\d{2}-\d{2}$/.test(saved)?saved:"2027-01-30";
 }
 catch(e){
-return "2027-01-20"
+return "2027-01-30";
 }
 }
 function setCountdownTarget(){
@@ -3126,7 +3127,7 @@ function setTopicSubjectFilter(subject){
 function setTopicTab(tab){
  const filter=document.getElementById("topicFilter"),sort=document.getElementById("topicSort");
  if(filter)filter.value=tab==="all"?"all":tab==="planned"?"Planned":"Attempted";
- if(sort&&tab==="analysis")sort.value="score";
+ if(sort)sort.value=tab==="analysis"?"score":"date";
  document.querySelectorAll("[data-topic-tab]").forEach(button=>button.classList.toggle("active",button.dataset.topicTab===tab));
  renderTopics();
 }
@@ -3134,6 +3135,12 @@ function renderTopics(){
  const filterNode=document.getElementById("topicFilter"),subjectNode=document.getElementById("topicSubjectFilter"),searchNode=document.getElementById("topicSearch"),sortNode=document.getElementById("topicSort");
  const f=filterNode?filterNode.value:"all",sub=subjectNode?subjectNode.value:"all",q=searchNode?searchNode.value.toLowerCase().trim():"",sort=sortNode?sortNode.value:"date";
  document.querySelectorAll("[data-topic-subject]").forEach(button=>button.classList.toggle("active",button.dataset.topicSubject===sub));
+ document.querySelectorAll("[data-topic-tab]").forEach(button=>{
+  const tab=button.dataset.topicTab;
+  const active=(tab==="all"&&f==="all")||(tab==="planned"&&f==="Planned")||(tab==="attempted"&&f==="Attempted"&&sort!=="score")||(tab==="analysis"&&f==="Attempted"&&sort==="score");
+  button.classList.toggle("active",active);
+ });
+
  let items=state.topics.filter(t=>(f==="all"||t.status===f)&&(sub==="all"||t.subject===sub)&&(topicDisplayName(t)+" "+topicChapterLabel(t)+" "+t.subject).toLowerCase().includes(q));
  if(sort==="score")items.sort((a,b)=>{
   const scoreA=a.marks!==""&&Number(a.outOf)>0?Number(a.marks)/Number(a.outOf):-1;
@@ -3142,6 +3149,16 @@ function renderTopics(){
  });
  else if(sort==="chapter")items.sort((a,b)=>String(topicChapterLabel(a)).localeCompare(String(topicChapterLabel(b))));
  else items.sort((a,b)=>String(a.plannedDate||a.actualDate||"9999").localeCompare(String(b.plannedDate||b.actualDate||"9999")));
+ const analysisNode=document.getElementById("topicAnalysisSummary");
+ const attemptedItems=items.filter(t=>t.status==="Attempted");
+ const scoredItems=attemptedItems.filter(t=>t.marks!==""&&t.marks!==null&&t.marks!==undefined&&Number(t.outOf)>0).map(t=>({...t,percent:Number(t.marks)/Number(t.outOf)*100}));
+ const average=scoredItems.length?Math.round(scoredItems.reduce((sum,t)=>sum+t.percent,0)/scoredItems.length):0;
+ const topScore=scoredItems.slice().sort((a,b)=>b.percent-a.percent)[0];
+ const analysisVisible=f==="Attempted"&&sort==="score";
+ if(analysisNode){
+  analysisNode.hidden=!analysisVisible;
+  analysisNode.innerHTML=analysisVisible?'<div class="topic-analysis-card"><small>ATTEMPTS</small><strong>'+attemptedItems.length+'</strong><span>Filtered topic tests</span></div><div class="topic-analysis-card"><small>AVERAGE SCORE</small><strong>'+(scoredItems.length?average+"%":"—")+'</strong><span>'+(scoredItems.length?"Across "+scoredItems.length+" scored attempts":"Enter marks to calculate")+'</span></div><div class="topic-analysis-card"><small>BEST SCORE</small><strong>'+(topScore?Math.round(topScore.percent)+"%":"—")+'</strong><span>'+(topScore?escapeHTML(topicDisplayName(topScore)):"No scored tests yet")+'</span></div>':"";
+ }
  document.getElementById("topicSummary").textContent=items.length+" tests · changes save automatically";
  const statusChoices=["Not Started","Planned","Attempted","Needs Retest"];
  document.getElementById("topicRows").innerHTML=items.map(t=>{
