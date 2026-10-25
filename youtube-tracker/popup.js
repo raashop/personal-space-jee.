@@ -136,21 +136,27 @@ async function refresh() {
     telegramStatusTitle.textContent = telegramStatus?.title ? "Video/post: " + telegramStatus.title : "";
     telegramStatusUpdated.textContent = telegramStatus?.updatedAt ? "Telegram Web · " + new Date(telegramStatus.updatedAt).toLocaleTimeString() + " · " + telegramRows.length + " records" : "";
   }
-  count.textContent = rows.length;
-  document.getElementById("time").textContent = rows.length
-    ? "Stored on this browser · " + fmt(rows.reduce((sum, row) => sum + (row.watchedSeconds || 0), 0)) + " total"
+  // YouTube and Telegram store records separately; show their combined total.
+  const allRows = [
+    ...rows.map(row => ({ ...row, trackerSource: "YouTube" })),
+    ...telegramRows.map(row => ({ ...row, trackerSource: "Telegram Web" }))
+  ];
+  count.textContent = allRows.length;
+  const totalSeconds = allRows.reduce((sum, row) => sum + (Number(row.watchedSeconds) || 0), 0);
+  document.getElementById("time").textContent = allRows.length
+    ? "YouTube + Telegram · " + fmt(totalSeconds) + " total"
     : "No watched-time records saved yet.";
 
   list.innerHTML = "";
-  if (!rows.length) {
+  if (!allRows.length) {
     list.innerHTML = '<p class="empty">No matched lecture recorded yet. Check the tracker status above.</p>';
   } else {
-    rows.slice().sort((a, b) => String(b.lastWatchedAt || "").localeCompare(String(a.lastWatchedAt || ""))).slice(0, 8).forEach(row => {
+    allRows.slice().sort((a, b) => String(b.lastWatchedAt || "").localeCompare(String(a.lastWatchedAt || ""))).slice(0, 8).forEach(row => {
       const item = document.createElement("article");
       item.className = "lecture";
       const title = document.createElement("strong"); title.textContent = row.title || "Untitled lecture";
       const detail = document.createElement("small");
-      detail.textContent = (row.subject || "Unmatched subject") + " · " + (row.chapter || "Unmatched chapter") + " · " + fmt(row.watchedSeconds);
+      detail.textContent = (row.trackerSource || row.source || "Lecture") + " · " + (row.subject || "Unmatched subject") + " · " + (row.chapter || "Unmatched chapter") + " · " + fmt(row.watchedSeconds);
       item.append(title, detail); list.appendChild(item);
     });
   }
@@ -179,7 +185,7 @@ async function refresh() {
 }
 document.getElementById("refresh").addEventListener("click", refresh);
 chrome.storage.onChanged.addListener((changes, area) => {
-  if (area === "local" && (changes[STORE] || changes[STATUS_KEY] || changes[PLANNER_CONFIG_KEY] || changes[LAST_SYNC_KEY])) refresh();
+  if (area === "local" && (changes[STORE] || changes[STATUS_KEY] || changes[TELEGRAM_STATUS_KEY] || changes[TELEGRAM_STORE] || changes[PLANNER_CONFIG_KEY] || changes[LAST_SYNC_KEY])) refresh();
 });
 connectButton.addEventListener("click", connectPlanner);
 disconnectButton.addEventListener("click", disconnectPlanner);
