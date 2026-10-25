@@ -3243,7 +3243,7 @@ async function requestAIChapterAllocation(){
   });
   let payload={};
   try{payload=await response.json();}catch(e){}
-  if(!response.ok)throw new Error(payload.error||("AI function returned HTTP "+response.status+". Deploy the Supabase Edge Function and add the OpenAI secret."));
+  if(!response.ok)throw new Error(payload.error||("AI function returned HTTP "+response.status+". Deploy the Supabase Edge Function and add the Gemini secret."));
   if(!Array.isArray(payload.chapters)||!payload.chapters.length)throw new Error("The AI returned no chapter estimates. Try again.");
   chapterAllocationAIResults={testId:test.id,data:payload,generatedAt:new Date().toISOString()};
   renderChapterAllocation();
