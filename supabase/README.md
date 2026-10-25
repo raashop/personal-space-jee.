@@ -22,16 +22,27 @@ The AI key remains on the server. Do not commit it to this repository. OpenAI AP
 
 ## 3) Deploy the function
 
-Recommended CLI steps, run from a local clone of this repository on branch `personal-space-v6`:
+**Fastest route: the included GitHub Actions workflow.** It deploys the function and writes the OpenAI key into Supabase Secrets without putting the key in the site or committing it to Git.
 
-1. Install Node.js 20+ and the Supabase CLI as a project dependency if it isn't installed: `npm install supabase --save-dev`.
+1. In GitHub, open this repository's **Settings → Secrets and variables → Actions** and add these repository secrets:
+   - `SUPABASE_ACCESS_TOKEN`: a Supabase personal access token from your Supabase account's Access Tokens page (not a service-role key).
+   - `SUPABASE_PROJECT_REF`: the project ref from the Supabase Dashboard URL `https://supabase.com/dashboard/project/<project-ref>`.
+   - `OPENAI_API_KEY`: your OpenAI API key.
+2. Open the repository's **Actions** tab and select **Deploy Chapter Allocation AI**.
+3. Click **Run workflow** and select the `personal-space-v6` branch.
+4. Wait for the workflow to finish successfully. It deploys the authenticated `chapter-allocation` function and stores `OPENAI_API_KEY` and `OPENAI_MODEL` as Supabase Edge Function Secrets.
+
+The workflow is manual only; it will not run or deploy just because you commit code. Do not add secrets to source files or issue comments.
+
+Alternative CLI route, from a local clone of this repository:
+
+1. Install Node.js 20+ and the Supabase CLI: `npm install supabase --save-dev`.
 2. Sign in: `npx supabase login`.
-3. Link your project using the project ref from the Supabase Dashboard URL `https://supabase.com/dashboard/project/<project-ref>`: `npx supabase link --project-ref <project-ref>`.
-4. Deploy the function: `npx supabase functions deploy chapter-allocation`.
+3. Link the project: `npx supabase link --project-ref <project-ref>`.
+4. Add the OpenAI secret with `npx supabase secrets set OPENAI_API_KEY=your-key OPENAI_MODEL=gpt-4.1-mini`.
+5. Deploy: `npx supabase functions deploy chapter-allocation`.
 
 The `supabase/config.toml` keeps JWT verification enabled. Do not deploy with `--no-verify-jwt`; the function is intended for signed-in users only.
-
-If you do not use the CLI, create an Edge Function named `chapter-allocation` in the Supabase Dashboard, paste the code from `supabase/functions/chapter-allocation/index.ts` into its editor, and deploy it. Then add the secrets above.
 
 ## 4) Use it
 
