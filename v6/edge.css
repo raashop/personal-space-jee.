@@ -2440,3 +2440,209 @@ html[data-edge-theme="daylight"] .chapter-test-btn:hover {
     width: 100px;
   }
 }
+
+
+/* Topic Tests reference table and status tabs. */
+html[data-edge-theme="daylight"] .topic-filters {
+  display: grid;
+  grid-template-columns: minmax(125px,.9fr) minmax(125px,.9fr) minmax(125px,.9fr) minmax(190px,1.4fr);
+  gap: 9px;
+  margin: 17px 0 13px;
+}
+html[data-edge-theme="daylight"] .topic-filters .control {
+  min-width: 0;
+  width: 100%;
+  min-height: 37px;
+  font-size: 10px;
+  padding: 9px 11px;
+}
+html[data-edge-theme="daylight"] .topic-filters .search-wrap {
+  min-width: 0;
+}
+html[data-edge-theme="daylight"] .topic-tabs {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding-bottom: 11px;
+  border-bottom: 1px solid #e9eff6;
+}
+html[data-edge-theme="daylight"] .topic-tab {
+  border: 1px solid transparent;
+  border-radius: 9px;
+  padding: 8px 13px;
+  color: #657b92;
+  background: transparent;
+  font-size: 10px;
+  font-weight: 800;
+  cursor: pointer;
+}
+html[data-edge-theme="daylight"] .topic-tab.active {
+  color: #ffffff;
+  border-color: #15966a;
+  background: #15966a;
+  box-shadow: 0 3px 9px rgba(21,150,106,.13);
+}
+html[data-edge-theme="daylight"] .topic-summary-line {
+  color: #8295a8;
+  font-size: 9px;
+  margin: 12px 0 9px;
+}
+html[data-edge-theme="daylight"] .topic-table-card {
+  padding: 0;
+  overflow: hidden;
+  border-radius: 14px;
+  border: 1px solid #e2eaf4;
+  background: #ffffff;
+}
+html[data-edge-theme="daylight"] .topic-table-card .table-scroll {
+  border: 0;
+  border-radius: 0;
+  background: #ffffff;
+}
+html[data-edge-theme="daylight"] .topic-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 10px;
+}
+html[data-edge-theme="daylight"] .topic-table thead th {
+  padding: 11px 12px;
+  background: #f5f8fc;
+  color: #70849a;
+  border-bottom: 1px solid #e7eef6;
+  font-size: 9px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+html[data-edge-theme="daylight"] .topic-table tbody td {
+  padding: 11px 12px;
+  border-bottom: 1px solid #edf2f7;
+  color: #293e56;
+  vertical-align: middle;
+}
+html[data-edge-theme="daylight"] .topic-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+html[data-edge-theme="daylight"] .topic-table tbody tr:hover {
+  background: #f9fbff;
+}
+html[data-edge-theme="daylight"] .topic-title-cell {
+  min-width: 170px;
+}
+html[data-edge-theme="daylight"] .topic-title-cell > strong {
+  display: block;
+  color: #20354d;
+  font-size: 10px;
+}
+html[data-edge-theme="daylight"] .topic-title-cell > small {
+  display: block;
+  color: #8295a9;
+  font-size: 8px;
+  margin-top: 4px;
+}
+html[data-edge-theme="daylight"] .topic-status-chip {
+  margin-top: 6px;
+  display: block;
+  width: max-content;
+  max-width: 125px;
+  min-width: 86px;
+  padding: 4px 7px !important;
+  border: 1px solid transparent !important;
+  border-radius: 7px !important;
+  font-size: 8px !important;
+  font-weight: 800;
+  box-shadow: none !important;
+  appearance: auto;
+}
+html[data-edge-theme="daylight"] .topic-status-chip.status-attempted {
+  color: #14774f;
+  background: #e1f6eb !important;
+  border-color: #ceecdc !important;
+}
+html[data-edge-theme="daylight"] .topic-status-chip.status-planned {
+  color: #277ec4;
+  background: #e8f3ff !important;
+  border-color: #d8eaff !important;
+}
+html[data-edge-theme="daylight"] .topic-status-chip.status-review {
+  color: #a96a22;
+  background: #fff3df !important;
+  border-color: #f8e7c7 !important;
+}
+html[data-edge-theme="daylight"] .topic-status-chip.status-todo {
+  color: #63778d;
+  background: #f0f3f6 !important;
+  border-color: #e5ebf2 !important;
+}
+html[data-edge-theme="daylight"] .topic-chapter-cell {
+  min-width: 135px;
+  max-width: 230px;
+  line-height: 1.5;
+  color: #60758d !important;
+  font-size: 9px;
+}
+html[data-edge-theme="daylight"] .topic-date-cell {
+  min-width: 127px;
+}
+html[data-edge-theme="daylight"] .topic-date-cell .date-input {
+  width: 125px;
+  font-size: 9px;
+  padding: 7px 8px;
+  border-radius: 8px;
+}
+html[data-edge-theme="daylight"] .topic-score-cell strong {
+  display: block;
+  color: #263b52;
+  font-size: 10px;
+  white-space: nowrap;
+}
+html[data-edge-theme="daylight"] .topic-score-cell small {
+  display: block;
+  margin-top: 4px;
+  font-size: 9px;
+  font-weight: 800;
+}
+html[data-edge-theme="daylight"] .topic-score-cell .score-good { color: #15966a; }
+html[data-edge-theme="daylight"] .topic-score-cell .score-mid { color: #b87525; }
+html[data-edge-theme="daylight"] .topic-score-cell .score-low { color: #c85d6a; }
+html[data-edge-theme="daylight"] .topic-score-cell .score-empty {
+  color: #91a1b2;
+  font-size: 9px;
+}
+html[data-edge-theme="daylight"] .topic-review-btn {
+  border: 1px solid #d8efe4;
+  border-radius: 8px;
+  background: #e5f7ee;
+  color: #16794f;
+  padding: 7px 11px;
+  font-size: 9px;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+}
+html[data-edge-theme="daylight"] .topic-review-btn:hover {
+  background: #d8f2e5;
+}
+html[data-edge-theme="daylight"] .topic-empty {
+  padding: 28px 14px;
+}
+@media (max-width: 950px) {
+  html[data-edge-theme="daylight"] .topic-filters {
+    grid-template-columns: repeat(2,minmax(0,1fr));
+  }
+}
+@media (max-width: 560px) {
+  html[data-edge-theme="daylight"] .topic-filters {
+    grid-template-columns: 1fr;
+  }
+  html[data-edge-theme="daylight"] .topic-tabs {
+    overflow-x: auto;
+  }
+  html[data-edge-theme="daylight"] .topic-tab {
+    white-space: nowrap;
+  }
+  html[data-edge-theme="daylight"] .topic-table thead th,
+  html[data-edge-theme="daylight"] .topic-table tbody td {
+    padding: 8px 7px;
+  }
+}
