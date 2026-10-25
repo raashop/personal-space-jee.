@@ -2107,6 +2107,25 @@ td strong {
 @media(max-width:980px){.dashboard-main-layout.dashboard-main-layout-optimized{grid-template-columns:minmax(0,1fr)!important}}
 @media(max-width:650px){.study-activity-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.dashboard-main-layout.dashboard-main-layout-optimized{gap:12px}.dashboard-main-stack.dashboard-main-stack-optimized{gap:10px}#chapterAllocationPanel{padding:14px!important}#chapterAllocationPanel .allocation-mode-row{grid-template-columns:repeat(2,minmax(0,1fr))}#chapterAllocationPanel .allocation-mode-row .allocation-field:first-child{grid-column:1/-1}#chapterAllocationPanel .allocation-chapter-picker{grid-template-columns:minmax(0,1fr)}#chapterAllocationPanel .allocation-summary-strip{gap:6px}#chapterAllocationPanel .allocation-summary-stat{padding:9px 7px}#chapterAllocationPanel .allocation-summary-stat strong{font-size:16px}#chapterAllocationPanel .allocation-result-header{align-items:flex-start}#chapterAllocationPanel .allocation-result-header h3{font-size:17px}}
 @media(prefers-reduced-motion:reduce){#chapterAllocationPanel,#chapterAllocationPanel .allocation-chapter-choice,#chapterAllocationPanel .allocation-chapter,#chapterAllocationPanel .allocation-loader-orbit,#chapterAllocationPanel .allocation-loader-track i,.study-chapter-card{animation:none!important;transition:none!important}}
+
+#studyActivityDailyPlan{border-top:1px solid var(--line);padding-top:10px;margin-top:10px;min-width:0}
+.study-daily-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.study-daily-head>div{display:grid;gap:3px}
+.study-daily-kicker{font-size:8px;font-weight:900;letter-spacing:.12em;color:#16805a}
+.study-daily-head>div strong{font-size:11px;color:#284b5b}
+.study-daily-hours{font-size:10px;font-weight:850;color:#247451;white-space:nowrap}
+.study-daily-item{display:flex;align-items:center;gap:7px;width:100%;min-width:0;padding:7px 0;border:0;border-bottom:1px solid #edf1f3;background:transparent;text-align:left;cursor:pointer;color:var(--ink)}
+.study-daily-item>i{width:6px;height:6px;border-radius:50%;background:#8064c7;flex:none}
+.study-daily-item>i.physics{background:#2784d8}.study-daily-item>i.chemistry{background:#15966a}
+.study-daily-item>span{display:grid;gap:2px;flex:1;min-width:0}
+.study-daily-item strong{font-size:9px;line-height:1.35;overflow-wrap:anywhere}
+.study-daily-item small{font-size:8px;line-height:1.3;color:var(--muted);display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+.study-daily-item>b{font-size:9px;white-space:nowrap;color:#247451}
+.study-daily-open{margin-top:7px;border:0;background:transparent;color:#24785b;font-size:9px;font-weight:850;cursor:pointer;padding:3px 0}
+.study-daily-empty{display:flex;align-items:center;gap:8px}
+.study-daily-empty>span{display:grid;place-items:center;width:27px;height:27px;border-radius:9px;background:#e8f5ed;color:#16805a}
+.study-daily-empty>div{display:grid;gap:3px;flex:1;min-width:0}
+.study-daily-empty strong{font-size:10px;color:#284b5b}.study-daily-empty small,.study-daily-emptyline{font-size:9px;line-height:1.4;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -3560,7 +3579,21 @@ function editAllocationPlan(){
  const button=document.getElementById("chapterAllocationAIButton");if(button)button.disabled=false;
  renderChapterAllocation();
 }
-async function requestAIChapterAllocation(){
+async function renderDashboardDailySchedule(){
+ const result=chapterAllocationAIResults&&chapterAllocationAIResults.data;
+ const node=document.getElementById("studyActivityDailyPlan");
+ if(!node)return;
+ if(!result||!Array.isArray(result.dailySchedule)||!result.dailySchedule.length){
+  node.innerHTML='<div class="study-daily-empty"><span>✦</span><div><strong>Daily AI plan</strong><small>Generate a chapter allocation to see the per-day focus here.</small></div><button type="button" class="small-btn" onclick="toggleChapterAllocation()">Make plan ↗</button></div>';
+  return;
+ }
+ const day=result.dailySchedule.find(x=>Number(x.day)===1)||result.dailySchedule[0];
+ const focus=Array.isArray(day.focus)?day.focus:[];
+ node.innerHTML='<div class="study-daily-head"><div><span class="study-daily-kicker">GEMINI DAILY PLAN</span><strong>Day '+Number(day.day||1)+' focus</strong></div><span class="study-daily-hours">'+Number(day.totalHours||0).toFixed(1)+'h planned</span></div>'+
+ (focus.length?focus.slice(0,3).map(item=>'<button type="button" class="study-daily-item" data-open-chapter-subject="'+escapeAttr(item.subject)+'" data-open-chapter-name="'+escapeAttr(item.chapter)+'"><i class="'+(item.subject==="Physics"?"physics":item.subject==="Chemistry"?"chemistry":"maths")+'"></i><span><strong>'+escapeHTML(chapterDisplayName(item.subject,item.chapter))+'</strong><small>'+escapeHTML(item.task||"Review concepts and practice questions")+'</small></span><b>'+Number(item.hours||0).toFixed(1)+'h</b></button>').join(""):'<div class="study-daily-emptyline">Use today for spaced revision and broader JEE progress.</div>')+
+ '<button type="button" class="study-daily-open" onclick="toggleChapterAllocation()">View full '+result.dailySchedule.length+'-day plan ↗</button>';
+}
+function requestAIChapterAllocation(){
  const button=document.getElementById("chapterAllocationAIButton"),status=document.getElementById("chapterAllocationAIStatus"),resultView=document.getElementById("chapterAllocationResultView"),working=document.getElementById("allocationWorking"),inputActions=document.getElementById("allocationInputActions"),manual=document.getElementById("allocationManualControls"),top=document.querySelector("#chapterAllocationPanel .allocation-controls-top"),resultTitle=document.getElementById("allocationResultTitle"),resultSummary=document.getElementById("allocationResultSummary");
  if(chapterAllocationAIActive)return;
  saveChapterAllocationPrefs();
@@ -4808,6 +4841,7 @@ function renderStudyActivitySummary(){
  }).join("")+(rendered.length>5?'<button type="button" class="study-chapter-more" onclick="go(\'chapters\')">+'+(rendered.length-5)+' more chapters · Open Chapter Planner ↗</button>':""):'<div class="empty">No chapters logged today yet. Watch a matched lecture or log a study session to see chapter progress here.</div>';
  const chapterCount=document.getElementById("studyActivityChapters");if(chapterCount)chapterCount.textContent=String(doneToday.length);
  const chapterMeta=document.getElementById("studyActivityChaptersMeta");if(chapterMeta)chapterMeta.textContent=chapterActivity.size+" chapter"+(chapterActivity.size===1?"":"s")+" touched today";
+ renderDashboardDailySchedule();
  renderYoutubeCourseProgress();
 }
 async function addYoutubeCourse(event){
