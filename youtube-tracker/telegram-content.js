@@ -20,7 +20,7 @@
     ["Physics","Current Electricity",["current electricity","kirchhoff","wheatstone bridge"]],
     ["Physics","Magnetic Effects of Current and Magnetism",["moving charges and magnetism","magnetic effects of current","magnetism and matter","biot savart","ampere's law"]],
     ["Physics","Electromagnetic Induction and Alternating Currents",["electromagnetic induction","alternating current","alternating currents","faraday's law","lenz's law","emi and ac"]],
-    ["Physics","Electromagnetic Waves",["electromagnetic waves"]],
+    ["Physics","Electromagnetic Waves",["electromagnetic waves","em waves","properties of em waves","maxwell equations"]],
     ["Physics","Optics",["ray optics","wave optics","young's double slit"]],
     ["Physics","Dual Nature of Matter and Radiation",["dual nature","photoelectric effect","de broglie"]],
     ["Physics","Atoms and Nuclei",["atoms and nuclei","radioactivity","bohr model","nuclear binding energy"]],
@@ -71,7 +71,7 @@
     const t=" "+normalize(text)+" ";
     const cues=[
       "lecture","lectures","lec","class","one shot","oneshot","revision",
-      "revise","pyq","previous year questions","question practice","practice session",
+      "revise","pyq","previous year questions","question practice","questions","solutions","problems","practice","practice session","important questions",
       "jee","neet","ncert","dpp","problem solving","concepts","chapterwise",
       "chapter wise","part 1","part 2","part 3","part 4","session"
     ];
@@ -88,36 +88,61 @@
     return null;
   }
   function getContext(video) {
-    // Telegram's caption is often a sibling of the <video>, not a child of it.
-    // Collect visible text from successive ancestors and prefer the nearest
-    // ancestor that contains both a chapter phrase and a lecture cue.
-    const videoTitle=video.getAttribute("aria-label")||video.getAttribute("title")||"";
+    // Captions may be a sibling of the player or rendered in Telegram's media viewer.
+    const clean = node => String(node?.innerText || "").replace(/\s+/g," ").trim();
     const ancestors=[];
     let node=video.parentElement;
     for(let depth=0;node&&depth<22;depth++,node=node.parentElement) {
-      const text=String(node.innerText||"").replace(/\\s+/g," ").trim();
+      const text=clean(node);
       if(text.length>4&&text.length<6000&&!ancestors.includes(text)) ancestors.push(text);
     }
-    const allText=[videoTitle,...ancestors].filter(Boolean).join(" · ").slice(0,12000);
+    const captionTexts=[];
+    const overlaySelectors=[
+      '.media-viewer-caption','.media-viewer-metadata',
+      '[class*="media-viewer-caption"]','[class*="media-viewer-metadata"]',
+      '[class*="viewer-caption"]','[class*="viewer-metadata"]'
+    ];
+    for(const selector of overlaySelectors) {
+      try {
+        for(const el of document.querySelectorAll(selector)) {
+          if(el.getClientRects().length===0) continue;
+          const text=clean(el);
+          if(text.length>4&&text.length<3000&&!captionTexts.includes(text)) captionTexts.push(text);
+        }
+      } catch {}
+    }
+    // If the active viewer exposes a caption as a text sibling, inspect the
+    // nearest media-viewer container rather than scanning unrelated chat posts.
+    const viewer=video.closest?.('[class*="media-viewer"], [class*="MediaViewer"], [class*="viewer-container"]');
+    const viewerText=clean(viewer);
+    const localTexts=[...captionTexts,...ancestors].filter(Boolean);
+    const allText=[video.getAttribute("aria-label")||"",video.getAttribute("title")||"",viewerText,...localTexts].filter(Boolean).join(" · ").slice(0,16000);
     const normalized=normalize(allText);
     const chapterHit=CHAPTERS.some(item=>[item[1],...item[2]].some(term=>{
       const n=normalize(term);
       return n.length>=4&&normalized.includes(n);
     }));
     const cueHit=isLecturePost(allText);
-    const bestText=ancestors.find(text=>{
+    const bestText=captionTexts.find(text=>{
       const n=normalize(text);
       const hasChapter=CHAPTERS.some(item=>[item[1],...item[2]].some(term=>{
         const phrase=normalize(term);
         return phrase.length>=4&&n.includes(phrase);
       }));
       return hasChapter&&isLecturePost(text);
-    })||ancestors.find(text=>text.length>12)||"";
-    const box=ancestors.find(text=>text.length>12)||"";
-    const link=node?.querySelector?.('a[href*="t.me/"],a[href*="telegram.me/"]');
-    const msgId=video.closest?.('[data-message-id], [data-mid]')?.getAttribute("data-message-id")||
-      video.closest?.('[data-message-id], [data-mid]')?.getAttribute("data-mid")||"";
-    const title=videoTitle.trim()||bestText.slice(0,180)||box.slice(0,180)||"Telegram video";
+    })||ancestors.find(text=>{
+      const n=normalize(text);
+      const hasChapter=CHAPTERS.some(item=>[item[1],...item[2]].some(term=>{
+        const phrase=normalize(term);
+        return phrase.length>=4&&n.includes(phrase);
+      }));
+      return hasChapter&&isLecturePost(text);
+    })||captionTexts[0]||ancestors.find(text=>text.length>12)||"";
+    const anchor=video.closest?.('[data-message-id], [data-mid]') ||
+      video.parentElement?.closest?.('[data-message-id], [data-mid]');
+    const msgId=anchor?.getAttribute("data-message-id")||anchor?.getAttribute("data-mid")||"";
+    const link=anchor?.querySelector?.('a[href*="t.me/"],a[href*="telegram.me/"]');
+    const title=(video.getAttribute("aria-label")||video.getAttribute("title")||bestText||"Telegram video").trim().slice(0,180);
     return {title,sourceText:allText,url:link?.href||location.href,msgId,boxText:bestText,chapterHint:chapterHit,cueHint:cueHit};
   }
   const tracked=new WeakMap();
