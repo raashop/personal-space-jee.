@@ -88,24 +88,31 @@
     return null;
   }
   function getMessageContainer(video) {
-    let node=video;
-    for(let depth=0;node&&depth<12;depth++,node=node.parentElement) {
-      if(node.matches?.('[data-message-id], [data-mid], .Message, .message, .bubble, [class*="message"], [class*="Message"]')) {
-        const text=(node.innerText||node.textContent||"").trim();
-        if(text.length>4&&text.length<6000)return node;
+    // Telegram Web's DOM differs between K and A layouts. Walk upward and
+    // prefer the smallest ancestor that contains a video plus useful caption text.
+    let node=video, fallback=video.parentElement;
+    for(let depth=0;node&&depth<16;depth++,node=node.parentElement) {
+      const text=String(node.innerText||node.textContent||"").replace(/\s+/g," ").trim();
+      if(text.length>4&&text.length<6000) {
+        if(!fallback || text.length < String(fallback.innerText||fallback.textContent||"").trim().length) fallback=node;
+        if(node.matches?.('[data-message-id], [data-mid], .Message, .message, .bubble, [class*="message"], [class*="Message"]')) return node;
       }
     }
-    return video.closest("figure")?.parentElement || video.parentElement;
+    return fallback || video.closest("figure")?.parentElement || video.parentElement;
   }
   function getContext(video) {
     const box=getMessageContainer(video);
     const messageText=String(box?.innerText||box?.textContent||"").replace(/\s+/g," ").trim();
     const videoTitle=video.getAttribute("aria-label")||video.getAttribute("title")||"";
-    const sourceText=[videoTitle,messageText].filter(Boolean).join(" · ").slice(0,5000);
+    // Include nearby visible caption/message text because Telegram may render
+    // the caption as a sibling of the player rather than inside its own node.
+    const parentText=String(video.parentElement?.innerText||video.parentElement?.textContent||"").replace(/\s+/g," ").trim();
+    const grandparentText=String(video.parentElement?.parentElement?.innerText||video.parentElement?.parentElement?.textContent||"").replace(/\s+/g," ").trim();
+    const sourceText=[videoTitle,messageText,parentText,grandparentText].filter(Boolean).join(" · ").slice(0,5000);
     const link=box?.querySelector('a[href*="t.me/"],a[href*="telegram.me/"]');
     const url=link?.href||location.href;
     const msgId=box?.getAttribute("data-message-id")||box?.getAttribute("data-mid")||"";
-    const title=videoTitle.trim()||messageText.slice(0,180)||"Telegram video lecture";
+    const title=videoTitle.trim()||messageText.slice(0,180)||parentText.slice(0,180)||"Telegram video";
     return {title,sourceText,url,msgId,boxText:messageText};
   }
   const tracked=new WeakMap();
