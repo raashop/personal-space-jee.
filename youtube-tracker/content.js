@@ -10,7 +10,7 @@
     .replace(/&/g, " and ")
     .replace(/[^a-z0-9]+/g, " ")
     .trim()
-    .replace(/\\s+/g, " ");
+    .replace(/\s+/g, " ");
 
   function reportStatus(type, message, title = "", match = null, id = "") {
     const signature = JSON.stringify([type, message, title, match?.subject || "", match?.chapter || "", id]);
@@ -95,7 +95,7 @@
   const videoTitle = () => (
     document.querySelector("h1.ytd-watch-metadata yt-formatted-string")?.textContent ||
     document.querySelector("h1")?.textContent ||
-    document.title.replace(/\\s*-\\s*YouTube$/, "")
+    document.title.replace(/\s*-\s*YouTube$/, "")
   ).trim();
   const channelName = () => (
     document.querySelector("#channel-name a, ytd-channel-name a, #owner #channel-name a")?.textContent || ""
@@ -108,7 +108,7 @@
     const chapter = CHAPTERS.find(item => item[2].some(term => text.includes(normalizeText(term))));
     if (!chapter) return null;
     const hinted = JEE_HINTS.some(term => text.includes(normalizeText(term)));
-    const academicFormat = /\\b(lecture|one shot|revision|pyq|question|questions|numerical|concept|chapter|part\\s*\\d|session\\s*\\d|neet|jee)\\b/.test(normalizeText(title));
+    const academicFormat = /\b(lecture|one shot|revision|pyq|question|questions|numerical|concept|chapter|part\s*\d|session\s*\d|neet|jee)\b/.test(normalizeText(title));
     if (!hinted && !academicFormat) return null;
     return { subject: chapter[0], chapter: chapter[1] };
   }
