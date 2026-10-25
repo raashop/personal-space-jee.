@@ -3275,3 +3275,22 @@ html[data-edge-theme="daylight"] .profile-mini small {
     display: none;
   }
 }
+
+
+/* Keep the light reference interface free of extra floating controls. */
+html[data-edge-theme="daylight"] #psEdgeOrb,
+html[data-edge-theme="daylight"] #psMotionToggle {
+  display: none !important;
+}
+html[data-edge-theme="daylight"] .top-actions {
+  display: flex;
+  align-items: center;
+}
+html[data-edge-theme="daylight"] .top-actions > .icon-button {
+  width: 33px;
+  min-width: 33px;
+  height: 33px;
+  border-radius: 9px;
+  font-size: 13px;
+  box-shadow: none;
+}
