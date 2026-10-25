@@ -26,7 +26,7 @@ function showConnectionMessage(message, isError = false) {
 function pathPrefixFromUrl(url) {
   const path = url.pathname || "/";
   if (path.endsWith(".html") || path.endsWith(".htm")) return path.slice(0, path.lastIndexOf("/") + 1) || "/";
-  return path === "/" ? "/" : path.replace(/\\/+$/, "");
+  return path === "/" ? "/" : path.replace(/\/+$/, "");
 }
 function pathnameMatches(pathname, prefix) {
   if (!prefix || prefix === "/") return true;
