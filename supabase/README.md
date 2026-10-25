@@ -34,7 +34,7 @@ This workflow is manual only. It does not run on every commit. The function requ
 
 ## 4) Connect it to your website
 
-1. Open the deployed [Personal Space V6 site](https://raashop.github.io/personal-space-jee/v6/).
+1. Open your deployed Personal Space V6 GitHub Pages site.
 2. Open **Backup & Sync** and enter your Supabase Project URL and **Publishable** key. Use the Publishable key only; never put a Supabase secret or service-role key in the browser.
 3. Sign in through Backup & Sync to the same Supabase project used by the deployment workflow.
 4. Create a planned topic test with a future date and select its chapters.
