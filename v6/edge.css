@@ -5432,3 +5432,68 @@ html[data-edge-theme="daylight"] .legend-not-started { background: #d85d69 !impo
 html[data-edge-theme="daylight"] .legend-in-progress { background: #4a9be8 !important; }
 html[data-edge-theme="daylight"] .legend-revision { background: #d28a35 !important; }
 html[data-edge-theme="daylight"] .legend-completed { background: #15966a !important; }
+
+
+/* Desktop-layout recovery: keep the sidebar as a left rail and content beside it
+   at desktop widths, including when the browser zoom narrows the CSS viewport. */
+@media (min-width: 720px) {
+  html[data-edge-theme="daylight"] .shell {
+    display: grid !important;
+    grid-template-columns: 205px minmax(0, 1fr) !important;
+    align-items: start !important;
+    width: 100% !important;
+    max-width: 1800px !important;
+    margin: 0 auto !important;
+  }
+  html[data-edge-theme="daylight"] .sidebar {
+    position: sticky !important;
+    top: 0 !important;
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    align-self: start !important;
+    height: 100vh !important;
+    min-height: 100vh !important;
+    max-height: 100vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+  }
+  html[data-edge-theme="daylight"] .brand,
+  html[data-edge-theme="daylight"] .nav-label,
+  html[data-edge-theme="daylight"] .side-bottom,
+  html[data-edge-theme="daylight"] .brand-sub {
+    display: flex !important;
+  }
+  html[data-edge-theme="daylight"] .nav-label {
+    display: block !important;
+  }
+  html[data-edge-theme="daylight"] .side-bottom {
+    flex-direction: column !important;
+    margin-top: auto !important;
+  }
+  html[data-edge-theme="daylight"] nav {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    align-items: stretch !important;
+    overflow: visible !important;
+    width: 100% !important;
+    flex-direction: initial !important;
+  }
+  html[data-edge-theme="daylight"] nav button {
+    display: flex !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    flex: none !important;
+    justify-content: flex-start !important;
+    white-space: normal !important;
+  }
+  html[data-edge-theme="daylight"] main {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    display: block !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    align-self: start !important;
+  }
+}
