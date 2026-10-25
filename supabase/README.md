@@ -28,7 +28,7 @@ Do not add these values to source code or issue comments. GitHub Actions stores 
 3. Tap **Run workflow**, select the `personal-space-v6` branch, and run it.
 4. Wait for the workflow to finish successfully.
 
-The workflow links the selected Supabase project, stores `GEMINI_API_KEY` and `GEMINI_MODEL` as Supabase Edge Function Secrets, then deploys the authenticated `chapter-allocation` function. The default model is `gemini-3.5-flash-lite`. If it is unavailable for your project, update the model in the workflow to a model enabled for your Gemini API account.
+The workflow stores `GEMINI_API_KEY` and `GEMINI_MODEL` as Supabase Edge Function Secrets in the project you specified, then deploys the authenticated `chapter-allocation` function. It targets the project reference directly, so no interactive database-password prompt is needed. The default model is `gemini-3.5-flash-lite`. If it is unavailable for your project, update the model in the workflow to a model enabled for your Gemini API account.
 
 This workflow is manual only. It does not run on every commit. The function requires authenticated Supabase users; do not turn off JWT verification.
 
