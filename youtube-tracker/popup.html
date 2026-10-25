@@ -4,15 +4,23 @@
 <body>
   <header><div class="mark">PS</div><div><h1>Lecture Tracker</h1><p>Personal Space · JEE Main</p></div></header>
   <section class="summary"><strong id="count">0</strong><span>matched lectures recorded</span><small id="time">Only likely JEE-topic videos are tracked.</small></section>
-  <section class="tracker-status" id="trackerStatus" aria-live="polite">
-    <h2>Tracker status</h2>
-    <p id="statusMessage">No response from a YouTube tab yet. Open a lecture page and refresh that tab.</p>
-    <small id="statusTitle"></small>
-    <small id="statusUpdated"></small>
+  <section class="tracker-status type-waiting" id="trackerStatus" aria-live="polite">
+    <h2>Tracker status</h2><p id="statusMessage">No response from a YouTube tab yet. Open a lecture page and refresh that tab.</p>
+    <small id="statusTitle"></small><small id="statusUpdated"></small>
+  </section>
+  <section class="sync-setup">
+    <h2>Automatic planner sync</h2>
+    <p class="section-copy">Connect your Personal Space page once. After that, there is no repeated export/import: records sync while the planner is open, or catch up automatically next time you open it.</p>
+    <label for="plannerUrl">Your planner page URL</label>
+    <input id="plannerUrl" type="url" placeholder="Paste the URL from your planner tab" autocomplete="url">
+    <button id="connectPlanner" class="primary">Connect planner</button>
+    <p id="syncConnectionMessage" class="connection-message" role="status" aria-live="polite">Not connected yet.</p>
+    <button id="disconnectPlanner" class="secondary hidden" type="button">Disconnect planner</button>
+    <small class="hint">One-time browser permission required. Records stay in this browser unless your planner's own cloud sync is enabled.</small>
   </section>
   <section><h2>Recent lectures</h2><div id="list" class="list"><p class="empty">Open a likely JEE lecture on YouTube.</p></div></section>
-  <button id="export" class="primary">Export for Personal Space ↗</button>
-  <p class="hint">Export the records, then import the JSON file in your planner's YouTube Lectures page. Unrelated videos are ignored.</p>
+  <button id="export" class="secondary">Export backup (optional) ↓</button>
+  <p class="hint">This is only a manual backup; it is no longer part of normal tracking.</p>
   <button id="refresh" class="secondary">Refresh list</button>
   <script src="popup.js"></script>
 </body></html>
