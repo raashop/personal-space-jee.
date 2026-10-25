@@ -1873,6 +1873,7 @@ td strong {
   <button data-page="mistakes"><span class="nav-icon">⌁</span>Mistake Bank</button>
   <button data-page="notes"><span class="nav-icon">▤</span>Notes</button>
   <button data-page="goals"><span class="nav-icon">◎</span>Goals &amp; Habits</button>
+  <button data-page="lectures"><span class="nav-icon">▶</span>YouTube Lectures</button>
   <button type="button" data-page="backup" onclick="openCloudSettings()"><span class="nav-icon">☁</span>Backup &amp; Sync</button>
  </nav>
  <div class="side-bottom">
@@ -2015,6 +2016,30 @@ td strong {
 
 <div class="modal-backdrop" id="modalBackdrop" onclick="if(event.target===this)closeModal()"><section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-head"><h3 id="modalTitle">Edit</h3><button type="button" class="small-btn" onclick="closeModal()">✕ Close</button></div><div class="modal-sub" id="modalSub">Your changes save to this workspace.</div><form id="modalForm" onsubmit="saveModal(event)"><div class="form-grid" id="modalFields"></div><div class="modal-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button><button type="submit" class="btn btn-primary">Save changes</button></div></form></section></div>
 <div class="cloud-gate" id="cloudGate"><section class="cloud-card" role="dialog" aria-modal="true" aria-labelledby="cloudTitle"><div style="display:flex;align-items:center;gap:10px"><div class="brandmark">☁</div><div><h3 id="cloudTitle">Cloud sync settings</h3><div class="helper-note">Connect your own Supabase project.</div></div></div><p>Offline mode works without setup. For cross-device sync, enter your Supabase Project URL and Publishable key. Never use a secret or service-role key in a browser.</p><div class="cloud-grid" id="cloudAuthForm"><label>Supabase Project URL<input id="cloudUrl" type="url" placeholder="https://your-project.supabase.co" autocomplete="url"></label><label>Publishable key<input id="cloudKey" type="password" placeholder="sb_publishable_…" autocomplete="off"></label><label>Email<input id="cloudEmail" type="email" placeholder="you@example.com" autocomplete="email"></label><label>Password<input id="cloudPassword" type="password" placeholder="Your password" autocomplete="current-password"></label></div><div class="cloud-actions" id="cloudAuthActions"><button class="btn btn-primary" onclick="cloudSignIn()" type="button">Sign in</button><button class="btn btn-secondary" onclick="cloudSignUp()" type="button">Create account</button></div><div class="cloud-actions"><button class="btn btn-quiet" onclick="cloudOffline()" type="button">Continue offline</button><button class="btn btn-secondary" onclick="cloudUploadLocal()" type="button" id="cloudUploadButton">Upload local data</button><button class="btn btn-secondary" onclick="cloudRestoreCloud()" type="button" id="cloudRestoreButton">Restore cloud backup</button><button class="btn btn-secondary" onclick="cloudSignOut()" type="button" id="cloudSignOutButton">Sign out</button></div><div id="cloudMessage" class="switch-note" role="status" aria-live="polite" style="margin-top:13px">Your current local tracker is safe.</div><div class="modal-actions"><button class="btn btn-secondary" onclick="closeCloudSettings()" type="button">Close settings</button></div></section></div>
+<section class="page" id="page-lectures">
+  <div class="page-hero"><div><h2>YouTube Lectures</h2><p>Import lecture records from the Brave extension. Matched chapters move to In Progress, never directly to mastered.</p></div><button class="btn btn-primary" type="button" onclick="document.getElementById('psLectureImportFile').click()">Import lecture JSON ↑</button></div>
+  <div class="dashboard-grid" style="margin-bottom:18px">
+   <article class="stat-card"><span class="stat-label">Tracked lectures</span><strong id="psLectureCount">0</strong><small>Unique YouTube videos</small></article>
+   <article class="stat-card"><span class="stat-label">Watch time</span><strong id="psLectureMinutes">0 min</strong><small>Accumulated playback time</small></article>
+   <article class="stat-card"><span class="stat-label">Chapters touched</span><strong id="psLectureChapters">0</strong><small>Matched to your syllabus</small></article>
+  </div>
+  <div class="panel">
+   <div class="panel-head"><div><h3>Imported lecture history</h3><p>Import the JSON file exported by the Personal Space YouTube extension.</p></div><button class="btn btn-secondary" type="button" onclick="exportYoutubeLectures()">Export history ↓</button></div>
+   <div id="psLectureList" class="empty-state">No lecture records yet. Install the extension and import its first export.</div>
+  </div>
+  <div class="panel" style="margin-top:16px">
+   <h3>How to connect Brave</h3>
+   <ol style="line-height:1.9;color:var(--muted);padding-left:22px">
+    <li>Open the repository's <code>youtube-tracker</code> folder on GitHub and download the repository ZIP.</li>
+    <li>Extract the ZIP, then open <code>brave://extensions</code> in Brave.</li>
+    <li>Enable <strong>Developer mode</strong>, choose <strong>Load unpacked</strong>, and select the extracted <code>youtube-tracker</code> folder.</li>
+    <li>Play a likely JEE lecture for at least 10 seconds, then open the extension and choose <strong>Export for Personal Space</strong>.</li>
+    <li>Import that downloaded JSON file here. The matching chapter will move from Not Ready to In Progress if it hasn't already progressed further.</li>
+   </ol>
+   <p class="helper-note">This first version uses local export/import. It does not read your YouTube watch history, track the Android YouTube app, or use AI transcripts. Unrelated videos are ignored unless their title/channel matches a known JEE topic.</p>
+  </div>
+ </section>
+<input type="file" id="psLectureImportFile" accept=".json,application/json" hidden onchange="importYoutubeLectures(event)">
 <input type="file" id="importFile" accept=".json,application/json" hidden onchange="importData(event)">
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -4003,7 +4028,8 @@ currentPage=page;
 document.querySelectorAll(".page").forEach(n=>n.classList.toggle("active",n.id==="page-"+page));
 document.querySelectorAll("nav [data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
 const title={
-dashboard:["YOUR STUDY SPACE","Welcome back, Raash.","Small sessions add up. Let’s make today count."],chapters:["SYLLABUS TRACKER","Chapter tracker","Make each chapter feel manageable."],topic:["PRACTICE & REVIEW","Topic test planner","Plan a test, log the score and keep chapter progress connected."],litmus:["TEST SERIES","LITMUS schedule","Your part tests and full mocks, with dates and marks."],pyq:["PREVIOUS-YEAR QUESTIONS","PYQ practice log","Track accuracy and build confidence by chapter."]
+dashboard:["YOUR STUDY SPACE","Welcome back, Raash.","Small sessions add up. Let’s make today count."],chapters:["SYLLABUS TRACKER","Chapter tracker","Make each chapter feel manageable."],topic:["PRACTICE & REVIEW","Topic test planner","Plan a test, log the score and keep chapter progress connected."],litmus:["TEST SERIES","LITMUS schedule","Your part tests and full mocks, with dates and marks."],pyq:["PREVIOUS-YEAR QUESTIONS","PYQ practice log","Track accuracy and build confidence by chapter."],
+lectures:["LECTURE TRACKER","YouTube Lectures","Track watched JEE lectures and connect them to your chapter planner."]
 }
 [page];
 document.getElementById("pageCrumb").textContent=title[0];
@@ -4018,7 +4044,77 @@ if(page==="chapters")renderChapters();
 if(page==="topic")renderTopics();
 if(page==="litmus")renderLitmus();
 if(page==="pyq")renderPyq();
+if(page==="lectures")renderYoutubeLectures();
 }
+
+const PS_LECTURE_KEY = "personal-space-youtube-lectures-v1";
+function readYoutubeLectures(){
+ try{const rows=JSON.parse(localStorage.getItem(PS_LECTURE_KEY)||"[]");return Array.isArray(rows)?rows:[];}catch(e){return [];}
+}
+function writeYoutubeLectures(rows){
+ try{localStorage.setItem(PS_LECTURE_KEY,JSON.stringify(rows));}catch(e){toast("Could not save lecture history in this browser.");}
+}
+function renderYoutubeLectures(){
+ const rows=readYoutubeLectures();
+ const watched=rows.reduce((sum,row)=>sum+Math.max(0,Number(row.watchedSeconds)||0),0);
+ const chapters=new Set(rows.map(row=>(row.subject||"")+"::"+(row.chapter||"")).filter(key=>key!=="::"));
+ const count=document.getElementById("psLectureCount");
+ const minutes=document.getElementById("psLectureMinutes");
+ const chapterCount=document.getElementById("psLectureChapters");
+ if(count)count.textContent=rows.length;
+ if(minutes)minutes.textContent=Math.round(watched/60)+" min";
+ if(chapterCount)chapterCount.textContent=chapters.size;
+ const list=document.getElementById("psLectureList");
+ if(!list)return;
+ if(!rows.length){list.className="empty-state";list.textContent="No lecture records yet. Install the extension and import its first export.";return;}
+ list.className="";
+ list.innerHTML=rows.slice().sort((a,b)=>String(b.lastWatchedAt||"").localeCompare(String(a.lastWatchedAt||""))).map(row=>{
+  const title=escapeHTML(row.title||"Untitled lecture");
+  const subject=escapeHTML(row.subject||"Unmatched subject");
+  const chapter=escapeHTML(row.chapter||"Unmatched chapter");
+  const channel=escapeHTML(row.channel||"YouTube");
+  const mins=Math.round((Number(row.watchedSeconds)||0)/60);
+  const date=row.lastWatchedAt?new Date(row.lastWatchedAt).toLocaleDateString():"";
+  const url=/^https:\/\/(www\.)?youtube\.com\/watch\?v=[\w-]+/.test(row.url||"")?row.url:"#";
+  return '<article class="list-row" style="padding:14px 0;border-bottom:1px solid var(--line);display:flex;gap:12px;align-items:flex-start"><div style="flex:1;min-width:0"><strong>'+title+'</strong><div class="helper-note">'+subject+' · '+chapter+' · '+mins+' min watched</div><small style="color:var(--muted)">'+channel+(date?' · '+date:'')+'</small></div><a class="btn btn-secondary" href="'+escapeAttr(url)+'" target="_blank" rel="noopener">Open ↗</a></article>';
+ }).join("");
+}
+function importYoutubeLectures(event){
+ const file=event.target.files&&event.target.files[0];
+ if(!file)return;
+ const reader=new FileReader();
+ reader.onload=()=>{
+  try{
+   const payload=JSON.parse(String(reader.result||"{}"));
+   if(payload.format!=="personal-space-youtube-lectures-v1"||!Array.isArray(payload.lectures))throw new Error("This doesn't look like a Personal Space lecture export.");
+   const existing=readYoutubeLectures();
+   const byId=new Map(existing.map(row=>[row.videoId,row]));
+   let added=0,updated=0,chaptersStarted=0;
+   payload.lectures.forEach(incoming=>{
+    if(!incoming||!incoming.videoId||!incoming.subject||!incoming.chapter)return;
+    const old=byId.get(incoming.videoId);
+    if(old){
+     const merged={...old,...incoming,watchedSeconds:Math.max(Number(old.watchedSeconds)||0,Number(incoming.watchedSeconds)||0)};
+     byId.set(incoming.videoId,merged);updated++;
+    }else{byId.set(incoming.videoId,incoming);added++;}
+    const chapter=state.chapters.find(ch=>ch.subject===incoming.subject&&ch.chapter===incoming.chapter);
+    if(chapter&&chapter.prep==="Not Ready"){chapter.prep="In Progress";chapter.statusTouched=true;chaptersStarted++;}
+   });
+   writeYoutubeLectures(Array.from(byId.values()).slice(-1000));
+   if(chaptersStarted)saveState();else if(typeof queueCloudSave==="function")queueCloudSave();
+   renderYoutubeLectures();
+   toast("Imported "+added+" new lecture(s); updated "+updated+". "+chaptersStarted+" chapter(s) moved to In Progress.");
+  }catch(error){toast(error.message||"Could not import lecture file.");}
+  event.target.value="";
+ };
+ reader.readAsText(file);
+}
+function exportYoutubeLectures(){
+ const payload={format:"personal-space-youtube-lectures-v1",exportedAt:new Date().toISOString(),lectures:readYoutubeLectures()};
+ const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
+ const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="personal-space-youtube-lectures-backup.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
 document.getElementById("nav").addEventListener("click",e=>{
 const b=e.target.closest("[data-page]");
 if(b)go(b.dataset.page)
