@@ -1,0 +1,6 @@
+project_id = "personal-space-jee"
+
+[functions.chapter-allocation]
+enabled = true
+verify_jwt = true
+entrypoint = "./functions/chapter-allocation/index.ts"
