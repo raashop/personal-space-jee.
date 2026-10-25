@@ -605,4 +605,22 @@
   }
   renderAllProductivity();
   if(typeof renderDashboard==="function")renderDashboard();
+
+  /* If the tab stays open across midnight, move today's view forward and refresh the rollover notice. */
+  let observedLocalDate=todayISO();
+  window.setInterval(function(){
+    const nextDate=todayISO();
+    if(nextDate===observedLocalDate)return;
+    const previousDate=observedLocalDate;
+    observedLocalDate=nextDate;
+    const dailyDateInput=byId("dailyDate");
+    if(dailyDateInput&&dailyDateInput.value===previousDate)dailyDateInput.value=nextDate;
+    renderDailyLog();
+    renderPerformance();
+    renderMistakes();
+    renderGoals();
+    window.renderDailyPulse();
+    window.renderRevisionQueue();
+    if(typeof renderDashboard==="function")renderDashboard();
+  },30000);
 })();
