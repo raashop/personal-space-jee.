@@ -1001,3 +1001,124 @@
     padding:7px
   }
 }
+
+
+/* V6 Edge theme bridge — keep every productivity surface readable in dark themes. */
+html:not([data-edge-theme="daylight"]) .daily-stat,
+html:not([data-edge-theme="daylight"]) .daily-task,
+html:not([data-edge-theme="daylight"]) .study-session,
+html:not([data-edge-theme="daylight"]) .focus-timer-panel,
+html:not([data-edge-theme="daylight"]) .yesterday-panel,
+html:not([data-edge-theme="daylight"]) .performance-controls,
+html:not([data-edge-theme="daylight"]) .performance-kpi,
+html:not([data-edge-theme="daylight"]) .comparison-pair > div,
+html:not([data-edge-theme="daylight"]) .insight-row,
+html:not([data-edge-theme="daylight"]) .weekly-review-card,
+html:not([data-edge-theme="daylight"]) .weekly-review-quotes > div,
+html:not([data-edge-theme="daylight"]) .pulse-panel > div,
+html:not([data-edge-theme="daylight"]) .due-mistake-row,
+html:not([data-edge-theme="daylight"]) .mistake-card {
+  color: var(--ink);
+  background: linear-gradient(145deg, color-mix(in srgb, var(--paper) 94%, var(--blue) 6%), var(--edge-panel)) !important;
+  border-color: var(--line) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.035), 0 14px 34px rgba(0,0,0,.12);
+}
+html:not([data-edge-theme="daylight"]) .daily-stat {
+  border-radius: 17px;
+  padding: 15px;
+}
+html:not([data-edge-theme="daylight"]) .daily-task {
+  background: color-mix(in srgb, var(--paper) 82%, var(--bg)) !important;
+  transition: background .2s ease, border-color .2s ease, transform .2s ease;
+}
+html:not([data-edge-theme="daylight"]) .daily-task:hover {
+  border-color: color-mix(in srgb, var(--blue) 38%, var(--line)) !important;
+  transform: translateY(-1px);
+}
+html:not([data-edge-theme="daylight"]) .daily-task.is-done {
+  background: color-mix(in srgb, var(--green) 9%, var(--paper)) !important;
+}
+html:not([data-edge-theme="daylight"]) .task-check {
+  color: transparent;
+  background: color-mix(in srgb, var(--paper) 88%, var(--bg)) !important;
+  border-color: var(--line) !important;
+}
+html:not([data-edge-theme="daylight"]) .task-check.checked {
+  background: var(--green) !important;
+  border-color: var(--green) !important;
+  color: #062018;
+}
+html:not([data-edge-theme="daylight"]) .task-priority {
+  color: var(--muted);
+  background: var(--soft);
+}
+html:not([data-edge-theme="daylight"]) .task-priority.high {
+  color: var(--red);
+  background: var(--red-soft);
+}
+html:not([data-edge-theme="daylight"]) .task-priority.low {
+  color: var(--blue);
+  background: var(--blue-soft);
+}
+html:not([data-edge-theme="daylight"]) .mini-delete:hover {
+  color: var(--red);
+  background: var(--red-soft);
+}
+html:not([data-edge-theme="daylight"]) .daily-task-footer,
+html:not([data-edge-theme="daylight"]) .mistake-detail,
+html:not([data-edge-theme="daylight"]) .mistake-card-footer,
+html:not([data-edge-theme="daylight"]) .revision-queue-item {
+  border-color: var(--line);
+}
+html:not([data-edge-theme="daylight"]) .focus-timer-panel {
+  background: linear-gradient(145deg, color-mix(in srgb, var(--blue) 10%, var(--edge-panel-solid)), color-mix(in srgb, var(--violet) 8%, var(--edge-panel-solid))) !important;
+}
+html:not([data-edge-theme="daylight"]) .timer-display {
+  color: var(--ink) !important;
+  text-shadow: 0 0 30px color-mix(in srgb, var(--green) 20%, transparent);
+}
+html:not([data-edge-theme="daylight"]) .timer-footnote,
+html:not([data-edge-theme="daylight"]) .yesterday-summary p,
+html:not([data-edge-theme="daylight"]) .weekly-review-quotes p,
+html:not([data-edge-theme="daylight"]) .mistake-detail p,
+html:not([data-edge-theme="daylight"]) .mistake-takeaway p,
+html:not([data-edge-theme="daylight"]) .daily-stat-foot,
+html:not([data-edge-theme="daylight"]) .task-meta {
+  color: var(--muted) !important;
+}
+html:not([data-edge-theme="daylight"]) .daily-stat > strong,
+html:not([data-edge-theme="daylight"]) .task-copy strong,
+html:not([data-edge-theme="daylight"]) .study-session strong,
+html:not([data-edge-theme="daylight"]) .performance-kpi strong,
+html:not([data-edge-theme="daylight"]) .mistake-card h3,
+html:not([data-edge-theme="daylight"]) .due-mistake-row strong {
+  color: var(--ink);
+}
+html:not([data-edge-theme="daylight"]) .daily-task.is-done .task-copy strong {
+  color: var(--muted);
+}
+html:not([data-edge-theme="daylight"]) .comparison-pair > div {
+  background: color-mix(in srgb, var(--paper) 88%, var(--blue) 12%) !important;
+}
+html:not([data-edge-theme="daylight"]) .comparison-delta.positive,
+html:not([data-edge-theme="daylight"]) .insight-number,
+html:not([data-edge-theme="daylight"]) .mistake-takeaway {
+  color: var(--green);
+  background: var(--green-soft) !important;
+  border-color: color-mix(in srgb, var(--green) 22%, var(--line)) !important;
+}
+html:not([data-edge-theme="daylight"]) .comparison-delta.negative {
+  color: var(--orange);
+  background: var(--orange-soft) !important;
+}
+html:not([data-edge-theme="daylight"]) .mistake-card.mistake-overdue {
+  border-color: color-mix(in srgb, var(--orange) 38%, var(--line)) !important;
+}
+html:not([data-edge-theme="daylight"]) .mistake-detail small,
+html:not([data-edge-theme="daylight"]) .mistake-takeaway small {
+  color: var(--muted);
+}
+html:not([data-edge-theme="daylight"]) .mistake-takeaway small,
+html:not([data-edge-theme="daylight"]) .session-kind {
+  color: var(--green);
+}
