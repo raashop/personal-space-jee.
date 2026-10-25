@@ -4633,3 +4633,18 @@ html[data-edge-theme="daylight"] .chapter-test-btn {
     min-width: 730px;
   }
 }
+
+
+/* Re-enable the V0 circular readiness button after legacy display-only rule. */
+html[data-edge-theme="daylight"] #overallRing {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  touch-action: manipulation;
+}
+html[data-edge-theme="daylight"] #overallRing:focus-visible {
+  outline: 3px solid #8fc7f4;
+  outline-offset: 5px;
+}
+html[data-edge-theme="daylight"] #overallRing .ring-inner {
+  pointer-events: none;
+}
