@@ -766,10 +766,6 @@
     openShortcuts: openShortcuts,
     renderSignal: renderEdgeSignal
   };
-  window.psEdgeRunRecommendation = function () {
-    const recommendation = chooseRecommendation();
-    goToPage(recommendation.page);
-  };
 
   if (doc.readyState === "loading") {
     doc.addEventListener("DOMContentLoaded", initialise, { once: true });
