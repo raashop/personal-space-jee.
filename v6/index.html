@@ -3095,8 +3095,9 @@ function renderDashboard(){
  if(subjectCards)subjectCards.innerHTML=["Physics","Chemistry","Mathematics"].map(sub=>{
   const arr=chapters.filter(c=>c.subject===sub),complete=arr.filter(c=>c.prep==="Exam Ready").length,percent=pct(complete,arr.length),colour=colors[sub];
   const needs=arr.filter(c=>c.prep==="Needs Work").length;
-return '<button type="button" class="subject-card '+sub.toLowerCase()+'" style="--subject:'+colour[0]+';--subject-soft:'+colour[1]+'" onclick="openDashboardDrilldown(\\'subject\\',\\''+sub+'\\')"><div class="subject-top"><span class="subject-mark">'+colour[2]+'</span><span class="badge">'+arr.length+' chapters</span></div><h3>'+escapeHTML(sub)+'</h3><p class="subject-stat">'+complete+' done · '+needs+' need work</p><div class="progress-track"><div class="progress-fill" style="--subject:'+colour[0]+';width:'+percent+'%"></div></div><div class="subject-foot"><span>'+percent+'% complete</span><span>View chapters ↗</span></div></button>';
+return '<button type="button" class="subject-card '+sub.toLowerCase()+'" style="--subject:'+colour[0]+';--subject-soft:'+colour[1]+'" data-dashboard-subject="'+sub+'"><div class="subject-top"><span class="subject-mark">'+colour[2]+'</span><span class="badge">'+arr.length+' chapters</span></div><h3>'+escapeHTML(sub)+'</h3><p class="subject-stat">'+complete+' done · '+needs+' need work</p><div class="progress-track"><div class="progress-fill" style="--subject:'+colour[0]+';width:'+percent+'%"></div></div><div class="subject-foot"><span>'+percent+'% complete</span><span>View chapters ↗</span></div></button>';
  }).join("");
+ if(subjectCards)subjectCards.querySelectorAll("[data-dashboard-subject]").forEach(button=>button.addEventListener("click",function(){openDashboardDrilldown("subject",this.getAttribute("data-dashboard-subject")||"Physics");}));
 
  const today=todayISO();
  const future=[
