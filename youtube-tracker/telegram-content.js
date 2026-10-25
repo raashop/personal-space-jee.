@@ -150,24 +150,20 @@
         }
       } catch {}
     }
-    const viewer=video.closest?.('[class*="media-viewer"], [class*="MediaViewer"], [class*="viewer-container"]');
-    const viewerText=clean(viewer);
-    const baseTexts=[video.getAttribute("aria-label")||"",video.getAttribute("title")||"",viewerText,...captionTexts,...ancestors].filter(Boolean);
-    let allText=baseTexts.join(" · ").slice(0,16000);
-    let nearby=null;
-    if(!textHasChapter(allText) || !isLecturePost(allText)) {
-      nearby=findNearbyLectureCaption(video);
-      if(nearby) allText=(allText+" · "+nearby.text).slice(0,18000);
-    }
-    const candidates=[...captionTexts,...ancestors];
-    const bestText=candidates.find(text=>textHasChapter(text)&&isLecturePost(text)) ||
-      nearby?.text || captionTexts[0] || ancestors.find(text=>text.length>12) || "";
-    const anchor=(nearby?.element || video).closest?.('[data-message-id], [data-mid]') ||
+    const videoLabel=[video.getAttribute("aria-label")||"",video.getAttribute("title")||""].filter(Boolean).join(" ").trim();
+    // Prefer a visible caption that independently matches a chapter plus a study cue.
+    // Avoid classifying from a large parent container that may contain other posts.
+    const localCandidate=[...captionTexts,...ancestors].find(text=>textHasChapter(text)&&isLecturePost(text));
+    const nearby=findNearbyLectureCaption(video);
+    const candidate=nearby?.text||localCandidate||
+      ([videoLabel].find(text=>textHasChapter(text)&&isLecturePost(text))||"");
+    const sourceText=(candidate||videoLabel).slice(0,7000);
+    const anchor=(nearby?.element||video).closest?.('[data-message-id], [data-mid]') ||
       video.closest?.('[data-message-id], [data-mid]');
     const msgId=anchor?.getAttribute("data-message-id")||anchor?.getAttribute("data-mid")||"";
     const link=anchor?.querySelector?.('a[href*="t.me/"],a[href*="telegram.me/"]');
-    const title=(video.getAttribute("aria-label")||video.getAttribute("title")||bestText||"Telegram video").trim().slice(0,180);
-    return {title,sourceText:allText,url:link?.href||location.href,msgId,boxText:bestText};
+    const title=(candidate||videoLabel||"Telegram video").trim().slice(0,180);
+    return {title,sourceText,url:link?.href||location.href,msgId,boxText:candidate};
   }
   const tracked=new WeakMap();
   function attach(video) {
