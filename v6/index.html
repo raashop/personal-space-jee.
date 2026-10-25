@@ -1954,26 +1954,324 @@ td strong {
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const BASE = {"subjects":{"Physics":[{"subject":"Physics","chapter":"Units and Measurements","class":"Class 11","coverage":"SI units, dimensions, significant figures and measurement errors."},{"subject":"Physics","chapter":"Kinematics","class":"Class 11","coverage":"Motion in a straight line and plane, graphs, relative velocity, projectiles and uniform circular motion."},{"subject":"Physics","chapter":"Laws of Motion","class":"Class 11","coverage":"Newton’s laws, momentum, impulse, friction, equilibrium and centripetal force."},{"subject":"Physics","chapter":"Work, Energy and Power","class":"Class 11","coverage":"Work-energy theorem, kinetic and potential energy, springs, conservation, power and elastic/inelastic collisions."},{"subject":"Physics","chapter":"Rotational Motion","class":"Class 11","coverage":"Centre of mass, torque, angular momentum, moment of inertia, rotation and rigid-body equilibrium."},{"subject":"Physics","chapter":"Gravitation","class":"Class 11","coverage":"Universal gravitation, variation of g, Kepler’s laws, gravitational potential, escape and satellite motion."},{"subject":"Physics","chapter":"Properties of Solids and Liquids","class":"Class 11","coverage":"Elasticity; fluid pressure, viscosity and Bernoulli; surface tension; thermal expansion, calorimetry, latent heat and heat transfer."},{"subject":"Physics","chapter":"Thermodynamics","class":"Class 11","coverage":"Thermal equilibrium, zeroth/first/second laws, internal energy, work, isothermal and adiabatic processes."},{"subject":"Physics","chapter":"Kinetic Theory of Gases","class":"Class 11","coverage":"Ideal-gas equation, molecular pressure, RMS speed, degrees of freedom, equipartition and mean free path."},{"subject":"Physics","chapter":"Oscillations and Waves","class":"Class 11","coverage":"SHM, springs, simple pendulum, progressive/standing waves, strings, organ pipes, harmonics and beats."},{"subject":"Physics","chapter":"Electrostatics","class":"Class 12","coverage":"Electric charges and fields, Gauss’s law, potential, dipoles, conductors, dielectrics and capacitance."},{"subject":"Physics","chapter":"Current Electricity","class":"Class 12","coverage":"Current, drift velocity, resistance, cells, power, Kirchhoff’s laws, Wheatstone bridge and metre bridge."},{"subject":"Physics","chapter":"Magnetic Effects of Current and Magnetism","class":"Class 12","coverage":"Biot–Savart and Ampere laws, magnetic force, current loops, galvanometer, bar magnets and magnetic materials."},{"subject":"Physics","chapter":"Electromagnetic Induction and Alternating Currents","class":"Class 12","coverage":"Faraday/Lenz laws, inductance, eddy currents, AC circuits, resonance, power, generators and transformers."},{"subject":"Physics","chapter":"Electromagnetic Waves","class":"Class 12","coverage":"Displacement current, EM-wave properties, spectrum and applications."},{"subject":"Physics","chapter":"Optics","class":"Class 12","coverage":"Mirrors, lenses, refraction, prisms, optical instruments, Huygens principle, interference, diffraction and polarisation."},{"subject":"Physics","chapter":"Dual Nature of Matter and Radiation","class":"Class 12","coverage":"Photoelectric effect, Einstein’s equation, particle nature of light and de Broglie matter waves."},{"subject":"Physics","chapter":"Atoms and Nuclei","class":"Class 12","coverage":"Rutherford and Bohr models, atomic spectra, nuclear size, mass defect, binding energy, fission and fusion."},{"subject":"Physics","chapter":"Electronic Devices","class":"Class 12","coverage":"Semiconductors, p–n diode, rectifiers, LED, photodiode, solar cell, Zener diode and logic gates."},{"subject":"Physics","chapter":"Experimental Skills","class":"Both","coverage":"NTA-listed measurement, mechanics, heat, electricity, optics and semiconductor experiments."}],"Chemistry":[{"subject":"Chemistry","chapter":"Some Basic Concepts in Chemistry","class":"Class 11","coverage":"Mole concept, atomic/molecular masses, formulae, chemical equations and stoichiometry."},{"subject":"Chemistry","chapter":"Atomic Structure","class":"Class 11","coverage":"Radiation and spectra, Bohr model, de Broglie relation, uncertainty principle, orbitals, quantum numbers and electronic configuration."},{"subject":"Chemistry","chapter":"Chemical Bonding and Molecular Structure","class":"Class 11","coverage":"Ionic/covalent bonds, lattice enthalpy, VSEPR, hybridisation, resonance, MOT, bond order, metallic and hydrogen bonding."},{"subject":"Chemistry","chapter":"Chemical Thermodynamics","class":"Class 11","coverage":"System and surroundings, state functions, enthalpy, Hess’s law, entropy, Gibbs energy and spontaneity."},{"subject":"Chemistry","chapter":"Solutions","class":"Class 12","coverage":"Concentration terms, Raoult’s law, ideal/non-ideal solutions and colligative properties."},{"subject":"Chemistry","chapter":"Equilibrium","class":"Class 11","coverage":"Physical and chemical equilibrium, Kp/Kc, Le Chatelier’s principle, acids/bases, pH, buffers, hydrolysis and solubility product."},{"subject":"Chemistry","chapter":"Redox Reactions and Electrochemistry","class":"Both","coverage":"Oxidation numbers and balancing, conductivity, electrochemical cells, electrode potentials, Nernst equation, batteries and fuel cells."},{"subject":"Chemistry","chapter":"Chemical Kinetics","class":"Class 12","coverage":"Rate laws, order and molecularity, zero/first-order reactions, half-life, Arrhenius equation and activation energy."},{"subject":"Chemistry","chapter":"Classification of Elements and Periodicity in Properties","class":"Class 11","coverage":"Modern periodic law, electronic configuration and periodic trends in radii, ionisation enthalpy, electron gain enthalpy and reactivity."},{"subject":"Chemistry","chapter":"p-Block Elements","class":"Class 12","coverage":"Groups 13–18: electronic configurations, general trends and distinctive behaviour of the first element in each group."},{"subject":"Chemistry","chapter":"d- and f-Block Elements","class":"Class 12","coverage":"Transition elements, oxidation states, colours, catalysis, complex formation, lanthanoids and actinoids."},{"subject":"Chemistry","chapter":"Coordination Compounds","class":"Class 12","coverage":"Ligands, coordination number, nomenclature, isomerism, bonding, crystal field basics and magnetic properties."},{"subject":"Chemistry","chapter":"Purification and Characterisation of Organic Compounds","class":"Class 11","coverage":"Crystallisation, sublimation, distillation, extraction, chromatography, qualitative/quantitative analysis and formula calculations."},{"subject":"Chemistry","chapter":"Some Basic Principles of Organic Chemistry","class":"Class 11","coverage":"Classification, IUPAC/trivial nomenclature, structural/stereo isomerism, intermediates, electronic effects and reaction types."},{"subject":"Chemistry","chapter":"Hydrocarbons","class":"Class 11","coverage":"Alkanes, alkenes, alkynes and aromatic hydrocarbons: nomenclature, preparation, properties, mechanisms and key reactions."},{"subject":"Chemistry","chapter":"Organic Compounds Containing Halogens","class":"Class 12","coverage":"Haloalkanes and haloarenes, C–X bond, substitution reactions and uses/environmental effects of listed halogen compounds."},{"subject":"Chemistry","chapter":"Organic Compounds Containing Oxygen","class":"Class 12","coverage":"Alcohols, phenols, ethers, aldehydes, ketones and carboxylic acids; preparation, reactions and uses."},{"subject":"Chemistry","chapter":"Organic Compounds Containing Nitrogen","class":"Class 12","coverage":"Amines, classification, nomenclature, basicity, identification and diazonium salts."},{"subject":"Chemistry","chapter":"Biomolecules","class":"Class 12","coverage":"Carbohydrates, proteins, enzymes, vitamins, nucleic acids and introductory hormones."},{"subject":"Chemistry","chapter":"Principles Related to Practical Chemistry","class":"Class 12","coverage":"Functional-group tests, titrations, qualitative salt analysis, preparations and listed practical experiments."}],"Mathematics":[{"subject":"Mathematics","chapter":"Sets, Relations and Functions","class":"Class 11","coverage":"Set operations, power sets, relations, equivalence relations, one-one/onto functions and composition."},{"subject":"Mathematics","chapter":"Complex Numbers and Quadratic Equations","class":"Class 11","coverage":"Complex-number algebra, Argand diagram, modulus/argument, roots, discriminant and coefficient relations."},{"subject":"Mathematics","chapter":"Matrices and Determinants","class":"Class 12","coverage":"Matrix operations, determinants, adjoint/inverse, triangle area, consistency and linear equations."},{"subject":"Mathematics","chapter":"Permutations and Combinations","class":"Class 11","coverage":"Fundamental counting principle, permutations, combinations and simple applications."},{"subject":"Mathematics","chapter":"Binomial Theorem and Its Simple Applications","class":"Class 11","coverage":"Positive integral powers, general and middle terms, and simple applications."},{"subject":"Mathematics","chapter":"Sequence and Series","class":"Class 11","coverage":"Arithmetic/geometric progressions, means and the relation between A.M. and G.M."},{"subject":"Mathematics","chapter":"Limit, Continuity and Differentiability","class":"Class 12","coverage":"Limits, continuity, differentiation rules, composite/implicit functions, inverse-trig derivatives, rates, monotonicity, maxima/minima."},{"subject":"Mathematics","chapter":"Integral Calculus","class":"Class 12","coverage":"Indefinite integration methods, standard integrals, definite integrals, properties and areas bounded by curves."},{"subject":"Mathematics","chapter":"Differential Equations","class":"Class 12","coverage":"Order and degree, separation of variables, homogeneous and first-order linear equations."},{"subject":"Mathematics","chapter":"Coordinate Geometry","class":"Class 11","coverage":"Coordinate basics, distance/section, locus, straight lines, circle, parabola, ellipse and hyperbola."},{"subject":"Mathematics","chapter":"Three-Dimensional Geometry","class":"Class 12","coverage":"Coordinates in space, distance/section formula, direction ratios/cosines, lines, skew lines and shortest distance."},{"subject":"Mathematics","chapter":"Vector Algebra","class":"Class 12","coverage":"Scalars/vectors, vector addition, components, scalar product and vector product."},{"subject":"Mathematics","chapter":"Statistics and Probability","class":"Class 11","coverage":"Measures of dispersion, mean/median/mode, variance, standard deviation, probability rules, Bayes’ theorem and distributions."},{"subject":"Mathematics","chapter":"Trigonometry","class":"Both","coverage":"Trigonometric functions and identities, equations, inverse-trigonometric functions and their properties."}]},"litmus":[{"name":"LITMUS Part Test 1","deadline":"2026-10-21","syllabus":"Maths: Relations & Functions; Inverse Trigonometric Functions; Limits, Continuity & Differentiability; Methods of Differentiation; Sets + Logarithms. Physics: Electrostatics; Current Electricity; Capacitance; Magnetic Effects of Current and Magnetism. Chemistry: Chemical Kinetics; Liquid Solution; Periodic Table; Biomolecules; Purification & Characterisation of Organic Compounds; Practical Chemistry (Principles Related to Practical Chemistry); GOC."},{"name":"LITMUS Part Test 2","deadline":"2026-11-02","syllabus":"Maths: Indefinite & Definite Integration; Applications of Derivatives; Matrices & Determinants; Differential Equations; Area Under Curve. Physics: Electromagnetic Induction; AC & EM Waves; Ray Optics; Wave Optics. Chemistry: Electrochemistry; Coordination; Isomerism; Hydrocarbon; Nomenclature."},{"name":"LITMUS Part Test 3","deadline":"2026-11-16","syllabus":"Maths: Quadratic Equation; Vectors & 3D Geometry; Probability; Statistics. Physics: Dual Nature of Radiation and Matter; Atoms and Nuclei; Electronic Devices; Experimental Skills; Units & Dimensions; Kinematics and NLM. Chemistry: Chemical Bonding; p-Block Elements; d- and f-Block; Carboxylic Acid and Aromatic Compounds."},{"name":"LITMUS Part Test 4","deadline":"2026-11-24","syllabus":"Maths: Trigonometric Functions, Identities & Equations (Parts I–III); Sequences & Series; Straight Line; Circles. Physics: Work, Power & Energy; Rotational Motion; Gravitation; SHM; Waves. Chemistry: Mole Concept; Structure of Atom; Redox Reactions; Alcohol and Ether; Halogen Derivatives."},{"name":"LITMUS Part Test 5","deadline":"2026-12-04","syllabus":"Maths: Permutations & Combinations; Binomial Theorem; Complex Numbers; Conic Sections. Physics: Properties of Bulk Matter (Solids + Liquids); Thermodynamics; Behaviour of Perfect Gases & Kinetic Theory of Gases. Chemistry: Chemical & Ionic Equilibrium; Thermodynamics + Thermochemistry; Grignard; Named Reactions; Carbonyl Compounds; Oxidation Reactions."},{"name":"LITMUS JEE Main Full Test FT-1","deadline":"2026-12-07","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."},{"name":"LITMUS JEE Main Full Test FT-2","deadline":"2026-12-10","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."},{"name":"LITMUS JEE Main Full Test FT-3","deadline":"2026-12-14","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."},{"name":"LITMUS JEE Main Full Test FT-4","deadline":"2026-12-16","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."},{"name":"LITMUS JEE Main Full Test FT-5","deadline":"2026-12-19","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."},{"name":"LITMUS JEE Main Full Test FT-6","deadline":"2026-12-22","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."},{"name":"LITMUS JEE Main Full Test FT-7","deadline":"2026-12-24","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."},{"name":"LITMUS JEE Main Full Test FT-8","deadline":"2026-12-27","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."},{"name":"LITMUS JEE Main Full Test FT-9","deadline":"2026-12-30","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."},{"name":"LITMUS JEE Main Full Test FT-10","deadline":"2027-01-02","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."},{"name":"LITMUS JEE Main Full Test FT-11","deadline":"2027-01-04","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."},{"name":"LITMUS JEE Main Full Test FT-12","deadline":"2027-01-07","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."},{"name":"LITMUS JEE Main Full Test FT-13","deadline":"2027-01-09","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."},{"name":"LITMUS JEE Main Full Test FT-14","deadline":"2027-01-12","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."},{"name":"LITMUS JEE Main Full Test FT-15","deadline":"2027-01-15","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."},{"name":"LITMUS JEE Main Full Test FT-16","deadline":"2027-01-18","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."},{"name":"LITMUS JEE Main Full Test FT-17","deadline":"2027-03-20","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."},{"name":"LITMUS JEE Main Full Test FT-18","deadline":"2027-03-23","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."},{"name":"LITMUS JEE Main Full Test FT-19","deadline":"2027-03-26","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."},{"name":"LITMUS JEE Main Full Test FT-20","deadline":"2027-03-29","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."},{"name":"LITMUS JEE Main Full Test FT-21","deadline":"2027-04-01","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."},{"name":"LITMUS JEE Main Full Test FT-22","deadline":"2027-04-03","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."}]};
+const BASE = {
+"subjects":{
+"Physics":[{
+"subject":"Physics","chapter":"Units and Measurements","class":"Class 11","coverage":"SI units, dimensions, significant figures and measurement errors."
+}
+,{
+"subject":"Physics","chapter":"Kinematics","class":"Class 11","coverage":"Motion in a straight line and plane, graphs, relative velocity, projectiles and uniform circular motion."
+}
+,{
+"subject":"Physics","chapter":"Laws of Motion","class":"Class 11","coverage":"Newton’s laws, momentum, impulse, friction, equilibrium and centripetal force."
+}
+,{
+"subject":"Physics","chapter":"Work, Energy and Power","class":"Class 11","coverage":"Work-energy theorem, kinetic and potential energy, springs, conservation, power and elastic/inelastic collisions."
+}
+,{
+"subject":"Physics","chapter":"Rotational Motion","class":"Class 11","coverage":"Centre of mass, torque, angular momentum, moment of inertia, rotation and rigid-body equilibrium."
+}
+,{
+"subject":"Physics","chapter":"Gravitation","class":"Class 11","coverage":"Universal gravitation, variation of g, Kepler’s laws, gravitational potential, escape and satellite motion."
+}
+,{
+"subject":"Physics","chapter":"Properties of Solids and Liquids","class":"Class 11","coverage":"Elasticity; fluid pressure, viscosity and Bernoulli; surface tension; thermal expansion, calorimetry, latent heat and heat transfer."
+}
+,{
+"subject":"Physics","chapter":"Thermodynamics","class":"Class 11","coverage":"Thermal equilibrium, zeroth/first/second laws, internal energy, work, isothermal and adiabatic processes."
+}
+,{
+"subject":"Physics","chapter":"Kinetic Theory of Gases","class":"Class 11","coverage":"Ideal-gas equation, molecular pressure, RMS speed, degrees of freedom, equipartition and mean free path."
+}
+,{
+"subject":"Physics","chapter":"Oscillations and Waves","class":"Class 11","coverage":"SHM, springs, simple pendulum, progressive/standing waves, strings, organ pipes, harmonics and beats."
+}
+,{
+"subject":"Physics","chapter":"Electrostatics","class":"Class 12","coverage":"Electric charges and fields, Gauss’s law, potential, dipoles, conductors, dielectrics and capacitance."
+}
+,{
+"subject":"Physics","chapter":"Current Electricity","class":"Class 12","coverage":"Current, drift velocity, resistance, cells, power, Kirchhoff’s laws, Wheatstone bridge and metre bridge."
+}
+,{
+"subject":"Physics","chapter":"Magnetic Effects of Current and Magnetism","class":"Class 12","coverage":"Biot–Savart and Ampere laws, magnetic force, current loops, galvanometer, bar magnets and magnetic materials."
+}
+,{
+"subject":"Physics","chapter":"Electromagnetic Induction and Alternating Currents","class":"Class 12","coverage":"Faraday/Lenz laws, inductance, eddy currents, AC circuits, resonance, power, generators and transformers."
+}
+,{
+"subject":"Physics","chapter":"Electromagnetic Waves","class":"Class 12","coverage":"Displacement current, EM-wave properties, spectrum and applications."
+}
+,{
+"subject":"Physics","chapter":"Optics","class":"Class 12","coverage":"Mirrors, lenses, refraction, prisms, optical instruments, Huygens principle, interference, diffraction and polarisation."
+}
+,{
+"subject":"Physics","chapter":"Dual Nature of Matter and Radiation","class":"Class 12","coverage":"Photoelectric effect, Einstein’s equation, particle nature of light and de Broglie matter waves."
+}
+,{
+"subject":"Physics","chapter":"Atoms and Nuclei","class":"Class 12","coverage":"Rutherford and Bohr models, atomic spectra, nuclear size, mass defect, binding energy, fission and fusion."
+}
+,{
+"subject":"Physics","chapter":"Electronic Devices","class":"Class 12","coverage":"Semiconductors, p–n diode, rectifiers, LED, photodiode, solar cell, Zener diode and logic gates."
+}
+,{
+"subject":"Physics","chapter":"Experimental Skills","class":"Both","coverage":"NTA-listed measurement, mechanics, heat, electricity, optics and semiconductor experiments."
+}
+],"Chemistry":[{
+"subject":"Chemistry","chapter":"Some Basic Concepts in Chemistry","class":"Class 11","coverage":"Mole concept, atomic/molecular masses, formulae, chemical equations and stoichiometry."
+}
+,{
+"subject":"Chemistry","chapter":"Atomic Structure","class":"Class 11","coverage":"Radiation and spectra, Bohr model, de Broglie relation, uncertainty principle, orbitals, quantum numbers and electronic configuration."
+}
+,{
+"subject":"Chemistry","chapter":"Chemical Bonding and Molecular Structure","class":"Class 11","coverage":"Ionic/covalent bonds, lattice enthalpy, VSEPR, hybridisation, resonance, MOT, bond order, metallic and hydrogen bonding."
+}
+,{
+"subject":"Chemistry","chapter":"Chemical Thermodynamics","class":"Class 11","coverage":"System and surroundings, state functions, enthalpy, Hess’s law, entropy, Gibbs energy and spontaneity."
+}
+,{
+"subject":"Chemistry","chapter":"Solutions","class":"Class 12","coverage":"Concentration terms, Raoult’s law, ideal/non-ideal solutions and colligative properties."
+}
+,{
+"subject":"Chemistry","chapter":"Equilibrium","class":"Class 11","coverage":"Physical and chemical equilibrium, Kp/Kc, Le Chatelier’s principle, acids/bases, pH, buffers, hydrolysis and solubility product."
+}
+,{
+"subject":"Chemistry","chapter":"Redox Reactions and Electrochemistry","class":"Both","coverage":"Oxidation numbers and balancing, conductivity, electrochemical cells, electrode potentials, Nernst equation, batteries and fuel cells."
+}
+,{
+"subject":"Chemistry","chapter":"Chemical Kinetics","class":"Class 12","coverage":"Rate laws, order and molecularity, zero/first-order reactions, half-life, Arrhenius equation and activation energy."
+}
+,{
+"subject":"Chemistry","chapter":"Classification of Elements and Periodicity in Properties","class":"Class 11","coverage":"Modern periodic law, electronic configuration and periodic trends in radii, ionisation enthalpy, electron gain enthalpy and reactivity."
+}
+,{
+"subject":"Chemistry","chapter":"p-Block Elements","class":"Class 12","coverage":"Groups 13–18: electronic configurations, general trends and distinctive behaviour of the first element in each group."
+}
+,{
+"subject":"Chemistry","chapter":"d- and f-Block Elements","class":"Class 12","coverage":"Transition elements, oxidation states, colours, catalysis, complex formation, lanthanoids and actinoids."
+}
+,{
+"subject":"Chemistry","chapter":"Coordination Compounds","class":"Class 12","coverage":"Ligands, coordination number, nomenclature, isomerism, bonding, crystal field basics and magnetic properties."
+}
+,{
+"subject":"Chemistry","chapter":"Purification and Characterisation of Organic Compounds","class":"Class 11","coverage":"Crystallisation, sublimation, distillation, extraction, chromatography, qualitative/quantitative analysis and formula calculations."
+}
+,{
+"subject":"Chemistry","chapter":"Some Basic Principles of Organic Chemistry","class":"Class 11","coverage":"Classification, IUPAC/trivial nomenclature, structural/stereo isomerism, intermediates, electronic effects and reaction types."
+}
+,{
+"subject":"Chemistry","chapter":"Hydrocarbons","class":"Class 11","coverage":"Alkanes, alkenes, alkynes and aromatic hydrocarbons: nomenclature, preparation, properties, mechanisms and key reactions."
+}
+,{
+"subject":"Chemistry","chapter":"Organic Compounds Containing Halogens","class":"Class 12","coverage":"Haloalkanes and haloarenes, C–X bond, substitution reactions and uses/environmental effects of listed halogen compounds."
+}
+,{
+"subject":"Chemistry","chapter":"Organic Compounds Containing Oxygen","class":"Class 12","coverage":"Alcohols, phenols, ethers, aldehydes, ketones and carboxylic acids; preparation, reactions and uses."
+}
+,{
+"subject":"Chemistry","chapter":"Organic Compounds Containing Nitrogen","class":"Class 12","coverage":"Amines, classification, nomenclature, basicity, identification and diazonium salts."
+}
+,{
+"subject":"Chemistry","chapter":"Biomolecules","class":"Class 12","coverage":"Carbohydrates, proteins, enzymes, vitamins, nucleic acids and introductory hormones."
+}
+,{
+"subject":"Chemistry","chapter":"Principles Related to Practical Chemistry","class":"Class 12","coverage":"Functional-group tests, titrations, qualitative salt analysis, preparations and listed practical experiments."
+}
+],"Mathematics":[{
+"subject":"Mathematics","chapter":"Sets, Relations and Functions","class":"Class 11","coverage":"Set operations, power sets, relations, equivalence relations, one-one/onto functions and composition."
+}
+,{
+"subject":"Mathematics","chapter":"Complex Numbers and Quadratic Equations","class":"Class 11","coverage":"Complex-number algebra, Argand diagram, modulus/argument, roots, discriminant and coefficient relations."
+}
+,{
+"subject":"Mathematics","chapter":"Matrices and Determinants","class":"Class 12","coverage":"Matrix operations, determinants, adjoint/inverse, triangle area, consistency and linear equations."
+}
+,{
+"subject":"Mathematics","chapter":"Permutations and Combinations","class":"Class 11","coverage":"Fundamental counting principle, permutations, combinations and simple applications."
+}
+,{
+"subject":"Mathematics","chapter":"Binomial Theorem and Its Simple Applications","class":"Class 11","coverage":"Positive integral powers, general and middle terms, and simple applications."
+}
+,{
+"subject":"Mathematics","chapter":"Sequence and Series","class":"Class 11","coverage":"Arithmetic/geometric progressions, means and the relation between A.M. and G.M."
+}
+,{
+"subject":"Mathematics","chapter":"Limit, Continuity and Differentiability","class":"Class 12","coverage":"Limits, continuity, differentiation rules, composite/implicit functions, inverse-trig derivatives, rates, monotonicity, maxima/minima."
+}
+,{
+"subject":"Mathematics","chapter":"Integral Calculus","class":"Class 12","coverage":"Indefinite integration methods, standard integrals, definite integrals, properties and areas bounded by curves."
+}
+,{
+"subject":"Mathematics","chapter":"Differential Equations","class":"Class 12","coverage":"Order and degree, separation of variables, homogeneous and first-order linear equations."
+}
+,{
+"subject":"Mathematics","chapter":"Coordinate Geometry","class":"Class 11","coverage":"Coordinate basics, distance/section, locus, straight lines, circle, parabola, ellipse and hyperbola."
+}
+,{
+"subject":"Mathematics","chapter":"Three-Dimensional Geometry","class":"Class 12","coverage":"Coordinates in space, distance/section formula, direction ratios/cosines, lines, skew lines and shortest distance."
+}
+,{
+"subject":"Mathematics","chapter":"Vector Algebra","class":"Class 12","coverage":"Scalars/vectors, vector addition, components, scalar product and vector product."
+}
+,{
+"subject":"Mathematics","chapter":"Statistics and Probability","class":"Class 11","coverage":"Measures of dispersion, mean/median/mode, variance, standard deviation, probability rules, Bayes’ theorem and distributions."
+}
+,{
+"subject":"Mathematics","chapter":"Trigonometry","class":"Both","coverage":"Trigonometric functions and identities, equations, inverse-trigonometric functions and their properties."
+}
+]
+}
+,"litmus":[{
+"name":"LITMUS Part Test 1","deadline":"2026-10-21","syllabus":"Maths: Relations & Functions; Inverse Trigonometric Functions; Limits, Continuity & Differentiability; Methods of Differentiation; Sets + Logarithms. Physics: Electrostatics; Current Electricity; Capacitance; Magnetic Effects of Current and Magnetism. Chemistry: Chemical Kinetics; Liquid Solution; Periodic Table; Biomolecules; Purification & Characterisation of Organic Compounds; Practical Chemistry (Principles Related to Practical Chemistry); GOC."
+}
+,{
+"name":"LITMUS Part Test 2","deadline":"2026-11-02","syllabus":"Maths: Indefinite & Definite Integration; Applications of Derivatives; Matrices & Determinants; Differential Equations; Area Under Curve. Physics: Electromagnetic Induction; AC & EM Waves; Ray Optics; Wave Optics. Chemistry: Electrochemistry; Coordination; Isomerism; Hydrocarbon; Nomenclature."
+}
+,{
+"name":"LITMUS Part Test 3","deadline":"2026-11-16","syllabus":"Maths: Quadratic Equation; Vectors & 3D Geometry; Probability; Statistics. Physics: Dual Nature of Radiation and Matter; Atoms and Nuclei; Electronic Devices; Experimental Skills; Units & Dimensions; Kinematics and NLM. Chemistry: Chemical Bonding; p-Block Elements; d- and f-Block; Carboxylic Acid and Aromatic Compounds."
+}
+,{
+"name":"LITMUS Part Test 4","deadline":"2026-11-24","syllabus":"Maths: Trigonometric Functions, Identities & Equations (Parts I–III); Sequences & Series; Straight Line; Circles. Physics: Work, Power & Energy; Rotational Motion; Gravitation; SHM; Waves. Chemistry: Mole Concept; Structure of Atom; Redox Reactions; Alcohol and Ether; Halogen Derivatives."
+}
+,{
+"name":"LITMUS Part Test 5","deadline":"2026-12-04","syllabus":"Maths: Permutations & Combinations; Binomial Theorem; Complex Numbers; Conic Sections. Physics: Properties of Bulk Matter (Solids + Liquids); Thermodynamics; Behaviour of Perfect Gases & Kinetic Theory of Gases. Chemistry: Chemical & Ionic Equilibrium; Thermodynamics + Thermochemistry; Grignard; Named Reactions; Carbonyl Compounds; Oxidation Reactions."
+}
+,{
+"name":"LITMUS JEE Main Full Test FT-1","deadline":"2026-12-07","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."
+}
+,{
+"name":"LITMUS JEE Main Full Test FT-2","deadline":"2026-12-10","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."
+}
+,{
+"name":"LITMUS JEE Main Full Test FT-3","deadline":"2026-12-14","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."
+}
+,{
+"name":"LITMUS JEE Main Full Test FT-4","deadline":"2026-12-16","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."
+}
+,{
+"name":"LITMUS JEE Main Full Test FT-5","deadline":"2026-12-19","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."
+}
+,{
+"name":"LITMUS JEE Main Full Test FT-6","deadline":"2026-12-22","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."
+}
+,{
+"name":"LITMUS JEE Main Full Test FT-7","deadline":"2026-12-24","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."
+}
+,{
+"name":"LITMUS JEE Main Full Test FT-8","deadline":"2026-12-27","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."
+}
+,{
+"name":"LITMUS JEE Main Full Test FT-9","deadline":"2026-12-30","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."
+}
+,{
+"name":"LITMUS JEE Main Full Test FT-10","deadline":"2027-01-02","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."
+}
+,{
+"name":"LITMUS JEE Main Full Test FT-11","deadline":"2027-01-04","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."
+}
+,{
+"name":"LITMUS JEE Main Full Test FT-12","deadline":"2027-01-07","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."
+}
+,{
+"name":"LITMUS JEE Main Full Test FT-13","deadline":"2027-01-09","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."
+}
+,{
+"name":"LITMUS JEE Main Full Test FT-14","deadline":"2027-01-12","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."
+}
+,{
+"name":"LITMUS JEE Main Full Test FT-15","deadline":"2027-01-15","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."
+}
+,{
+"name":"LITMUS JEE Main Full Test FT-16","deadline":"2027-01-18","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."
+}
+,{
+"name":"LITMUS JEE Main Full Test FT-17","deadline":"2027-03-20","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."
+}
+,{
+"name":"LITMUS JEE Main Full Test FT-18","deadline":"2027-03-23","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."
+}
+,{
+"name":"LITMUS JEE Main Full Test FT-19","deadline":"2027-03-26","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."
+}
+,{
+"name":"LITMUS JEE Main Full Test FT-20","deadline":"2027-03-29","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."
+}
+,{
+"name":"LITMUS JEE Main Full Test FT-21","deadline":"2027-04-01","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."
+}
+,{
+"name":"LITMUS JEE Main Full Test FT-22","deadline":"2027-04-03","syllabus":"Full JEE Main syllabus (Physics, Chemistry and Mathematics)."
+}
+]
+}
+;
 const KEY = "personal-space-v6-state";
 const LEGACY_KEY = "jee-study-hq-v1";
-const todayISO=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`};
-const defaultPlanDate=()=>{const d=new Date();d.setDate(d.getDate()+1);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`};
-function formatDateForInput(iso){if(!iso)return "";const m=String(iso).match(/^(\d{4})-(\d{2})-(\d{2})$/);return m?`${m[3]}/${m[2]}/${m[1]}`:String(iso)}
-function parseFlexibleDate(value){const raw=String(value||"").trim();if(!raw)return "";let y,m,d;let a=raw.match(/^(\d{1,2})[\/. -](\d{1,2})[\/. -](\d{4})$/);if(a){d=+a[1];m=+a[2];y=+a[3]}else{a=raw.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);if(!a)return null;y=+a[1];m=+a[2];d=+a[3]}const dt=new Date(y,m-1,d);if(dt.getFullYear()!==y||dt.getMonth()!==m-1||dt.getDate()!==d)return null;return `${y}-${String(m).padStart(2,"0")}-${String(d).padStart(2,"0")}`}
+const todayISO=()=>{
+const d=new Date();
+return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`
+}
+;
+const defaultPlanDate=()=>{
+const d=new Date();
+d.setDate(d.getDate()+1);
+return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`
+}
+;
+function formatDateForInput(iso){
+if(!iso)return "";
+const m=String(iso).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+return m?`${m[3]}/${m[2]}/${m[1]}`:String(iso)
+}
+function parseFlexibleDate(value){
+const raw=String(value||"").trim();
+if(!raw)return "";
+let y,m,d;
+let a=raw.match(/^(\d{1,2})[\/. -](\d{1,2})[\/. -](\d{4})$/);
+if(a){
+d=+a[1];
+m=+a[2];
+y=+a[3]
+}
+else{
+a=raw.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+if(!a)return null;
+y=+a[1];
+m=+a[2];
+d=+a[3]
+}
+const dt=new Date(y,m-1,d);
+if(dt.getFullYear()!==y||dt.getMonth()!==m-1||dt.getDate()!==d)return null;
+return `${y}-${String(m).padStart(2,"0")}-${String(d).padStart(2,"0")}`
+}
 
 
 const clone=x=>JSON.parse(JSON.stringify(x));
 function initialState(){
  const chapters=[];
- Object.entries(BASE.subjects).forEach(([subject,list])=>list.forEach(x=>chapters.push({...x,prep:"Not Ready",r1:false,r2:false,r3:false,notes:false,pyq:false,topicAttempted:false,latestDate:"",marks:"",outOf:"",difficulty:""})));
- const topics=chapters.map((c,i)=>({id:"topic-"+i,subject:c.subject,chapter:c.chapter,name:c.chapter+" Topic Test",source:"Chapter topic test",status:"Not Started",plannedDate:"",actualDate:"",marks:"",outOf:"100",difficulty:"",notes:"",custom:false}));
- const litmus=BASE.litmus.map((t,i)=>({...t,id:"litmus-"+i,status:"Not Started",actualDate:"",marks:"",outOf:"",notes:""}));
- return {chapters,topics,litmus,pyqs:[]};
+ Object.entries(BASE.subjects).forEach(([subject,list])=>list.forEach(x=>chapters.push({
+...x,prep:"Not Ready",r1:false,r2:false,r3:false,notes:false,pyq:false,topicAttempted:false,latestDate:"",marks:"",outOf:"",difficulty:""
+}
+)));
+ const topics=chapters.map((c,i)=>({
+id:"topic-"+i,subject:c.subject,chapter:c.chapter,name:c.chapter+" Topic Test",source:"Chapter topic test",status:"Not Started",plannedDate:"",actualDate:"",marks:"",outOf:"100",difficulty:"",notes:"",custom:false
+}
+));
+ const litmus=BASE.litmus.map((t,i)=>({
+...t,id:"litmus-"+i,status:"Not Started",actualDate:"",marks:"",outOf:"",notes:""
+}
+));
+ return {
+chapters,topics,litmus,pyqs:[]
+}
+;
 }
 
-function plannerChapterKey(item){return String(item&&item.subject||"")+"::"+String(item&&item.chapter||"");}
-function plannerSlug(value){return String(value||"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")||"chapter";}
+function plannerChapterKey(item){
+return String(item&&item.subject||"")+"::"+String(item&&item.chapter||"");
+}
+function plannerSlug(value){
+return String(value||"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")||"chapter";
+}
 const CHAPTER_DISPLAY_NAMES={
  "Physics":{
   "Kinematics":"Motion in a Straight Line & Plane",
@@ -1986,7 +2284,9 @@ const CHAPTER_DISPLAY_NAMES={
   "Optics":"Ray Optics & Wave Optics",
   "Dual Nature of Matter and Radiation":"Dual Nature of Radiation & Matter",
   "Electronic Devices":"Semiconductor Electronics"
- },
+ 
+}
+,
  "Chemistry":{
   "Some Basic Concepts in Chemistry":"Mole Concept & Stoichiometry",
   "Atomic Structure":"Structure of Atom",
@@ -2003,7 +2303,9 @@ const CHAPTER_DISPLAY_NAMES={
   "Organic Compounds Containing Oxygen":"Alcohols, Phenols & Ethers; Aldehydes, Ketones & Carboxylic Acids",
   "Organic Compounds Containing Nitrogen":"Amines & Diazonium Salts",
   "Principles Related to Practical Chemistry":"Practical Chemistry & Functional-Group Tests"
- },
+ 
+}
+,
  "Mathematics":{
   "Sets, Relations and Functions":"Sets, Relations & Functions",
   "Complex Numbers and Quadratic Equations":"Complex Numbers & Quadratic Equations",
@@ -2017,17 +2319,39 @@ const CHAPTER_DISPLAY_NAMES={
   "Three-Dimensional Geometry":"3D Geometry",
   "Vector Algebra":"Vectors",
   "Statistics and Probability":"Statistics & Probability"
- }
-};
-function chapterDisplayName(subject,chapter){return (CHAPTER_DISPLAY_NAMES[subject]||{})[chapter]||chapter;}
+ 
+}
+}
+;
+function chapterDisplayName(subject,chapter){
+return (CHAPTER_DISPLAY_NAMES[subject]||{
+}
+)[chapter]||chapter;
+}
 function topicDisplayName(t){
  const chapters=topicChapters(t),base=chapters.map(ch=>chapterDisplayName(t.subject,ch)).join(" + ")||chapterDisplayName(t.subject,t.chapter||"");
  const isDefault=!t.name||(t.custom!==true&&t.chapter&&t.name===t.chapter+" Topic Test");
  return isDefault?(base+" Topic Test"):t.name;
 }
 
-const LEGACY_CHAPTER_ALIASES={"Physics":{"Motion in a Straight Line":["Kinematics"],"Motion in a Plane":["Kinematics"],"Motion in a Straight Line & Plane":["Kinematics"],"Centre of Mass and Collisions":["Work, Energy and Power","Rotational Motion"],"System of Particles & Rotational Motion":["Rotational Motion"],"Mechanical Properties of Solids":["Properties of Solids and Liquids"],"Mechanical Properties of Fluids":["Properties of Solids and Liquids"],"Thermal Properties of Matter":["Properties of Solids and Liquids"],"Mechanical Properties of Solids & Fluids":["Properties of Solids and Liquids"],"Thermal Physics, KTG & Thermodynamics":["Properties of Solids and Liquids","Thermodynamics","Kinetic Theory of Gases"],"Oscillations":["Oscillations and Waves"],"Waves":["Oscillations and Waves"],"Electric Charges and Fields":["Electrostatics"],"Electrostatic Potential and Capacitance":["Electrostatics"],"Electrostatics & Capacitance":["Electrostatics"],"Moving Charges and Magnetism":["Magnetic Effects of Current and Magnetism"],"Magnetism and Matter":["Magnetic Effects of Current and Magnetism"],"Moving Charges, Magnetism & Matter":["Magnetic Effects of Current and Magnetism"],"Electromagnetic Induction":["Electromagnetic Induction and Alternating Currents"],"Alternating Current":["Electromagnetic Induction and Alternating Currents"],"EMI & Alternating Current":["Electromagnetic Induction and Alternating Currents"],"Ray Optics":["Optics"],"Wave Optics":["Optics"],"Ray Optics & Wave Optics":["Optics"],"Atoms":["Atoms and Nuclei"],"Nuclei":["Atoms and Nuclei"],"Semiconductor Electronics":["Electronic Devices"],"Dual Nature, Atoms & Nuclei (Modern Physics)":["Dual Nature of Matter and Radiation","Atoms and Nuclei"]},"Chemistry":{"Mole Concept & Stoichiometry":["Some Basic Concepts in Chemistry"],"Structure of Atom":["Atomic Structure"],"Chemical Bonding & Molecular Structure":["Chemical Bonding and Molecular Structure"],"Chemical Equilibrium":["Equilibrium"],"Ionic Equilibrium":["Equilibrium"],"Chemical & Ionic Equilibrium":["Equilibrium"],"Redox Reactions":["Redox Reactions and Electrochemistry"],"Electrochemistry":["Redox Reactions and Electrochemistry"],"Classification of Elements and Periodicity":["Classification of Elements and Periodicity in Properties"],"Periodic Table & Periodicity":["Classification of Elements and Periodicity in Properties"],"d and f Block Elements":["d- and f-Block Elements"],"Purification Methods":["Purification and Characterisation of Organic Compounds"],"Qualitative and Quantitative Organic Analysis":["Purification and Characterisation of Organic Compounds"],"Purification & Characterisation of Organic Compounds":["Purification and Characterisation of Organic Compounds"],"Nomenclature":["Some Basic Principles of Organic Chemistry"],"General Organic Chemistry (GOC)":["Some Basic Principles of Organic Chemistry"],"Isomerism":["Some Basic Principles of Organic Chemistry"],"Alkanes":["Hydrocarbons"],"Alkenes":["Hydrocarbons"],"Alkynes":["Hydrocarbons"],"Aromatic Hydrocarbons":["Hydrocarbons"],"Haloalkanes":["Organic Compounds Containing Halogens"],"Haloarenes":["Organic Compounds Containing Halogens"],"Haloalkanes & Haloarenes":["Organic Compounds Containing Halogens"],"Alcohols":["Organic Compounds Containing Oxygen"],"Phenols":["Organic Compounds Containing Oxygen"],"Ethers":["Organic Compounds Containing Oxygen"],"Aldehydes and Ketones":["Organic Compounds Containing Oxygen"],"Carboxylic Acids":["Organic Compounds Containing Oxygen"],"Alcohols, Phenols & Ethers":["Organic Compounds Containing Oxygen"],"Aldehydes, Ketones & Carboxylic Acids":["Organic Compounds Containing Oxygen"],"Amines":["Organic Compounds Containing Nitrogen"],"Diazonium Salts":["Organic Compounds Containing Nitrogen"],"Amines & Biomolecules":["Organic Compounds Containing Nitrogen","Biomolecules"],"GOC & Hydrocarbons":["Some Basic Principles of Organic Chemistry","Hydrocarbons"],"Practical Chemistry":["Principles Related to Practical Chemistry"]},"Mathematics":{"Sets":["Sets, Relations and Functions"],"Relations and Functions":["Sets, Relations and Functions"],"Sets, Relations & Functions":["Sets, Relations and Functions"],"Complex Numbers":["Complex Numbers and Quadratic Equations"],"Quadratic Equations":["Complex Numbers and Quadratic Equations"],"Complex Numbers & Quadratic Equations":["Complex Numbers and Quadratic Equations"],"Matrices":["Matrices and Determinants"],"Determinants":["Matrices and Determinants"],"Binomial Theorem":["Binomial Theorem and Its Simple Applications"],"Sequences and Series":["Sequence and Series"],"Trigonometric Functions and Identities":["Trigonometry"],"Trigonometric Equations":["Trigonometry"],"Inverse Trigonometry":["Trigonometry"],"Trigonometric Functions, Identities & Equations":["Trigonometry"],"Limits":["Limit, Continuity and Differentiability"],"Continuity and Differentiability":["Limit, Continuity and Differentiability"],"Methods of Differentiation":["Limit, Continuity and Differentiability"],"Application of Derivatives":["Limit, Continuity and Differentiability"],"Limits, Continuity & Derivatives":["Limit, Continuity and Differentiability"],"Straight Lines and Coordinate Basics":["Coordinate Geometry"],"Circle":["Coordinate Geometry"],"Parabola":["Coordinate Geometry"],"Ellipse":["Coordinate Geometry"],"Hyperbola":["Coordinate Geometry"],"Straight Lines & Conic Sections":["Coordinate Geometry"],"Statistics":["Statistics and Probability"],"Probability":["Statistics and Probability"],"Statistics & Probability":["Statistics and Probability"],"Indefinite Integration":["Integral Calculus"],"Definite Integration":["Integral Calculus"],"Area Under the Curve":["Integral Calculus"],"Definite Integrals & Application of Integrals":["Integral Calculus"],"Vectors":["Vector Algebra"],"Vectors & 3D Geometry":["Vector Algebra","Three-Dimensional Geometry"],"P&C and Binomial Theorem":["Permutations and Combinations","Binomial Theorem and Its Simple Applications"]}};
-function legacyChapterTargets(subject,chapter){const bySubject=LEGACY_CHAPTER_ALIASES[subject]||{};return bySubject[chapter]||null;}
+const LEGACY_CHAPTER_ALIASES={
+"Physics":{
+"Motion in a Straight Line":["Kinematics"],"Motion in a Plane":["Kinematics"],"Motion in a Straight Line & Plane":["Kinematics"],"Centre of Mass and Collisions":["Work, Energy and Power","Rotational Motion"],"System of Particles & Rotational Motion":["Rotational Motion"],"Mechanical Properties of Solids":["Properties of Solids and Liquids"],"Mechanical Properties of Fluids":["Properties of Solids and Liquids"],"Thermal Properties of Matter":["Properties of Solids and Liquids"],"Mechanical Properties of Solids & Fluids":["Properties of Solids and Liquids"],"Thermal Physics, KTG & Thermodynamics":["Properties of Solids and Liquids","Thermodynamics","Kinetic Theory of Gases"],"Oscillations":["Oscillations and Waves"],"Waves":["Oscillations and Waves"],"Electric Charges and Fields":["Electrostatics"],"Electrostatic Potential and Capacitance":["Electrostatics"],"Electrostatics & Capacitance":["Electrostatics"],"Moving Charges and Magnetism":["Magnetic Effects of Current and Magnetism"],"Magnetism and Matter":["Magnetic Effects of Current and Magnetism"],"Moving Charges, Magnetism & Matter":["Magnetic Effects of Current and Magnetism"],"Electromagnetic Induction":["Electromagnetic Induction and Alternating Currents"],"Alternating Current":["Electromagnetic Induction and Alternating Currents"],"EMI & Alternating Current":["Electromagnetic Induction and Alternating Currents"],"Ray Optics":["Optics"],"Wave Optics":["Optics"],"Ray Optics & Wave Optics":["Optics"],"Atoms":["Atoms and Nuclei"],"Nuclei":["Atoms and Nuclei"],"Semiconductor Electronics":["Electronic Devices"],"Dual Nature, Atoms & Nuclei (Modern Physics)":["Dual Nature of Matter and Radiation","Atoms and Nuclei"]
+}
+,"Chemistry":{
+"Mole Concept & Stoichiometry":["Some Basic Concepts in Chemistry"],"Structure of Atom":["Atomic Structure"],"Chemical Bonding & Molecular Structure":["Chemical Bonding and Molecular Structure"],"Chemical Equilibrium":["Equilibrium"],"Ionic Equilibrium":["Equilibrium"],"Chemical & Ionic Equilibrium":["Equilibrium"],"Redox Reactions":["Redox Reactions and Electrochemistry"],"Electrochemistry":["Redox Reactions and Electrochemistry"],"Classification of Elements and Periodicity":["Classification of Elements and Periodicity in Properties"],"Periodic Table & Periodicity":["Classification of Elements and Periodicity in Properties"],"d and f Block Elements":["d- and f-Block Elements"],"Purification Methods":["Purification and Characterisation of Organic Compounds"],"Qualitative and Quantitative Organic Analysis":["Purification and Characterisation of Organic Compounds"],"Purification & Characterisation of Organic Compounds":["Purification and Characterisation of Organic Compounds"],"Nomenclature":["Some Basic Principles of Organic Chemistry"],"General Organic Chemistry (GOC)":["Some Basic Principles of Organic Chemistry"],"Isomerism":["Some Basic Principles of Organic Chemistry"],"Alkanes":["Hydrocarbons"],"Alkenes":["Hydrocarbons"],"Alkynes":["Hydrocarbons"],"Aromatic Hydrocarbons":["Hydrocarbons"],"Haloalkanes":["Organic Compounds Containing Halogens"],"Haloarenes":["Organic Compounds Containing Halogens"],"Haloalkanes & Haloarenes":["Organic Compounds Containing Halogens"],"Alcohols":["Organic Compounds Containing Oxygen"],"Phenols":["Organic Compounds Containing Oxygen"],"Ethers":["Organic Compounds Containing Oxygen"],"Aldehydes and Ketones":["Organic Compounds Containing Oxygen"],"Carboxylic Acids":["Organic Compounds Containing Oxygen"],"Alcohols, Phenols & Ethers":["Organic Compounds Containing Oxygen"],"Aldehydes, Ketones & Carboxylic Acids":["Organic Compounds Containing Oxygen"],"Amines":["Organic Compounds Containing Nitrogen"],"Diazonium Salts":["Organic Compounds Containing Nitrogen"],"Amines & Biomolecules":["Organic Compounds Containing Nitrogen","Biomolecules"],"GOC & Hydrocarbons":["Some Basic Principles of Organic Chemistry","Hydrocarbons"],"Practical Chemistry":["Principles Related to Practical Chemistry"]
+}
+,"Mathematics":{
+"Sets":["Sets, Relations and Functions"],"Relations and Functions":["Sets, Relations and Functions"],"Sets, Relations & Functions":["Sets, Relations and Functions"],"Complex Numbers":["Complex Numbers and Quadratic Equations"],"Quadratic Equations":["Complex Numbers and Quadratic Equations"],"Complex Numbers & Quadratic Equations":["Complex Numbers and Quadratic Equations"],"Matrices":["Matrices and Determinants"],"Determinants":["Matrices and Determinants"],"Binomial Theorem":["Binomial Theorem and Its Simple Applications"],"Sequences and Series":["Sequence and Series"],"Trigonometric Functions and Identities":["Trigonometry"],"Trigonometric Equations":["Trigonometry"],"Inverse Trigonometry":["Trigonometry"],"Trigonometric Functions, Identities & Equations":["Trigonometry"],"Limits":["Limit, Continuity and Differentiability"],"Continuity and Differentiability":["Limit, Continuity and Differentiability"],"Methods of Differentiation":["Limit, Continuity and Differentiability"],"Application of Derivatives":["Limit, Continuity and Differentiability"],"Limits, Continuity & Derivatives":["Limit, Continuity and Differentiability"],"Straight Lines and Coordinate Basics":["Coordinate Geometry"],"Circle":["Coordinate Geometry"],"Parabola":["Coordinate Geometry"],"Ellipse":["Coordinate Geometry"],"Hyperbola":["Coordinate Geometry"],"Straight Lines & Conic Sections":["Coordinate Geometry"],"Statistics":["Statistics and Probability"],"Probability":["Statistics and Probability"],"Statistics & Probability":["Statistics and Probability"],"Indefinite Integration":["Integral Calculus"],"Definite Integration":["Integral Calculus"],"Area Under the Curve":["Integral Calculus"],"Definite Integrals & Application of Integrals":["Integral Calculus"],"Vectors":["Vector Algebra"],"Vectors & 3D Geometry":["Vector Algebra","Three-Dimensional Geometry"],"P&C and Binomial Theorem":["Permutations and Combinations","Binomial Theorem and Its Simple Applications"]
+}
+}
+;
+function legacyChapterTargets(subject,chapter){
+const bySubject=LEGACY_CHAPTER_ALIASES[subject]||{
+}
+;
+return bySubject[chapter]||null;
+}
 function aggregateLegacyChapter(rows){
  const unique=[...new Map(rows.map(r=>[plannerChapterKey(r),r])).values()];
  const statuses=unique.map(r=>r.prep||"Not Ready");
@@ -2035,12 +2359,19 @@ function aggregateLegacyChapter(rows){
  if(statuses.length&&statuses.every(x=>x==="Exam Ready"))prep="Exam Ready";
  else if(statuses.includes("Needs Work"))prep="Needs Work";
  else if(statuses.includes("In Progress")||statuses.includes("Exam Ready"))prep="In Progress";
- const result={prep};
+ const result={
+prep
+}
+;
  ["r1","r2","r3","notes","pyq"].forEach(k=>result[k]=unique.length>0&&unique.every(r=>r[k]===true));
  result.topicAttempted=unique.some(r=>r.topicAttempted===true);
  const dated=unique.filter(r=>r.latestDate).sort((a,b)=>String(b.latestDate).localeCompare(String(a.latestDate)));
  const scored=unique.filter(r=>r.marks!==""&&r.marks!==undefined&&r.marks!==null&&r.outOf!==""&&r.outOf!==undefined&&r.outOf!==null).sort((a,b)=>String(b.latestDate||"").localeCompare(String(a.latestDate||"")));
- const latest=dated[0]||{},score=scored[0]||{};
+ const latest=dated[0]||{
+}
+,score=scored[0]||{
+}
+;
  result.latestDate=latest.latestDate||"";
  result.marks=score.marks!==undefined?score.marks:"";
  result.outOf=score.outOf!==undefined?score.outOf:"";
@@ -2056,82 +2387,181 @@ function migrateState(saved){
  const exact=new Map(),mapped=new Map(),legacyKeys=new Set();
  oldChapters.forEach(ch=>{
   const key=plannerChapterKey(ch);
-  if(defaultKeys.has(key)){if(!exact.has(key))exact.set(key,ch);return;}
+  if(defaultKeys.has(key)){
+if(!exact.has(key))exact.set(key,ch);
+return;
+}
   const targets=legacyChapterTargets(ch.subject,ch.chapter);
   if(!targets||!targets.length)return;
   legacyKeys.add(key);
   targets.forEach(target=>{
-   const targetKey=plannerChapterKey({subject:ch.subject,chapter:target});
+   const targetKey=plannerChapterKey({
+subject:ch.subject,chapter:target
+}
+);
    if(!defaultKeys.has(targetKey))return;
    if(!mapped.has(targetKey))mapped.set(targetKey,[]);
    mapped.get(targetKey).push(ch);
-  });
- });
+  
+}
+);
+ 
+}
+);
  const chapters=defaults.chapters.map(ch=>{
   const key=plannerChapterKey(ch),savedExact=exact.get(key);
-  if(savedExact)return {...ch,...savedExact,subject:ch.subject,chapter:ch.chapter,class:ch.class,coverage:ch.coverage};
+  if(savedExact)return {
+...ch,...savedExact,subject:ch.subject,chapter:ch.chapter,class:ch.class,coverage:ch.coverage
+}
+;
   const records=mapped.get(key)||[];
-  return records.length?{...ch,...aggregateLegacyChapter(records),subject:ch.subject,chapter:ch.chapter,class:ch.class,coverage:ch.coverage}:ch;
- });
+  return records.length?{
+...ch,...aggregateLegacyChapter(records),subject:ch.subject,chapter:ch.chapter,class:ch.class,coverage:ch.coverage
+}
+:ch;
+ 
+}
+);
  oldChapters.filter(ch=>!defaultKeys.has(plannerChapterKey(ch))&&!legacyKeys.has(plannerChapterKey(ch))).forEach(ch=>chapters.push(ch));
 
  const topics=oldTopics.map(t=>{
   const names=Array.isArray(t.chapters)&&t.chapters.length?t.chapters:[t.chapter].filter(Boolean);
-  const mappedNames=[];let wasRemapped=false;
+  const mappedNames=[];
+let wasRemapped=false;
   names.forEach(name=>{
-   if(defaultKeys.has(plannerChapterKey({subject:t.subject,chapter:name}))){mappedNames.push(name);return;}
+   if(defaultKeys.has(plannerChapterKey({
+subject:t.subject,chapter:name
+}
+))){
+mappedNames.push(name);
+return;
+}
    const targets=legacyChapterTargets(t.subject,name);
-   if(targets&&targets.length){wasRemapped=true;targets.forEach(target=>{if(defaultKeys.has(plannerChapterKey({subject:t.subject,chapter:target})))mappedNames.push(target);});}
+   if(targets&&targets.length){
+wasRemapped=true;
+targets.forEach(target=>{
+if(defaultKeys.has(plannerChapterKey({
+subject:t.subject,chapter:target
+}
+)))mappedNames.push(target);
+}
+);
+}
    else mappedNames.push(name);
-  });
+  
+}
+);
   const unique=[...new Set(mappedNames)];
   if(!unique.length)return t;
   const oldChapter=t.chapter,oldDefaultName=t.custom!==true&&String(t.name||"")===oldChapter+" Topic Test";
   const isUntouchedDefault=wasRemapped&&oldDefaultName&&t.status==="Not Started"&&!t.plannedDate&&!t.actualDate&&(t.marks===""||t.marks===null||t.marks===undefined)&&!t.notes&&!t.difficulty;
   if(isUntouchedDefault)return null;
-  return {...t,chapter:unique[0],chapters:unique,name:oldDefaultName&&unique.length===1?unique[0]+" Topic Test":t.name};
- }).filter(Boolean);
+  return {
+...t,chapter:unique[0],chapters:unique,name:oldDefaultName&&unique.length===1?unique[0]+" Topic Test":t.name
+}
+;
+ 
+}
+).filter(Boolean);
  const topicIds=new Set(topics.map(t=>String(t&&t.id||"")));
  defaults.chapters.forEach(ch=>{
   const hasDefault=topics.some(t=>t&&t.subject===ch.subject&&topicChapters(t).includes(ch.chapter)&&String(t.name||"")===ch.chapter+" Topic Test"&&t.custom!==true);
   if(hasDefault)return;
   let id="topic-syllabus-"+plannerSlug(ch.subject+"-"+ch.chapter),suffix=2;
-  while(topicIds.has(id)){id="topic-syllabus-"+plannerSlug(ch.subject+"-"+ch.chapter)+"-"+suffix++;}
+  while(topicIds.has(id)){
+id="topic-syllabus-"+plannerSlug(ch.subject+"-"+ch.chapter)+"-"+suffix++;
+}
   topicIds.add(id);
-  const template=defaults.topics.find(t=>t.subject===ch.subject&&t.chapter===ch.chapter)||{};
-  topics.push({...template,id,subject:ch.subject,chapter:ch.chapter,chapters:[ch.chapter],name:ch.chapter+" Topic Test",source:"Chapter topic test",status:"Not Started",plannedDate:"",actualDate:"",marks:"",outOf:"100",difficulty:"",notes:"",custom:false});
- });
+  const template=defaults.topics.find(t=>t.subject===ch.subject&&t.chapter===ch.chapter)||{
+}
+;
+  topics.push({
+...template,id,subject:ch.subject,chapter:ch.chapter,chapters:[ch.chapter],name:ch.chapter+" Topic Test",source:"Chapter topic test",status:"Not Started",plannedDate:"",actualDate:"",marks:"",outOf:"100",difficulty:"",notes:"",custom:false
+}
+);
+ 
+}
+);
  const normalizedTopics=topics.map(t=>{
-  const oldMax=Number(t.outOf)||100,oldMarks=Number(t.marks);let marks=t.marks;
+  const oldMax=Number(t.outOf)||100,oldMarks=Number(t.marks);
+let marks=t.marks;
   if(oldMax>100&&t.marks!==""&&t.marks!==null&&t.marks!==undefined&&Number.isFinite(oldMarks))marks=String(Math.round(oldMarks/oldMax*100*10)/10);
-  return {...t,marks,outOf:String(oldMax>100?100:(t.outOf||100))};
- });
+  return {
+...t,marks,outOf:String(oldMax>100?100:(t.outOf||100))
+}
+;
+ 
+}
+);
  chapters.forEach(ch=>{
   const oldMax=Number(ch.outOf),oldMarks=Number(ch.marks);
-  if(oldMax>100){if(ch.marks!==""&&Number.isFinite(oldMarks)&&oldMarks>100)ch.marks=String(Math.round(oldMarks/oldMax*100*10)/10);ch.outOf="100";}
- });
+  if(oldMax>100){
+if(ch.marks!==""&&Number.isFinite(oldMarks)&&oldMarks>100)ch.marks=String(Math.round(oldMarks/oldMax*100*10)/10);
+ch.outOf="100";
+}
+ 
+}
+);
  chapters.forEach(ch=>{
   const attempts=topics.filter(t=>t.subject===ch.subject&&t.status==="Attempted"&&topicChapters(t).includes(ch.chapter)).sort((a,b)=>String(b.actualDate||"").localeCompare(String(a.actualDate||"")));
   ch.topicAttempted=attempts.length>0;
-  if(attempts[0]){ch.latestDate=attempts[0].actualDate||ch.latestDate;ch.marks=attempts[0].marks??ch.marks;ch.outOf=attempts[0].outOf??ch.outOf;ch.difficulty=attempts[0].difficulty||ch.difficulty;}
- });
+  if(attempts[0]){
+ch.latestDate=attempts[0].actualDate||ch.latestDate;
+ch.marks=attempts[0].marks??ch.marks;
+ch.outOf=attempts[0].outOf??ch.outOf;
+ch.difficulty=attempts[0].difficulty||ch.difficulty;
+}
+ 
+}
+);
  const defaultLitmusIds=new Set(defaults.litmus.map(t=>t.id));
  const savedLitmus=Array.isArray(saved.litmus)?saved.litmus:[];
- const litmus=defaults.litmus.map(def=>{const old=savedLitmus.find(t=>t&&t.id===def.id);return old?{...def,...old,syllabus:def.syllabus}:def;});
+ const litmus=defaults.litmus.map(def=>{
+const old=savedLitmus.find(t=>t&&t.id===def.id);
+return old?{
+...def,...old,syllabus:def.syllabus
+}
+:def;
+}
+);
  savedLitmus.filter(t=>t&&!defaultLitmusIds.has(t.id)).forEach(t=>litmus.push(t));
  const pyqs=(Array.isArray(saved.pyqs)?saved.pyqs:[]).map(p=>{
-  const names=Array.isArray(p.chapters)&&p.chapters.length?p.chapters:[p.chapter].filter(Boolean);let target;
+  const names=Array.isArray(p.chapters)&&p.chapters.length?p.chapters:[p.chapter].filter(Boolean);
+let target;
   for(const name of names){
-   if(defaultKeys.has(plannerChapterKey({subject:p.subject,chapter:name}))){target=name;break;}
-   const options=legacyChapterTargets(p.subject,name)||[];target=options.find(ch=>defaultKeys.has(plannerChapterKey({subject:p.subject,chapter:ch})));
+   if(defaultKeys.has(plannerChapterKey({
+subject:p.subject,chapter:name
+}
+))){
+target=name;
+break;
+}
+   const options=legacyChapterTargets(p.subject,name)||[];
+target=options.find(ch=>defaultKeys.has(plannerChapterKey({
+subject:p.subject,chapter:ch
+}
+)));
    if(target)break;
-  }
-  return target?{...p,chapter:target}:p;
- });
- return {...defaults,...saved,chapters,topics:normalizedTopics,litmus,pyqs};
+  
+}
+  return target?{
+...p,chapter:target
+}
+:p;
+ 
+}
+);
+ return {
+...defaults,...saved,chapters,topics:normalizedTopics,litmus,pyqs
+}
+;
 }
 
-function chapterDisplayName(subject,chapter){return (CHAPTER_DISPLAY_NAMES[subject]||{})[chapter]||chapter;}
+function chapterDisplayName(subject,chapter){
+return (CHAPTER_DISPLAY_NAMES[subject]||{
+}
+)[chapter]||chapter;
+}
 function topicDisplayName(t){
  const chapters=topicChapters(t),base=chapters.map(ch=>chapterDisplayName(t.subject,ch)).join(" + ")||chapterDisplayName(t.subject,t.chapter||"");
  const isDefault=!t.name||(t.custom!==true&&t.chapter&&t.name===t.chapter+" Topic Test");
@@ -2139,8 +2569,13 @@ function topicDisplayName(t){
 }
 
 
-function topicChapters(t){const chapters=Array.isArray(t&&t.chapters)&&t.chapters.length?t.chapters:[t&&t.chapter].filter(Boolean);return [...new Set(chapters.filter(Boolean))]}
-function topicChapterLabel(t){return topicChapters(t).map(ch=>chapterDisplayName(t.subject,ch)).join(", ")}
+function topicChapters(t){
+const chapters=Array.isArray(t&&t.chapters)&&t.chapters.length?t.chapters:[t&&t.chapter].filter(Boolean);
+return [...new Set(chapters.filter(Boolean))]
+}
+function topicChapterLabel(t){
+return topicChapters(t).map(ch=>chapterDisplayName(t.subject,ch)).join(", ")
+}
 function generatedTopicTestName(subject,chapters){
  const labels=[...new Set((chapters||[]).filter(Boolean))].map(ch=>chapterDisplayName(subject,ch));
  return labels.length?"Topic Test — "+labels.join(" + "):"Topic Test";
@@ -2157,134 +2592,567 @@ function syncTopicTestNameFromPicker(force=false){
 }
 function syncTopicToChapter(t,previous){
  const targets=[];
- const addTargets=(subject,list)=>{(list||[]).forEach(chapter=>{const key=subject+"::"+chapter;if(!targets.some(x=>x.key===key))targets.push({key,subject,chapter});});};
+ const addTargets=(subject,list)=>{
+(list||[]).forEach(chapter=>{
+const key=subject+"::"+chapter;
+if(!targets.some(x=>x.key===key))targets.push({
+key,subject,chapter
+}
+);
+}
+);
+}
+;
  addTargets(t&&t.subject,topicChapters(t));
  if(previous)addTargets(previous.subject,previous.chapters||[previous.chapter].filter(Boolean));
  targets.forEach(target=>{
-  const c=state.chapters.find(x=>x.subject===target.subject&&x.chapter===target.chapter);if(!c)return;
+  const c=state.chapters.find(x=>x.subject===target.subject&&x.chapter===target.chapter);
+if(!c)return;
   const attempts=state.topics.filter(x=>x.subject===target.subject&&x.status==="Attempted"&&topicChapters(x).includes(target.chapter)).sort((a,b)=>(b.actualDate||"").localeCompare(a.actualDate||""));
   c.topicAttempted=attempts.length>0;
-  if(attempts[0]){c.latestDate=attempts[0].actualDate;c.marks=attempts[0].marks;c.outOf=attempts[0].outOf;c.difficulty=attempts[0].difficulty;}
-  else{c.latestDate="";c.marks="";c.outOf="";c.difficulty="";}
- });
+  if(attempts[0]){
+c.latestDate=attempts[0].actualDate;
+c.marks=attempts[0].marks;
+c.outOf=attempts[0].outOf;
+c.difficulty=attempts[0].difficulty;
+}
+  else{
+c.latestDate="";
+c.marks="";
+c.outOf="";
+c.difficulty="";
+}
+ 
+}
+);
 }
 
 let currentPage="dashboard",currentChapterSubject="Physics",currentChapterYear="all",currentLitmusType="all",modalContext=null,toastTimer=null;
 let cloudClient=null,cloudReady=false,cloudBackupAvailable=false,cloudUser=null,cloudTimer=null,cloudApplying=false,cloudSettingsKey="ps-cloud-settings-v2",offlineKey="ps-offline-mode-v1";
 function loadState(){
- try{const saved=JSON.parse(localStorage.getItem(KEY)||"null");if(saved&&Array.isArray(saved.chapters)&&Array.isArray(saved.topics))return migrateState(saved);
- const old=JSON.parse(localStorage.getItem(LEGACY_KEY)||"null");if(old&&Array.isArray(old.chapters)){const migrated=migrateState(old);try{localStorage.setItem(KEY,JSON.stringify(migrated))}catch(e){}return migrated;}}catch(e){}
+ try{
+const saved=JSON.parse(localStorage.getItem(KEY)||"null");
+if(saved&&Array.isArray(saved.chapters)&&Array.isArray(saved.topics))return migrateState(saved);
+ const old=JSON.parse(localStorage.getItem(LEGACY_KEY)||"null");
+if(old&&Array.isArray(old.chapters)){
+const migrated=migrateState(old);
+try{
+localStorage.setItem(KEY,JSON.stringify(migrated))
+}
+catch(e){
+}
+return migrated;
+}
+}
+catch(e){
+}
  return initialState();
 }
 state = loadState();
 function saveState(){
- try{localStorage.setItem(KEY,JSON.stringify(state));document.getElementById("syncStatus").textContent=cloudReady?"Cloud sync enabled":"Saved on this device";document.getElementById("syncDetail").textContent=cloudReady?"Changes sync automatically.":"Your progress autosaves as you work.";}catch(e){toast("Could not save locally. Export a backup to avoid losing changes.");}
- renderDashboard();if(currentPage==="chapters")renderChapters();else if(currentPage==="topic")renderTopics();else if(currentPage==="litmus")renderLitmus();else if(currentPage==="pyq")renderPyq();if(cloudReady&&!cloudApplying)queueCloudSave();
+ try{
+localStorage.setItem(KEY,JSON.stringify(state));
+document.getElementById("syncStatus").textContent=cloudReady?"Cloud sync enabled":"Saved on this device";
+document.getElementById("syncDetail").textContent=cloudReady?"Changes sync automatically.":"Your progress autosaves as you work.";
 }
-function escapeHTML(x){return String(x??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));}
-function escapeAttr(x){return String(x??"").replace(/\\/g,"\\\\").replace(/'/g,"\\'");}
-function pct(a,b){return b?Math.round(a/b*100):0;}
-function statusClass(s){if(["Attempted","Completed","Exam Ready"].includes(s))return "green";if(["Missed","Needs Retest","Redo","Needs Work"].includes(s))return "red";if(["Planned","In Progress","Not Ready"].includes(s))return "orange";return "blue";}
-function scoreLabel(m,o){return m!==""&&m!==undefined&&m!==null&&o!==""&&Number(o)>0?String(m)+" / "+String(o)+" ("+Math.round(Number(m)/Number(o)*100)+"%)":"—";}
-function formatNiceDate(iso){if(!iso)return "Not set";const d=new Date(String(iso).slice(0,10)+"T00:00:00");return Number.isNaN(d.getTime())?String(iso):d.toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"});}
-function getCountdownTarget(){try{return localStorage.getItem("jee-countdown-target")||"2027-01-30"}catch(e){return "2027-01-30"}}
+catch(e){
+toast("Could not save locally. Export a backup to avoid losing changes.");
+}
+ renderDashboard();
+if(currentPage==="chapters")renderChapters();
+else if(currentPage==="topic")renderTopics();
+else if(currentPage==="litmus")renderLitmus();
+else if(currentPage==="pyq")renderPyq();
+if(cloudReady&&!cloudApplying)queueCloudSave();
+}
+function escapeHTML(x){
+return String(x??"").replace(/[&<>"']/g,m=>({
+"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+}
+[m]));
+}
+function escapeAttr(x){
+return String(x??"").replace(/\\/g,"\\\\").replace(/'/g,"\\'");
+}
+function pct(a,b){
+return b?Math.round(a/b*100):0;
+}
+function statusClass(s){
+if(["Attempted","Completed","Exam Ready"].includes(s))return "green";
+if(["Missed","Needs Retest","Redo","Needs Work"].includes(s))return "red";
+if(["Planned","In Progress","Not Ready"].includes(s))return "orange";
+return "blue";
+}
+function scoreLabel(m,o){
+return m!==""&&m!==undefined&&m!==null&&o!==""&&Number(o)>0?String(m)+" / "+String(o)+" ("+Math.round(Number(m)/Number(o)*100)+"%)":"—";
+}
+function formatNiceDate(iso){
+if(!iso)return "Not set";
+const d=new Date(String(iso).slice(0,10)+"T00:00:00");
+return Number.isNaN(d.getTime())?String(iso):d.toLocaleDateString("en-IN",{
+day:"numeric",month:"short",year:"numeric"
+}
+);
+}
+function getCountdownTarget(){
+try{
+return localStorage.getItem("jee-countdown-target")||"2027-01-30"
+}
+catch(e){
+return "2027-01-30"
+}
+}
 function setCountdownTarget(){
- openModal("Countdown target",[{name:"target",label:"Exam date",type:"date",value:getCountdownTarget(),required:true}],{type:"countdown"});
+ openModal("Countdown target",[{
+name:"target",label:"Exam date",type:"date",value:getCountdownTarget(),required:true
 }
-function currentStatusLabel(s){return s==="Exam Ready"?"✓ Done":s==="Not Ready"?"Not ready":s==="Needs Work"?"Needs work":s||"Not started";}
-function chapterColor(s){return s==="Physics"?"#367fb9":s==="Chemistry"?"#218b68":"#7665bd";}
-function chapterSoft(s){return s==="Physics"?"#eaf3fb":s==="Chemistry"?"#e5f5ed":"#f0edfb";}
-function chapterSymbol(s){return s==="Physics"?"ϟ":s==="Chemistry"?"⚗":"∑";}
+],{
+type:"countdown"
+}
+);
+}
+function currentStatusLabel(s){
+return s==="Exam Ready"?"✓ Done":s==="Not Ready"?"Not ready":s==="Needs Work"?"Needs work":s||"Not started";
+}
+function chapterColor(s){
+return s==="Physics"?"#367fb9":s==="Chemistry"?"#218b68":"#7665bd";
+}
+function chapterSoft(s){
+return s==="Physics"?"#eaf3fb":s==="Chemistry"?"#e5f5ed":"#f0edfb";
+}
+function chapterSymbol(s){
+return s==="Physics"?"ϟ":s==="Chemistry"?"⚗":"∑";
+}
 function renderDashboard(){
  const chapters=state.chapters||[],ready=chapters.filter(c=>c.prep==="Exam Ready").length,total=chapters.length,work=chapters.filter(c=>c.prep==="Needs Work").length,active=chapters.filter(c=>c.prep==="In Progress").length;
- const pc=pct(ready,total),circ=2*Math.PI*58;document.getElementById("overallPct").textContent=pc+"%";document.getElementById("ringArc").style.strokeDasharray=String(circ);document.getElementById("ringArc").style.strokeDashoffset=String(circ*(1-pc/100));
- const target=new Date(getCountdownTarget()+"T00:00:00");document.getElementById("daysLeft").textContent=Math.max(0,Math.ceil((target-new Date())/86400000));document.getElementById("doneHero").textContent=ready;
- document.getElementById("todayText").textContent=new Date().toLocaleDateString("en-IN",{weekday:"short",day:"numeric",month:"short"});
- document.getElementById("readyMetric").textContent=ready+" / "+total;document.getElementById("needsWorkMetric").textContent=work;
- const attempts=[...(state.topics||[]).filter(t=>t.status==="Attempted"),...(state.litmus||[]).filter(t=>t.status==="Attempted")];document.getElementById("testMetric").textContent=attempts.length;document.getElementById("testMetricHint").textContent=state.topics.filter(t=>t.status==="Attempted").length+" topic · "+state.litmus.filter(t=>t.status==="Attempted").length+" LITMUS · view scores";
- const planned=state.topics.filter(t=>t.status==="Planned").sort((a,b)=>String(a.plannedDate||"9999").localeCompare(String(b.plannedDate||"9999")));document.getElementById("plannedMetricCount").textContent=planned.length;const next=planned.find(t=>t.plannedDate&&t.plannedDate>=todayISO())||planned[0];document.getElementById("plannedMetricHint").textContent=next?(chapterDisplayName(next.subject,next.chapter)+" · "+(next.plannedDate||"date not set")):"Add dates to your plan";
- const colors={Physics:["#367fb9","#eaf3fb","ϟ"],Chemistry:["#218b68","#e5f5ed","⚗"],Mathematics:["#7665bd","#f0edfb","∑"]};
- document.getElementById("subjectCards").innerHTML=Object.keys(BASE.subjects).map(sub=>{const ch=chapters.filter(c=>c.subject===sub),done=ch.filter(c=>c.prep==="Exam Ready").length,p=pct(done,ch.length),v=colors[sub];return '<button type="button" class="subject-card" style="--subject:'+v[0]+';--subject-soft:'+v[1]+'" onclick="go(\'chapters\');setChapterSubject(\''+sub+'\')"><div class="subject-top"><span class="subject-mark">'+v[2]+'</span><span class="badge">'+ch.length+' chapters</span></div><h3>'+escapeHTML(sub)+'</h3><p class="subject-stat">'+done+' done · '+ch.filter(c=>c.prep==="Needs Work").length+' need work</p><div class="progress-track"><div class="progress-fill" style="--subject:'+v[0]+';width:'+p+'%"></div></div><div class="subject-foot"><span>'+p+'% complete</span><span>Open subject ↗</span></div></button>'}).join("");
- const future=[...state.topics.filter(t=>t.status==="Planned"&&t.plannedDate).map(t=>({date:t.plannedDate,name:topicDisplayName(t),meta:topicChapterLabel(t),kind:"Topic test"})),...state.litmus.filter(t=>t.deadline&&t.status!=="Attempted"&&t.status!=="Missed").map(t=>({date:t.deadline,name:t.name,meta:t.name.includes("Full Test")?"Full mock":"Part test",kind:"LITMUS"}))].filter(t=>t.date>=todayISO()).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,4);
- document.getElementById("upcomingList").innerHTML=future.map(t=>{const d=new Date(t.date+"T00:00:00"),delta=Math.round((d-new Date(todayISO()+"T00:00:00"))/86400000);return '<div class="upcoming-row"><div class="date-block"><strong>'+d.getDate()+'</strong><small>'+d.toLocaleDateString("en-IN",{month:"short"})+'</small></div><div class="upcoming-info"><strong>'+escapeHTML(t.name)+'</strong><small>'+escapeHTML(t.kind+" · "+t.meta)+'</small></div><span class="upcoming-badge">'+(delta===0?"Today":delta===1?"Tomorrow":delta+"d")+'</span></div>'}).join("")||'<div class="empty">No upcoming dates saved yet.<br>Plan a topic test or check the LITMUS schedule.</div>';
- const focus=chapters.find(c=>c.prep==="Needs Work")||chapters.find(c=>c.prep==="In Progress")||chapters.find(c=>c.prep!=="Exam Ready");document.getElementById("focusTitle").textContent=focus?chapterDisplayName(focus.subject,focus.chapter):"Every chapter is marked done.";document.getElementById("focusBody").textContent=focus?"A good next step: "+focus.subject+" · "+focus.class+". Update the status and checkpoints once you've studied, then practise its topic test.":"Your tracker is fully marked done. Keep the habit by reviewing scores and maintaining revision." ;document.getElementById("focusNeeds").textContent=work;document.getElementById("focusActive").textContent=active;
+ const pc=pct(ready,total),circ=2*Math.PI*58;
+document.getElementById("overallPct").textContent=pc+"%";
+document.getElementById("ringArc").style.strokeDasharray=String(circ);
+document.getElementById("ringArc").style.strokeDashoffset=String(circ*(1-pc/100));
+ const target=new Date(getCountdownTarget()+"T00:00:00");
+document.getElementById("daysLeft").textContent=Math.max(0,Math.ceil((target-new Date())/86400000));
+document.getElementById("doneHero").textContent=ready;
+ document.getElementById("todayText").textContent=new Date().toLocaleDateString("en-IN",{
+weekday:"short",day:"numeric",month:"short"
 }
-function setChapterSubject(subject){if(!BASE.subjects[subject])return;currentChapterSubject=subject;document.body.dataset.activeSubject=subject.toLowerCase();renderChapters();}
-function setChapterYear(year){currentChapterYear=year;renderChapters();}
-function resetChapterFilters(){document.getElementById("chapterStatus").value="all";document.getElementById("chapterSearch").value="";currentChapterYear="all";renderChapters();}
+);
+ document.getElementById("readyMetric").textContent=ready+" / "+total;
+document.getElementById("needsWorkMetric").textContent=work;
+ const attempts=[...(state.topics||[]).filter(t=>t.status==="Attempted"),...(state.litmus||[]).filter(t=>t.status==="Attempted")];
+document.getElementById("testMetric").textContent=attempts.length;
+document.getElementById("testMetricHint").textContent=state.topics.filter(t=>t.status==="Attempted").length+" topic · "+state.litmus.filter(t=>t.status==="Attempted").length+" LITMUS · view scores";
+ const planned=state.topics.filter(t=>t.status==="Planned").sort((a,b)=>String(a.plannedDate||"9999").localeCompare(String(b.plannedDate||"9999")));
+document.getElementById("plannedMetricCount").textContent=planned.length;
+const next=planned.find(t=>t.plannedDate&&t.plannedDate>=todayISO())||planned[0];
+document.getElementById("plannedMetricHint").textContent=next?(chapterDisplayName(next.subject,next.chapter)+" · "+(next.plannedDate||"date not set")):"Add dates to your plan";
+ const colors={
+Physics:["#367fb9","#eaf3fb","ϟ"],Chemistry:["#218b68","#e5f5ed","⚗"],Mathematics:["#7665bd","#f0edfb","∑"]
+}
+;
+ document.getElementById("subjectCards").innerHTML=Object.keys(BASE.subjects).map(sub=>{
+const ch=chapters.filter(c=>c.subject===sub),done=ch.filter(c=>c.prep==="Exam Ready").length,p=pct(done,ch.length),v=colors[sub];
+return '<button type="button" class="subject-card" style="--subject:'+v[0]+';--subject-soft:'+v[1]+'" onclick="go(\'chapters\');setChapterSubject(\''+sub+'\')"><div class="subject-top"><span class="subject-mark">'+v[2]+'</span><span class="badge">'+ch.length+' chapters</span></div><h3>'+escapeHTML(sub)+'</h3><p class="subject-stat">'+done+' done · '+ch.filter(c=>c.prep==="Needs Work").length+' need work</p><div class="progress-track"><div class="progress-fill" style="--subject:'+v[0]+';width:'+p+'%"></div></div><div class="subject-foot"><span>'+p+'% complete</span><span>Open subject ↗</span></div></button>'
+}
+).join("");
+ const future=[...state.topics.filter(t=>t.status==="Planned"&&t.plannedDate).map(t=>({
+date:t.plannedDate,name:topicDisplayName(t),meta:topicChapterLabel(t),kind:"Topic test"
+}
+)),...state.litmus.filter(t=>t.deadline&&t.status!=="Attempted"&&t.status!=="Missed").map(t=>({
+date:t.deadline,name:t.name,meta:t.name.includes("Full Test")?"Full mock":"Part test",kind:"LITMUS"
+}
+))].filter(t=>t.date>=todayISO()).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,4);
+ document.getElementById("upcomingList").innerHTML=future.map(t=>{
+const d=new Date(t.date+"T00:00:00"),delta=Math.round((d-new Date(todayISO()+"T00:00:00"))/86400000);
+return '<div class="upcoming-row"><div class="date-block"><strong>'+d.getDate()+'</strong><small>'+d.toLocaleDateString("en-IN",{
+month:"short"
+}
+)+'</small></div><div class="upcoming-info"><strong>'+escapeHTML(t.name)+'</strong><small>'+escapeHTML(t.kind+" · "+t.meta)+'</small></div><span class="upcoming-badge">'+(delta===0?"Today":delta===1?"Tomorrow":delta+"d")+'</span></div>'
+}
+).join("")||'<div class="empty">No upcoming dates saved yet.<br>Plan a topic test or check the LITMUS schedule.</div>';
+ const focus=chapters.find(c=>c.prep==="Needs Work")||chapters.find(c=>c.prep==="In Progress")||chapters.find(c=>c.prep!=="Exam Ready");
+document.getElementById("focusTitle").textContent=focus?chapterDisplayName(focus.subject,focus.chapter):"Every chapter is marked done.";
+document.getElementById("focusBody").textContent=focus?"A good next step: "+focus.subject+" · "+focus.class+". Update the status and checkpoints once you've studied, then practise its topic test.":"Your tracker is fully marked done. Keep the habit by reviewing scores and maintaining revision." ;
+document.getElementById("focusNeeds").textContent=work;
+document.getElementById("focusActive").textContent=active;
+}
+function setChapterSubject(subject){
+if(!BASE.subjects[subject])return;
+currentChapterSubject=subject;
+document.body.dataset.activeSubject=subject.toLowerCase();
+renderChapters();
+}
+function setChapterYear(year){
+currentChapterYear=year;
+renderChapters();
+}
+function resetChapterFilters(){
+document.getElementById("chapterStatus").value="all";
+document.getElementById("chapterSearch").value="";
+currentChapterYear="all";
+renderChapters();
+}
 function renderChapters(){
- document.querySelectorAll(".subject-tab").forEach(b=>{const s=b.dataset.subject;b.classList.toggle("active",s===currentChapterSubject);b.setAttribute("aria-pressed",String(s===currentChapterSubject))});
- document.querySelectorAll(".year-tab").forEach(b=>{const y=b.dataset.year;b.classList.toggle("active",y===currentChapterYear);b.setAttribute("aria-pressed",String(y===currentChapterYear))});
- ["Physics","Chemistry","Mathematics"].forEach(s=>{const node=document.getElementById(s==="Mathematics"?"mathsCount":s.toLowerCase()+"Count");if(node)node.textContent=state.chapters.filter(c=>c.subject===s).length+" chapters"});
+ document.querySelectorAll(".subject-tab").forEach(b=>{
+const s=b.dataset.subject;
+b.classList.toggle("active",s===currentChapterSubject);
+b.setAttribute("aria-pressed",String(s===currentChapterSubject))
+}
+);
+ document.querySelectorAll(".year-tab").forEach(b=>{
+const y=b.dataset.year;
+b.classList.toggle("active",y===currentChapterYear);
+b.setAttribute("aria-pressed",String(y===currentChapterYear))
+}
+);
+ ["Physics","Chemistry","Mathematics"].forEach(s=>{
+const node=document.getElementById(s==="Mathematics"?"mathsCount":s.toLowerCase()+"Count");
+if(node)node.textContent=state.chapters.filter(c=>c.subject===s).length+" chapters"
+}
+);
  const all=state.chapters.filter(c=>c.subject===currentChapterSubject),group=all.filter(c=>currentChapterYear==="all"||c.class===currentChapterYear||c.class==="Both"),filter=document.getElementById("chapterStatus").value,q=document.getElementById("chapterSearch").value.toLowerCase().trim();
  const items=group.filter(c=>(filter==="all"||c.prep===filter)&&((c.chapter+" "+chapterDisplayName(c.subject,c.chapter)+" "+c.coverage).toLowerCase().includes(q)));
- const done=group.filter(c=>c.prep==="Exam Ready").length;document.getElementById("chapterSummary").innerHTML='<strong style="color:var(--green)">'+done+' / '+group.length+' done</strong><span>·</span><span>'+group.filter(c=>c.topicAttempted).length+' chapters with an attempted test</span><span>·</span><span>'+items.length+' shown</span>';
- document.getElementById("chapterList").innerHTML=items.map((c,i)=>{const color=chapterColor(c.subject),soft=chapterSoft(c.subject),prep=[["Not Ready","not-ready"],["In Progress","in-progress"],["Needs Work","needs-work"],["Exam Ready","done"]],checkpoints=[["r1","Revision 1"],["r2","Revision 2"],["r3","Revision 3"],["notes","Short notes"],["pyq","PYQs"]];return '<article class="chapter-card" style="--i:'+i+';--accent:'+color+';--soft:'+soft+'"><div class="chapter-head"><div><h3>'+escapeHTML(chapterDisplayName(c.subject,c.chapter))+'</h3><p class="chapter-coverage">'+escapeHTML(c.coverage||"")+'</p><div class="chapter-meta"><span class="pill">'+escapeHTML(c.class||"JEE Main")+'</span><span class="pill subject">'+escapeHTML(c.subject)+'</span></div></div><button class="small-btn" onclick="editChapter(\''+escapeAttr(c.subject)+'\',\''+escapeAttr(c.chapter)+'\')">Details ⋯</button></div><div class="status-block">'+prep.map(([label,cls])=>'<button class="status-button '+(c.prep===label?'active '+cls:'')+'" onclick="setPrep(\''+escapeAttr(c.subject)+'\',\''+escapeAttr(c.chapter)+'\',\''+label+'\')">'+(label==="Exam Ready"?"✓ Done":label)+"</button>").join("")+'</div><div class="chapter-checks">'+checkpoints.map(([key,label])=>'<button class="check-button '+(c[key]?"checked":"")+'" onclick="toggleCheckpoint(\''+escapeAttr(c.subject)+'\',\''+escapeAttr(c.chapter)+'\',\''+key+'\')">'+(c[key]?"✓":"○")+' '+label+'</button>').join("")+'</div><div class="chapter-test"><small>'+(c.topicAttempted?'✓ Last test: '+escapeHTML(scoreLabel(c.marks,c.outOf)):'Topic test: not attempted')+'</small><button class="btn btn-secondary" style="padding:8px 10px" onclick="quickTopic(\''+escapeAttr(c.subject)+'\',\''+escapeAttr(c.chapter)+'\')">'+(c.topicAttempted?'Log another attempt':'Plan topic test')+' ↗</button></div></article>'}).join("")||'<div class="empty" style="grid-column:1/-1">No chapters match these filters. Try another status or search term.</div>';
+ const done=group.filter(c=>c.prep==="Exam Ready").length;
+document.getElementById("chapterSummary").innerHTML='<strong style="color:var(--green)">'+done+' / '+group.length+' done</strong><span>·</span><span>'+group.filter(c=>c.topicAttempted).length+' chapters with an attempted test</span><span>·</span><span>'+items.length+' shown</span>';
+ document.getElementById("chapterList").innerHTML=items.map((c,i)=>{
+const color=chapterColor(c.subject),soft=chapterSoft(c.subject),prep=[["Not Ready","not-ready"],["In Progress","in-progress"],["Needs Work","needs-work"],["Exam Ready","done"]],checkpoints=[["r1","Revision 1"],["r2","Revision 2"],["r3","Revision 3"],["notes","Short notes"],["pyq","PYQs"]];
+return '<article class="chapter-card" style="--i:'+i+';--accent:'+color+';--soft:'+soft+'"><div class="chapter-head"><div><h3>'+escapeHTML(chapterDisplayName(c.subject,c.chapter))+'</h3><p class="chapter-coverage">'+escapeHTML(c.coverage||"")+'</p><div class="chapter-meta"><span class="pill">'+escapeHTML(c.class||"JEE Main")+'</span><span class="pill subject">'+escapeHTML(c.subject)+'</span></div></div><button class="small-btn" onclick="editChapter(\''+escapeAttr(c.subject)+'\',\''+escapeAttr(c.chapter)+'\')">Details ⋯</button></div><div class="status-block">'+prep.map(([label,cls])=>'<button class="status-button '+(c.prep===label?'active '+cls:'')+'" onclick="setPrep(\''+escapeAttr(c.subject)+'\',\''+escapeAttr(c.chapter)+'\',\''+label+'\')">'+(label==="Exam Ready"?"✓ Done":label)+"</button>").join("")+'</div><div class="chapter-checks">'+checkpoints.map(([key,label])=>'<button class="check-button '+(c[key]?"checked":"")+'" onclick="toggleCheckpoint(\''+escapeAttr(c.subject)+'\',\''+escapeAttr(c.chapter)+'\',\''+key+'\')">'+(c[key]?"✓":"○")+' '+label+'</button>').join("")+'</div><div class="chapter-test"><small>'+(c.topicAttempted?'✓ Last test: '+escapeHTML(scoreLabel(c.marks,c.outOf)):'Topic test: not attempted')+'</small><button class="btn btn-secondary" style="padding:8px 10px" onclick="quickTopic(\''+escapeAttr(c.subject)+'\',\''+escapeAttr(c.chapter)+'\')">'+(c.topicAttempted?'Log another attempt':'Plan topic test')+' ↗</button></div></article>'
 }
-function setPrep(subject,chapter,prep){const c=state.chapters.find(x=>x.subject===subject&&x.chapter===chapter);if(!c)return;c.prep=prep;saveState();toast("Chapter status updated.");}
-function toggleCheckpoint(subject,chapter,key){const c=state.chapters.find(x=>x.subject===subject&&x.chapter===chapter);if(!c)return;c[key]=!c[key];saveState();toast("Checkpoint updated.");}
+).join("")||'<div class="empty" style="grid-column:1/-1">No chapters match these filters. Try another status or search term.</div>';
+}
+function setPrep(subject,chapter,prep){
+const c=state.chapters.find(x=>x.subject===subject&&x.chapter===chapter);
+if(!c)return;
+c.prep=prep;
+saveState();
+toast("Chapter status updated.");
+}
+function toggleCheckpoint(subject,chapter,key){
+const c=state.chapters.find(x=>x.subject===subject&&x.chapter===chapter);
+if(!c)return;
+c[key]=!c[key];
+saveState();
+toast("Checkpoint updated.");
+}
 function renderTopics(){
  const f=document.getElementById("topicFilter").value,sub=document.getElementById("topicSubjectFilter").value,q=document.getElementById("topicSearch").value.toLowerCase().trim();
  const items=state.topics.filter(t=>(f==="all"||t.status===f)&&(sub==="all"||t.subject===sub)&&(topicDisplayName(t)+" "+topicChapterLabel(t)+" "+t.subject).toLowerCase().includes(q));
  document.getElementById("topicSummary").textContent=items.length+" tests shown · Statuses, dates and scores save automatically.";
  document.getElementById("topicRows").innerHTML=items.map(t=>'<tr data-id="'+escapeAttr(t.id)+'"><td><div class="topic-name">'+escapeHTML(topicDisplayName(t))+'</div><div class="cell-muted">'+escapeHTML(t.subject+" · "+topicChapterLabel(t))+'</div></td><td><select class="control status-select" aria-label="Test status" onchange="quickTopicStatus(\''+escapeAttr(t.id)+'\',this.value)">'+["Not Started","Planned","Attempted","Needs Retest"].map(x=>'<option '+(t.status===x?'selected':'')+'>'+x+'</option>').join("")+'</select></td><td><input class="control date-input" type="date" aria-label="Planned date" value="'+escapeHTML(t.plannedDate||"")+'" onchange="quickTopicDate(\''+escapeAttr(t.id)+'\',this.value)"></td><td class="cell-muted">'+escapeHTML(formatNiceDate(t.actualDate))+'</td><td><div class="score-edit"><input class="control" type="number" min="0" max="100" step="any" placeholder="Score" aria-label="Marks scored" value="'+escapeHTML(t.marks||"")+'" onchange="quickTopicScore(\''+escapeAttr(t.id)+'\',\'marks\',this.value)"><span>/</span><input class="control" type="number" min="1" max="100" step="any" aria-label="Maximum score" value="'+escapeHTML(t.outOf||100)+'" onchange="quickTopicScore(\''+escapeAttr(t.id)+'\',\'outOf\',this.value)"></div></td><td><div class="actions-cell"><button class="small-btn" onclick="editTopic(\''+escapeAttr(t.id)+'\')">Edit</button>'+(t.custom?'<button class="small-btn" onclick="deleteTopic(\''+escapeAttr(t.id)+'\')">Delete</button>':'')+'</div></td></tr>').join("")||'<tr><td colspan="6" class="empty">No tests match. Use “Plan a test” to make one.</td></tr>';
 }
-function quickTopicDate(id,date){const t=state.topics.find(x=>x.id===id);if(!t)return;t.plannedDate=date;t.status=date&&t.status==="Not Started"?"Planned":t.status;saveState();toast("Planned date saved.");}
-function quickTopicStatus(id,status){const t=state.topics.find(x=>x.id===id);if(!t)return;t.status=status;if(status==="Attempted"&&!t.actualDate)t.actualDate=todayISO();syncTopicToChapter(t);saveState();toast("Test status updated.");}
-function quickTopicScore(id,key,value){
- const t=state.topics.find(x=>x.id===id);if(!t)return;const currentMax=Number(t.outOf||100),n=value===""?null:Number(value);
- if(key==="marks"&&n!==null&&(!Number.isFinite(n)||n<0||n>currentMax)){toast("Marks must be between zero and the maximum.");renderTopics();return}
- if(key==="outOf"&&(!Number.isFinite(n)||n<1||n>100||Number(t.marks||0)>n)){toast("Choose a valid maximum score.");renderTopics();return}
- t[key]=value;if(t.marks!==""&&t.marks!==undefined){t.status="Attempted";if(!t.actualDate)t.actualDate=todayISO();syncTopicToChapter(t)}
- saveState();toast("Score saved.");
+function quickTopicDate(id,date){
+const t=state.topics.find(x=>x.id===id);
+if(!t)return;
+t.plannedDate=date;
+t.status=date&&t.status==="Not Started"?"Planned":t.status;
+saveState();
+toast("Planned date saved.");
 }
-function openPlannedTopicModal(){openTopicModal(null,true)}
-function quickTopic(subject,chapter){const t=state.topics.find(x=>x.subject===subject&&topicChapters(x).includes(chapter)&&!x.custom)||{subject,chapter,chapters:[chapter]};openTopicModal(t,true)}
+function quickTopicStatus(id,status){
+const t=state.topics.find(x=>x.id===id);
+if(!t)return;
+t.status=status;
+if(status==="Attempted"&&!t.actualDate)t.actualDate=todayISO();
+syncTopicToChapter(t);
+saveState();
+toast("Test status updated.");
+}
+function quickTopicScore(id,key,value){
+ const t=state.topics.find(x=>x.id===id);
+if(!t)return;
+const currentMax=Number(t.outOf||100),n=value===""?null:Number(value);
+ if(key==="marks"&&n!==null&&(!Number.isFinite(n)||n<0||n>currentMax)){
+toast("Marks must be between zero and the maximum.");
+renderTopics();
+return
+}
+ if(key==="outOf"&&(!Number.isFinite(n)||n<1||n>100||Number(t.marks||0)>n)){
+toast("Choose a valid maximum score.");
+renderTopics();
+return
+}
+ t[key]=value;
+if(t.marks!==""&&t.marks!==undefined){
+t.status="Attempted";
+if(!t.actualDate)t.actualDate=todayISO();
+syncTopicToChapter(t)
+}
+ saveState();
+toast("Score saved.");
+}
+function openPlannedTopicModal(){
+openTopicModal(null,true)
+}
+function quickTopic(subject,chapter){
+const t=state.topics.find(x=>x.subject===subject&&topicChapters(x).includes(chapter)&&!x.custom)||{
+subject,chapter,chapters:[chapter]
+}
+;
+openTopicModal(t,true)
+}
 function openTopicModal(existing,planned){
- const t=existing||{subject:currentChapterSubject,chapter:"",chapters:[],name:"",status:"Planned",plannedDate:"",actualDate:"",marks:"",outOf:"100",difficulty:"",notes:"",custom:true};
+ const t=existing||{
+subject:currentChapterSubject,chapter:"",chapters:[],name:"",status:"Planned",plannedDate:"",actualDate:"",marks:"",outOf:"100",difficulty:"",notes:"",custom:true
+}
+;
  const isEdit=!!(existing&&existing.id),subject=t.subject||"Physics",chosen=topicChapters(t);
- const subjectOptions=["Physics","Chemistry","Mathematics"].map(x=>({value:x,label:x}));
- const chapterOptions=(state.chapters.filter(c=>c.subject===subject)).map(c=>({value:c.chapter,label:chapterDisplayName(c.subject,c.chapter)}));
+ const subjectOptions=["Physics","Chemistry","Mathematics"].map(x=>({
+value:x,label:x
+}
+));
+ const chapterOptions=(state.chapters.filter(c=>c.subject===subject)).map(c=>({
+value:c.chapter,label:chapterDisplayName(c.subject,c.chapter)
+}
+));
  const fields=[
-  {name:"subject",label:"Subject",type:"select",value:subject,options:subjectOptions},
-  {name:"status",label:"Status",type:"select",value:t.status||"Planned",options:["Not Started","Planned","Attempted","Needs Retest"].map(x=>({value:x,label:x}))},
-  {name:"chapters",label:"Chapters included in this test",type:"multiCheckbox",full:true,options:chapterOptions,values:chosen},
-  {name:"name",label:"Test name",type:"text",value:t.name&&t.name!==t.chapter+" Topic Test"?t.name:generatedTopicTestName(subject,chosen),required:true,full:true,autoName:true},
-  {name:"plannedDate",label:"Planned date",type:"date",value:t.plannedDate||""},
-  {name:"actualDate",label:"Attempt date",type:"date",value:t.actualDate||""},
-  {name:"marks",label:"Marks scored",type:"number",value:t.marks||"",min:0,max:100,step:"any"},
-  {name:"outOf",label:"Maximum marks (out of 100)",type:"number",value:t.outOf||"100",min:1,max:100,step:"any"},
-  {name:"difficulty",label:"Difficulty",type:"select",value:t.difficulty||"",options:["","Easy","Moderate","Hard"].map(x=>({value:x,label:x||"Not rated"}))},
-  {name:"notes",label:"Review notes",type:"textarea",value:t.notes||"",full:true}
+  {
+name:"subject",label:"Subject",type:"select",value:subject,options:subjectOptions
+}
+,
+  {
+name:"status",label:"Status",type:"select",value:t.status||"Planned",options:["Not Started","Planned","Attempted","Needs Retest"].map(x=>({
+value:x,label:x
+}
+))
+}
+,
+  {
+name:"chapters",label:"Chapters included in this test",type:"multiCheckbox",full:true,options:chapterOptions,values:chosen
+}
+,
+  {
+name:"name",label:"Test name",type:"text",value:t.name&&t.name!==t.chapter+" Topic Test"?t.name:generatedTopicTestName(subject,chosen),required:true,full:true,autoName:true
+}
+,
+  {
+name:"plannedDate",label:"Planned date",type:"date",value:t.plannedDate||""
+}
+,
+  {
+name:"actualDate",label:"Attempt date",type:"date",value:t.actualDate||""
+}
+,
+  {
+name:"marks",label:"Marks scored",type:"number",value:t.marks||"",min:0,max:100,step:"any"
+}
+,
+  {
+name:"outOf",label:"Maximum marks (out of 100)",type:"number",value:t.outOf||"100",min:1,max:100,step:"any"
+}
+,
+  {
+name:"difficulty",label:"Difficulty",type:"select",value:t.difficulty||"",options:["","Easy","Moderate","Hard"].map(x=>({
+value:x,label:x||"Not rated"
+}
+))
+}
+,
+  {
+name:"notes",label:"Review notes",type:"textarea",value:t.notes||"",full:true
+}
  ];
- openModal(isEdit?"Edit topic test":"Plan a chapter topic test",fields,{type:isEdit?"topic":"newtopic",id:t.id||null,existing:!!isEdit,autoName:(!t.name||t.name===t.chapter+" Topic Test"||t.name===generatedTopicTestName(subject,chosen))});
+ openModal(isEdit?"Edit topic test":"Plan a chapter topic test",fields,{
+type:isEdit?"topic":"newtopic",id:t.id||null,existing:!!isEdit,autoName:(!t.name||t.name===t.chapter+" Topic Test"||t.name===generatedTopicTestName(subject,chosen))
+}
+);
  const subjectInput=document.querySelector('#modalFields [name="subject"]'),nameInput=document.querySelector('#modalFields [name="name"]'),picker=document.querySelector('#modalFields [data-chapter-picker]');
  if(nameInput)nameInput.dataset.autoName="true";
- if(nameInput)nameInput.addEventListener("input",()=>{nameInput.dataset.autoName="false"});
- const syncChapters=(keep)=>{const nextSubject=subjectInput.value,old=Array.from(picker.querySelectorAll('input[name="chapters"]:checked')).map(x=>x.value);const list=state.chapters.filter(c=>c.subject===nextSubject);picker.innerHTML='<div class="multi-picker-grid">'+list.map(c=>'<label class="multi-choice"><input type="checkbox" name="chapters" value="'+escapeAttr(c.chapter)+'" '+((keep||old).includes(c.chapter)?'checked':'')+'><span>'+escapeHTML(chapterDisplayName(c.subject,c.chapter))+'</span></label>').join("")+'</div>';syncTopicTestNameFromPicker(true)};
+ if(nameInput)nameInput.addEventListener("input",()=>{
+nameInput.dataset.autoName="false"
+}
+);
+ const syncChapters=(keep)=>{
+const nextSubject=subjectInput.value,old=Array.from(picker.querySelectorAll('input[name="chapters"]:checked')).map(x=>x.value);
+const list=state.chapters.filter(c=>c.subject===nextSubject);
+picker.innerHTML='<div class="multi-picker-grid">'+list.map(c=>'<label class="multi-choice"><input type="checkbox" name="chapters" value="'+escapeAttr(c.chapter)+'" '+((keep||old).includes(c.chapter)?'checked':'')+'><span>'+escapeHTML(chapterDisplayName(c.subject,c.chapter))+'</span></label>').join("")+'</div>';
+syncTopicTestNameFromPicker(true)
+}
+;
  if(picker)picker.innerHTML='<div class="multi-picker-grid">'+chapterOptions.map(o=>'<label class="multi-choice"><input type="checkbox" name="chapters" value="'+escapeAttr(o.value)+'" '+(chosen.includes(o.value)?'checked':'')+'><span>'+escapeHTML(o.label)+'</span></label>').join("")+'</div>';
  if(subjectInput)subjectInput.addEventListener("change",()=>syncChapters([]));
  if(picker)picker.addEventListener("change",()=>syncTopicTestNameFromPicker(true));
- if(nameInput)nameInput.addEventListener("input",()=>{nameInput.dataset.autoName="false"});
+ if(nameInput)nameInput.addEventListener("input",()=>{
+nameInput.dataset.autoName="false"
+}
+);
 }
 function renderLitmus(){
  const f=document.getElementById("litmusFilter").value,q=document.getElementById("litmusSearch").value.toLowerCase().trim(),today=todayISO();
  const items=state.litmus.filter(t=>(f==="all"||t.status===f)&&(currentLitmusType==="all"||(currentLitmusType==="full"?/full test|\bFT-?\d+/i.test(t.name):!/full test|\bFT-?\d+/i.test(t.name)))&&(t.name+" "+t.syllabus).toLowerCase().includes(q)).sort((a,b)=>String(a.deadline||"9999").localeCompare(String(b.deadline||"9999")));
  const upcoming=items.filter(t=>t.deadline>=today&&t.status!=="Attempted"&&t.status!=="Missed").length,attempted=items.filter(t=>t.status==="Attempted").length,review=items.filter(t=>t.status==="Needs Review").length;
- document.getElementById("litmusUpcomingCount").textContent=upcoming;document.getElementById("litmusAttemptedCount").textContent=attempted;document.getElementById("litmusReviewCount").textContent=review;
- document.getElementById("litmusPartCount").textContent=state.litmus.filter(t=>!/full test|\bFT-?\d+/i.test(t.name)).length;document.getElementById("litmusFullCount").textContent=state.litmus.filter(t=>/full test|\bFT-?\d+/i.test(t.name)).length;
- const next=state.litmus.filter(t=>t.deadline>=today&&t.status!=="Attempted"&&t.status!=="Missed").sort((a,b)=>a.deadline.localeCompare(b.deadline))[0];document.getElementById("litmusNextName").textContent=next?next.name:"No upcoming tests";document.getElementById("litmusNextDate").textContent=next?"Deadline · "+formatNiceDate(next.deadline):"The schedule is fully logged.";
+ document.getElementById("litmusUpcomingCount").textContent=upcoming;
+document.getElementById("litmusAttemptedCount").textContent=attempted;
+document.getElementById("litmusReviewCount").textContent=review;
+ document.getElementById("litmusPartCount").textContent=state.litmus.filter(t=>!/full test|\bFT-?\d+/i.test(t.name)).length;
+document.getElementById("litmusFullCount").textContent=state.litmus.filter(t=>/full test|\bFT-?\d+/i.test(t.name)).length;
+ const next=state.litmus.filter(t=>t.deadline>=today&&t.status!=="Attempted"&&t.status!=="Missed").sort((a,b)=>a.deadline.localeCompare(b.deadline))[0];
+document.getElementById("litmusNextName").textContent=next?next.name:"No upcoming tests";
+document.getElementById("litmusNextDate").textContent=next?"Deadline · "+formatNiceDate(next.deadline):"The schedule is fully logged.";
  document.getElementById("litmusListHint").textContent=items.length+" tests shown · dates and scores save as you enter them.";
- document.getElementById("litmusRows").innerHTML=items.map(t=>{const full=/full test|\bFT-?\d+/i.test(t.name),days=t.deadline?Math.ceil((new Date(t.deadline+"T00:00:00")-new Date(today+"T00:00:00"))/86400000):null,due=t.status==="Attempted"?"Completed":t.status==="Missed"?"Missed":days===null?"Set a date":days<0?Math.abs(days)+"d overdue":days===0?"Due today":days+"d left";return '<article class="litmus-card '+(full?"full":"")+'" id="litmus-'+escapeAttr(t.id)+'"><div><div><span class="litmus-kind '+(full?"full":"")+'">'+(full?"FULL MOCK":"PART TEST")+'</span><span class="litmus-due">'+escapeHTML(due)+'</span></div><h3>'+escapeHTML(t.name)+'</h3><div class="litmus-date"><span>Deadline</span><input class="control date-input" type="date" value="'+escapeHTML(t.deadline||"")+'" onchange="quickLitmusDate(\''+escapeAttr(t.id)+'\',this.value)"></div><details class="syllabus-details"><summary>View syllabus / coverage</summary><p>'+escapeHTML(t.syllabus||"No syllabus entered.")+'</p></details><div style="margin-top:12px"><button class="small-btn" onclick="editLitmus(\''+escapeAttr(t.id)+'\')">Edit test details</button></div></div><div class="litmus-controls"><label>ATTEMPT STATUS<select class="control status-select" onchange="quickLitmusStatus(\''+escapeAttr(t.id)+'\',this.value)">'+["Not Started","Planned","Attempted","Missed","Needs Review"].map(x=>'<option '+(t.status===x?'selected':'')+'>'+x+'</option>').join("")+'</select></label><label>SCORE (MARKS)<div class="score-edit"><input class="control" type="number" min="0" step="any" placeholder="Score" value="'+escapeHTML(t.marks||"")+'" onchange="quickLitmusScore(\''+escapeAttr(t.id)+'\',\'marks\',this.value)"><span>/</span><input class="control" type="number" min="1" step="any" placeholder="Max" value="'+escapeHTML(t.outOf||"")+'" onchange="quickLitmusScore(\''+escapeAttr(t.id)+'\',\'outOf\',this.value)"></div></label><label>ATTEMPT DATE<input class="control" type="date" value="'+escapeHTML(t.actualDate||"")+'" onchange="quickLitmusActualDate(\''+escapeAttr(t.id)+'\',this.value)"></label></div></article>'}).join("")||'<div class="empty">No tests match. Change the filters to see more of your schedule.</div>';
+ document.getElementById("litmusRows").innerHTML=items.map(t=>{
+const full=/full test|\bFT-?\d+/i.test(t.name),days=t.deadline?Math.ceil((new Date(t.deadline+"T00:00:00")-new Date(today+"T00:00:00"))/86400000):null,due=t.status==="Attempted"?"Completed":t.status==="Missed"?"Missed":days===null?"Set a date":days<0?Math.abs(days)+"d overdue":days===0?"Due today":days+"d left";
+return '<article class="litmus-card '+(full?"full":"")+'" id="litmus-'+escapeAttr(t.id)+'"><div><div><span class="litmus-kind '+(full?"full":"")+'">'+(full?"FULL MOCK":"PART TEST")+'</span><span class="litmus-due">'+escapeHTML(due)+'</span></div><h3>'+escapeHTML(t.name)+'</h3><div class="litmus-date"><span>Deadline</span><input class="control date-input" type="date" value="'+escapeHTML(t.deadline||"")+'" onchange="quickLitmusDate(\''+escapeAttr(t.id)+'\',this.value)"></div><details class="syllabus-details"><summary>View syllabus / coverage</summary><p>'+escapeHTML(t.syllabus||"No syllabus entered.")+'</p></details><div style="margin-top:12px"><button class="small-btn" onclick="editLitmus(\''+escapeAttr(t.id)+'\')">Edit test details</button></div></div><div class="litmus-controls"><label>ATTEMPT STATUS<select class="control status-select" onchange="quickLitmusStatus(\''+escapeAttr(t.id)+'\',this.value)">'+["Not Started","Planned","Attempted","Missed","Needs Review"].map(x=>'<option '+(t.status===x?'selected':'')+'>'+x+'</option>').join("")+'</select></label><label>SCORE (MARKS)<div class="score-edit"><input class="control" type="number" min="0" step="any" placeholder="Score" value="'+escapeHTML(t.marks||"")+'" onchange="quickLitmusScore(\''+escapeAttr(t.id)+'\',\'marks\',this.value)"><span>/</span><input class="control" type="number" min="1" step="any" placeholder="Max" value="'+escapeHTML(t.outOf||"")+'" onchange="quickLitmusScore(\''+escapeAttr(t.id)+'\',\'outOf\',this.value)"></div></label><label>ATTEMPT DATE<input class="control" type="date" value="'+escapeHTML(t.actualDate||"")+'" onchange="quickLitmusActualDate(\''+escapeAttr(t.id)+'\',this.value)"></label></div></article>'
 }
-function setLitmusType(type){currentLitmusType=type;document.querySelectorAll("[data-litmus-type]").forEach(b=>b.classList.toggle("active",b.dataset.litmusType===type));renderLitmus();}
-function focusNextLitmus(){const next=state.litmus.filter(t=>t.deadline>=todayISO()&&t.status!=="Attempted"&&t.status!=="Missed").sort((a,b)=>a.deadline.localeCompare(b.deadline))[0];if(!next)return;currentLitmusType="all";document.querySelectorAll("[data-litmus-type]").forEach(b=>b.classList.toggle("active",b.dataset.litmusType==="all"));document.getElementById("litmusFilter").value="all";document.getElementById("litmusSearch").value=next.name;renderLitmus();document.getElementById("litmus-"+next.id)?.scrollIntoView({behavior:"smooth",block:"center"});}
-function quickLitmusDate(id,date){const t=state.litmus.find(x=>x.id===id);if(!t)return;t.deadline=date;saveState();toast("LITMUS deadline saved.");}
-function quickLitmusStatus(id,status){const t=state.litmus.find(x=>x.id===id);if(!t)return;t.status=status;if(status==="Attempted"&&!t.actualDate)t.actualDate=todayISO();saveState();toast("LITMUS status updated.");}
-function quickLitmusActualDate(id,date){const t=state.litmus.find(x=>x.id===id);if(!t)return;t.actualDate=date;if(date)t.status="Attempted";saveState();toast("Attempt date saved.");}
-function quickLitmusScore(id,key,value){const t=state.litmus.find(x=>x.id===id);if(!t)return;const n=value===""?null:Number(value);if(n!==null&&(!Number.isFinite(n)||n<0)){toast("Enter a valid score.");renderLitmus();return;}if(key==="marks"&&n!==null&&t.outOf!==""&&n>Number(t.outOf)){toast("Score cannot exceed the maximum.");renderLitmus();return;}if(key==="outOf"&&n!==null&&n<1){toast("Maximum score must be at least 1.");renderLitmus();return;}if(key==="outOf"&&t.marks!==""&&Number(t.marks)>n){toast("Maximum cannot be below the current score.");renderLitmus();return;}t[key]=value;if(t.marks!==""&&t.outOf!==""){t.status="Attempted";if(!t.actualDate)t.actualDate=todayISO();}saveState();toast("LITMUS score saved.");}
-function openLitmusModal(id){const t=state.litmus.find(x=>x.id===id);if(!t)return;openModal("Edit LITMUS test",[{name:"name",label:"Test name",type:"text",value:t.name,required:true},{name:"deadline",label:"Deadline",type:"date",value:t.deadline},{name:"syllabus",label:"Syllabus / coverage",type:"textarea",value:t.syllabus,full:true},{name:"status",label:"Status",type:"select",value:t.status,options:["Not Started","Planned","Attempted","Missed","Needs Review"].map(x=>({value:x,label:x}))},{name:"actualDate",label:"Attempt date",type:"date",value:t.actualDate},{name:"marks",label:"Marks scored",type:"number",value:t.marks,min:0,step:"any"},{name:"outOf",label:"Maximum marks",type:"number",value:t.outOf,min:1,step:"any"},{name:"notes",label:"Review notes",type:"textarea",value:t.notes,full:true}],{type:"litmus",id});}
-function openPyqModal(existing=null){const p=existing||{},subject=p.subject||currentChapterSubject,chs=state.chapters.filter(c=>c.subject===subject);openModal(existing?"Edit PYQ session":"Log PYQ practice",[{name:"date",label:"Practice date",type:"date",value:p.date||todayISO(),required:true},{name:"subject",label:"Subject",type:"select",value:subject,options:["Physics","Chemistry","Mathematics"].map(x=>({value:x,label:x}))},{name:"chapter",label:"Chapter",type:"select",value:p.chapter||chs[0]?.chapter,options:chs.map(c=>({value:c.chapter,label:chapterDisplayName(c.subject,c.chapter)}))},{name:"year",label:"Question year",type:"number",value:p.year||2024,min:2002,max:2027,required:true},{name:"source",label:"Source / paper",type:"text",value:p.source||"JEE Main PYQ",required:true},{name:"attempted",label:"Questions attempted",type:"number",value:p.attempted??0,min:0,required:true},{name:"correct",label:"Correct answers",type:"number",value:p.correct??0,min:0,required:true},{name:"status",label:"Status",type:"select",value:p.status||"In Progress",options:["Not Started","In Progress","Completed","Redo"].map(x=>({value:x,label:x}))},{name:"notes",label:"Review notes",type:"textarea",value:p.notes||"",full:true}],{type:existing?"editpyq":"pyq",id:p.id});const subInput=document.querySelector('#modalFields [name="subject"]'),chInput=document.querySelector('#modalFields [name="chapter"]');if(subInput&&chInput)subInput.addEventListener("change",()=>{const opts=state.chapters.filter(c=>c.subject===subInput.value);chInput.innerHTML=opts.map(c=>'<option value="'+escapeAttr(c.chapter)+'">'+escapeHTML(chapterDisplayName(c.subject,c.chapter))+'</option>').join("")});}
+).join("")||'<div class="empty">No tests match. Change the filters to see more of your schedule.</div>';
+}
+function setLitmusType(type){
+currentLitmusType=type;
+document.querySelectorAll("[data-litmus-type]").forEach(b=>b.classList.toggle("active",b.dataset.litmusType===type));
+renderLitmus();
+}
+function focusNextLitmus(){
+const next=state.litmus.filter(t=>t.deadline>=todayISO()&&t.status!=="Attempted"&&t.status!=="Missed").sort((a,b)=>a.deadline.localeCompare(b.deadline))[0];
+if(!next)return;
+currentLitmusType="all";
+document.querySelectorAll("[data-litmus-type]").forEach(b=>b.classList.toggle("active",b.dataset.litmusType==="all"));
+document.getElementById("litmusFilter").value="all";
+document.getElementById("litmusSearch").value=next.name;
+renderLitmus();
+document.getElementById("litmus-"+next.id)?.scrollIntoView({
+behavior:"smooth",block:"center"
+}
+);
+}
+function quickLitmusDate(id,date){
+const t=state.litmus.find(x=>x.id===id);
+if(!t)return;
+t.deadline=date;
+saveState();
+toast("LITMUS deadline saved.");
+}
+function quickLitmusStatus(id,status){
+const t=state.litmus.find(x=>x.id===id);
+if(!t)return;
+t.status=status;
+if(status==="Attempted"&&!t.actualDate)t.actualDate=todayISO();
+saveState();
+toast("LITMUS status updated.");
+}
+function quickLitmusActualDate(id,date){
+const t=state.litmus.find(x=>x.id===id);
+if(!t)return;
+t.actualDate=date;
+if(date)t.status="Attempted";
+saveState();
+toast("Attempt date saved.");
+}
+function quickLitmusScore(id,key,value){
+const t=state.litmus.find(x=>x.id===id);
+if(!t)return;
+const n=value===""?null:Number(value);
+if(n!==null&&(!Number.isFinite(n)||n<0)){
+toast("Enter a valid score.");
+renderLitmus();
+return;
+}
+if(key==="marks"&&n!==null&&t.outOf!==""&&n>Number(t.outOf)){
+toast("Score cannot exceed the maximum.");
+renderLitmus();
+return;
+}
+if(key==="outOf"&&n!==null&&n<1){
+toast("Maximum score must be at least 1.");
+renderLitmus();
+return;
+}
+if(key==="outOf"&&t.marks!==""&&Number(t.marks)>n){
+toast("Maximum cannot be below the current score.");
+renderLitmus();
+return;
+}
+t[key]=value;
+if(t.marks!==""&&t.outOf!==""){
+t.status="Attempted";
+if(!t.actualDate)t.actualDate=todayISO();
+}
+saveState();
+toast("LITMUS score saved.");
+}
+function openLitmusModal(id){
+const t=state.litmus.find(x=>x.id===id);
+if(!t)return;
+openModal("Edit LITMUS test",[{
+name:"name",label:"Test name",type:"text",value:t.name,required:true
+}
+,{
+name:"deadline",label:"Deadline",type:"date",value:t.deadline
+}
+,{
+name:"syllabus",label:"Syllabus / coverage",type:"textarea",value:t.syllabus,full:true
+}
+,{
+name:"status",label:"Status",type:"select",value:t.status,options:["Not Started","Planned","Attempted","Missed","Needs Review"].map(x=>({
+value:x,label:x
+}
+))
+}
+,{
+name:"actualDate",label:"Attempt date",type:"date",value:t.actualDate
+}
+,{
+name:"marks",label:"Marks scored",type:"number",value:t.marks,min:0,step:"any"
+}
+,{
+name:"outOf",label:"Maximum marks",type:"number",value:t.outOf,min:1,step:"any"
+}
+,{
+name:"notes",label:"Review notes",type:"textarea",value:t.notes,full:true
+}
+],{
+type:"litmus",id
+}
+);
+}
+function openPyqModal(existing=null){
+const p=existing||{
+}
+,subject=p.subject||currentChapterSubject,chs=state.chapters.filter(c=>c.subject===subject);
+openModal(existing?"Edit PYQ session":"Log PYQ practice",[{
+name:"date",label:"Practice date",type:"date",value:p.date||todayISO(),required:true
+}
+,{
+name:"subject",label:"Subject",type:"select",value:subject,options:["Physics","Chemistry","Mathematics"].map(x=>({
+value:x,label:x
+}
+))
+}
+,{
+name:"chapter",label:"Chapter",type:"select",value:p.chapter||chs[0]?.chapter,options:chs.map(c=>({
+value:c.chapter,label:chapterDisplayName(c.subject,c.chapter)
+}
+))
+}
+,{
+name:"year",label:"Question year",type:"number",value:p.year||2024,min:2002,max:2027,required:true
+}
+,{
+name:"source",label:"Source / paper",type:"text",value:p.source||"JEE Main PYQ",required:true
+}
+,{
+name:"attempted",label:"Questions attempted",type:"number",value:p.attempted??0,min:0,required:true
+}
+,{
+name:"correct",label:"Correct answers",type:"number",value:p.correct??0,min:0,required:true
+}
+,{
+name:"status",label:"Status",type:"select",value:p.status||"In Progress",options:["Not Started","In Progress","Completed","Redo"].map(x=>({
+value:x,label:x
+}
+))
+}
+,{
+name:"notes",label:"Review notes",type:"textarea",value:p.notes||"",full:true
+}
+],{
+type:existing?"editpyq":"pyq",id:p.id
+}
+);
+const subInput=document.querySelector('#modalFields [name="subject"]'),chInput=document.querySelector('#modalFields [name="chapter"]');
+if(subInput&&chInput)subInput.addEventListener("change",()=>{
+const opts=state.chapters.filter(c=>c.subject===subInput.value);
+chInput.innerHTML=opts.map(c=>'<option value="'+escapeAttr(c.chapter)+'">'+escapeHTML(chapterDisplayName(c.subject,c.chapter))+'</option>').join("")
+}
+);
+}
 function renderPyq(){
  const all=state.pyqs||[],f=document.getElementById("pyqFilter").value,sub=document.getElementById("pyqSubjectFilter").value,q=document.getElementById("pyqSearch").value.toLowerCase().trim(),attempted=all.reduce((n,p)=>n+(Number(p.attempted)||0),0),correct=all.reduce((n,p)=>n+(Number(p.correct)||0),0);
  document.getElementById("pyqSummary").innerHTML=[["Sessions",all.length],["Questions attempted",attempted],["Correct answers",correct],["Accuracy",attempted?pct(correct,attempted)+"%":"—"]].map(([l,v])=>'<div class="pyq-stat"><small>'+l+'</small><strong>'+v+'</strong></div>').join("");
@@ -2292,67 +3160,724 @@ function renderPyq(){
  document.getElementById("pyqRows").innerHTML=items.map(p=>'<tr><td>'+escapeHTML(formatNiceDate(p.date))+'</td><td><strong>'+escapeHTML(p.subject)+'</strong><div class="cell-muted">'+escapeHTML(chapterDisplayName(p.subject,p.chapter))+'</div></td><td>'+escapeHTML(p.year)+'<div class="cell-muted">'+escapeHTML(p.source)+'</div></td><td>'+Number(p.attempted||0)+'</td><td>'+Number(p.correct||0)+'</td><td><span class="badge blue">'+pct(Number(p.correct||0),Number(p.attempted||0))+'%</span></td><td><span class="badge '+statusClass(p.status)+'">'+escapeHTML(p.status)+'</span></td><td><div class="actions-cell"><button class="small-btn" onclick="editPyq(\''+escapeAttr(p.id)+'\')">Edit</button><button class="small-btn" onclick="quickAddPyq(\''+escapeAttr(p.id)+'\')">+10 Q</button><button class="small-btn" onclick="deletePyq(\''+escapeAttr(p.id)+'\')">Delete</button></div></td></tr>').join("")||'<tr><td colspan="8" class="empty">'+(all.length?'No matching PYQ sessions.':'No practice logged yet. Add your first session to start tracking accuracy.')+'</td></tr>';
 }
 function openModal(title,fields,context){
- modalContext=context;document.getElementById("modalTitle").textContent=title;document.getElementById("modalSub").textContent="Your changes save locally and update related summaries.";const holder=document.getElementById("modalFields");
- holder.innerHTML=fields.map(f=>{if(f.type==="multiCheckbox"){const checked=f.values||[];return '<div class="multi-picker"><strong>'+escapeHTML(f.label)+'</strong><div class="multi-picker-grid" data-chapter-picker>'+f.options.map(o=>'<label class="multi-choice"><input type="checkbox" name="'+escapeAttr(f.name)+'" value="'+escapeAttr(o.value)+'" '+(checked.includes(o.value)?'checked':'')+'><span>'+escapeHTML(o.label)+'</span></label>').join("")+'</div><div class="helper-note">Choose one or more chapters. The test title follows your chapter selection.</div></div>'}let el='';if(f.type==="select")el='<select class="control" name="'+escapeAttr(f.name)+'" '+(f.required?'required':'')+'>'+f.options.map(o=>'<option value="'+escapeAttr(o.value)+'" '+(String(o.value)===String(f.value)?'selected':'')+'>'+escapeHTML(o.label)+'</option>').join("")+'</select>';else if(f.type==="textarea")el='<textarea class="control" name="'+escapeAttr(f.name)+'" rows="4" '+(f.required?'required':'')+'>'+escapeHTML(f.value||"")+'</textarea>';else el='<input class="control" name="'+escapeAttr(f.name)+'" type="'+(f.type||"text")+'" value="'+escapeHTML(f.value??"")+'" '+(f.required?'required':'')+' '+(f.min!==undefined?'min="'+f.min+'"':'')+' '+(f.max!==undefined?'max="'+f.max+'"':'')+' '+(f.step?'step="'+f.step+'"':'')+'>';return '<label class="form-field '+(f.full?'full':'')+'">'+escapeHTML(f.label)+el+'</label>'}).join("");
- document.getElementById("modalBackdrop").classList.add("show");document.body.style.overflow="hidden";
+ modalContext=context;
+document.getElementById("modalTitle").textContent=title;
+document.getElementById("modalSub").textContent="Your changes save locally and update related summaries.";
+const holder=document.getElementById("modalFields");
+ holder.innerHTML=fields.map(f=>{
+if(f.type==="multiCheckbox"){
+const checked=f.values||[];
+return '<div class="multi-picker"><strong>'+escapeHTML(f.label)+'</strong><div class="multi-picker-grid" data-chapter-picker>'+f.options.map(o=>'<label class="multi-choice"><input type="checkbox" name="'+escapeAttr(f.name)+'" value="'+escapeAttr(o.value)+'" '+(checked.includes(o.value)?'checked':'')+'><span>'+escapeHTML(o.label)+'</span></label>').join("")+'</div><div class="helper-note">Choose one or more chapters. The test title follows your chapter selection.</div></div>'
 }
-function closeModal(){document.getElementById("modalBackdrop").classList.remove("show");document.body.style.overflow="";modalContext=null;}
-function valuesFromForm(){const form=document.getElementById("modalForm"),out=Object.fromEntries(new FormData(form).entries());const picker=form.querySelector("[data-chapter-picker]");if(picker)out.chapters=[...picker.querySelectorAll('input[name="chapters"]:checked')].map(x=>x.value);return out;}
+let el='';
+if(f.type==="select")el='<select class="control" name="'+escapeAttr(f.name)+'" '+(f.required?'required':'')+'>'+f.options.map(o=>'<option value="'+escapeAttr(o.value)+'" '+(String(o.value)===String(f.value)?'selected':'')+'>'+escapeHTML(o.label)+'</option>').join("")+'</select>';
+else if(f.type==="textarea")el='<textarea class="control" name="'+escapeAttr(f.name)+'" rows="4" '+(f.required?'required':'')+'>'+escapeHTML(f.value||"")+'</textarea>';
+else el='<input class="control" name="'+escapeAttr(f.name)+'" type="'+(f.type||"text")+'" value="'+escapeHTML(f.value??"")+'" '+(f.required?'required':'')+' '+(f.min!==undefined?'min="'+f.min+'"':'')+' '+(f.max!==undefined?'max="'+f.max+'"':'')+' '+(f.step?'step="'+f.step+'"':'')+'>';
+return '<label class="form-field '+(f.full?'full':'')+'">'+escapeHTML(f.label)+el+'</label>'
+}
+).join("");
+ document.getElementById("modalBackdrop").classList.add("show");
+document.body.style.overflow="hidden";
+}
+function closeModal(){
+document.getElementById("modalBackdrop").classList.remove("show");
+document.body.style.overflow="";
+modalContext=null;
+}
+function valuesFromForm(){
+const form=document.getElementById("modalForm"),out=Object.fromEntries(new FormData(form).entries());
+const picker=form.querySelector("[data-chapter-picker]");
+if(picker)out.chapters=[...picker.querySelectorAll('input[name="chapters"]:checked')].map(x=>x.value);
+return out;
+}
 function saveModal(e){
- e.preventDefault();if(!modalContext)return;const v=valuesFromForm(),ctx=modalContext;
- if(["topic","newtopic"].includes(ctx.type)){const eligible=new Set(state.chapters.filter(c=>c.subject===v.subject).map(c=>c.chapter));const chosen=[...new Set((v.chapters||[]).filter(x=>eligible.has(x)))];if(!chosen.length){toast("Select at least one chapter for this test.");return;}v.chapters=chosen;v.chapter=chosen[0];if(ctx.autoName!==false){const titleInput=document.querySelector('#modalFields [name="name"]');if(!titleInput||titleInput.dataset.autoName!=="false")v.name=generatedTopicTestName(v.subject,chosen);}const max=Number(v.outOf||100),marks=v.marks===""?null:Number(v.marks);if(!Number.isFinite(max)||max<1||max>100||(marks!==null&&(!Number.isFinite(marks)||marks<0||marks>max))){toast("Enter marks between 0 and the maximum (out of 100).");return;}v.outOf=String(max);if(v.plannedDate==="")v.plannedDate="";}
- if(ctx.type==="countdown"||ctx.type==="settings"){if(!v.target){toast("Choose a date.");return;}localStorage.setItem("jee-countdown-target",v.target);closeModal();renderDashboard();toast("Countdown target saved.");return;}
- if(ctx.type==="chapter"){const c=state.chapters.find(x=>x.subject===ctx.subject&&x.chapter===ctx.chapter);if(c)Object.assign(c,{prep:v.prep,r1:v.r1==="true",r2:v.r2==="true",r3:v.r3==="true",notes:v.notes==="true",pyq:v.pyq==="true",difficulty:v.difficulty||"",latestDate:v.latestDate||"",marks:v.marks??"",outOf:v.outOf??""});}
- if(ctx.type==="topic"){const t=state.topics.find(x=>x.id===ctx.id);if(t){const before={subject:t.subject,chapters:topicChapters(t)};Object.assign(t,{subject:v.subject,chapter:v.chapter,chapters:v.chapters,name:v.name,status:v.status,plannedDate:v.plannedDate,actualDate:v.actualDate,marks:v.marks,outOf:v.outOf,difficulty:v.difficulty,notes:v.notes});syncTopicToChapter(t,before);}}
- if(ctx.type==="newtopic"){const t={id:"custom-"+Date.now(),subject:v.subject,chapter:v.chapter,chapters:v.chapters,name:v.name,source:"Custom topic test",status:v.status||"Planned",plannedDate:v.plannedDate||"",actualDate:v.actualDate||"",marks:v.marks||"",outOf:v.outOf||"100",difficulty:v.difficulty||"",notes:v.notes||"",custom:true};state.topics.unshift(t);syncTopicToChapter(t);}
- if(ctx.type==="litmus"){const t=state.litmus.find(x=>x.id===ctx.id);if(t)Object.assign(t,{name:v.name,deadline:v.deadline,syllabus:v.syllabus,status:v.status,actualDate:v.actualDate,marks:v.marks,outOf:v.outOf,notes:v.notes});}
- if(ctx.type==="pyq"||ctx.type==="editpyq"){const a=Number(v.attempted),c=Number(v.correct);if(!Number.isFinite(a)||!Number.isFinite(c)||a<0||c<0||c>a){toast("Correct answers cannot exceed attempted questions.");return;}const rec={date:v.date,subject:v.subject,chapter:v.chapter,year:Number(v.year),source:v.source,attempted:a,correct:c,status:v.status,notes:v.notes||""};if(ctx.type==="pyq")state.pyqs.unshift({id:"pyq-"+Date.now(),...rec});else{const p=state.pyqs.find(x=>x.id===ctx.id);if(p)Object.assign(p,rec);}}
- closeModal();saveState();toast("Saved. Your workspace is updated.");
+ e.preventDefault();
+if(!modalContext)return;
+const v=valuesFromForm(),ctx=modalContext;
+ if(["topic","newtopic"].includes(ctx.type)){
+const eligible=new Set(state.chapters.filter(c=>c.subject===v.subject).map(c=>c.chapter));
+const chosen=[...new Set((v.chapters||[]).filter(x=>eligible.has(x)))];
+if(!chosen.length){
+toast("Select at least one chapter for this test.");
+return;
 }
-function editChapter(subject,chapter){const c=state.chapters.find(x=>x.subject===subject&&x.chapter===chapter);if(!c)return;openModal("Chapter details",[{name:"prep",label:"Preparation state",type:"select",value:c.prep,options:[["Not Ready","Not ready"],["In Progress","In progress"],["Needs Work","Needs work"],["Exam Ready","✓ Done"]].map(([value,label])=>({value,label}))},{name:"r1",label:"Revision 1",type:"select",value:String(c.r1),options:[{value:"false",label:"Not done"},{value:"true",label:"Done"}]},{name:"r2",label:"Revision 2",type:"select",value:String(c.r2),options:[{value:"false",label:"Not done"},{value:"true",label:"Done"}]},{name:"r3",label:"Revision 3",type:"select",value:String(c.r3),options:[{value:"false",label:"Not done"},{value:"true",label:"Done"}]},{name:"notes",label:"Notes ready",type:"select",value:String(c.notes),options:[{value:"false",label:"Not yet"},{value:"true",label:"Done"}]},{name:"pyq",label:"PYQs practised",type:"select",value:String(c.pyq),options:[{value:"false",label:"Not yet"},{value:"true",label:"Done"}]},{name:"difficulty",label:"Difficulty",type:"select",value:c.difficulty||"",options:["","Easy","Moderate","Hard"].map(x=>({value:x,label:x||"Not rated"}))},{name:"marks",label:"Latest test marks",type:"number",value:c.marks||"",min:0,step:"any"},{name:"outOf",label:"Maximum marks",type:"number",value:c.outOf||"",min:1,step:"any"},{name:"latestDate",label:"Last attempt date",type:"date",value:c.latestDate||""}],{type:"chapter",subject,chapter});}
-function editTopic(id){const t=state.topics.find(x=>x.id===id);if(t)openTopicModal(t,false);}
-function editLitmus(id){openLitmusModal(id);}
-function editPyq(id){const p=state.pyqs.find(x=>x.id===id);if(p)openPyqModal(p);}
-function quickTopicStatus(id,status){const t=state.topics.find(x=>x.id===id);if(!t)return;t.status=status;if(status==="Attempted"&&!t.actualDate)t.actualDate=todayISO();syncTopicToChapter(t);saveState();toast("Test status updated.");}
-function quickTopicDate(id,date){const t=state.topics.find(x=>x.id===id);if(!t)return;t.plannedDate=date;if(date&&t.status==="Not Started")t.status="Planned";saveState();toast("Planned date saved.");}
-function quickTopicScore(id,key,value){const t=state.topics.find(x=>x.id===id);if(!t)return;const n=value===""?null:Number(value),max=Number(t.outOf||100);if(key==="marks"&&n!==null&&(!Number.isFinite(n)||n<0||n>max)){toast("Marks must be between 0 and "+max+".");renderTopics();return;}if(key==="outOf"&&(!Number.isFinite(n)||n<1||n>100||Number(t.marks||0)>n)){toast("Choose a valid maximum score.");renderTopics();return;}t[key]=value;if(t.marks!==""&&t.marks!==undefined){t.status="Attempted";if(!t.actualDate)t.actualDate=todayISO();syncTopicToChapter(t);}saveState();toast("Score saved.");}
-function quickLogTopic(id){const t=state.topics.find(x=>x.id===id);if(t)openModal("Log test result",[{name:"marks",label:"Marks",type:"number",value:t.marks||"",min:0,max:100,step:"any"},{name:"outOf",label:"Maximum",type:"number",value:t.outOf||100,min:1,max:100,step:"any"},{name:"actualDate",label:"Attempt date",type:"date",value:t.actualDate||todayISO()},{name:"difficulty",label:"Difficulty",type:"select",value:t.difficulty||"",options:["","Easy","Moderate","Hard"].map(x=>({value:x,label:x||"Not rated"}))},{name:"notes",label:"Review notes",type:"textarea",value:t.notes||"",full:true}],{type:"quicktopic",id});}
-function quickTopicActualDate(id,date){const t=state.topics.find(x=>x.id===id);if(!t)return;t.actualDate=date;if(date)t.status="Attempted";syncTopicToChapter(t);saveState();toast("Attempt date saved.");}
-function quickLitmusDate(id,date){const t=state.litmus.find(x=>x.id===id);if(!t)return;t.deadline=date;saveState();toast("Deadline saved.");}
-function quickLitmusStatus(id,status){const t=state.litmus.find(x=>x.id===id);if(!t)return;t.status=status;if(status==="Attempted"&&!t.actualDate)t.actualDate=todayISO();saveState();toast("Status updated.");}
-function quickLitmusActualDate(id,date){const t=state.litmus.find(x=>x.id===id);if(!t)return;t.actualDate=date;if(date)t.status="Attempted";saveState();toast("Attempt date saved.");}
-function quickLitmusScore(id,key,value){const t=state.litmus.find(x=>x.id===id);if(!t)return;const n=value===""?null:Number(value);if(n!==null&&(!Number.isFinite(n)||n<0)){toast("Enter a valid score.");renderLitmus();return;}if(key==="marks"&&n!==null&&t.outOf!==""&&n>Number(t.outOf)){toast("Score cannot exceed maximum.");renderLitmus();return;}if(key==="outOf"&&n!==null&&(n<1||Number(t.marks||0)>n)){toast("Maximum must be above the score.");renderLitmus();return;}t[key]=value;if(t.marks!==""&&t.outOf!==""){t.status="Attempted";if(!t.actualDate)t.actualDate=todayISO();}saveState();toast("Score saved.");}
-function quickAddPyq(id){const p=state.pyqs.find(x=>x.id===id);if(!p)return;p.attempted=(Number(p.attempted)||0)+10;p.status=p.status==="Completed"?"Completed":"In Progress";saveState();toast("Added 10 attempted questions.");}
-function deletePyq(id){if(!confirm("Delete this PYQ practice session?"))return;state.pyqs=state.pyqs.filter(p=>p.id!==id);saveState();toast("PYQ session deleted.");}
-function deleteTopic(id){if(!confirm("Delete this custom topic test?"))return;state.topics=state.topics.filter(t=>t.id!==id);saveState();toast("Custom test deleted.");}
-function saveTopicNameAutoFlag(){const n=document.querySelector('#modalFields [name="name"]');if(n)n.dataset.autoName="false";}
-function openAttemptReport(){const a=[...state.topics.filter(t=>t.status==="Attempted").map(t=>({kind:"Topic test",name:topicDisplayName(t),sub:topicChapterLabel(t),date:t.actualDate,marks:t.marks,outOf:t.outOf,status:t.status})),...state.litmus.filter(t=>t.status==="Attempted").map(t=>({kind:"LITMUS",name:t.name,sub:t.syllabus,date:t.actualDate,marks:t.marks,outOf:t.outOf,status:t.status}))].sort((x,y)=>String(y.date||"").localeCompare(String(x.date||"")));openModal("Your test attempts",[{name:"summary",label:"Attempts logged",type:"text",value:String(a.length)+" attempts · "+a.filter(x=>x.marks!=="").length+" with scores"},{name:"report",label:"Recent attempts",type:"textarea",value:a.slice(0,18).map(x=>x.name+" · "+formatNiceDate(x.date)+" · "+scoreLabel(x.marks,x.outOf)).join("\n")||"No test attempts logged yet.",full:true}],{type:"report"});}
-function resetLitmusSchedule(){if(!confirm("Reset LITMUS test dates to the original schedule? This keeps your scores and attempt statuses."))return;const current=BASE.litmus;state.litmus.forEach((t,i)=>{if(current[i])t.deadline=current[i].deadline});saveState();toast("LITMUS dates reset.");}
-function openSettings(){openModal("Workspace settings",[{name:"target",label:"Countdown target",type:"date",value:getCountdownTarget(),required:true}],{type:"settings"});}
-function exportData(){const blob=new Blob([JSON.stringify({exportedAt:new Date().toISOString(),countdownTarget:getCountdownTarget(),state},null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="personal-space-6-backup.json";a.click();URL.revokeObjectURL(a.href);toast("Backup downloaded.");}
-function importData(e){const file=e.target.files&&e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{try{const obj=JSON.parse(reader.result),imported=obj.state||obj;if(!Array.isArray(imported.chapters)||!Array.isArray(imported.topics))throw new Error("Invalid backup");if(confirm("Replace this browser’s Personal Space 6.0 data with the selected backup?")){state=migrateState(imported);if(obj.countdownTarget&&/^\d{4}-\d{2}-\d{2}$/.test(obj.countdownTarget))localStorage.setItem("jee-countdown-target",obj.countdownTarget);saveState();renderAll();toast("Backup restored.");}}catch(err){alert("Could not import that file. Choose a Personal Space JSON backup.");}e.target.value="";};reader.readAsText(file);}
-let toastTimer2;function toast(message){const el=document.getElementById("toast");el.textContent=message;el.classList.add("show");clearTimeout(toastTimer2);toastTimer2=setTimeout(()=>el.classList.remove("show"),2600);}
-function go(page){if(!document.getElementById("page-"+page))return;currentPage=page;document.querySelectorAll(".page").forEach(n=>n.classList.toggle("active",n.id==="page-"+page));document.querySelectorAll("nav [data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===page));const title={dashboard:["YOUR STUDY SPACE","Welcome back, Raash.","Small sessions add up. Let’s make today count."],chapters:["SYLLABUS TRACKER","Chapter tracker","Make each chapter feel manageable."],topic:["PRACTICE & REVIEW","Topic test planner","Plan a test, log the score and keep chapter progress connected."],litmus:["TEST SERIES","LITMUS schedule","Your part tests and full mocks, with dates and marks."],pyq:["PREVIOUS-YEAR QUESTIONS","PYQ practice log","Track accuracy and build confidence by chapter."]}[page];document.getElementById("pageCrumb").textContent=title[0];document.getElementById("pageTitle").textContent=title[1];document.getElementById("pageSubtitle").textContent=title[2];window.scrollTo({top:0,behavior:"smooth"});if(page==="dashboard")renderDashboard();if(page==="chapters")renderChapters();if(page==="topic")renderTopics();if(page==="litmus")renderLitmus();if(page==="pyq")renderPyq();}
-document.getElementById("nav").addEventListener("click",e=>{const b=e.target.closest("[data-page]");if(b)go(b.dataset.page)});
-document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeModal();document.getElementById("cloudGate").classList.remove("show");document.body.style.overflow="";}});
-function renderAll(){renderDashboard();renderChapters();renderTopics();renderLitmus();renderPyq();}
-function cloudSettings(){return {url:document.getElementById("cloudUrl").value.trim().replace(/\/+$/,""),key:document.getElementById("cloudKey").value.trim()};}
-function restoreCloudSettings(){try{const saved=JSON.parse(localStorage.getItem(cloudSettingsKey)||"{}");if(saved.url)document.getElementById("cloudUrl").value=saved.url;if(saved.key)document.getElementById("cloudKey").value=saved.key;}catch(e){}}
-function cloudMessage(s,isError=false){const n=document.getElementById("cloudMessage");n.textContent=s;n.style.borderColor=isError?"#efc7cb":"";}
-function openCloudSettings(){restoreCloudSettings();document.getElementById("cloudGate").classList.add("show");document.body.style.overflow="hidden";}
-function closeCloudSettings(){document.getElementById("cloudGate").classList.remove("show");document.body.style.overflow="";}
-function cloudOffline(){try{localStorage.setItem(KEY,JSON.stringify(state));localStorage.setItem(offlineKey,"1")}catch(e){}cloudReady=false;cloudBackupAvailable=false;cloudUser=null;closeCloudSettings();toast("Continuing offline. Your local tracker is safe.");}
-function cloudCreateClient(){const cfg=cloudSettings();if(!/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(cfg.url))throw new Error("Enter the Project URL from the same Supabase project.");if(!cfg.key)throw new Error("Enter the Publishable key (or legacy anon key), not a Secret or Service Role key.");if(/^sb_secret_/i.test(cfg.key)||/service_role/i.test(cfg.key))throw new Error("Use a Publishable or anon key only.");if(!window.supabase||!window.supabase.createClient)throw new Error("Supabase library did not load.");try{localStorage.setItem(cloudSettingsKey,JSON.stringify(cfg))}catch(e){}if(!cloudClient)cloudClient=window.supabase.createClient(cfg.url,cfg.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storageKey:"ps-supabase-auth-v2"}});return cloudClient;}
-async function cloudAuth(mode){try{const email=document.getElementById("cloudEmail").value.trim(),password=document.getElementById("cloudPassword").value;if(!email||!password)throw new Error("Enter your email and password.");const client=cloudCreateClient();cloudMessage(mode==="signup"?"Creating account…":"Signing in…");const res=mode==="signup"?await client.auth.signUp({email,password}):await client.auth.signInWithPassword({email,password});if(res.error)throw res.error;if(mode==="signup"&&!res.data.session){cloudMessage("Account created. Confirm your email, then sign in.");return;}if(!res.data.user)throw new Error("Supabase did not return a user.");cloudUser=res.data.user;const backup=await client.from("study_data").select("data").eq("user_id",cloudUser.id).maybeSingle();if(backup.error){cloudReady=true;cloudBackupAvailable=false;cloudMessage("Signed in, but backup table access failed. The local tracker still works. "+backup.error.message,true);closeCloudSettings();return;}cloudBackupAvailable=true;const payload=backup.data&&backup.data.data;if(payload&&payload.state&&Array.isArray(payload.state.chapters)){if(confirm("A cloud backup exists. Press OK to restore it, or Cancel to upload this browser’s data instead.")){state=migrateState(payload.state);if(payload.countdownTarget)localStorage.setItem("jee-countdown-target",payload.countdownTarget);}else{await cloudWriteNow();}}else{await cloudWriteNow();}cloudReady=true;try{localStorage.removeItem(offlineKey)}catch(e){}saveState();closeCloudSettings();toast("Cloud sync connected.");}catch(e){cloudMessage("Cloud sign-in failed: "+(e.message||"unknown error")+". Check that the URL and Publishable key belong to the same project.",true);}}
-function cloudSignIn(){return cloudAuth("signin")}function cloudSignUp(){return cloudAuth("signup")}
-function queueCloudSave(){if(!cloudReady||cloudApplying||!cloudBackupAvailable)return;clearTimeout(cloudTimer);cloudTimer=setTimeout(()=>cloudWriteNow().catch(e=>{cloudMessage("Cloud save failed: "+e.message,true);}),650);}
-async function cloudWriteNow(){if(!cloudClient||!cloudUser)throw new Error("Sign in first.");const {error}=await cloudClient.from("study_data").upsert({user_id:cloudUser.id,data:{state,countdownTarget:getCountdownTarget()},updated_at:new Date().toISOString()},{onConflict:"user_id"});if(error)throw error;cloudBackupAvailable=true;}
-async function cloudUploadLocal(){try{if(!cloudClient||!cloudUser){toast("Connect cloud sync first.");return;}await cloudWriteNow();toast("Local data uploaded to cloud.");}catch(e){cloudMessage(e.message,true);}}
-async function cloudRestoreCloud(){try{if(!cloudClient||!cloudUser){toast("Connect cloud sync first.");return;}const r=await cloudClient.from("study_data").select("data").eq("user_id",cloudUser.id).maybeSingle();if(r.error)throw r.error;if(!r.data?.data?.state)throw new Error("No cloud backup exists yet.");if(!confirm("Replace this browser's tracker with the cloud backup?"))return;cloudApplying=true;state=migrateState(r.data.data.state);localStorage.setItem(KEY,JSON.stringify(state));renderAll();cloudApplying=false;toast("Cloud backup restored.");}catch(e){cloudApplying=false;cloudMessage(e.message,true);}}
-async function cloudSignOut(){try{if(cloudClient)await cloudClient.auth.signOut()}catch(e){}cloudReady=false;cloudBackupAvailable=false;cloudUser=null;closeCloudSettings();toast("Cloud sync signed out. Local data remains saved.");}
-(async()=>{try{restoreCloudSettings();if(localStorage.getItem(offlineKey)==="1")return;const cfg=JSON.parse(localStorage.getItem(cloudSettingsKey)||"{}");if(!cfg.url||!cfg.key)return;cloudClient=cloudCreateClient();const sr=await cloudClient.auth.getSession();if(sr.data?.session?.user){const user=sr.data.session.user;cloudUser=user;const r=await cloudClient.from("study_data").select("data").eq("user_id",user.id).maybeSingle();if(!r.error&&r.data?.data?.state){cloudBackupAvailable=true;cloudReady=true;document.getElementById("syncStatus").textContent="Cloud sync enabled";}}}catch(e){console.warn("Cloud session restore skipped",e)}})();
-document.getElementById("modalForm").addEventListener("change",e=>{if(e.target.name==="subject"&&["pyq","editpyq"].includes(modalContext?.type)){const subject=e.target.value,chapter=document.querySelector('#modalFields [name="chapter"]'),old=chapter?.value,opts=state.chapters.filter(c=>c.subject===subject);if(chapter)chapter.innerHTML=opts.map(c=>'<option value="'+escapeAttr(c.chapter)+'">'+escapeHTML(chapterDisplayName(c.subject,c.chapter))+'</option>').join("");}});
-document.addEventListener("change",e=>{if(e.target.matches('#modalFields [name="subject"]')&&["topic","newtopic"].includes(modalContext?.type)){/* handled by picker listener */}});
+v.chapters=chosen;
+v.chapter=chosen[0];
+if(ctx.autoName!==false){
+const titleInput=document.querySelector('#modalFields [name="name"]');
+if(!titleInput||titleInput.dataset.autoName!=="false")v.name=generatedTopicTestName(v.subject,chosen);
+}
+const max=Number(v.outOf||100),marks=v.marks===""?null:Number(v.marks);
+if(!Number.isFinite(max)||max<1||max>100||(marks!==null&&(!Number.isFinite(marks)||marks<0||marks>max))){
+toast("Enter marks between 0 and the maximum (out of 100).");
+return;
+}
+v.outOf=String(max);
+if(v.plannedDate==="")v.plannedDate="";
+}
+ if(ctx.type==="countdown"||ctx.type==="settings"){
+if(!v.target){
+toast("Choose a date.");
+return;
+}
+localStorage.setItem("jee-countdown-target",v.target);
+closeModal();
+renderDashboard();
+toast("Countdown target saved.");
+return;
+}
+ if(ctx.type==="chapter"){
+const c=state.chapters.find(x=>x.subject===ctx.subject&&x.chapter===ctx.chapter);
+if(c)Object.assign(c,{
+prep:v.prep,r1:v.r1==="true",r2:v.r2==="true",r3:v.r3==="true",notes:v.notes==="true",pyq:v.pyq==="true",difficulty:v.difficulty||"",latestDate:v.latestDate||"",marks:v.marks??"",outOf:v.outOf??""
+}
+);
+}
+ if(ctx.type==="topic"){
+const t=state.topics.find(x=>x.id===ctx.id);
+if(t){
+const before={
+subject:t.subject,chapters:topicChapters(t)
+}
+;
+Object.assign(t,{
+subject:v.subject,chapter:v.chapter,chapters:v.chapters,name:v.name,status:v.status,plannedDate:v.plannedDate,actualDate:v.actualDate,marks:v.marks,outOf:v.outOf,difficulty:v.difficulty,notes:v.notes
+}
+);
+syncTopicToChapter(t,before);
+}
+}
+ if(ctx.type==="newtopic"){
+const t={
+id:"custom-"+Date.now(),subject:v.subject,chapter:v.chapter,chapters:v.chapters,name:v.name,source:"Custom topic test",status:v.status||"Planned",plannedDate:v.plannedDate||"",actualDate:v.actualDate||"",marks:v.marks||"",outOf:v.outOf||"100",difficulty:v.difficulty||"",notes:v.notes||"",custom:true
+}
+;
+state.topics.unshift(t);
+syncTopicToChapter(t);
+}
+ if(ctx.type==="litmus"){
+const t=state.litmus.find(x=>x.id===ctx.id);
+if(t)Object.assign(t,{
+name:v.name,deadline:v.deadline,syllabus:v.syllabus,status:v.status,actualDate:v.actualDate,marks:v.marks,outOf:v.outOf,notes:v.notes
+}
+);
+}
+ if(ctx.type==="pyq"||ctx.type==="editpyq"){
+const a=Number(v.attempted),c=Number(v.correct);
+if(!Number.isFinite(a)||!Number.isFinite(c)||a<0||c<0||c>a){
+toast("Correct answers cannot exceed attempted questions.");
+return;
+}
+const rec={
+date:v.date,subject:v.subject,chapter:v.chapter,year:Number(v.year),source:v.source,attempted:a,correct:c,status:v.status,notes:v.notes||""
+}
+;
+if(ctx.type==="pyq")state.pyqs.unshift({
+id:"pyq-"+Date.now(),...rec
+}
+);
+else{
+const p=state.pyqs.find(x=>x.id===ctx.id);
+if(p)Object.assign(p,rec);
+}
+}
+ closeModal();
+saveState();
+toast("Saved. Your workspace is updated.");
+}
+function editChapter(subject,chapter){
+const c=state.chapters.find(x=>x.subject===subject&&x.chapter===chapter);
+if(!c)return;
+openModal("Chapter details",[{
+name:"prep",label:"Preparation state",type:"select",value:c.prep,options:[["Not Ready","Not ready"],["In Progress","In progress"],["Needs Work","Needs work"],["Exam Ready","✓ Done"]].map(([value,label])=>({
+value,label
+}
+))
+}
+,{
+name:"r1",label:"Revision 1",type:"select",value:String(c.r1),options:[{
+value:"false",label:"Not done"
+}
+,{
+value:"true",label:"Done"
+}
+]
+}
+,{
+name:"r2",label:"Revision 2",type:"select",value:String(c.r2),options:[{
+value:"false",label:"Not done"
+}
+,{
+value:"true",label:"Done"
+}
+]
+}
+,{
+name:"r3",label:"Revision 3",type:"select",value:String(c.r3),options:[{
+value:"false",label:"Not done"
+}
+,{
+value:"true",label:"Done"
+}
+]
+}
+,{
+name:"notes",label:"Notes ready",type:"select",value:String(c.notes),options:[{
+value:"false",label:"Not yet"
+}
+,{
+value:"true",label:"Done"
+}
+]
+}
+,{
+name:"pyq",label:"PYQs practised",type:"select",value:String(c.pyq),options:[{
+value:"false",label:"Not yet"
+}
+,{
+value:"true",label:"Done"
+}
+]
+}
+,{
+name:"difficulty",label:"Difficulty",type:"select",value:c.difficulty||"",options:["","Easy","Moderate","Hard"].map(x=>({
+value:x,label:x||"Not rated"
+}
+))
+}
+,{
+name:"marks",label:"Latest test marks",type:"number",value:c.marks||"",min:0,step:"any"
+}
+,{
+name:"outOf",label:"Maximum marks",type:"number",value:c.outOf||"",min:1,step:"any"
+}
+,{
+name:"latestDate",label:"Last attempt date",type:"date",value:c.latestDate||""
+}
+],{
+type:"chapter",subject,chapter
+}
+);
+}
+function editTopic(id){
+const t=state.topics.find(x=>x.id===id);
+if(t)openTopicModal(t,false);
+}
+function editLitmus(id){
+openLitmusModal(id);
+}
+function editPyq(id){
+const p=state.pyqs.find(x=>x.id===id);
+if(p)openPyqModal(p);
+}
+function quickTopicStatus(id,status){
+const t=state.topics.find(x=>x.id===id);
+if(!t)return;
+t.status=status;
+if(status==="Attempted"&&!t.actualDate)t.actualDate=todayISO();
+syncTopicToChapter(t);
+saveState();
+toast("Test status updated.");
+}
+function quickTopicDate(id,date){
+const t=state.topics.find(x=>x.id===id);
+if(!t)return;
+t.plannedDate=date;
+if(date&&t.status==="Not Started")t.status="Planned";
+saveState();
+toast("Planned date saved.");
+}
+function quickTopicScore(id,key,value){
+const t=state.topics.find(x=>x.id===id);
+if(!t)return;
+const n=value===""?null:Number(value),max=Number(t.outOf||100);
+if(key==="marks"&&n!==null&&(!Number.isFinite(n)||n<0||n>max)){
+toast("Marks must be between 0 and "+max+".");
+renderTopics();
+return;
+}
+if(key==="outOf"&&(!Number.isFinite(n)||n<1||n>100||Number(t.marks||0)>n)){
+toast("Choose a valid maximum score.");
+renderTopics();
+return;
+}
+t[key]=value;
+if(t.marks!==""&&t.marks!==undefined){
+t.status="Attempted";
+if(!t.actualDate)t.actualDate=todayISO();
+syncTopicToChapter(t);
+}
+saveState();
+toast("Score saved.");
+}
+function quickLogTopic(id){
+const t=state.topics.find(x=>x.id===id);
+if(t)openModal("Log test result",[{
+name:"marks",label:"Marks",type:"number",value:t.marks||"",min:0,max:100,step:"any"
+}
+,{
+name:"outOf",label:"Maximum",type:"number",value:t.outOf||100,min:1,max:100,step:"any"
+}
+,{
+name:"actualDate",label:"Attempt date",type:"date",value:t.actualDate||todayISO()
+}
+,{
+name:"difficulty",label:"Difficulty",type:"select",value:t.difficulty||"",options:["","Easy","Moderate","Hard"].map(x=>({
+value:x,label:x||"Not rated"
+}
+))
+}
+,{
+name:"notes",label:"Review notes",type:"textarea",value:t.notes||"",full:true
+}
+],{
+type:"quicktopic",id
+}
+);
+}
+function quickTopicActualDate(id,date){
+const t=state.topics.find(x=>x.id===id);
+if(!t)return;
+t.actualDate=date;
+if(date)t.status="Attempted";
+syncTopicToChapter(t);
+saveState();
+toast("Attempt date saved.");
+}
+function quickLitmusDate(id,date){
+const t=state.litmus.find(x=>x.id===id);
+if(!t)return;
+t.deadline=date;
+saveState();
+toast("Deadline saved.");
+}
+function quickLitmusStatus(id,status){
+const t=state.litmus.find(x=>x.id===id);
+if(!t)return;
+t.status=status;
+if(status==="Attempted"&&!t.actualDate)t.actualDate=todayISO();
+saveState();
+toast("Status updated.");
+}
+function quickLitmusActualDate(id,date){
+const t=state.litmus.find(x=>x.id===id);
+if(!t)return;
+t.actualDate=date;
+if(date)t.status="Attempted";
+saveState();
+toast("Attempt date saved.");
+}
+function quickLitmusScore(id,key,value){
+const t=state.litmus.find(x=>x.id===id);
+if(!t)return;
+const n=value===""?null:Number(value);
+if(n!==null&&(!Number.isFinite(n)||n<0)){
+toast("Enter a valid score.");
+renderLitmus();
+return;
+}
+if(key==="marks"&&n!==null&&t.outOf!==""&&n>Number(t.outOf)){
+toast("Score cannot exceed maximum.");
+renderLitmus();
+return;
+}
+if(key==="outOf"&&n!==null&&(n<1||Number(t.marks||0)>n)){
+toast("Maximum must be above the score.");
+renderLitmus();
+return;
+}
+t[key]=value;
+if(t.marks!==""&&t.outOf!==""){
+t.status="Attempted";
+if(!t.actualDate)t.actualDate=todayISO();
+}
+saveState();
+toast("Score saved.");
+}
+function quickAddPyq(id){
+const p=state.pyqs.find(x=>x.id===id);
+if(!p)return;
+p.attempted=(Number(p.attempted)||0)+10;
+p.status=p.status==="Completed"?"Completed":"In Progress";
+saveState();
+toast("Added 10 attempted questions.");
+}
+function deletePyq(id){
+if(!confirm("Delete this PYQ practice session?"))return;
+state.pyqs=state.pyqs.filter(p=>p.id!==id);
+saveState();
+toast("PYQ session deleted.");
+}
+function deleteTopic(id){
+if(!confirm("Delete this custom topic test?"))return;
+state.topics=state.topics.filter(t=>t.id!==id);
+saveState();
+toast("Custom test deleted.");
+}
+function saveTopicNameAutoFlag(){
+const n=document.querySelector('#modalFields [name="name"]');
+if(n)n.dataset.autoName="false";
+}
+function openAttemptReport(){
+const a=[...state.topics.filter(t=>t.status==="Attempted").map(t=>({
+kind:"Topic test",name:topicDisplayName(t),sub:topicChapterLabel(t),date:t.actualDate,marks:t.marks,outOf:t.outOf,status:t.status
+}
+)),...state.litmus.filter(t=>t.status==="Attempted").map(t=>({
+kind:"LITMUS",name:t.name,sub:t.syllabus,date:t.actualDate,marks:t.marks,outOf:t.outOf,status:t.status
+}
+))].sort((x,y)=>String(y.date||"").localeCompare(String(x.date||"")));
+openModal("Your test attempts",[{
+name:"summary",label:"Attempts logged",type:"text",value:String(a.length)+" attempts · "+a.filter(x=>x.marks!=="").length+" with scores"
+}
+,{
+name:"report",label:"Recent attempts",type:"textarea",value:a.slice(0,18).map(x=>x.name+" · "+formatNiceDate(x.date)+" · "+scoreLabel(x.marks,x.outOf)).join("\n")||"No test attempts logged yet.",full:true
+}
+],{
+type:"report"
+}
+);
+}
+function resetLitmusSchedule(){
+if(!confirm("Reset LITMUS test dates to the original schedule? This keeps your scores and attempt statuses."))return;
+const current=BASE.litmus;
+state.litmus.forEach((t,i)=>{
+if(current[i])t.deadline=current[i].deadline
+}
+);
+saveState();
+toast("LITMUS dates reset.");
+}
+function openSettings(){
+openModal("Workspace settings",[{
+name:"target",label:"Countdown target",type:"date",value:getCountdownTarget(),required:true
+}
+],{
+type:"settings"
+}
+);
+}
+function exportData(){
+const blob=new Blob([JSON.stringify({
+exportedAt:new Date().toISOString(),countdownTarget:getCountdownTarget(),state
+}
+,null,2)],{
+type:"application/json"
+}
+);
+const a=document.createElement("a");
+a.href=URL.createObjectURL(blob);
+a.download="personal-space-6-backup.json";
+a.click();
+URL.revokeObjectURL(a.href);
+toast("Backup downloaded.");
+}
+function importData(e){
+const file=e.target.files&&e.target.files[0];
+if(!file)return;
+const reader=new FileReader();
+reader.onload=()=>{
+try{
+const obj=JSON.parse(reader.result),imported=obj.state||obj;
+if(!Array.isArray(imported.chapters)||!Array.isArray(imported.topics))throw new Error("Invalid backup");
+if(confirm("Replace this browser’s Personal Space 6.0 data with the selected backup?")){
+state=migrateState(imported);
+if(obj.countdownTarget&&/^\d{4}-\d{2}-\d{2}$/.test(obj.countdownTarget))localStorage.setItem("jee-countdown-target",obj.countdownTarget);
+saveState();
+renderAll();
+toast("Backup restored.");
+}
+}
+catch(err){
+alert("Could not import that file. Choose a Personal Space JSON backup.");
+}
+e.target.value="";
+}
+;
+reader.readAsText(file);
+}
+let toastTimer2;
+function toast(message){
+const el=document.getElementById("toast");
+el.textContent=message;
+el.classList.add("show");
+clearTimeout(toastTimer2);
+toastTimer2=setTimeout(()=>el.classList.remove("show"),2600);
+}
+function go(page){
+if(!document.getElementById("page-"+page))return;
+currentPage=page;
+document.querySelectorAll(".page").forEach(n=>n.classList.toggle("active",n.id==="page-"+page));
+document.querySelectorAll("nav [data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
+const title={
+dashboard:["YOUR STUDY SPACE","Welcome back, Raash.","Small sessions add up. Let’s make today count."],chapters:["SYLLABUS TRACKER","Chapter tracker","Make each chapter feel manageable."],topic:["PRACTICE & REVIEW","Topic test planner","Plan a test, log the score and keep chapter progress connected."],litmus:["TEST SERIES","LITMUS schedule","Your part tests and full mocks, with dates and marks."],pyq:["PREVIOUS-YEAR QUESTIONS","PYQ practice log","Track accuracy and build confidence by chapter."]
+}
+[page];
+document.getElementById("pageCrumb").textContent=title[0];
+document.getElementById("pageTitle").textContent=title[1];
+document.getElementById("pageSubtitle").textContent=title[2];
+window.scrollTo({
+top:0,behavior:"smooth"
+}
+);
+if(page==="dashboard")renderDashboard();
+if(page==="chapters")renderChapters();
+if(page==="topic")renderTopics();
+if(page==="litmus")renderLitmus();
+if(page==="pyq")renderPyq();
+}
+document.getElementById("nav").addEventListener("click",e=>{
+const b=e.target.closest("[data-page]");
+if(b)go(b.dataset.page)
+}
+);
+document.addEventListener("keydown",e=>{
+if(e.key==="Escape"){
+closeModal();
+document.getElementById("cloudGate").classList.remove("show");
+document.body.style.overflow="";
+}
+}
+);
+function renderAll(){
+renderDashboard();
+renderChapters();
+renderTopics();
+renderLitmus();
+renderPyq();
+}
+function cloudSettings(){
+return {
+url:document.getElementById("cloudUrl").value.trim().replace(/\/+$/,""),key:document.getElementById("cloudKey").value.trim()
+}
+;
+}
+function restoreCloudSettings(){
+try{
+const saved=JSON.parse(localStorage.getItem(cloudSettingsKey)||"{}");
+if(saved.url)document.getElementById("cloudUrl").value=saved.url;
+if(saved.key)document.getElementById("cloudKey").value=saved.key;
+}
+catch(e){
+}
+}
+function cloudMessage(s,isError=false){
+const n=document.getElementById("cloudMessage");
+n.textContent=s;
+n.style.borderColor=isError?"#efc7cb":"";
+}
+function openCloudSettings(){
+restoreCloudSettings();
+document.getElementById("cloudGate").classList.add("show");
+document.body.style.overflow="hidden";
+}
+function closeCloudSettings(){
+document.getElementById("cloudGate").classList.remove("show");
+document.body.style.overflow="";
+}
+function cloudOffline(){
+try{
+localStorage.setItem(KEY,JSON.stringify(state));
+localStorage.setItem(offlineKey,"1")
+}
+catch(e){
+}
+cloudReady=false;
+cloudBackupAvailable=false;
+cloudUser=null;
+closeCloudSettings();
+toast("Continuing offline. Your local tracker is safe.");
+}
+function cloudCreateClient(){
+const cfg=cloudSettings();
+if(!/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(cfg.url))throw new Error("Enter the Project URL from the same Supabase project.");
+if(!cfg.key)throw new Error("Enter the Publishable key (or legacy anon key), not a Secret or Service Role key.");
+if(/^sb_secret_/i.test(cfg.key)||/service_role/i.test(cfg.key))throw new Error("Use a Publishable or anon key only.");
+if(!window.supabase||!window.supabase.createClient)throw new Error("Supabase library did not load.");
+try{
+localStorage.setItem(cloudSettingsKey,JSON.stringify(cfg))
+}
+catch(e){
+}
+if(!cloudClient)cloudClient=window.supabase.createClient(cfg.url,cfg.key,{
+auth:{
+persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storageKey:"ps-supabase-auth-v2"
+}
+}
+);
+return cloudClient;
+}
+async function cloudAuth(mode){
+try{
+const email=document.getElementById("cloudEmail").value.trim(),password=document.getElementById("cloudPassword").value;
+if(!email||!password)throw new Error("Enter your email and password.");
+const client=cloudCreateClient();
+cloudMessage(mode==="signup"?"Creating account…":"Signing in…");
+const res=mode==="signup"?await client.auth.signUp({
+email,password
+}
+):await client.auth.signInWithPassword({
+email,password
+}
+);
+if(res.error)throw res.error;
+if(mode==="signup"&&!res.data.session){
+cloudMessage("Account created. Confirm your email, then sign in.");
+return;
+}
+if(!res.data.user)throw new Error("Supabase did not return a user.");
+cloudUser=res.data.user;
+const backup=await client.from("study_data").select("data").eq("user_id",cloudUser.id).maybeSingle();
+if(backup.error){
+cloudReady=true;
+cloudBackupAvailable=false;
+cloudMessage("Signed in, but backup table access failed. The local tracker still works. "+backup.error.message,true);
+closeCloudSettings();
+return;
+}
+cloudBackupAvailable=true;
+const payload=backup.data&&backup.data.data;
+if(payload&&payload.state&&Array.isArray(payload.state.chapters)){
+if(confirm("A cloud backup exists. Press OK to restore it, or Cancel to upload this browser’s data instead.")){
+state=migrateState(payload.state);
+if(payload.countdownTarget)localStorage.setItem("jee-countdown-target",payload.countdownTarget);
+}
+else{
+await cloudWriteNow();
+}
+}
+else{
+await cloudWriteNow();
+}
+cloudReady=true;
+try{
+localStorage.removeItem(offlineKey)
+}
+catch(e){
+}
+saveState();
+closeCloudSettings();
+toast("Cloud sync connected.");
+}
+catch(e){
+cloudMessage("Cloud sign-in failed: "+(e.message||"unknown error")+". Check that the URL and Publishable key belong to the same project.",true);
+}
+}
+function cloudSignIn(){
+return cloudAuth("signin")
+}
+function cloudSignUp(){
+return cloudAuth("signup")
+}
+function queueCloudSave(){
+if(!cloudReady||cloudApplying||!cloudBackupAvailable)return;
+clearTimeout(cloudTimer);
+cloudTimer=setTimeout(()=>cloudWriteNow().catch(e=>{
+cloudMessage("Cloud save failed: "+e.message,true);
+}
+),650);
+}
+async function cloudWriteNow(){
+if(!cloudClient||!cloudUser)throw new Error("Sign in first.");
+const {
+error
+}
+=await cloudClient.from("study_data").upsert({
+user_id:cloudUser.id,data:{
+state,countdownTarget:getCountdownTarget()
+}
+,updated_at:new Date().toISOString()
+}
+,{
+onConflict:"user_id"
+}
+);
+if(error)throw error;
+cloudBackupAvailable=true;
+}
+async function cloudUploadLocal(){
+try{
+if(!cloudClient||!cloudUser){
+toast("Connect cloud sync first.");
+return;
+}
+await cloudWriteNow();
+toast("Local data uploaded to cloud.");
+}
+catch(e){
+cloudMessage(e.message,true);
+}
+}
+async function cloudRestoreCloud(){
+try{
+if(!cloudClient||!cloudUser){
+toast("Connect cloud sync first.");
+return;
+}
+const r=await cloudClient.from("study_data").select("data").eq("user_id",cloudUser.id).maybeSingle();
+if(r.error)throw r.error;
+if(!r.data?.data?.state)throw new Error("No cloud backup exists yet.");
+if(!confirm("Replace this browser's tracker with the cloud backup?"))return;
+cloudApplying=true;
+state=migrateState(r.data.data.state);
+localStorage.setItem(KEY,JSON.stringify(state));
+renderAll();
+cloudApplying=false;
+toast("Cloud backup restored.");
+}
+catch(e){
+cloudApplying=false;
+cloudMessage(e.message,true);
+}
+}
+async function cloudSignOut(){
+try{
+if(cloudClient)await cloudClient.auth.signOut()
+}
+catch(e){
+}
+cloudReady=false;
+cloudBackupAvailable=false;
+cloudUser=null;
+closeCloudSettings();
+toast("Cloud sync signed out. Local data remains saved.");
+}
+(async()=>{
+try{
+restoreCloudSettings();
+if(localStorage.getItem(offlineKey)==="1")return;
+const cfg=JSON.parse(localStorage.getItem(cloudSettingsKey)||"{}");
+if(!cfg.url||!cfg.key)return;
+cloudClient=cloudCreateClient();
+const sr=await cloudClient.auth.getSession();
+if(sr.data?.session?.user){
+const user=sr.data.session.user;
+cloudUser=user;
+const r=await cloudClient.from("study_data").select("data").eq("user_id",user.id).maybeSingle();
+if(!r.error&&r.data?.data?.state){
+cloudBackupAvailable=true;
+cloudReady=true;
+document.getElementById("syncStatus").textContent="Cloud sync enabled";
+}
+}
+}
+catch(e){
+console.warn("Cloud session restore skipped",e)
+}
+}
+)();
+document.getElementById("modalForm").addEventListener("change",e=>{
+if(e.target.name==="subject"&&["pyq","editpyq"].includes(modalContext?.type)){
+const subject=e.target.value,chapter=document.querySelector('#modalFields [name="chapter"]'),old=chapter?.value,opts=state.chapters.filter(c=>c.subject===subject);
+if(chapter)chapter.innerHTML=opts.map(c=>'<option value="'+escapeAttr(c.chapter)+'">'+escapeHTML(chapterDisplayName(c.subject,c.chapter))+'</option>').join("");
+}
+}
+);
+document.addEventListener("change",e=>{
+if(e.target.matches('#modalFields [name="subject"]')&&["topic","newtopic"].includes(modalContext?.type)){
+/* handled by picker listener */
+}
+}
+);
 renderAll();
 </script>
 <script src="./productivity.js"></script>
