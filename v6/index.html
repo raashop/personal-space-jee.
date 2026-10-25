@@ -1912,7 +1912,7 @@ td strong {
 @media(max-width:760px){#page-telegram .telegram-lecture-list{grid-template-columns:1fr}}
 
 </style>
-<link rel="stylesheet" href="./edge.css?v=20261026-dashboard-lectures">
+<link rel="stylesheet" href="./edge.css?v=20261025-layout3">
 </head>
 <body>
 <div class="shell">
@@ -1927,6 +1927,9 @@ td strong {
   <button data-page="pyq"><span class="nav-icon">✎</span>PYQ Practice</button>
    <button data-page="daily"><span class="nav-icon">◷</span>Daily Journal</button>
   <button data-page="performance"><span class="nav-icon">↗</span>Performance</button>
+  <button data-page="mistakes"><span class="nav-icon">⌁</span>Mistake Bank</button>
+  <button data-page="notes"><span class="nav-icon">▤</span>Notes</button>
+  <button data-page="goals"><span class="nav-icon">◎</span>Goals &amp; Habits</button>
   <button data-page="lectures"><span class="nav-icon">▶</span>YouTube Lectures</button>
   <button data-page="telegram"><span class="nav-icon">↗</span>Telegram Import</button>
   <button type="button" data-page="backup" onclick="openCloudSettings()"><span class="nav-icon">☁</span>Backup &amp; Sync</button>
@@ -1958,18 +1961,24 @@ td strong {
      <div class="hero-actions"><button class="btn primary" onclick="openReadinessReport()">Chapter progress <span aria-hidden="true">→</span></button><button class="btn ghost" onclick="openPlannedTopicModal()">Plan a test</button></div>
     </div>
     <div class="hero-side">
-     <button type="button" class="ring ring-action" id="overallRing" aria-label="Open detailed chapter readiness report" title="Open chapter readiness report" onclick="openReadinessReport()"><svg class="ring-svg" viewBox="0 0 160 160" aria-hidden="true"><circle class="ring-track" cx="80" cy="80" r="69.5"/><circle class="ring-subject-arc ring-physics-arc" id="ringPhysicsArc" cx="80" cy="80" r="69.5"/><circle class="ring-subject-arc ring-chemistry-arc" id="ringChemistryArc" cx="80" cy="80" r="69.5"/><circle class="ring-subject-arc ring-maths-arc" id="ringMathsArc" cx="80" cy="80" r="69.5"/></svg><div class="ring-inner"><strong id="overallPct">0%</strong><span>chapters done</span><i class="ring-dot" aria-hidden="true"></i></div></button><div class="hero-ring-caption"><strong id="doneHero">0 / 54</strong><span>chapters completed</span><div class="dashboard-ring-legend"><span class="dashboard-ring-key"><i style="background:#2784d8"></i>Physics</span><span class="dashboard-ring-key"><i style="background:#15966a"></i>Chemistry</span><span class="dashboard-ring-key"><i style="background:#8064c7"></i>Maths</span></div></div>
+     <button type="button" class="ring ring-action" id="overallRing" aria-label="Open detailed chapter readiness report" title="Open chapter readiness report" onclick="openReadinessReport()">
+      <svg class="ring-svg" viewBox="0 0 160 160" aria-hidden="true"><defs><linearGradient id="readinessGradient" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#2784d8"/><stop offset="100%" stop-color="#15966a"/></linearGradient></defs><circle class="ring-track" cx="80" cy="80" r="69.5"/><circle class="ring-arc ring-value" id="ringArc" cx="80" cy="80" r="69.5"/></svg>
+      <div class="ring-inner"><strong id="overallPct">0%</strong><span>chapters done</span><i class="ring-dot" aria-hidden="true"></i></div>
+     </button>
      <div class="hero-ring-caption"><strong id="doneHero">0 / 54</strong><span>chapters completed</span></div>
     </div>
    </section>
 
   <div class="metric-grid dashboard-metrics">
-   <button class="metric metric-clickable" type="button" onclick="go('lectures')" aria-label="Open lecture tracker"><div class="metric-top"><div class="metric-icon metric-icon-book">▶</div><label>LECTURES WATCHED</label><span class="metric-arrow">↗</span></div><strong id="dashLectureCount">0</strong><small id="dashLectureHint">Unique lectures · YouTube + Telegram</small></button>
-   <button class="metric metric-clickable" type="button" onclick="go('lectures')" aria-label="Open lecture tracker watch-time history"><div class="metric-top"><div class="metric-icon metric-icon-tests">◷</div><label>STUDY TIME TODAY</label><span class="metric-arrow">↗</span></div><strong id="dashStudyTime">0m</strong><small id="dashStudyTimeHint">Tracked playback captured today</small></button>
-   <button class="metric metric-clickable" type="button" onclick="openReadinessReport()" aria-label="Open chapter readiness"><div class="metric-top"><div class="metric-icon metric-icon-revision">✓</div><label>CHAPTERS DONE</label><span class="metric-arrow">↗</span></div><strong id="readyMetric">0 / 54</strong><small id="dashChaptersDoneHint">Marked Done in the chapter planner</small></button>
-   <button class="metric metric-clickable planned-metric" type="button" onclick="go('chapters')" aria-label="Open chapter planner progress"><div class="metric-top"><div class="metric-icon metric-icon-calendar">⌁</div><label>CHAPTERS STUDIED</label><span class="metric-arrow">↗</span></div><strong id="dashChaptersStarted">0 / 54</strong><small id="dashChaptersStartedHint">Chapters with tracked lecture activity</small></button>
+   <button class="metric metric-clickable" type="button" onclick="openDashboardDrilldown('done')" aria-label="View chapters marked done"><div class="metric-top"><div class="metric-icon metric-icon-book">▤</div><label>CHAPTERS DONE</label><span class="metric-arrow">↗</span></div><strong id="readyMetric">0 / 54</strong><small>Marked done in the chapter planner</small></button>
+   <button class="metric metric-clickable" type="button" onclick="openDashboardDrilldown('attempts')" aria-label="View all test attempts and scores"><div class="metric-top"><div class="metric-icon metric-icon-tests">✓</div><label>TEST ATTEMPTS</label><span class="metric-arrow">↗</span></div><strong id="testMetric">0</strong><small id="testMetricHint">Topic tests · LITMUS tests · view marks</small></button>
+   <button class="metric metric-clickable" type="button" onclick="openDashboardDrilldown('needs')" aria-label="View chapters that need work"><div class="metric-top"><div class="metric-icon metric-icon-revision">↻</div><label>CHAPTERS NEED WORK</label><span class="metric-arrow">↗</span></div><strong id="needsWorkMetric">0</strong><small>Chapters to revise</small></button>
+   <button class="metric metric-clickable planned-metric" type="button" onclick="openDashboardDrilldown('planned')" aria-label="View planned topic tests"><div class="metric-top"><div class="metric-icon metric-icon-calendar">▦</div><label>PLANNED TESTS</label><span class="metric-arrow">↗</span></div><strong id="plannedMetricCount">0</strong><small id="plannedMetricHint">Open your upcoming tests</small></button>
   </div>
   </div>
+
+  <div class="section-head dashboard-section-head"><div><h3>Your subject progress</h3><p>Physics, Chemistry and Mathematics — updated from your chapter statuses.</p></div><button class="small-btn" type="button" onclick="openReadinessReport()">View progress ↗</button></div>
+  <div class="subject-grid" id="subjectCards"></div>
 
   <div class="dashboard-main-layout">
    <div class="dashboard-main-stack">
@@ -1979,15 +1988,16 @@ td strong {
      <div class="upcoming-list" id="upcomingList"></div>
     </section>
    </div>
-<aside class="dashboard-side-stack"><section class="panel dashboard-today-summary"><div class="dashboard-panel-head"><div><h2>Lecture activity</h2><p>Your tracked study, across YouTube and Telegram.</p></div><span class="status-pill">LIVE DATA</span></div><div class="dashboard-mini-summary"><div><span class="summary-mini-icon">◷</span><div><strong id="dashboardTodayMinutes">0m</strong><small>study time today</small></div></div><div><span class="summary-mini-icon">▶</span><div><strong id="dashboardTodayTasks">0</strong><small>unique lectures today</small></div></div></div><div class="daily-summary-meter"><div class="daily-summary-meter-head"><span>Daily target</span><strong id="dashboardTargetLabel">0 / 300 min</strong></div><div class="progress-track"><div class="progress-fill" id="dashboardTargetFill" style="width:0%"></div></div></div><button class="small-btn" onclick="go('lectures')">Open lecture history ↗</button></section></aside>
+   <aside class="dashboard-side-stack">
+    <section class="panel dashboard-today-summary">
+     <div class="dashboard-panel-head"><div><h2>Today's Summary</h2><p>Updates when you tick a task or log study time.</p></div></div>
+     <div class="dashboard-mini-summary"><div><span class="summary-mini-icon">◷</span><div><strong id="dashboardTodayMinutes">0m</strong><small>study time</small></div></div><div><span class="summary-mini-icon">✓</span><div><strong id="dashboardTodayTasks">0 / 0</strong><small>tasks done</small></div></div></div>
+     <div class="daily-summary-meter"><div class="daily-summary-meter-head"><span>Daily target</span><strong id="dashboardTargetLabel">0 / 300 min</strong></div><div class="progress-track"><div class="progress-fill" id="dashboardTargetFill" style="width:0%"></div></div></div>
+     <button class="small-btn" onclick="go('daily')">View Daily Journal ↗</button>
+    </section>
+   </aside>
   </div>
- <div class="dashboard-lecture-overview">
-<section class="dashboard-lecture-card"><h2>Study from your lectures</h2><p class="dashboard-lecture-muted">Watch time and watched chapters come from your connected YouTube + Telegram tracker records.</p><div class="dashboard-lecture-kpis"><div class="dashboard-lecture-kpi"><span>Total tracked time</span><strong id="dashLifetimeTime">0m</strong><small>Across both platforms</small></div><div class="dashboard-lecture-kpi"><span>Lecture records</span><strong id="dashLifetimeLectures">0</strong><small>Unique saved videos</small></div><div class="dashboard-lecture-kpi"><span>Chapters touched</span><strong id="dashTouchedChapters">0</strong><small>Matched to the planner</small></div></div><div class="dashboard-lecture-source-row"><span>YouTube <strong id="dashYoutubeCount">0</strong></span><span>Telegram <strong id="dashTelegramCount">0</strong></span></div><a href="#" class="dashboard-lecture-link" onclick="go('lectures');return false">View full lecture history ↗</a></section>
-<section class="dashboard-lecture-card"><h2>Tracked chapter coverage</h2><p class="dashboard-lecture-muted">Which syllabus chapters have recorded lecture activity.</p><div class="dashboard-subject-inline" id="dashSubjectCoverage"></div><div class="dashboard-source-note" id="dashLectureStatus" role="status">Waiting for tracker records.</div></section>
-<section class="dashboard-lecture-card"><div class="dashboard-panel-head"><div><h2>Recently watched</h2><p class="dashboard-lecture-muted">Latest lecture records from both platforms.</p></div></div><div id="dashRecentLectures" class="dashboard-recent-lectures"></div><a href="#" class="dashboard-lecture-link" onclick="go('lectures');return false">Open lectures ↗</a></section>
-<section class="dashboard-lecture-card"><h2>Lecture tracking vs syllabus</h2><p class="dashboard-lecture-muted">Chapter completion uses your planner. Lecture time means activity, not mastery.</p><div class="dashboard-subject-inline" id="dashDoneCoverage"></div><div class="dashboard-source-note">Mark chapters Done in the Chapter Planner to advance syllabus completion.</div></section>
-</div>
-</section>
+ </section>
  <section class="page" id="page-chapters">
   <div class="page-hero chapter-page-hero"><div><h2>Chapter Planner</h2><p>Track your progress chapter by chapter. Plan, study, revise, and test.</p></div><button class="btn btn-secondary" onclick="resetChapterFilters()">Reset filters ↺</button></div>
   <div class="chapter-subject-row">
@@ -3132,57 +3142,113 @@ function openReadinessStatus(status){
 document.addEventListener("keydown",event=>{
  if(event.key==="Escape")closeReadinessReport();
 });
-const PS_LECTURE_ACTIVITY_KEY="personal-space-lecture-daily-activity-v1";
-function readLectureDailyActivity(){try{const value=JSON.parse(localStorage.getItem(PS_LECTURE_ACTIVITY_KEY)||"{}");return value&&typeof value==="object"?value:{}}catch(e){return {}}}
-function captureLectureDailyActivity(incoming,platform){
- const rows=Array.isArray(incoming)?incoming:[],yt=platform==="YouTube",oldRows=yt?readYoutubeLectures():readTelegramLectures(),idKey=yt?"videoId":"id";
- const previous=new Map(oldRows.filter(row=>row&&row[idKey]).map(row=>[String(row[idKey]),row]));
- const today=todayISO(),ledger=readLectureDailyActivity(),day=ledger[today]&&typeof ledger[today]==="object"?ledger[today]:{};
- rows.forEach(row=>{
-  if(!row||!row[idKey])return;
-  const id=String(row[idKey]),old=previous.get(id),next=Math.max(0,Number(row.watchedSeconds)||0);
-  let delta=old?Math.max(0,next-(Number(old.watchedSeconds)||0)):0;
-  if(!old){const stamp=row.firstWatchedAt||row.lastWatchedAt;if(stamp){const d=new Date(stamp),iso=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");if(Number.isFinite(d.getTime())&&iso===today)delta=next;}}
-  if(delta>0)day[platform+":"+id]=(Number(day[platform+":"+id])||0)+delta;
- });
- ledger[today]=day;
- Object.keys(ledger).sort().slice(0,-14).forEach(date=>delete ledger[date]);
- try{localStorage.setItem(PS_LECTURE_ACTIVITY_KEY,JSON.stringify(ledger))}catch(e){}
-}
-function getLectureDailySeconds(date){const day=readLectureDailyActivity()[date||todayISO()]||{};return Object.values(day).reduce((sum,value)=>sum+Math.max(0,Number(value)||0),0)}
 function renderDashboard(){
  if(typeof updateDashboardTaskChapters==="function")updateDashboardTaskChapters();
  const chapters=Array.isArray(state.chapters)?state.chapters:[];
- const subjects=["Physics","Chemistry","Mathematics"],colors={Physics:"#2784d8",Chemistry:"#15966a",Mathematics:"#8064c7"};
- const info={};subjects.forEach(subject=>{const rows=chapters.filter(ch=>ch.subject===subject);info[subject]={total:rows.length,done:rows.filter(ch=>ch.prep==="Exam Ready").length};});
- const ready=chapters.filter(ch=>ch.prep==="Exam Ready").length,total=chapters.length,work=chapters.filter(ch=>ch.prep==="Needs Work").length,active=chapters.filter(ch=>ch.prep==="In Progress").length;
- const pc=pct(ready,total),circ=2*Math.PI*69.5,node=(id)=>document.getElementById(id),set=(id,value)=>{const el=node(id);if(el)el.textContent=value};
- set("overallPct",pc+"%");const ringEl=node("overallRing");if(ringEl)ringEl.setAttribute("aria-label","Open chapter readiness report. "+ready+" of "+total+" chapters done, "+pc+" percent.");
- let offset=0;subjects.forEach(subject=>{const done=info[subject].done,arc=node(subject==="Physics"?"ringPhysicsArc":subject==="Chemistry"?"ringChemistryArc":"ringMathsArc");if(arc){const length=circ*done/Math.max(1,total);arc.style.strokeDasharray=length+" "+Math.max(0,circ-length);arc.style.strokeDashoffset=String(-offset);offset+=length;}});
- const target=getCountdownTarget(),targetDate=new Date(target+"T00:00:00");set("daysLeft",String(Math.max(0,Math.ceil((targetDate-new Date())/86400000))));set("countdownDateLabel",targetDate.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}).toUpperCase());const dateInput=node("countdownTargetInput");if(dateInput)dateInput.value=target;set("doneHero",ready+" / "+total);set("todayText",new Date().toLocaleDateString("en-IN",{weekday:"short",day:"numeric",month:"short",year:"numeric"}));
- const yt=typeof readYoutubeLectures==="function"?readYoutubeLectures():[],tg=typeof readTelegramLectures==="function"?readTelegramLectures():[];
- const combined=[...yt.map(row=>({...row,_platform:"YouTube",_key:String(row.videoId||row.url||row.title||"")})),...tg.map(row=>({...row,_platform:"Telegram",_key:String(row.id||row.videoId||row.url||row.title||"")}))];
- const map=new Map();combined.forEach(row=>{const key=row._platform+":"+row._key;if(!map.has(key)||Number(row.watchedSeconds)>Number(map.get(key).watchedSeconds))map.set(key,row)});
- const lectures=Array.from(map.values()),today=todayISO(),dayStart=new Date(today+"T00:00:00").getTime(),dayEnd=dayStart+86400000;
- const touchedToday=row=>[row.lastWatchedAt,row.addedAt,row.firstWatchedAt].some(stamp=>{if(!stamp)return false;const d=new Date(stamp),iso=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");return Number.isFinite(d.getTime())&&iso===today&&d.getTime()>=dayStart&&d.getTime()<dayEnd});
- const todayRows=lectures.filter(touchedToday),todaySeconds=getLectureDailySeconds(today),lifetimeSeconds=lectures.reduce((sum,row)=>sum+Math.max(0,Number(row.watchedSeconds)||0),0);
- const duration=seconds=>{const m=Math.max(0,Math.round(seconds/60));return m>=60?Math.floor(m/60)+"h "+String(m%60).padStart(2,"0")+"m":m+"m"};
- set("dashLectureCount",String(lectures.length));set("dashLectureHint","YouTube "+yt.length+" · Telegram "+tg.length);set("dashStudyTime",duration(todaySeconds));set("dashStudyTimeHint",todayRows.length+" lecture record(s) active today");set("readyMetric",ready+" / "+total);set("dashChaptersDoneHint","Marked Done in the chapter planner");
- const touched=new Set(lectures.filter(row=>(Number(row.watchedSeconds)||0)>0&&chapters.some(ch=>ch.subject===row.subject&&ch.chapter===row.chapter)).map(row=>String(row.subject)+"::"+String(row.chapter)));
- set("dashChaptersStarted",touched.size+" / "+total);set("dashChaptersStartedHint","Unique syllabus chapters with tracked playback");
- set("dashboardTodayMinutes",duration(todaySeconds));set("dashboardTodayTasks",String(todayRows.length));const dailyMinutes=Math.round(todaySeconds/60),goal=Number(state.studyGoals&&state.studyGoals.dailyMinutes)||300;set("dashboardTargetLabel",dailyMinutes+" / "+goal+" min");const fill=node("dashboardTargetFill");if(fill)fill.style.width=Math.min(100,Math.round(dailyMinutes/goal*100))+"%";
- set("dashLifetimeTime",duration(lifetimeSeconds));set("dashLifetimeLectures",String(lectures.length));set("dashTouchedChapters",String(touched.size));set("dashYoutubeCount",String(yt.length));set("dashTelegramCount",String(tg.length));
- const coverageRow=(subject,value,denom)=>'<div class="dashboard-subject-inline-row"><span>'+subject+'</span><div class="dashboard-subject-inline-track"><span style="width:'+pct(value,denom)+'%;background:'+colors[subject]+'"></span></div><strong>'+value+'/'+denom+'</strong></div>';
- const trackerCoverage=node("dashSubjectCoverage");if(trackerCoverage)trackerCoverage.innerHTML=subjects.map(subject=>{const seen=new Set(lectures.filter(row=>row.subject===subject&&(Number(row.watchedSeconds)||0)>0&&chapters.some(ch=>ch.subject===subject&&ch.chapter===row.chapter)).map(row=>row.chapter)).size;return coverageRow(subject,seen,info[subject].total)}).join("");
- const doneCoverage=node("dashDoneCoverage");if(doneCoverage)doneCoverage.innerHTML=subjects.map(subject=>coverageRow(subject,info[subject].done,info[subject].total)).join("");
- const recent=node("dashRecentLectures");if(recent){const rows=lectures.slice().sort((a,b)=>String(b.lastWatchedAt||b.addedAt||b.firstWatchedAt||"").localeCompare(String(a.lastWatchedAt||a.addedAt||a.firstWatchedAt||""))).slice(0,4);recent.innerHTML=rows.map(row=>'<div class="dashboard-recent-row"><span class="dashboard-recent-icon">'+(row._platform==="YouTube"?"▶":"↗")+'</span><span class="dashboard-recent-copy"><strong>'+escapeHTML(row.title||"Untitled lecture")+'</strong><small>'+escapeHTML((row.subject||"Unknown subject")+" · "+(row.chapter||"Unmatched chapter")+" · "+row._platform+" · "+duration(Number(row.watchedSeconds)||0))+'</small></span></div>').join("")||'<div class="dashboard-lecture-empty">No lectures tracked yet. Play a recognized lecture in YouTube or Telegram Web with the extension connected.</div>'}
- const status=node("dashLectureStatus");if(status)status.textContent=lectures.length?(todayRows.length+" lecture record(s) touched today · "+duration(todaySeconds)+" added to today's watch-time ledger."):"Waiting for tracker records. Connect the extension and start a recognized lecture.";
- const planned=(Array.isArray(state.topics)?state.topics:[]).filter(t=>t.status==="Planned").sort((a,b)=>String(a.plannedDate||"9999-12-31").localeCompare(String(b.plannedDate||"9999-12-31"))),next=planned.find(t=>t.plannedDate&&t.plannedDate>=today)||planned[0]||null;
- const hint=node("plannedMetricHintSecondary");if(hint)hint.textContent=next?"Next: "+topicDisplayName(next)+(next.plannedDate?" · "+formatNiceDate(next.plannedDate):" · choose a date"):"Plan a topic test or check the LITMUS schedule.";
- const future=[...(Array.isArray(state.topics)?state.topics:[]).filter(t=>t.status==="Planned"&&t.plannedDate).map(t=>({date:t.plannedDate,name:topicDisplayName(t),meta:topicChapterLabel(t),kind:"Topic test",recordKind:"topic",id:t.id})),...(Array.isArray(state.litmus)?state.litmus:[]).filter(t=>t.deadline&&t.status!=="Attempted"&&t.status!=="Missed").map(t=>({date:t.deadline,name:t.name,meta:t.name.includes("Full Test")?"Full mock":"Part test",kind:"LITMUS",recordKind:"litmus",id:t.id}))].filter(t=>t.date>=today).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,5);
- const upcoming=node("upcomingList");if(upcoming)upcoming.innerHTML=future.map(t=>{const d=new Date(t.date+"T00:00:00"),delta=Math.round((d-new Date(today+"T00:00:00"))/86400000);return '<button type="button" class="upcoming-row" onclick="openDashboardUpcoming(\\''+t.recordKind+'\\',\\''+escapeAttr(t.id)+'\\')"><span class="date-block"><strong>'+d.getDate()+'</strong><small>'+d.toLocaleDateString("en-IN",{month:"short"})+'</small></span><span class="upcoming-info"><strong>'+escapeHTML(t.name)+'</strong><small>'+escapeHTML(t.kind+" · "+t.meta)+'</small></span><span class="upcoming-badge">'+(delta===0?"Today":delta===1?"Tomorrow":delta+"d")+'</span></button>'}).join("")||'<div class="empty">No upcoming dates saved. Plan a topic test or open the LITMUS schedule.</div>';set("upcomingCount",String(future.length));
- const focus=chapters.find(ch=>ch.prep==="Needs Work")||chapters.find(ch=>ch.prep==="In Progress")||chapters.find(ch=>ch.prep!=="Exam Ready");if(node("focusTitle"))set("focusTitle",focus?chapterDisplayName(focus.subject,focus.chapter):"Every chapter is marked done.");if(node("focusBody"))set("focusBody",focus?"A good next step: "+focus.subject+" · "+(focus.class||"JEE Main")+". Update its progress and checkpoints, then attempt the topic test.":"Your chapters are marked done. Maintain the habit with revision and test analysis.");set("focusNeeds",work);set("focusActive",active);
-}function setChapterSubject(subject){
+ const ready=chapters.filter(c=>c.prep==="Exam Ready").length;
+ const total=chapters.length;
+ const work=chapters.filter(c=>c.prep==="Needs Work").length;
+ const active=chapters.filter(c=>c.prep==="In Progress").length;
+ const notReady=chapters.filter(c=>c.prep==="Not Ready").length;
+ const pc=pct(ready,total);
+ const circumference=2*Math.PI*69.5;
+ const pctNode=document.getElementById("overallPct");
+ if(pctNode)pctNode.textContent=pc+"%";
+ const arc=document.getElementById("ringArc");
+ if(arc){
+  arc.style.strokeDasharray=String(circumference);
+  arc.style.strokeDashoffset=String(circumference*(1-pc/100));
+ }
+ const ring=document.getElementById("overallRing");
+ if(ring){
+  ring.setAttribute("aria-label","Open chapter readiness report. "+ready+" of "+total+" chapters done, "+pc+" percent.");
+  const grad=document.getElementById("readinessGradient");
+  if(grad){
+   const stops=grad.querySelectorAll("stop");
+   if(stops[0])stops[0].setAttribute("stop-color",pc>=60?"#15966a":"#2784d8");
+   if(stops[1])stops[1].setAttribute("stop-color",pc>=60?"#44bd91":"#8064c7");
+  }
+ }
+ const daysTarget=getCountdownTarget();
+ const targetDate=new Date(daysTarget+"T00:00:00");
+ const daysNode=document.getElementById("daysLeft");
+ if(daysNode)daysNode.textContent=Math.max(0,Math.ceil((targetDate-new Date())/86400000));
+ const labelNode=document.getElementById("countdownDateLabel");
+ if(labelNode)labelNode.textContent=targetDate.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}).toUpperCase();
+ const dateInput=document.getElementById("countdownTargetInput");
+ if(dateInput)dateInput.value=daysTarget;
+ const doneNode=document.getElementById("doneHero");
+ if(doneNode)doneNode.textContent=ready+" / "+total;
+ const todayNode=document.getElementById("todayText");
+ if(todayNode)todayNode.textContent=new Date().toLocaleDateString("en-IN",{weekday:"short",day:"numeric",month:"short",year:"numeric"});
+
+ const readyMetric=document.getElementById("readyMetric");
+ if(readyMetric)readyMetric.textContent=ready+" / "+total;
+ const attempts=[...(Array.isArray(state.topics)?state.topics:[]).filter(t=>t.status==="Attempted"),...(Array.isArray(state.litmus)?state.litmus:[]).filter(t=>t.status==="Attempted")];
+ const testMetric=document.getElementById("testMetric");
+ if(testMetric)testMetric.textContent=attempts.length;
+ const testHint=document.getElementById("testMetricHint");
+ if(testHint)testHint.textContent=(state.topics||[]).filter(t=>t.status==="Attempted").length+" topic · "+(state.litmus||[]).filter(t=>t.status==="Attempted").length+" LITMUS · open scores";
+ const workNode=document.getElementById("needsWorkMetric");
+ if(workNode)workNode.textContent=work;
+ const planned=(Array.isArray(state.topics)?state.topics:[]).filter(t=>t.status==="Planned").sort((a,b)=>String(a.plannedDate||"9999-12-31").localeCompare(String(b.plannedDate||"9999-12-31")));
+ const plannedNode=document.getElementById("plannedMetricCount");
+ if(plannedNode)plannedNode.textContent=planned.length;
+ const nextPlanned=planned.find(t=>t.plannedDate&&t.plannedDate>=todayISO())||planned[0]||null;
+ const plannedHint=document.getElementById("plannedMetricHint");
+ if(plannedHint)plannedHint.textContent=nextPlanned?topicDisplayName(nextPlanned)+" · "+(nextPlanned.plannedDate?formatNiceDate(nextPlanned.plannedDate):"date not set"):"No tests planned yet";
+ const plannedHint2=document.getElementById("plannedMetricHintSecondary");
+ if(plannedHint2)plannedHint2.textContent=nextPlanned?"Next: "+topicDisplayName(nextPlanned)+(nextPlanned.plannedDate?" · "+formatNiceDate(nextPlanned.plannedDate):" · choose a date"):"Plan a topic test or check the LITMUS schedule.";
+
+ const colors={
+  Physics:["#2784d8","#e5f2ff","ϟ"],
+  Chemistry:["#15966a","#e0f6ec","⚗"],
+  Mathematics:["#8064c7","#f0ebff","∑"]
+ };
+ const subjectCards=document.getElementById("subjectCards");
+ if(subjectCards)subjectCards.innerHTML=["Physics","Chemistry","Mathematics"].map(sub=>{
+  const arr=chapters.filter(c=>c.subject===sub),complete=arr.filter(c=>c.prep==="Exam Ready").length,percent=pct(complete,arr.length),colour=colors[sub];
+  const needs=arr.filter(c=>c.prep==="Needs Work").length;
+return '<button type="button" class="subject-card '+sub.toLowerCase()+'" style="--subject:'+colour[0]+';--subject-soft:'+colour[1]+'" data-dashboard-subject="'+sub+'"><div class="subject-top"><span class="subject-mark">'+colour[2]+'</span><span class="badge">'+arr.length+' chapters</span></div><h3>'+escapeHTML(sub)+'</h3><p class="subject-stat">'+complete+' done · '+needs+' need work</p><div class="progress-track"><div class="progress-fill" style="--subject:'+colour[0]+';width:'+percent+'%"></div></div><div class="subject-foot"><span>'+percent+'% complete</span><span>View chapters ↗</span></div></button>';
+ }).join("");
+ if(subjectCards)subjectCards.querySelectorAll("[data-dashboard-subject]").forEach(button=>button.addEventListener("click",function(){openDashboardDrilldown("subject",this.getAttribute("data-dashboard-subject")||"Physics");}));
+
+ const today=todayISO();
+ const future=[
+  ...(Array.isArray(state.topics)?state.topics:[]).filter(t=>t.status==="Planned"&&t.plannedDate).map(t=>({date:t.plannedDate,name:topicDisplayName(t),meta:topicChapterLabel(t),kind:"Topic test",recordKind:"topic",id:t.id})),
+  ...(Array.isArray(state.litmus)?state.litmus:[]).filter(t=>t.deadline&&t.status!=="Attempted"&&t.status!=="Missed").map(t=>({date:t.deadline,name:t.name,meta:t.name.includes("Full Test")?"Full mock":"Part test",kind:"LITMUS",recordKind:"litmus",id:t.id}))
+ ].filter(t=>t.date>=today).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,5);
+ const upcomingList=document.getElementById("upcomingList");
+ if(upcomingList)upcomingList.innerHTML=future.map(t=>{
+  const date=new Date(t.date+"T00:00:00"),delta=Math.round((date-new Date(today+"T00:00:00"))/86400000);
+  return '<button type="button" class="upcoming-row" onclick="openDashboardUpcoming(\''+t.recordKind+'\',\''+escapeAttr(t.id)+'\')"><span class="date-block"><strong>'+date.getDate()+'</strong><small>'+date.toLocaleDateString("en-IN",{month:"short"})+'</small></span><span class="upcoming-info"><strong>'+escapeHTML(t.name)+'</strong><small>'+escapeHTML(t.kind+" · "+t.meta)+'</small></span><span class="upcoming-badge">'+(delta===0?"Today":delta===1?"Tomorrow":delta+"d")+'</span></button>';
+ }).join("")||'<div class="empty">No upcoming dates saved. Plan a topic test or open the LITMUS schedule.</div>';
+ const upcomingCount=document.getElementById("upcomingCount");
+ if(upcomingCount)upcomingCount.textContent=future.length;
+
+ const focus=chapters.find(c=>c.prep==="Needs Work")||chapters.find(c=>c.prep==="In Progress")||chapters.find(c=>c.prep!=="Exam Ready");
+ const focusTitle=document.getElementById("focusTitle");
+ if(focusTitle)focusTitle.textContent=focus?chapterDisplayName(focus.subject,focus.chapter):"Every chapter is marked done.";
+ const focusBody=document.getElementById("focusBody");
+ if(focusBody)focusBody.textContent=focus?"A good next step: "+focus.subject+" · "+(focus.class||"JEE Main")+". Update its progress and checkpoints, then attempt the topic test.":"Your chapters are marked done. Maintain the habit with revision and test analysis.";
+ const focusNeeds=document.getElementById("focusNeeds");if(focusNeeds)focusNeeds.textContent=work;
+ const focusActive=document.getElementById("focusActive");if(focusActive)focusActive.textContent=active;
+ const studyMinutes=(Array.isArray(state.studySessions)?state.studySessions:[]).reduce((sum,s)=>sum+(Number(s.minutes)||0),0);
+ const studyTimeNode=document.getElementById("totalStudyTime");if(studyTimeNode)studyTimeNode.textContent=Math.floor(studyMinutes/60)+"h "+studyMinutes%60+"m";
+ const streakNode=document.getElementById("studyStreakMetric");
+ if(streakNode){
+  const sessions=Array.isArray(state.studySessions)?state.studySessions:[];
+  const tasks=Array.isArray(state.dailyTasks)?state.dailyTasks:[];
+  const worked=iso=>sessions.some(s=>s.date===iso&&Number(s.minutes)>0)||tasks.some(t=>t.date===iso&&t.done);
+  const d=new Date();d.setHours(12,0,0,0);
+  const isoNow=()=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+  if(!worked(isoNow()))d.setDate(d.getDate()-1);
+  let count=0;while(count<366&&worked(isoNow())){count++;d.setDate(d.getDate()-1);}
+  streakNode.textContent=count+" day"+(count===1?"":"s");
+ }
+ renderDashboardPlanPreview();
+}
+function setChapterSubject(subject){
 if(!BASE.subjects[subject])return;
 currentChapterSubject=subject;
 document.body.dataset.activeSubject=subject.toLowerCase();
@@ -4204,11 +4270,8 @@ window.addEventListener("message",event=>{
  }
  if(message.type!=="LECTURES_UPDATED"||message.format!=="personal-space-youtube-lectures-v1")return;
  youtubeSyncReceived=true;
- captureLectureDailyActivity(Array.isArray(message.lectures)?message.lectures:[],"YouTube");
- captureLectureDailyActivity(Array.isArray(message.telegramLectures)?message.telegramLectures:[],"Telegram");
  const result=mergeYoutubeLectureRows(Array.isArray(message.lectures)?message.lectures:[]);
  const telegramResult=mergeTelegramPlaybackRows(Array.isArray(message.telegramLectures)?message.telegramLectures:[]);
- renderDashboard();
  const watchMinutes=Math.round(readYoutubeLectures().reduce((sum,row)=>sum+(Number(row.watchedSeconds)||0),0)/60);
  const telegramMinutes=Math.round(readTelegramLectures().reduce((sum,row)=>sum+(Number(row.watchedSeconds)||0),0)/60);
  setYoutubeSyncStatus("Automatic sync connected · YouTube "+result.count+" lecture(s) · Telegram "+telegramResult.count+" lecture(s) · "+(watchMinutes+telegramMinutes)+" minutes recorded.");
@@ -4667,7 +4730,7 @@ if(e.target.matches('#modalFields [name="subject"]')&&["topic","newtopic"].inclu
 renderAll();
 setTimeout(requestYoutubeLectureSync,350);
 </script>
-<script src="./productivity.js?v=20261026-dashboard-lectures"></script>
-<script src="./edge.js?v=20261026-dashboard-lectures"></script>
+<script src="./productivity.js?v=20261025-layout3"></script>
+<script src="./edge.js?v=20261025-layout3"></script>
 </body>
 </html>
