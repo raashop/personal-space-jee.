@@ -2206,6 +2206,71 @@ td strong {
 }
 @media(prefers-reduced-motion:reduce){#chapterAllocationPanel .allocation-filter-pill,#chapterAllocationPanel .allocation-selected-chip,#chapterAllocationPanel .allocation-chapter-choice{transition:none}}
 </style>
+<style id="personal-space-v6-dashboard-allocation-finish">
+/* Compact study activity and a genuinely compact, click-to-open chapter allocator. */
+.dashboard-main-layout.dashboard-main-layout-optimized{grid-template-columns:minmax(0,.94fr) minmax(0,1.06fr)!important;gap:14px!important;align-items:start}
+.dashboard-main-stack.dashboard-main-stack-optimized{min-width:0}
+.study-activity-panel{padding:13px!important}
+.study-activity-panel .dashboard-panel-head{margin-bottom:8px}
+.study-activity-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin:8px 0 10px}
+.study-activity-stat{min-height:60px;padding:8px;grid-template-columns:22px minmax(0,1fr);column-gap:7px}
+.study-activity-icon{width:22px;height:22px;border-radius:7px;font-size:12px}
+.study-activity-stat strong{font-size:16px}
+.study-activity-lower{margin-top:2px}
+.study-activity-chapter-list{max-height:250px;overflow-y:auto;padding:1px 3px 1px 1px;overscroll-behavior:contain}
+.study-chapter-card{padding:8px 9px;gap:5px}
+.study-chapter-title strong{font-size:10px}
+.study-chapter-details{font-size:9px}
+.study-activity-daily-plan{display:none!important}
+.dashboard-main-layout-optimized .dashboard-coming-panel{padding:13px!important}
+.dashboard-main-layout-optimized .dashboard-coming-panel .upcoming-list{max-height:270px;overflow-y:auto;overscroll-behavior:contain;padding-right:3px}
+#chapterAllocationPanel{min-width:0}
+#chapterAllocationPanel .allocation-accordion-trigger{min-height:44px}
+#chapterAllocationPanel .allocation-accordion-copy small{max-width:360px}
+#chapterAllocationPanel .allocation-collapsed-summary{font-size:11px}
+#chapterAllocationPanel #chapterAllocationBody{padding-top:11px}
+#chapterAllocationPanel .allocation-mode-row{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px}
+#chapterAllocationPanel .allocation-mode-row .allocation-field:first-child{display:none!important}
+#chapterAllocationPanel .allocation-mode-row .allocation-field{grid-column:auto!important}
+#chapterAllocationPanel .allocation-controls-top{margin-bottom:10px}
+#chapterAllocationPanel .allocation-picker-heading{margin:8px 0}
+#chapterAllocationPanel .allocation-picker-heading>div{gap:2px}
+#chapterAllocationPanel .allocation-picker-toolbar{grid-template-columns:minmax(0,1fr);gap:8px}
+#chapterAllocationPanel .allocation-chapter-picker{grid-template-columns:repeat(2,minmax(0,1fr));max-height:245px;padding:2px;gap:7px}
+#chapterAllocationPanel .allocation-chapter-choice{padding:9px 10px;border-radius:11px;gap:8px}
+#chapterAllocationPanel .allocation-choice-copy strong{font-size:10px}
+#chapterAllocationPanel .allocation-choice-copy small{font-size:9px}
+#chapterAllocationPanel .allocation-actions{margin-top:11px}
+#chapterAllocationPanel .allocation-status{font-size:10px}
+#chapterAllocationPanel .allocation-summary-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-bottom:10px}
+#chapterAllocationPanel .allocation-summary-stat{min-width:0;padding:10px 8px;border-radius:11px}
+#chapterAllocationPanel .allocation-summary-stat strong{font-size:clamp(15px,1.5vw,19px)}
+#chapterAllocationPanel .allocation-summary-stat small{font-size:9px;line-height:1.3}
+#chapterAllocationPanel .allocation-ai-summary{padding:10px 11px;margin-bottom:10px}
+#chapterAllocationPanel .allocation-ai-summary p{font-size:11px;line-height:1.5}
+#chapterAllocationPanel .allocation-day-tabs{display:flex;gap:6px;max-width:100%;overflow-x:auto;padding:2px 2px 8px;margin:2px 0 4px;scrollbar-width:thin;overscroll-behavior-x:contain}
+#chapterAllocationPanel .allocation-day-tab{display:grid;gap:3px;min-width:64px;padding:8px 10px;border:1px solid #e0e9ed;border-radius:10px;background:#fff;color:#536878;text-align:center;cursor:pointer;transition:transform .15s,border-color .15s,background .15s;flex:0 0 auto}
+#chapterAllocationPanel .allocation-day-tab span{font-size:10px;font-weight:750}
+#chapterAllocationPanel .allocation-day-tab strong{font-size:11px}
+#chapterAllocationPanel .allocation-day-tab:hover{transform:translateY(-1px)}
+#chapterAllocationPanel .allocation-day-tab.active{border-color:#a6d7bc;background:#eaf8f0;color:#176d4b;box-shadow:0 0 0 1px #d4f0e0 inset}
+#chapterAllocationPanel .allocation-day-card{padding:11px;border-radius:13px}
+#chapterAllocationPanel .allocation-day-chapters{display:grid;gap:4px}
+#chapterAllocationPanel .allocation-day-chapter{padding:8px 5px;gap:8px}
+#chapterAllocationPanel .allocation-day-chapter-copy strong{font-size:11px}
+#chapterAllocationPanel .allocation-day-chapter-copy small{font-size:10px}
+#chapterAllocationPanel .allocation-day-footer{margin-top:9px;padding-top:8px}
+@media(max-width:980px){
+ .dashboard-main-layout.dashboard-main-layout-optimized{grid-template-columns:minmax(0,1fr)!important}
+ #chapterAllocationPanel .allocation-chapter-picker{max-height:280px}
+}
+@media(max-width:650px){
+ #chapterAllocationPanel .allocation-chapter-picker{grid-template-columns:minmax(0,1fr);max-height:260px}
+ #chapterAllocationPanel .allocation-mode-row{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .study-activity-chapter-list{max-height:220px}
+}
+@media(prefers-reduced-motion:reduce){#chapterAllocationPanel .allocation-day-tab{transition:none}}
+</style>
 </head>
 <body>
 <div class="shell">
@@ -3511,7 +3576,7 @@ let chapterAllocationAIResults=null, chapterAllocationAIActive=false;
 function readAllocationPrefs(){
  try{
   const value=JSON.parse(localStorage.getItem(ALLOCATION_PREFS_KEY)||"{}");
-  return {mode:value.mode==="test"?"test":"chapters",selected:Array.isArray(value.selected)?Array.from(new Set(value.selected.map(String))):[],days:Math.max(1,Math.min(90,Number(value.days)||5)),dailyHours:Math.max(.5,Math.min(14,Number(value.dailyHours)||6.5)),subjectFilter:["all","Physics","Chemistry","Mathematics"].includes(value.subjectFilter)?value.subjectFilter:"all"};
+  return {mode:"chapters",selected:Array.isArray(value.selected)?Array.from(new Set(value.selected.map(String))):[],days:Math.max(1,Math.min(90,Number(value.days)||5)),dailyHours:Math.max(.5,Math.min(14,Number(value.dailyHours)||6.5)),subjectFilter:["all","Physics","Chemistry","Mathematics"].includes(value.subjectFilter)?value.subjectFilter:"all"};
  }catch(e){return {mode:"chapters",selected:[],days:5,dailyHours:6.5,subjectFilter:"all"};}
 }
 function writeAllocationPrefs(prefs){try{localStorage.setItem(ALLOCATION_PREFS_KEY,JSON.stringify(prefs));}catch(e){}}
@@ -3603,7 +3668,7 @@ function getAllocationContext(){
  const chapters=topicChapters(test).map(name=>state.chapters.find(ch=>ch.subject===test.subject&&ch.chapter===name)||{subject:test.subject,chapter:name,prep:"Not Ready",class:""});
  return {mode,key:allocationPlanKey("test",test.id,daysRemaining,dailyStudyHours,chapters),test,daysRemaining,dailyStudyHours,chapters};
 }
-const ALLOCATION_ACCORDION_KEY="personal-space-allocation-expanded-v1";
+const ALLOCATION_ACCORDION_KEY="personal-space-allocation-expanded-v2";
 function applyChapterAllocationAccordion(open,remember){
  const body=document.getElementById("chapterAllocationBody"),trigger=document.getElementById("chapterAllocationToggle"),chevron=document.getElementById("chapterAllocationChevron"),panel=document.getElementById("chapterAllocationPanel");
  if(!body||!trigger)return;
@@ -3614,7 +3679,7 @@ function applyChapterAllocationAccordion(open,remember){
 }
 function restoreChapterAllocationAccordion(){
  // Keep the planning controls visible by default: the time and chapter inputs must not be hidden behind an extra click.
- let open=true;try{const saved=localStorage.getItem(ALLOCATION_ACCORDION_KEY);if(saved!==null)open=saved==="1";}catch(e){}
+ let open=false;try{const saved=localStorage.getItem(ALLOCATION_ACCORDION_KEY);if(saved!==null)open=saved==="1";}catch(e){}
  applyChapterAllocationAccordion(open,false);
 }
 function toggleChapterAllocation(){
@@ -3705,7 +3770,7 @@ async function requestAIChapterAllocation(){
   if(!Array.isArray(payload.chapters)||!payload.chapters.length)throw new Error("Gemini returned no chapter estimates. Try again.");
   // Build an explicit daily schedule locally from Gemini's chapter priorities and hour estimates.
   const detailed=buildDailyAllocationSchedule(payload,context);
-  chapterAllocationAIResults={planKey:context.key,data:{...payload,dailySchedule:detailed.dailySchedule,chapters:detailed.chapters,totalHours:detailed.totalHours},generatedAt:new Date().toISOString()};
+  selectedAllocationDay=1; chapterAllocationAIResults={planKey:context.key,data:{...payload,dailySchedule:detailed.dailySchedule,chapters:detailed.chapters,totalHours:detailed.totalHours},generatedAt:new Date().toISOString()};
   const data=chapterAllocationAIResults.data;
   if(resultTitle)resultTitle.textContent="Your day-by-day plan";
   if(resultSummary)resultSummary.textContent=context.daysRemaining+" days · "+context.dailyStudyHours+"h/day available · "+detailed.totalHours+"h planned test/chapter work";
@@ -3788,12 +3853,48 @@ function buildDailyAllocationSchedule(payload,context){
  return {chapters,totalHours,dailySchedule};
 }
 
+let selectedAllocationDay=1;
+function renderAllocationDayCard(day,context){
+ if(!day)return '<div class="empty">No day selected.</div>';
+ const available=Math.max(.5,Number(context.dailyStudyHours)||6.5);
+ const hours=Number(day.hours)||0;
+ const remaining=Math.max(0,Math.round((available-hours)*10)/10);
+ const overBudget=hours>available*.65+0.05;
+ return '<article class="allocation-day-card">'+
+  '<div class="allocation-day-head"><div><strong>Day '+Number(day.day||1)+'</strong><small>'+day.chapters.length+' focus item'+(day.chapters.length===1?'':'s')+'</small></div><span>'+hours.toFixed(1)+'h planned</span></div>'+
+  '<div class="allocation-day-bar"><i style="width:'+Math.min(100,Math.round((hours/Math.max(available,1))*100))+'%"></i></div>'+
+  '<div class="allocation-day-chapters">'+(day.chapters.length?day.chapters.map(ch=>'<button type="button" class="allocation-day-chapter" data-open-chapter-subject="'+escapeAttr(ch.subject)+'" data-open-chapter-name="'+escapeAttr(ch.chapter)+'"><span class="allocation-day-dot '+(ch.subject==='Physics'?'physics':ch.subject==='Chemistry'?'chemistry':'maths')+'"></span><span class="allocation-day-chapter-copy"><strong>'+escapeHTML(chapterDisplayName(ch.subject,ch.chapter))+'</strong><small>'+escapeHTML(ch.focus||'Review concepts and practise JEE questions')+'</small></span><b>'+Number(ch.dayHours||0).toFixed(1)+'h</b></button>').join(''):'<span class="allocation-day-empty">Use this day for spaced revision and broader JEE progress.</span>')+'</div>'+
+  '<div class="allocation-day-footer"><span>Other JEE syllabus + revision</span><strong>'+remaining.toFixed(1)+'h remaining</strong></div>'+
+  (overBudget?'<div class="allocation-warning">This day exceeds the suggested 65% test-preparation budget. Reduce chapter work to protect time for the wider syllabus.</div>':'')+
+  '</article>';
+}
+function showAllocationDay(dayNumber){
+ const result=chapterAllocationAIResults&&chapterAllocationAIResults.data;
+ if(!result||!Array.isArray(result.dailySchedule))return;
+ const totalDays=result.dailySchedule.length;
+ selectedAllocationDay=Math.max(1,Math.min(totalDays,Number(dayNumber)||1));
+ const context=getAllocationContext();
+ document.querySelectorAll('#chapterAllocationPanel [data-allocation-day]').forEach(button=>{
+  const active=Number(button.getAttribute('data-allocation-day'))===selectedAllocationDay;
+  button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active));
+ });
+ const view=document.getElementById('allocationSelectedDayView');
+ if(view)view.innerHTML=renderAllocationDayCard(result.dailySchedule[selectedAllocationDay-1],context);
+}
 function renderDailyAllocationResults(data,context){
  const daily=Array.isArray(data.dailySchedule)?data.dailySchedule:[],total=Number(data.totalHours)||0;
- return '<div class="allocation-summary-strip"><div class="allocation-summary-stat"><strong>'+context.daysRemaining+'</strong><small>days available</small></div><div class="allocation-summary-stat"><strong>'+total+'h</strong><small>total chapter work</small></div><div class="allocation-summary-stat"><strong>'+Number(data.testPrepHoursPerDay||total/context.daysRemaining).toFixed(1)+'h/day</strong><small>chapter work per day</small></div></div>'+
- '<div class="allocation-ai-summary"><strong>Gemini recommendation</strong><p>'+escapeHTML(data.summary||"Follow the daily focus below. Keep the wider JEE syllabus active alongside test preparation.")+'</p></div>'+
- '<div class="allocation-day-list">'+daily.map(day=>'<article class="allocation-day-card"><div class="allocation-day-head"><div><strong>Day '+day.day+'</strong><small>'+day.chapters.length+' chapter focus'+(day.chapters.length===1?"":"es")+'</small></div><span>'+Number(day.hours||0).toFixed(1)+'h planned</span></div><div class="allocation-day-bar"><i style="width:'+Math.min(100,Math.round((Number(day.hours||0)/Math.max(context.dailyStudyHours,1))*100))+'%"></i></div><div class="allocation-day-chapters">'+(day.chapters.length?day.chapters.map(ch=>'<button type="button" class="allocation-day-chapter" data-open-chapter-subject="'+escapeAttr(ch.subject)+'" data-open-chapter-name="'+escapeAttr(ch.chapter)+'"><span class="allocation-day-dot '+(ch.subject==="Physics"?"physics":ch.subject==="Chemistry"?"chemistry":"maths")+'"></span><span class="allocation-day-chapter-copy"><strong>'+escapeHTML(chapterDisplayName(ch.subject,ch.chapter))+'</strong><small>'+escapeHTML(ch.focus)+'</small></span><b>'+Number(ch.dayHours||0).toFixed(1)+'h</b></button>').join(""):'<span class="allocation-day-empty">Use this day for spaced revision and broader JEE progress.</span>')+'</div><div class="allocation-day-footer"><span>Wider JEE syllabus + revision</span><strong>'+Math.max(0,Math.round((context.dailyStudyHours-Number(day.hours||0))*10)/10).toFixed(1)+'h remaining</strong></div></article>').join("")+'</div>'+
- (Array.isArray(data.warnings)&&data.warnings.length?'<div class="allocation-warning">'+data.warnings.map(w=>escapeHTML(w)).join("<br>")+'</div>':'');
+ if(!daily.length)return '<div class="empty">Gemini did not return a daily schedule. Try generating the plan again.</div>';
+ selectedAllocationDay=Math.max(1,Math.min(daily.length,selectedAllocationDay||1));
+ const average=Math.round(total/Math.max(1,context.daysRemaining)*10)/10;
+ return '<div class="allocation-summary-strip">'+
+  '<div class="allocation-summary-stat"><strong>'+context.daysRemaining+'</strong><small>days available</small></div>'+
+  '<div class="allocation-summary-stat"><strong>'+Number(context.dailyStudyHours).toFixed(1)+'h</strong><small>available per day</small></div>'+
+  '<div class="allocation-summary-stat"><strong>'+average.toFixed(1)+'h/day</strong><small>average chapter work</small></div>'+
+  '</div>'+
+  '<div class="allocation-ai-summary"><strong>Gemini recommendation</strong><p>'+escapeHTML(data.summary||'Follow the daily focus below while keeping the wider JEE syllabus active.')+'</p></div>'+
+  '<div class="allocation-day-tabs" role="group" aria-label="Choose a study day">'+daily.map(day=>'<button type="button" class="allocation-day-tab '+(Number(day.day)===selectedAllocationDay?'active':'')+'" data-allocation-day="'+Number(day.day)+'" aria-pressed="'+(Number(day.day)===selectedAllocationDay?'true':'false')+'" onclick="showAllocationDay('+Number(day.day)+')"><span>Day '+Number(day.day)+'</span><strong>'+Number(day.hours||0).toFixed(1)+'h</strong></button>').join('')+'</div>'+
+  '<div id="allocationSelectedDayView">'+renderAllocationDayCard(daily[selectedAllocationDay-1],context)+'</div>'+
+  (Array.isArray(data.warnings)&&data.warnings.length?'<div class="allocation-warning">'+data.warnings.map(w=>escapeHTML(w)).join('<br>')+'</div>':'');
 }
 
 function renderDashboard(){
