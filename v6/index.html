@@ -2791,9 +2791,32 @@ document.getElementById("ringArc").style.strokeDasharray=String(circ);
 document.getElementById("ringArc").style.strokeDashoffset=String(circ*(1-pc/100));
  const countdownTarget=getCountdownTarget();
  const target=new Date(countdownTarget+"T00:00:00");
-document.getElementById("daysLeft").textContent=Math.max(0,Math.ceil((target-new Date())/86400000));
+ const daysToExam=Math.max(0,Math.ceil((target-new Date())/86400000));
+document.getElementById("daysLeft").textContent=daysToExam;
  const countdownDateLabel=document.getElementById("countdownDateLabel");
  if(countdownDateLabel)countdownDateLabel.textContent="Target · "+formatNiceDate(countdownTarget);
+ const sessionsForMetric=Array.isArray(state.studySessions)?state.studySessions:[];
+ const totalMinutesForMetric=sessionsForMetric.reduce((sum,item)=>sum+(Number(item.minutes)||0),0);
+ const totalStudyTimeNode=document.getElementById("totalStudyTime");
+ if(totalStudyTimeNode)totalStudyTimeNode.textContent=Math.floor(totalMinutesForMetric/60)+"h";
+ const overallMetricNode=document.getElementById("overallMetricPct");
+ if(overallMetricNode)overallMetricNode.textContent=pc+"%";
+ const streakNode=document.getElementById("studyStreakMetric");
+ if(streakNode){
+  const isStudyDayMetric=function(iso){
+   const sessionDay=sessionsForMetric.some(item=>item.date===iso&&Number(item.minutes)>0);
+   const taskDay=Array.isArray(state.dailyTasks)&&state.dailyTasks.some(item=>item.date===iso&&item.done);
+   return sessionDay||taskDay;
+  };
+  const keyDateMetric=function(date){
+   return date.getFullYear()+"-"+String(date.getMonth()+1).padStart(2,"0")+"-"+String(date.getDate()).padStart(2,"0");
+  };
+  const streakCursor=new Date();streakCursor.setHours(12,0,0,0);
+  if(!isStudyDayMetric(keyDateMetric(streakCursor)))streakCursor.setDate(streakCursor.getDate()-1);
+  let streakCount=0;
+  while(streakCount<366&&isStudyDayMetric(keyDateMetric(streakCursor))){streakCount++;streakCursor.setDate(streakCursor.getDate()-1);}
+  streakNode.textContent=streakCount+" day"+(streakCount===1?"":"s");
+ }
 document.getElementById("doneHero").textContent=ready;
  document.getElementById("todayText").textContent=new Date().toLocaleDateString("en-IN",{
 weekday:"short",day:"numeric",month:"short"
