@@ -2844,6 +2844,7 @@ function ensureDashboardDrilldown(){
  backdrop.className="dashboard-drilldown-backdrop";
  backdrop.innerHTML='<section class="dashboard-drilldown" role="dialog" aria-modal="true" aria-labelledby="dashboardDrilldownTitle"><header class="dashboard-drilldown-head"><div><span class="dashboard-drilldown-kicker">YOUR STUDY SPACE</span><h2 id="dashboardDrilldownTitle">Details</h2><p id="dashboardDrilldownSubtitle"></p></div><button type="button" class="dashboard-drilldown-close" aria-label="Close details" title="Close">×</button></header><div id="dashboardDrilldownBody" class="dashboard-drilldown-body"></div><footer class="dashboard-drilldown-footer"><span>Changes save to your planner automatically.</span><button type="button" class="btn btn-secondary" onclick="closeDashboardDrilldown()">Back to dashboard</button></footer></section>';
  backdrop.addEventListener("click",event=>{if(event.target===backdrop)closeDashboardDrilldown();});
+ document.addEventListener("keydown",event=>{if(event.key==="Escape")closeDashboardDrilldown();});
  backdrop.querySelector(".dashboard-drilldown-close").addEventListener("click",closeDashboardDrilldown);
  document.body.appendChild(backdrop);
  return backdrop;
