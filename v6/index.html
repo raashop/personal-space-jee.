@@ -3608,36 +3608,45 @@ async function requestAIChapterAllocation(){
  }
 }
 function buildDailyAllocationSchedule(payload,context){
- const original=context.chapters.map((ch,index)=>{
-  const ai=(payload.chapters||[]).find(item=>item.chapter===ch.chapter&&item.subject===ch.subject)||{};
-  return {...ch,id:String(index),hours:Math.max(.5,Math.min(20,Math.round((Number(ai.estimatedHours)||chapterAllocationHours(ch))*2)/2)),priority:["High","Medium","Low"].includes(ai.priority)?ai.priority:"Medium",focusDays:Math.max(1,Math.min(context.daysRemaining,Math.round(Number(ai.focusDays)||1))),focus:String(ai.focus||"Revise concepts and solve JEE questions."),reason:String(ai.reason||"")};
+ const chapters=context.chapters.map((ch,index)=>{
+  const item=(payload.chapters||[]).find(x=>x.chapter===ch.chapter&&x.subject===ch.subject)||{};
+  return {...ch,id:String(index),hours:Math.max(.5,Math.min(20,Math.round((Number(item.estimatedHours)||chapterAllocationHours(ch))*2)/2)),priority:["High","Medium","Low"].includes(item.priority)?item.priority:"Medium",focusDays:Math.max(1,Math.min(context.daysRemaining,Math.round(Number(item.focusDays)||1))),focus:String(item.focus||"Revise concepts and solve JEE questions."),reason:String(item.reason||"")};
  }).sort((a,b)=>({High:0,Medium:1,Low:2}[a.priority]-({High:0,Medium:1,Low:2}[b.priority])||b.hours-a.hours));
- const limit=Math.max(.5,context.dailyStudyHours*.65),days=Array.from({length:context.daysRemaining},(_,i)=>({day:i+1,chapters:[],hours:0}));
- // Spread each chapter across enough days to revisit it, prioritising its highest-weight work.
- for(const ch of original){
-  let remaining=ch.hours,visits=Math.min(ch.focusDays,context.daysRemaining);
-  for(let visit=0;visit<visits&&remaining>.01;visit++){
-   const candidates=days.filter(d=>d.chapters.every(x=>x.subject!==ch.subject||x.chapter!==ch.chapter)).sort((a,b)=>a.hours-b.hours);
-   const day=candidates[0]||days.slice().sort((a,b)=>a.hours-b.hours)[0];
-   const share=Math.round((remaining/(visits-visit))*2)/2;
-   const allocated=Math.min(remaining,Math.max(.5,share));
-   day.chapters.push({...ch,dayHours:allocated});
-   day.hours=Math.round((day.hours+allocated)*10)/10;
-   remaining=Math.round((remaining-allocated)*10)/10;
-  }
-  let guard=0;
-  while(remaining>.01&&guard++<context.daysRemaining*4){
-   const day=days.slice().sort((a,b)=>a.hours-b.hours)[0];
-   const add=Math.min(remaining,Math.max(.5,Math.round(Math.min(2.5,remaining)*2)/2));
-   const existing=day.chapters.find(x=>x.subject===ch.subject&&x.chapter===ch.chapter);
-   if(existing)existing.dayHours=Math.round((existing.dayHours+add)*10)/10;else day.chapters.push({...ch,dayHours:add});
-   day.hours=Math.round((day.hours+add)*10)/10;remaining=Math.round((remaining-add)*10)/10;
+ const days=Array.from({length:context.daysRemaining},(_,i)=>({day:i+1,chapters:[],hours:0}));
+ const aiDays=Array.isArray(payload.dailySchedule)?payload.dailySchedule:[];
+ if(aiDays.some(d=>Array.isArray(d.focus)&&d.focus.length)){
+  aiDays.forEach(rawDay=>{
+   const dayNumber=Math.round(Number(rawDay.day));
+   if(dayNumber<1||dayNumber>days.length)return;
+   const day=days[dayNumber-1];
+   rawDay.focus.forEach(focus=>{
+    const ch=chapters.find(item=>item.chapter===focus.chapter&&item.subject===focus.subject);
+    if(!ch)return;
+    const hours=Math.max(.5,Math.min(6,Math.round((Number(focus.hours)||1)*2)/2));
+    day.chapters.push({...ch,dayHours:hours,focus:String(focus.task||ch.focus)});
+    day.hours=Math.round((day.hours+hours)*10)/10;
+   });
+  });
+ }else{
+  for(const ch of chapters){
+   let remaining=ch.hours,visits=Math.min(ch.focusDays,context.daysRemaining);
+   for(let visit=0;visit<visits&&remaining>.01;visit++){
+    const candidates=days.slice().sort((a,b)=>a.hours-b.hours);
+    const day=candidates[0];
+    const share=Math.max(.5,Math.round((remaining/(visits-visit))*2)/2),hours=Math.min(remaining,share);
+    day.chapters.push({...ch,dayHours:hours});day.hours=Math.round((day.hours+hours)*10)/10;remaining=Math.round((remaining-hours)*10)/10;
+   }
+   let guard=0;
+   while(remaining>.01&&guard++<context.daysRemaining*5){
+    const day=days.slice().sort((a,b)=>a.hours-b.hours)[0];
+    const hours=Math.min(remaining,1.5),existing=day.chapters.find(item=>item.subject===ch.subject&&item.chapter===ch.chapter);
+    if(existing)existing.dayHours=Math.round((existing.dayHours+hours)*10)/10;else day.chapters.push({...ch,dayHours:hours});
+    day.hours=Math.round((day.hours+hours)*10)/10;remaining=Math.round((remaining-hours)*10)/10;
+   }
   }
  }
- const dailyCap=limit;
- const overloaded=days.some(day=>day.hours>dailyCap);
- const dailySchedule=days.map(day=>({...day,chapters:day.chapters.sort((a,b)=>({High:0,Medium:1,Low:2}[a.priority]-({High:0,Medium:1,Low:2}[b.priority])||b.dayHours-a.dayHours),broaderHours:Math.max(0,Math.round((context.dailyStudyHours-day.hours)*10)/10)}));
- return {chapters:original,totalHours:Math.round(original.reduce((sum,ch)=>sum+ch.hours,0)*10)/10,dailySchedule,overloaded};
+ const totalHours=Math.round(chapters.reduce((sum,ch)=>sum+ch.hours,0)*10)/10;
+ return {chapters,totalHours,dailySchedule:days.map(day=>({...day,chapters:day.chapters.sort((a,b)=>({High:0,Medium:1,Low:2}[a.priority]-({High:0,Medium:1,Low:2}[b.priority])||b.dayHours-a.dayHours),broaderHours:Math.max(0,Math.round((context.dailyStudyHours-day.hours)*10)/10)}))};
 }
 function renderDailyAllocationResults(data,context){
  const daily=Array.isArray(data.dailySchedule)?data.dailySchedule:[],total=Number(data.totalHours)||0;
