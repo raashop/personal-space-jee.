@@ -17,10 +17,10 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - name: Set up Supabase CLI
+        uses: supabase/setup-cli@v1
         with:
-          node-version: "20"
+          version: latest
 
       - name: Check required secrets
         shell: bash
@@ -29,14 +29,8 @@ jobs:
           test -n "$SUPABASE_PROJECT_REF" || (echo "::error::Add SUPABASE_PROJECT_REF in repository Actions secrets." && exit 1)
           test -n "$GEMINI_API_KEY" || (echo "::error::Add GEMINI_API_KEY in repository Actions secrets." && exit 1)
 
-      - name: Install Supabase CLI
-        run: npm install --no-save supabase@latest
+      - name: Store Gemini API key as a Supabase secret
+        run: supabase secrets set --project-ref "$SUPABASE_PROJECT_REF" GEMINI_API_KEY="$GEMINI_API_KEY" GEMINI_MODEL="gemini-3.5-flash-lite"
 
-      - name: Link Supabase project
-        run: npx supabase link --project-ref "$SUPABASE_PROJECT_REF"
-
-      - name: Store AI API key as a Supabase secret
-        run: npx supabase secrets set GEMINI_API_KEY="$GEMINI_API_KEY" GEMINI_MODEL="gemini-3.5-flash-lite"
-
-      - name: Deploy authenticated AI Edge Function
-        run: npx supabase functions deploy chapter-allocation
+      - name: Deploy authenticated Gemini Edge Function
+        run: supabase functions deploy chapter-allocation --project-ref "$SUPABASE_PROJECT_REF"
