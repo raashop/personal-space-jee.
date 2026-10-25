@@ -4230,6 +4230,28 @@ function mergeYoutubeLectureRows(incomingRows){
  if(recordsChanged||stateChanged)renderYoutubeLectures();
  return {added,updated,chaptersStarted,recordsChanged,stateChanged,count:byId.size};
 }
+function mergeTelegramPlaybackRows(incomingRows){
+ const incoming=Array.isArray(incomingRows)?incomingRows:[];
+ const existing=readTelegramLectures();
+ const byId=new Map(existing.filter(row=>row&&row.id).map(row=>[String(row.id),row]));
+ let added=0,updated=0,chaptersStarted=0,recordsChanged=false,stateChanged=false;
+ for(const raw of incoming){
+  if(!raw||!raw.id||!raw.subject||!raw.chapter)continue;
+  const id=String(raw.id),old=byId.get(id);
+  const row=old?{...old,...raw,watchedSeconds:Math.max(Number(old.watchedSeconds)||0,Number(raw.watchedSeconds)||0),addedAt:old.addedAt||raw.firstWatchedAt||new Date().toISOString()}:{...raw,addedAt:raw.firstWatchedAt||new Date().toISOString()};
+  const changed=!old||Number(row.watchedSeconds||0)!==Number(old.watchedSeconds||0)||row.title!==old.title||row.chapter!==old.chapter||row.lastWatchedAt!==old.lastWatchedAt;
+  if(!old){added++;recordsChanged=true;byId.set(id,row);}
+  else if(changed){updated++;recordsChanged=true;byId.set(id,row);}
+  if((Number(row.watchedSeconds)||0)>0){
+   const chapter=state.chapters.find(ch=>ch.subject===row.subject&&ch.chapter===row.chapter);
+   if(chapter&&chapter.prep==="Not Ready"){chapter.prep="In Progress";chapter.statusTouched=true;chaptersStarted++;stateChanged=true;}
+  }
+ }
+ if(recordsChanged)writeTelegramLectures(Array.from(byId.values()).slice(-1000));
+ if(stateChanged)saveState();
+ if(recordsChanged||stateChanged)renderTelegramImport();
+ return {added,updated,chaptersStarted,recordsChanged,stateChanged,count:byId.size};
+}
 function setYoutubeSyncStatus(message,isError=false){
  const node=document.getElementById("psLectureSyncStatus");
  if(!node)return;
@@ -4247,11 +4269,13 @@ window.addEventListener("message",event=>{
   setYoutubeSyncStatus("Automatic sync connected · "+(Number(message.count)||0)+" lecture record(s) stored by the extension.");
   return;
  }
- if(message.type!=="LECTURES_UPDATED"||message.format!=="personal-space-youtube-lectures-v1"||!Array.isArray(message.lectures))return;
+ if(message.type!=="LECTURES_UPDATED"||message.format!=="personal-space-youtube-lectures-v1")return;
  youtubeSyncReceived=true;
- const result=mergeYoutubeLectureRows(message.lectures);
+ const result=mergeYoutubeLectureRows(Array.isArray(message.lectures)?message.lectures:[]);
+ const telegramResult=mergeTelegramPlaybackRows(Array.isArray(message.telegramLectures)?message.telegramLectures:[]);
  const watchMinutes=Math.round(readYoutubeLectures().reduce((sum,row)=>sum+(Number(row.watchedSeconds)||0),0)/60);
- setYoutubeSyncStatus("Automatic sync connected · "+result.count+" lecture(s) · "+watchMinutes+" minutes recorded. No export/import needed.");
+ const telegramMinutes=Math.round(readTelegramLectures().reduce((sum,row)=>sum+(Number(row.watchedSeconds)||0),0)/60);
+ setYoutubeSyncStatus("Automatic sync connected · YouTube "+result.count+" lecture(s) · Telegram "+telegramResult.count+" lecture(s) · "+(watchMinutes+telegramMinutes)+" minutes recorded.");
 });
 function requestYoutubeLectureSync(){
  setYoutubeSyncStatus("Looking for the connected extension…");
