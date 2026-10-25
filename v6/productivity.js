@@ -118,8 +118,10 @@
   `;
 
   const nav = document.getElementById("nav");
-  if(nav && !document.querySelector('[data-page="daily"]')){
-    nav.insertAdjacentHTML("beforeend",'<button data-page="daily"><span class="nav-icon">✎</span>Daily log</button><button data-page="performance"><span class="nav-icon">↗</span>Performance</button>');
+  if(nav){
+    nav.querySelectorAll('[data-page="daily"]').forEach(button => button.remove());
+    const performanceButtons = nav.querySelectorAll('[data-page="performance"]');
+    performanceButtons.forEach((button,index) => { if(index > 0) button.remove(); });
   }
   const footer = document.querySelector(".footer-line");
   if(footer && !byId("page-daily")) footer.insertAdjacentHTML("beforebegin",dailyMarkup);
