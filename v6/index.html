@@ -2799,6 +2799,34 @@ return s==="Physics"?"#eaf3fb":s==="Chemistry"?"#e5f5ed":"#f0edfb";
 function chapterSymbol(s){
 return s==="Physics"?"ϟ":s==="Chemistry"?"⚗":"∑";
 }
+function changeCountdownTarget(){
+ const editor=document.getElementById("countdownDateEditor");
+ const input=document.getElementById("countdownTargetInput");
+ const button=document.querySelector(".dashboard-countdown-hero .countdown-target");
+ if(!editor||!input)return;
+ const opening=editor.hidden;
+ input.value=getCountdownTarget();
+ editor.hidden=!opening;
+ if(button)button.setAttribute("aria-expanded",String(opening));
+ if(opening){
+  if(typeof input.showPicker==="function"){try{input.showPicker();}catch(error){}}
+  else input.focus();
+ }
+}
+function saveCountdownTarget(){
+ const input=document.getElementById("countdownTargetInput");
+ if(!input||!/^\d{4}-\d{2}-\d{2}$/.test(input.value)){toast("Choose a valid countdown date.");return;}
+ const date=new Date(input.value+"T00:00:00");
+ if(Number.isNaN(date.getTime())){toast("Choose a valid countdown date.");return;}
+ localStorage.setItem("jee-countdown-target",input.value);
+ const editor=document.getElementById("countdownDateEditor");
+ const button=document.querySelector(".dashboard-countdown-hero .countdown-target");
+ if(editor)editor.hidden=true;
+ if(button)button.setAttribute("aria-expanded","false");
+ if(typeof queueCloudSave==="function")queueCloudSave();
+ renderDashboard();
+ toast("Countdown target saved.");
+}
 function renderDashboardPlanPreview(){
  const list=document.getElementById("dashboardTodayPlan");
  const date=typeof todayISO==="function"?todayISO():new Date().toISOString().slice(0,10);
