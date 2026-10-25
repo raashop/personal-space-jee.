@@ -1,6 +1,12 @@
 name: Deploy Chapter Allocation AI
 
 on:
+  push:
+    branches:
+      - personal-space-v6
+    paths:
+      - 'supabase/functions/**'
+      - '.github/workflows/deploy-chapter-allocation-ai.yml'
   workflow_dispatch:
 
 permissions:
