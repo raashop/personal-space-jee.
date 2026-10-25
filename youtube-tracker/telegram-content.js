@@ -198,8 +198,8 @@
         }
         const signature=context.msgId+"|"+context.title+"|"+match.chapter;
         if(signature!==lastContext){lastContext=signature;const key=context.msgId||context.url+"|"+context.title;let hash=2166136261;for(let i=0;i<key.length;i++)hash=Math.imul(hash^key.charCodeAt(i),16777619);recordId="tgweb-"+(hash>>>0).toString(36);}
-        if(video.paused||video.ended){
-          report("matched-paused","Recognized "+match.subject+" · "+match.chapter+". Video is paused; press Play to record watch time.",{title:context.title,subject:match.subject,chapter:match.chapter,videoId:recordId});
+        if((video.paused||video.ended)&&delta<=0){
+          report("matched-paused","Recognized "+match.subject+" · "+match.chapter+". Video is paused or ended; press Play to record more watch time.",{title:context.title,subject:match.subject,chapter:match.chapter,videoId:recordId});
           return;
         }
         if(delta<=0){
