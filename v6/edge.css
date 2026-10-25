@@ -5497,3 +5497,75 @@ html[data-edge-theme="daylight"] .legend-completed { background: #15966a !import
     align-self: start !important;
   }
 }
+
+
+/* Root-cause repair: stop using a scrollable sticky sidebar. On desktop,
+   the sidebar is a fixed left rail and the document/main content owns vertical
+   scrolling. This prevents the nav from being left halfway down independently. */
+@media (min-width: 720px) {
+  html[data-edge-theme="daylight"] body {
+    overflow-x: hidden !important;
+  }
+  html[data-edge-theme="daylight"] .shell {
+    display: block !important;
+    position: relative !important;
+    width: 100% !important;
+    max-width: none !important;
+    min-height: 100vh !important;
+    margin: 0 !important;
+  }
+  html[data-edge-theme="daylight"] .sidebar {
+    position: fixed !important;
+    inset: 0 auto 0 0 !important;
+    width: 205px !important;
+    height: 100vh !important;
+    min-height: 0 !important;
+    max-height: 100vh !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    z-index: 100 !important;
+  }
+  html[data-edge-theme="daylight"] .brand {
+    display: flex !important;
+    flex: 0 0 auto !important;
+  }
+  html[data-edge-theme="daylight"] .nav-label {
+    display: block !important;
+    flex: 0 0 auto !important;
+  }
+  html[data-edge-theme="daylight"] #nav {
+    display: flex !important;
+    flex: 1 1 auto !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    gap: 6px !important;
+    width: 100% !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+  html[data-edge-theme="daylight"] #nav button {
+    display: flex !important;
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    min-height: 40px !important;
+    justify-content: flex-start !important;
+    white-space: nowrap !important;
+  }
+  html[data-edge-theme="daylight"] .side-bottom {
+    display: flex !important;
+    flex: 0 0 auto !important;
+    flex-direction: column !important;
+    margin-top: auto !important;
+  }
+  html[data-edge-theme="daylight"] main {
+    display: block !important;
+    position: relative !important;
+    width: auto !important;
+    min-width: 0 !important;
+    margin-left: 205px !important;
+    padding-top: 28px !important;
+  }
+}
