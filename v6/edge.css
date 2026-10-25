@@ -1275,3 +1275,57 @@ html[data-edge-theme="daylight"] .brandmark  {
   .hero-mini > div { min-width: 0; }
   .hero-mini .countdown-stat { grid-column: 1 / -1; }
 }
+
+
+/* Remaining legacy light surfaces: bring them into the same theme system. */
+html:not([data-edge-theme="daylight"]) .sync-state,
+html:not([data-edge-theme="daylight"]) .today-chip,
+html:not([data-edge-theme="daylight"]) .icon-button,
+html:not([data-edge-theme="daylight"]) .upcoming-row,
+html:not([data-edge-theme="daylight"]) .focus-stat,
+html:not([data-edge-theme="daylight"]) .litmus-intro,
+html:not([data-edge-theme="daylight"]) .litmus-next,
+html:not([data-edge-theme="daylight"]) .litmus-stat,
+html:not([data-edge-theme="daylight"]) .pyq-stat,
+html:not([data-edge-theme="daylight"]) .multi-picker,
+html:not([data-edge-theme="daylight"]) .multi-choice,
+html:not([data-edge-theme="daylight"]) .switch-note,
+html:not([data-edge-theme="daylight"]) .small-count,
+html:not([data-edge-theme="daylight"]) .modal-actions {
+  color: var(--ink);
+  background: var(--edge-panel) !important;
+  border-color: var(--line) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.025);
+}
+html:not([data-edge-theme="daylight"]) .upcoming-row {
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--paper) 86%, var(--blue) 14%) !important;
+}
+html:not([data-edge-theme="daylight"]) .date-block {
+  background: color-mix(in srgb, var(--green) 9%, var(--paper)) !important;
+  border-color: var(--line) !important;
+}
+html:not([data-edge-theme="daylight"]) .focus-stat {
+  background: color-mix(in srgb, var(--paper) 85%, var(--violet) 15%) !important;
+}
+html:not([data-edge-theme="daylight"]) .sync-state strong,
+html:not([data-edge-theme="daylight"]) .focus-panel p,
+html:not([data-edge-theme="daylight"]) .upcoming-info strong,
+html:not([data-edge-theme="daylight"]) .litmus-intro h3,
+html:not([data-edge-theme="daylight"]) .litmus-next h3 {
+  color: var(--ink) !important;
+}
+html:not([data-edge-theme="daylight"]) .sync-state div,
+html:not([data-edge-theme="daylight"]) .upcoming-info small,
+html:not([data-edge-theme="daylight"]) .litmus-intro p,
+html:not([data-edge-theme="daylight"]) .litmus-next p {
+  color: var(--muted) !important;
+}
+html:not([data-edge-theme="daylight"]) .modal-actions {
+  background: color-mix(in srgb, var(--paper) 90%, var(--bg)) !important;
+}
+html:not([data-edge-theme="daylight"]) .check-button {
+  color: var(--ink);
+  background: color-mix(in srgb, var(--paper) 86%, var(--bg)) !important;
+  border-color: var(--line) !important;
+}
