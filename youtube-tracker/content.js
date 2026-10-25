@@ -45,8 +45,8 @@
     ["Physics","Oscillations and Waves",["oscillations","simple harmonic motion","waves and sound","standing waves"]],
     ["Physics","Electrostatics",["electrostatics","electric charges and fields","electric potential","capacitance"]],
     ["Physics","Current Electricity",["current electricity","kirchhoff","wheatstone bridge","drift velocity"]],
-    ["Physics","Magnetic Effects of Current and Magnetism",["moving charges and magnetism","magnetic effects of current","biot savart","ampere's law"]],
-    ["Physics","Electromagnetic Induction and Alternating Currents",["electromagnetic induction","alternating current","faraday's law","lenz's law"]],
+    ["Physics","Magnetic Effects of Current and Magnetism",["moving charges and magnetism","magnetic effects of current","magnetism and matter","biot savart","ampere's law","lorentz force"]],
+    ["Physics","Electromagnetic Induction and Alternating Currents",["electromagnetic induction","alternating current","alternating currents","faraday's law","lenz's law","emi and ac","emi ac"]],
     ["Physics","Electromagnetic Waves",["electromagnetic waves"]],
     ["Physics","Optics",["ray optics","wave optics","optical instruments","young's double slit"]],
     ["Physics","Dual Nature of Matter and Radiation",["dual nature","photoelectric effect","de broglie"]],
@@ -56,7 +56,7 @@
     ["Chemistry","Atomic Structure",["structure of atom","atomic structure","quantum numbers","bohr model chemistry"]],
     ["Chemistry","Chemical Bonding and Molecular Structure",["chemical bonding","molecular structure","vsepr","hybridisation","molecular orbital theory"]],
     ["Chemistry","Chemical Thermodynamics",["chemical thermodynamics","enthalpy","gibbs free energy"]],
-    ["Chemistry","Solutions",["solutions chemistry","colligative properties","raoult's law"]],
+    ["Chemistry","Solutions",["solutions chemistry","solutions and colligative properties","colligative properties","raoult's law","osmotic pressure","elevation in boiling point","depression in freezing point","van't hoff factor"]],
     ["Chemistry","Equilibrium",["chemical equilibrium","ionic equilibrium","buffer solution","solubility product"]],
     ["Chemistry","Redox Reactions and Electrochemistry",["redox reactions","electrochemistry","nernst equation","electrochemical cell"]],
     ["Chemistry","Chemical Kinetics",["chemical kinetics","rate law","order of reaction","half life","pseudo first order"]],
@@ -64,25 +64,25 @@
     ["Chemistry","p-Block Elements",["p block elements","p-block elements"]],
     ["Chemistry","d- and f-Block Elements",["d and f block","d-block elements","f-block elements"]],
     ["Chemistry","Coordination Compounds",["coordination compounds","crystal field theory","isomerism in coordination"]],
-    ["Chemistry","Some Basic Principles of Organic Chemistry",["goc","general organic chemistry","inductive effect","resonance effect","isomerism organic"]],
+    ["Chemistry","Some Basic Principles of Organic Chemistry",["goc","general organic chemistry","basic principles of organic chemistry","inductive effect","resonance effect","isomerism organic","isomerism in organic chemistry"]],
     ["Chemistry","Hydrocarbons",["hydrocarbons","alkanes","alkenes","alkynes","aromatic hydrocarbons"]],
     ["Chemistry","Organic Compounds Containing Halogens",["haloalkanes","haloarenes","organic compounds containing halogens"]],
-    ["Chemistry","Organic Compounds Containing Oxygen",["alcohols phenols ethers","phenols and ethers","aldehydes ketones carboxylic acids","carbonyl compounds","organic compounds containing oxygen"]],
+    ["Chemistry","Organic Compounds Containing Oxygen",["alcohols phenols ethers","alcohols phenols and ethers","alcohol phenol ether","phenols and ethers","aldehydes ketones carboxylic acids","aldehyde ketone carboxylic acid","carbonyl compounds","organic compounds containing oxygen"]],
     ["Chemistry","Organic Compounds Containing Nitrogen",["amines chemistry","diazonium salts","organic compounds containing nitrogen"]],
     ["Chemistry","Biomolecules",["biomolecules","carbohydrates","proteins","tollens reagent","fehling solution"]],
     ["Mathematics","Sets, Relations and Functions",["sets relations and functions","relations and functions"]],
     ["Mathematics","Complex Numbers and Quadratic Equations",["complex numbers","quadratic equations","argand plane"]],
-    ["Mathematics","Matrices and Determinants",["matrices and determinants","inverse of a matrix"]],
+    ["Mathematics","Matrices and Determinants",["matrices and determinants","matrices","determinants","inverse of a matrix"]],
     ["Mathematics","Permutations and Combinations",["permutations and combinations","p and c"]],
     ["Mathematics","Binomial Theorem and Its Simple Applications",["binomial theorem","general term binomial"]],
-    ["Mathematics","Sequence and Series",["sequences and series","sequence and series","arithmetic progression","geometric progression"]],
+    ["Mathematics","Sequence and Series",["sequences and series","sequence and series","arithmetic progression","geometric progression","ap and gp"]],
     ["Mathematics","Limit, Continuity and Differentiability",["limits continuity differentiability","limits and derivatives","continuity and differentiability"]],
     ["Mathematics","Integral Calculus",["indefinite integration","definite integration","integral calculus","area under curves"]],
     ["Mathematics","Differential Equations",["differential equations"]],
     ["Mathematics","Coordinate Geometry",["straight lines","circle maths","conic sections","parabola ellipse hyperbola"]],
     ["Mathematics","Three-Dimensional Geometry",["three dimensional geometry","three-dimensional geometry","3d geometry","direction cosines"]],
     ["Mathematics","Vector Algebra",["vector algebra","dot product","cross product"]],
-    ["Mathematics","Statistics and Probability",["statistics and probability","probability","mean variance"]],
+    ["Mathematics","Statistics and Probability",["statistics and probability","probability","mean variance","standard deviation"]],
     ["Mathematics","Trigonometry",["trigonometric functions","trigonometry","inverse trigonometric functions"]]
   ].filter(item => Array.isArray(item) && Array.isArray(item[2]));
   CHAPTERS.sort((a, b) => Math.max(...b[2].map(term => term.length)) - Math.max(...a[2].map(term => term.length)));
@@ -105,7 +105,7 @@
     const rawText = title + " " + channel;
     const text = normalizeText(rawText);
     if (EXCLUDE.some(word => text.includes(normalizeText(word)))) return null;
-    const chapter = CHAPTERS.find(item => item[2].some(term => text.includes(normalizeText(term))));
+    const chapter = CHAPTERS.find(item => [item[1], ...item[2]].some(term => text.includes(normalizeText(term))));
     if (!chapter) return null;
     const hinted = JEE_HINTS.some(term => text.includes(normalizeText(term)));
     const academicFormat = /\b(lecture|one shot|revision|pyq|question|questions|numerical|concept|chapter|part\s*\d|session\s*\d|neet|jee)\b/.test(normalizeText(title));
