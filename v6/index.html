@@ -2080,7 +2080,7 @@ td strong {
     <article class="study-activity-stat"><span class="study-activity-icon">◷</span><small>Study time logged today</small><strong id="studyActivityHours">0m</strong><span id="studyActivityHoursMeta">From your study sessions</span></article>
     <article class="study-activity-stat"><span class="study-activity-icon yt">▶</span><small>YouTube watch time</small><strong id="studyActivityYoutubeTime">0m</strong><span id="studyActivityYoutubeMeta">Total tracked playback</span></article>
     <article class="study-activity-stat"><span class="study-activity-icon tg">↗</span><small>Telegram lectures</small><strong id="studyActivityTelegram">0</strong><span id="studyActivityTelegramMeta">Tracked lecture posts</span></article>
-    <article class="study-activity-stat"><span class="study-activity-icon done">✓</span><small>Chapters touched today</small><strong id="studyActivityChapters">0</strong><span id="studyActivityChaptersMeta">From sessions, tasks and lectures</span></article>
+    <article class="study-activity-stat"><span class="study-activity-icon done">✓</span><small>Chapters studied / done today</small><strong id="studyActivityChapters">0</strong><span id="studyActivityChaptersMeta">From sessions, tasks and lectures</span></article>
    </div>
    <div class="study-activity-lower">
     <section><div class="study-activity-subhead"><strong>Course progress</strong><span>Totals pulled from saved YouTube playlists</span></div><div id="studyCourseProgressList" class="study-course-progress-list"><div class="empty">Add a YouTube playlist in Lecture Tracker to see total lectures and progress.</div></div></section>
@@ -3689,7 +3689,7 @@ function renderChapters(){
 function setPrep(subject,chapter,prep){
 const c=state.chapters.find(x=>x.subject===subject&&x.chapter===chapter);
 if(!c)return;
-c.prep=prep;c.statusTouched=true;
+c.prep=prep;c.statusTouched=true;c.prepUpdatedAt=new Date().toISOString();
 saveState();
 renderChapters();
 renderDashboard();
@@ -4111,7 +4111,7 @@ return;
  if(ctx.type==="chapter"){
 const c=state.chapters.find(x=>x.subject===ctx.subject&&x.chapter===ctx.chapter);
 if(c)Object.assign(c,{
-prep:v.prep,statusTouched:true,r1:v.r1==="true",r2:v.r2==="true",r3:v.r3==="true",notes:v.notes==="true",pyq:v.pyq==="true",difficulty:v.difficulty||"",latestDate:v.latestDate||"",marks:v.marks??"",outOf:v.outOf??""
+prep:v.prep,statusTouched:true,prepUpdatedAt:new Date().toISOString(),r1:v.r1==="true",r2:v.r2==="true",r3:v.r3==="true",notes:v.notes==="true",pyq:v.pyq==="true",difficulty:v.difficulty||"",latestDate:v.latestDate||"",marks:v.marks??"",outOf:v.outOf??""
 }
 );
 }
@@ -4612,8 +4612,10 @@ function renderStudyActivitySummary(){
   const color=ch.subject==="Physics"?"#2784d8":ch.subject==="Chemistry"?"#15966a":"#8064c7";
   return '<button type="button" class="study-chapter-chip" onclick="openDashboardEntry(\'chapter\',\'\',\''+escapeAttr(ch.subject)+'\',\''+escapeAttr(ch.chapter)+'\')"><span style="width:8px;height:8px;border-radius:50%;background:'+color+'"></span><span>'+escapeHTML(chapterDisplayName(ch.subject,ch.chapter))+'</span><small>'+escapeHTML(ch.subject)+' ↗</small></button>';
  }).join(""):'<div class="empty">No chapters logged today yet. Log a session or watch a matched lecture.</div>';
+ const doneToday=(Array.isArray(state.chapters)?state.chapters:[]).filter(ch=>ch.prep==="Exam Ready"&&localDateKey(ch.prepUpdatedAt||"")===today);
+ doneToday.forEach(ch=>addChapter(ch.subject,ch.chapter));
  const chapterCount=document.getElementById("studyActivityChapters");if(chapterCount)chapterCount.textContent=chapters.size;
- const chapterMeta=document.getElementById("studyActivityChaptersMeta");if(chapterMeta)chapterMeta.textContent=chapters.size+" unique chapter"+(chapters.size===1?"":"s")+" touched today";
+ const chapterMeta=document.getElementById("studyActivityChaptersMeta");if(chapterMeta)chapterMeta.textContent=chapters.size+" unique chapter"+(chapters.size===1?"":"s")+" touched · "+doneToday.length+" marked Done today";
  renderYoutubeCourseProgress();
 }
 async function addYoutubeCourse(event){
@@ -4697,23 +4699,40 @@ function plannerChapterForLecture(row){
  return null;
 }
 const PS_DAILY_LECTURE_SECONDS_KEY="personal-space-daily-lecture-seconds-v1";
+function readDailyLectureLedger(){
+ try{const data=JSON.parse(localStorage.getItem(PS_DAILY_LECTURE_SECONDS_KEY)||"{}");return data&&typeof data==="object"&&!Array.isArray(data)?data:{};}catch(e){return {};}
+}
+function writeDailyLectureLedger(data){
+ try{localStorage.setItem(PS_DAILY_LECTURE_SECONDS_KEY,JSON.stringify(data||{}));}catch(e){}
+}
+function mergeDailyLectureLedger(incoming){
+ if(!incoming||typeof incoming!=="object"||Array.isArray(incoming))return;
+ const local=readDailyLectureLedger();
+ Object.keys(incoming).forEach(day=>{
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(day)||!incoming[day]||typeof incoming[day]!=="object")return;
+  if(!local[day]||typeof local[day]!=="object")local[day]={};
+  Object.keys(incoming[day]).forEach(key=>{
+   local[day][key]=Math.max(Number(local[day][key])||0,Number(incoming[day][key])||0);
+  });
+ });
+ Object.keys(local).sort().slice(0,Math.max(0,Object.keys(local).length-60)).forEach(day=>delete local[day]);
+ writeDailyLectureLedger(local);
+}
 function recordDailyLectureSeconds(source,id,seconds,timestamp){
  const amount=Math.max(0,Number(seconds)||0);if(!amount)return;
  const day=localDateKey(timestamp||new Date().toISOString());if(!day)return;
  try{
-  const daily=JSON.parse(localStorage.getItem(PS_DAILY_LECTURE_SECONDS_KEY)||"{}");
+  const daily=readDailyLectureLedger();
   if(!daily[day]||typeof daily[day]!=="object")daily[day]={};
   const key=String(source)+":"+String(id);
   daily[day][key]=(Number(daily[day][key])||0)+amount;
   const days=Object.keys(daily).sort();while(days.length>60){delete daily[days.shift()];}
-  localStorage.setItem(PS_DAILY_LECTURE_SECONDS_KEY,JSON.stringify(daily));
+  writeDailyLectureLedger(daily);
  }catch(e){}
 }
 function dailyLectureSecondsFor(day){
- try{
-  const daily=JSON.parse(localStorage.getItem(PS_DAILY_LECTURE_SECONDS_KEY)||"{}");
-  return Object.values(daily[day]||{}).reduce((sum,value)=>sum+(Number(value)||0),0);
- }catch(e){return 0;}
+ const daily=readDailyLectureLedger();
+ return Object.values(daily[day]||{}).reduce((sum,value)=>sum+(Number(value)||0),0);
 }
 function mergeYoutubeLectureRows(incomingRows){
  const rows=Array.isArray(incomingRows)?incomingRows:[];
@@ -5124,6 +5143,7 @@ if(payload.countdownTarget)localStorage.setItem("jee-countdown-target",payload.c
 if(Array.isArray(payload.youtubeLectures))mergeYoutubeLectureRows(payload.youtubeLectures);
 if(Array.isArray(payload.youtubeCourses))mergeYoutubeCourses(payload.youtubeCourses);
 if(Array.isArray(payload.telegramLectures))mergeTelegramPlaybackRows(payload.telegramLectures);
+if(payload.dailyLectureSeconds)mergeDailyLectureLedger(payload.dailyLectureSeconds);
 }
 else{
 await cloudWriteNow();
@@ -5167,7 +5187,7 @@ error
 }
 =await cloudClient.from("study_data").upsert({
 user_id:cloudUser.id,data:{
-state,countdownTarget:getCountdownTarget(),youtubeLectures:readYoutubeLectures(),youtubeCourses:readYoutubeCourses(),telegramLectures:readTelegramLectures()
+state,countdownTarget:getCountdownTarget(),youtubeLectures:readYoutubeLectures(),youtubeCourses:readYoutubeCourses(),telegramLectures:readTelegramLectures(),dailyLectureSeconds:readDailyLectureLedger()
 }
 ,updated_at:new Date().toISOString()
 }
@@ -5207,6 +5227,8 @@ localStorage.setItem(KEY,JSON.stringify(state));
 const lectureMerge=Array.isArray(r.data.data.youtubeLectures)?mergeYoutubeLectureRows(r.data.data.youtubeLectures):null;
 if(Array.isArray(r.data.data.youtubeCourses))mergeYoutubeCourses(r.data.data.youtubeCourses);
 if(Array.isArray(r.data.data.telegramLectures))mergeTelegramPlaybackRows(r.data.data.telegramLectures);
+if(r.data.data.dailyLectureSeconds)mergeDailyLectureLedger(r.data.data.dailyLectureSeconds);
+if(r.data.data.dailyLectureSeconds)mergeDailyLectureLedger(r.data.data.dailyLectureSeconds);
 localStorage.setItem(KEY,JSON.stringify(state));
 renderAll();
 cloudApplying=false;
