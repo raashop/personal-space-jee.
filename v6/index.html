@@ -1891,7 +1891,7 @@ td strong {
     <p>Your syllabus, test practice and revisions—together in one calm space. Pick up from where you left off.</p>
     <div class="hero-actions"><button class="btn btn-primary" onclick="go('chapters')">Continue chapters <span>↗</span></button><button class="btn btn-secondary" onclick="go('topic')">Plan a test <span>＋</span></button></div>
    </div>
-   <div class="hero-side"><div class="hero-progress-wrap"><button class="progress-ring" id="overallRing" onclick="go('chapters')" aria-label="Open chapter tracker" style="border:0;background:transparent;padding:0"><svg viewBox="0 0 132 132" aria-hidden="true"><circle class="ring-track" cx="66" cy="66" r="58"/><circle class="ring-value" id="ringArc" cx="66" cy="66" r="58"/></svg><span class="ring-center"><strong id="overallPct">0%</strong><span>done</span></span></button><div class="hero-mini"><div><strong id="daysLeft">—</strong><span>days to target</span></div><div><strong id="doneHero">0</strong><span>chapters done</span></div></div></div></div>
+   <div class="hero-side"><div class="hero-progress-wrap"><div class="progress-ring" id="overallRing" role="img" aria-label="Overall syllabus progress"><svg viewBox="0 0 132 132" aria-hidden="true"><circle class="ring-track" cx="66" cy="66" r="58"/><circle class="ring-value" id="ringArc" cx="66" cy="66" r="58"/></svg><span class="ring-center"><strong id="overallPct">0%</strong><span>done</span></span></div><div class="hero-mini"><div class="countdown-stat"><span class="countdown-label">JEE MAIN · SESSION 1</span><strong id="daysLeft">—</strong><span class="countdown-unit">days to go</span><span class="countdown-date" id="countdownDateLabel">Target · 20 Jan 2027</span><button class="countdown-edit" type="button" onclick="setCountdownTarget()">Set my exam date ↗</button></div><div class="hero-chapters-stat"><strong id="doneHero">0</strong><span>chapters done</span></div></div></div></div>
   </div>
   <div class="metric-grid">
    <div class="metric"><div class="metric-head"><div class="metric-icon" style="background:var(--green-soft);color:var(--green)">✓</div><label>CHAPTERS DONE</label></div><strong id="readyMetric">0 / 54</strong><small>Marked done in your tracker</small></div>
@@ -2696,10 +2696,11 @@ day:"numeric",month:"short",year:"numeric"
 }
 function getCountdownTarget(){
 try{
-return localStorage.getItem("jee-countdown-target")||"2027-01-30"
+const saved=localStorage.getItem("jee-countdown-target");
+return !saved||saved==="2027-01-30"?"2027-01-20":saved
 }
 catch(e){
-return "2027-01-30"
+return "2027-01-20"
 }
 }
 function setCountdownTarget(){
@@ -2729,8 +2730,11 @@ function renderDashboard(){
 document.getElementById("overallPct").textContent=pc+"%";
 document.getElementById("ringArc").style.strokeDasharray=String(circ);
 document.getElementById("ringArc").style.strokeDashoffset=String(circ*(1-pc/100));
- const target=new Date(getCountdownTarget()+"T00:00:00");
+ const countdownTarget=getCountdownTarget();
+ const target=new Date(countdownTarget+"T00:00:00");
 document.getElementById("daysLeft").textContent=Math.max(0,Math.ceil((target-new Date())/86400000));
+ const countdownDateLabel=document.getElementById("countdownDateLabel");
+ if(countdownDateLabel)countdownDateLabel.textContent="Target · "+formatNiceDate(countdownTarget);
 document.getElementById("doneHero").textContent=ready;
  document.getElementById("todayText").textContent=new Date().toLocaleDateString("en-IN",{
 weekday:"short",day:"numeric",month:"short"
