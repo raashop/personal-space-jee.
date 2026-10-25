@@ -872,6 +872,30 @@ main>.page>.section-head p { color:#71869a!important; opacity:1!important; }
 .chapter-search-clear:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .chapter-search-clear[hidden]{display:none!important}
 @media(max-width:720px){.chapter-search-wrap{min-width:0;width:100%;flex-basis:100%}}
+
+/* Monochrome action buttons: primary actions black with white text; secondary actions white with black text. */
+.btn.primary,.btn-blue,.btn-danger,.quick-action,.ring-action,.pyq-toolbar-primary,.litmus-next-action,.planned-modal-footer .btn,.planned-modal-empty .btn{
+ background:#111!important;background-image:none!important;color:#fff!important;border:1px solid #111!important;box-shadow:none!important;text-shadow:none!important;filter:none!important;
+}
+.btn.primary:hover,.btn-blue:hover,.btn-danger:hover,.quick-action:hover,.ring-action:hover,.pyq-toolbar-primary:hover,.litmus-next-action:hover,.planned-modal-footer .btn:hover,.planned-modal-empty .btn:hover{
+ background:#000!important;background-image:none!important;color:#fff!important;border-color:#000!important;box-shadow:none!important;filter:none!important;transform:none!important;
+}
+.btn.ghost,.btn-light,.small-btn,.quicklink,.planned-modal-close,.chapter-search-clear{
+ background:#fff!important;background-image:none!important;color:#111!important;border:1px solid #d8d8d8!important;box-shadow:none!important;text-shadow:none!important;filter:none!important;
+}
+.btn.ghost:hover,.btn-light:hover,.small-btn:hover,.quicklink:hover,.planned-modal-close:hover,.chapter-search-clear:hover{
+ background:#f3f3f3!important;color:#000!important;border-color:#bcbcbc!important;box-shadow:none!important;filter:none!important;transform:none!important;
+}
+.multi-topic-field{display:grid;gap:7px;min-width:0}
+.multi-topic-title{font-size:11px;font-weight:800;color:#222}
+.multi-topic-help{font-size:10px;color:#666;font-weight:500}
+.multi-topic-picker{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;max-height:230px;overflow:auto;padding:9px;border:1px solid #dedede;border-radius:12px;background:#fff}
+.multi-topic-option{display:flex!important;grid-template-columns:none!important;align-items:flex-start;gap:8px!important;min-width:0;padding:9px 10px;border:1px solid #e4e4e4;border-radius:9px;background:#fff;color:#222!important;font-size:11px!important;font-weight:650!important;line-height:1.35}
+.multi-topic-option:has(input:checked){background:#f4f4f4;border-color:#111}
+.multi-topic-option input{accent-color:#111;width:15px;height:15px;flex:0 0 15px;margin:0;padding:0}
+.multi-topic-option span{overflow-wrap:anywhere}
+@media(max-width:720px){.multi-topic-picker{grid-template-columns:1fr;max-height:260px}}
+
 </style>
 </head>
 <body data-active-page="dashboard" class="cloud-auth-pending">
@@ -1486,7 +1510,7 @@ function renderPlannedTestsModal(){
   const day=valid?dt.toLocaleDateString("en-IN",{day:"2-digit"}):"—",mon=valid?dt.toLocaleDateString("en-IN",{month:"short"}):"No date";
   const delta=iso?Math.round((new Date(iso+"T00:00:00")-new Date(today+"T00:00:00"))/86400000):null;
   const due=delta===null?"Date needed":delta<0?Math.abs(delta)+"d overdue":delta===0?"Today":delta===1?"Tomorrow":delta+"d left";
-  return '<button type="button" class="planned-modal-item" onclick="closePlannedTestsModal();editTopic(&quot;'+escapeAttr(t.id)+'&quot;)"><span class="planned-modal-date"><b>'+day+'</b><small>'+mon+'</small></span><span><h4>'+escapeHTML(t.name||t.chapter+" Topic Test")+'</h4><p>'+escapeHTML(t.subject)+' · '+escapeHTML(t.chapter)+'</p></span><span class="planned-modal-due">'+due+'</span></button>';
+  return '<button type="button" class="planned-modal-item" onclick="closePlannedTestsModal();editTopic(&quot;'+escapeAttr(t.id)+'&quot;)"><span class="planned-modal-date"><b>'+day+'</b><small>'+mon+'</small></span><span><h4>'+escapeHTML(t.name||t.chapter+" Topic Test")+'</h4><p>'+escapeHTML(t.subject)+' · '+escapeHTML(topicChapterLabel(t))+'</p></span><span class="planned-modal-due">'+due+'</span></button>';
  }).join("");
 }
 function renderDashboardPlannedTests(){
@@ -1496,7 +1520,7 @@ function renderDashboardPlannedTests(){
  const items=(state.topics||[]).filter(t=>t.status==="Planned").sort((a,b)=>String(a.plannedDate||"9999-99-99").localeCompare(String(b.plannedDate||"9999-99-99")));
  count.textContent=String(items.length);
  const next=items.find(t=>t.plannedDate&&t.plannedDate>=today)||items.find(t=>t.plannedDate)||null;
- hint.textContent=!items.length?"Click to plan a test":next?(next.chapter+" · "+formatDateForInput(next.plannedDate)):(items.length+" planned · set a date");
+ hint.textContent=!items.length?"Click to plan a test":next?((topicChapters(next)[0]||next.chapter)+(topicChapters(next).length>1?" +"+(topicChapters(next).length-1)+" topics":"")+" · "+formatDateForInput(next.plannedDate)):(items.length+" planned · set a date");
 }
 function renderDashboard(){
  renderDashboardPlannedTests();
@@ -1615,8 +1639,8 @@ function renderTopics(){
  const searchInput=document.getElementById("topicSearch"),clearSearchButton=document.getElementById("topicSearchClear");
  const f=document.getElementById("topicFilter").value,sub=document.getElementById("topicSubjectFilter").value,q=searchInput.value.toLowerCase();
  if(clearSearchButton)clearSearchButton.hidden=!searchInput.value.trim();
- const items=state.topics.filter(t=>(f==="all"||t.status===f)&&(sub==="All subjects"||t.subject===sub)&&(t.name+" "+t.chapter+" "+t.subject).toLowerCase().includes(q));
- document.getElementById("topicRows").innerHTML=items.map(t=>`<tr class="test-row" data-item-id="${t.id}"><td><b>${escapeHTML(t.name)}</b><br><small>${escapeHTML(t.subject)} · ${escapeHTML(t.chapter)}</small></td><td><select class="inline-status" aria-label="Test status" onchange="quickTopicStatus('${t.id}',this.value)">${["Not Started","Planned","Attempted","Needs Retest"].map(x=>`<option ${t.status===x?'selected':''}>${x}</option>`).join("")}</select></td><td><input class="inline-date date-text-input" type="text" inputmode="numeric" placeholder="DD/MM/YYYY" aria-label="Planned date (DD/MM/YYYY)" value="${formatDateForInput(t.plannedDate||defaultPlanDate())}" onchange="quickTopicDateText('${t.id}',this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}"/></td><td>${t.actualDate||"—"}</td><td><div class="score-edit"><input type="number" min="0" max="100" step="any" placeholder="Score" aria-label="Score (out of 100)" value="${t.marks||''}" onchange="quickTopicScore('${t.id}','marks',this.value)"/><span>/</span><input type="number" min="1" max="100" step="any" aria-label="Maximum score (out of 100)" value="${t.outOf||100}" onchange="quickTopicScore('${t.id}','outOf',this.value)"/></div></td><td><div class="topic-actions"><span class="score-hint">Score auto-saves</span><button class="small-btn" onclick="editTopic('${t.id}')">More</button></div></td></tr>`).join("")||`<tr><td colspan="6" class="empty">No topic tests found.</td></tr>`;
+ const items=state.topics.filter(t=>(f==="all"||t.status===f)&&(sub==="All subjects"||t.subject===sub)&&(t.name+" "+topicChapterLabel(t)+" "+t.subject).toLowerCase().includes(q));
+ document.getElementById("topicRows").innerHTML=items.map(t=>`<tr class="test-row" data-item-id="${t.id}"><td><b>${escapeHTML(t.name)}</b><br><small>${escapeHTML(t.subject)} · ${escapeHTML(topicChapterLabel(t))}</small></td><td><select class="inline-status" aria-label="Test status" onchange="quickTopicStatus('${t.id}',this.value)">${["Not Started","Planned","Attempted","Needs Retest"].map(x=>`<option ${t.status===x?'selected':''}>${x}</option>`).join("")}</select></td><td><input class="inline-date date-text-input" type="text" inputmode="numeric" placeholder="DD/MM/YYYY" aria-label="Planned date (DD/MM/YYYY)" value="${formatDateForInput(t.plannedDate||defaultPlanDate())}" onchange="quickTopicDateText('${t.id}',this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}"/></td><td>${t.actualDate||"—"}</td><td><div class="score-edit"><input type="number" min="0" max="100" step="any" placeholder="Score" aria-label="Score (out of 100)" value="${t.marks||''}" onchange="quickTopicScore('${t.id}','marks',this.value)"/><span>/</span><input type="number" min="1" max="100" step="any" aria-label="Maximum score (out of 100)" value="${t.outOf||100}" onchange="quickTopicScore('${t.id}','outOf',this.value)"/></div></td><td><div class="topic-actions"><span class="score-hint">Score auto-saves</span><button class="small-btn" onclick="editTopic('${t.id}')">More</button></div></td></tr>`).join("")||`<tr><td colspan="6" class="empty">No topic tests found.</td></tr>`;
 }
 function quickTopicScore(id,key,value){
  const t=state.topics.find(x=>x.id===id);if(!t)return;
@@ -1713,15 +1737,33 @@ function renderAll(){
 }
 function escapeHTML(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
 function escapeAttr(s){return String(s).replace(/\\/g,"\\\\").replace(/'/g,"\\'")}
-function openModal(title,fields,context){modalContext=context;document.getElementById("modalTitle").textContent=title;const holder=document.getElementById("modalFields");holder.innerHTML=fields.map(f=>{let el;if(f.type==="select"){el=`<select name="${f.name}" ${f.required?"required":""}>${f.options.map(o=>`<option value="${escapeHTML(o.value)}" ${String(o.value)===String(f.value)?"selected":""}>${escapeHTML(o.label)}</option>`).join("")}</select>`}else if(f.type==="textarea"){el=`<textarea name="${f.name}" rows="${f.rows||4}" ${f.required?"required":""}>${escapeHTML(f.value||"")}</textarea>`}else if(f.type==="dateText"){el=`<input name="${f.name}" type="text" inputmode="numeric" placeholder="DD/MM/YYYY" class="date-text-input" value="${escapeHTML(f.value??"")}" ${f.required?"required":""} />`}else{el=`<input name="${f.name}" type="${f.type||"text"}" value="${escapeHTML(f.value??"")}" ${f.required?"required":""} ${f.min!==undefined?`min="${f.min}"`:""} ${f.max!==undefined?`max="${f.max}"`:""} ${f.step?`step="${f.step}"`:""} />`}return `<label class="${f.full?"full":""}">${f.label}${el}</label>`}).join("");document.getElementById("modalBackdrop").classList.add("show");document.body.classList.add("modal-open");document.querySelector("#modalBackdrop .modal").scrollTop=0}
+function openModal(title,fields,context){
+ modalContext=context;document.getElementById("modalTitle").textContent=title;
+ const holder=document.getElementById("modalFields");
+ holder.innerHTML=fields.map(f=>{
+  if(f.type==="multiCheckbox"){
+   const selected=Array.isArray(f.value)?f.value:[f.value].filter(Boolean);
+   const options=f.options||[];
+   const picker=`<div class="multi-topic-picker" data-chapter-picker>${options.map(o=>`<label class="multi-topic-option"><input type="checkbox" name="${f.name}" value="${escapeHTML(o.value)}" ${selected.includes(o.value)?"checked":""}><span>${escapeHTML(o.label)}</span></label>`).join("")}</div>`;
+   return `<div class="multi-topic-field ${f.full?"full":""}"><div class="multi-topic-title">${escapeHTML(f.label)}</div>${picker}<small class="multi-topic-help">Select every chapter included in this test.</small></div>`;
+  }
+  let el;
+  if(f.type==="select"){el=`<select name="${f.name}" ${f.required?"required":""}>${f.options.map(o=>`<option value="${escapeHTML(o.value)}" ${String(o.value)===String(f.value)?"selected":""}>${escapeHTML(o.label)}</option>`).join("")}</select>`}
+  else if(f.type==="textarea"){el=`<textarea name="${f.name}" rows="${f.rows||4}" ${f.required?"required":""}>${escapeHTML(f.value||"")}</textarea>`}
+  else if(f.type==="dateText"){el=`<input name="${f.name}" type="text" inputmode="numeric" placeholder="DD/MM/YYYY" class="date-text-input" value="${escapeHTML(f.value??"")}" ${f.required?"required":""} />`}
+  else{el=`<input name="${f.name}" type="${f.type||"text"}" value="${escapeHTML(f.value??"")}" ${f.required?"required":""} ${f.min!==undefined?`min="${f.min}"`:""} ${f.max!==undefined?`max="${f.max}"`:""} ${f.step?`step="${f.step}"`:""} />`}
+  return `<label class="${f.full?"full":""}">${escapeHTML(f.label)}${el}</label>`;
+ }).join("");
+ document.getElementById("modalBackdrop").classList.add("show");document.body.classList.add("modal-open");document.querySelector("#modalBackdrop .modal").scrollTop=0
+}
 function closeModal(){document.getElementById("modalBackdrop").classList.remove("show");document.body.classList.remove("modal-open");modalContext=null}
-function valuesFromForm(){return Object.fromEntries(new FormData(document.getElementById("modalForm")).entries())}
-function saveModal(e){e.preventDefault();const v=valuesFromForm();if(["topic","newtopic","quicktopic"].includes(modalContext.type)){const max=Number(v.outOf||100),marks=v.marks===""?null:Number(v.marks);if(!Number.isFinite(max)||max<1||max>100||(marks!==null&&(!Number.isFinite(marks)||marks<0||marks>max))){toast("Topic tests are scored out of 100; marks must fit within the maximum.");document.querySelector('#modalFields [name="marks"]')?.focus();return;}v.outOf=String(max);}if(modalContext.type==="topic"||modalContext.type==="newtopic"){const parsed=parseFlexibleDate(v.plannedDate);if(parsed===null){toast("Enter planned date as DD/MM/YYYY, e.g. 21/11/2026.");document.querySelector("#modalFields [name=plannedDate]")?.focus();return;}v.plannedDate=parsed;}if(modalContext.type==="chapter"){const c=state.chapters.find(x=>x.subject===modalContext.subject&&x.chapter===modalContext.chapter);Object.assign(c,{prep:v.prep,r1:v.r1==="true",r2:v.r2==="true",r3:v.r3==="true",notes:v.notes==="true",pyq:v.pyq==="true"});}
-if(modalContext.type==="topic"){const t=state.topics.find(x=>x.id===modalContext.id);Object.assign(t,{name:v.name,subject:v.subject,chapter:v.chapter,status:v.status,plannedDate:v.plannedDate,actualDate:v.actualDate,marks:v.marks,outOf:v.outOf,difficulty:v.difficulty,notes:v.notes});syncTopicToChapter(t);}
+function valuesFromForm(){const form=document.getElementById("modalForm"),result=Object.fromEntries(new FormData(form).entries());if(form.querySelector("[data-chapter-picker]"))result.chapters=Array.from(form.querySelectorAll('input[name="chapters"]:checked')).map(el=>el.value);return result}
+function saveModal(e){e.preventDefault();const v=valuesFromForm();if(["topic","newtopic"].includes(modalContext.type)){const eligible=new Set(state.chapters.filter(c=>c.subject===v.subject).map(c=>c.chapter));const picked=Array.isArray(v.chapters)?v.chapters:[v.chapter].filter(Boolean);v.chapters=[...new Set(picked.filter(ch=>eligible.has(ch)))];if(!v.chapters.length){toast("Select at least one topic for this test.");document.querySelector("#modalFields [data-chapter-picker]")?.scrollIntoView({behavior:"smooth",block:"center"});return;}v.chapter=v.chapters[0];}if(["topic","newtopic","quicktopic"].includes(modalContext.type)){const max=Number(v.outOf||100),marks=v.marks===""?null:Number(v.marks);if(!Number.isFinite(max)||max<1||max>100||(marks!==null&&(!Number.isFinite(marks)||marks<0||marks>max))){toast("Topic tests are scored out of 100; marks must fit within the maximum.");document.querySelector('#modalFields [name="marks"]')?.focus();return;}v.outOf=String(max);}if(modalContext.type==="topic"||modalContext.type==="newtopic"){const parsed=parseFlexibleDate(v.plannedDate);if(parsed===null){toast("Enter planned date as DD/MM/YYYY, e.g. 21/11/2026.");document.querySelector("#modalFields [name=plannedDate]")?.focus();return;}v.plannedDate=parsed;}if(modalContext.type==="chapter"){const c=state.chapters.find(x=>x.subject===modalContext.subject&&x.chapter===modalContext.chapter);Object.assign(c,{prep:v.prep,r1:v.r1==="true",r2:v.r2==="true",r3:v.r3==="true",notes:v.notes==="true",pyq:v.pyq==="true"});}
+if(modalContext.type==="topic"){const t=state.topics.find(x=>x.id===modalContext.id);if(t){const previous={subject:t.subject,chapters:topicChapters(t)};Object.assign(t,{name:v.name,subject:v.subject,chapter:v.chapter,chapters:v.chapters,status:v.status,plannedDate:v.plannedDate,actualDate:v.actualDate,marks:v.marks,outOf:v.outOf,difficulty:v.difficulty,notes:v.notes});syncTopicToChapter(t,previous);}}
 if(modalContext.type==="quicktopic"){const t=state.topics.find(x=>x.id===modalContext.id);Object.assign(t,{marks:v.marks,outOf:v.outOf,status:"Attempted",actualDate:todayISO()});syncTopicToChapter(t);}
 if(modalContext.type==="litmus"){const t=state.litmus.find(x=>x.id===modalContext.id);Object.assign(t,{name:v.name,deadline:v.deadline,syllabus:v.syllabus,status:v.status,actualDate:v.actualDate,marks:v.marks,outOf:v.outOf,notes:v.notes});}
 if(modalContext.type==="quicklitmus"){const t=state.litmus.find(x=>x.id===modalContext.id);Object.assign(t,{marks:v.marks,outOf:v.outOf,status:"Attempted",actualDate:todayISO()});}
-if(modalContext.type==="newtopic"){const id="custom-"+Date.now();const t={id,subject:v.subject,chapter:v.chapter,name:v.name,source:"Custom test",status:v.status,plannedDate:v.plannedDate,actualDate:v.actualDate,marks:v.marks,outOf:v.outOf,difficulty:v.difficulty,notes:v.notes,custom:true};state.topics.unshift(t);syncTopicToChapter(t);}
+if(modalContext.type==="newtopic"){const id="custom-"+Date.now();const t={id,subject:v.subject,chapter:v.chapter,chapters:v.chapters,name:v.name,source:"Custom test",status:v.status,plannedDate:v.plannedDate,actualDate:v.actualDate,marks:v.marks,outOf:v.outOf,difficulty:v.difficulty,notes:v.notes,custom:true};state.topics.unshift(t);syncTopicToChapter(t);}
 if(modalContext.type==="pyq"||modalContext.type==="editpyq"){
  const attempted=Number(v.attempted),correct=Number(v.correct);
  if(!Number.isFinite(attempted)||!Number.isFinite(correct)||attempted<0||correct<0||correct>attempted){toast("Check the question counts: correct answers cannot exceed attempted questions.");document.querySelector('#modalFields [name="correct"]')?.focus();return;}
@@ -1730,7 +1772,21 @@ if(modalContext.type==="pyq"||modalContext.type==="editpyq"){
  else{const p=state.pyqs.find(x=>x.id===modalContext.id);if(p)Object.assign(p,record);}
 }
 closeModal();saveState();toast("Saved. Your dashboard is updated.");}
-function syncTopicToChapter(t){const c=state.chapters.find(x=>x.subject===t.subject&&x.chapter===t.chapter);if(!c)return;const attempts=state.topics.filter(x=>x.subject===t.subject&&x.chapter===t.chapter&&x.status==="Attempted").sort((a,b)=>(b.actualDate||"").localeCompare(a.actualDate||""));c.topicAttempted=attempts.length>0;if(attempts[0]){c.latestDate=attempts[0].actualDate;c.marks=attempts[0].marks;c.outOf=attempts[0].outOf;c.difficulty=attempts[0].difficulty;}}
+function topicChapters(t){const chapters=Array.isArray(t&&t.chapters)&&t.chapters.length?t.chapters:[t&&t.chapter].filter(Boolean);return [...new Set(chapters.filter(Boolean))]}
+function topicChapterLabel(t){return topicChapters(t).join(", ")}
+function syncTopicToChapter(t,previous){
+ const targets=[];
+ const addTargets=(subject,list)=>{(list||[]).forEach(chapter=>{const key=subject+"::"+chapter;if(!targets.some(x=>x.key===key))targets.push({key,subject,chapter});});};
+ addTargets(t&&t.subject,topicChapters(t));
+ if(previous)addTargets(previous.subject,previous.chapters||[previous.chapter].filter(Boolean));
+ targets.forEach(target=>{
+  const c=state.chapters.find(x=>x.subject===target.subject&&x.chapter===target.chapter);if(!c)return;
+  const attempts=state.topics.filter(x=>x.subject===target.subject&&x.status==="Attempted"&&topicChapters(x).includes(target.chapter)).sort((a,b)=>(b.actualDate||"").localeCompare(a.actualDate||""));
+  c.topicAttempted=attempts.length>0;
+  if(attempts[0]){c.latestDate=attempts[0].actualDate;c.marks=attempts[0].marks;c.outOf=attempts[0].outOf;c.difficulty=attempts[0].difficulty;}
+  else{c.latestDate="";c.marks="";c.outOf="";c.difficulty="";}
+ });
+}
 function editChapter(subject,chapter){const c=state.chapters.find(x=>x.subject===subject&&x.chapter===chapter);openModal("Update chapter",[
 {name:"prep",label:"Preparation level",type:"select",value:c.prep,options:["Not Ready","In Progress","Needs Work","Exam Ready"].map(x=>({value:x,label:x==="Exam Ready"?"✓ Done":x}))},
 {name:"r1",label:"Revision 1 complete?",type:"select",value:String(c.r1),options:[{value:"false",label:"Not yet"},{value:"true",label:"Done"}]},
@@ -1740,26 +1796,39 @@ function editChapter(subject,chapter){const c=state.chapters.find(x=>x.subject==
 { name:"pyq",label:"PYQs practised?",type:"select",value:String(c.pyq),options:[{value:"false",label:"Not yet"},{value:"true",label:"Done"}]}
 ],{type:"chapter",subject,chapter})}
 function editTopic(id){const t=state.topics.find(x=>x.id===id);topicForm(t,false)}
-function topicForm(t,creating){openModal(creating?"Add custom topic test":"Edit topic test",[
-{name:"name",label:"Test name",value:t.name,required:true},
-{name:"subject",label:"Subject",type:"select",value:t.subject,options:["Physics","Chemistry","Mathematics"].map(x=>({value:x,label:x}))},
-{name:"chapter",label:"Chapter / topic",type:"select",value:t.chapter,options:state.chapters.map(x=>({value:x.chapter,label:x.subject+" — "+x.chapter}))},
-{name:"status",label:"Status",type:"select",value:t.status,options:["Not Started","Planned","Attempted","Needs Retest"].map(x=>({value:x,label:x}))},
-{name:"plannedDate",label:"Planned date (DD/MM/YYYY)",type:"dateText",value:formatDateForInput(t.plannedDate||defaultPlanDate())},
-{name:"actualDate",label:"Actual test date",type:"date",value:t.actualDate},
-{name:"marks",label:"Marks scored (out of 100)",type:"number",value:t.marks,min:0,max:100,step:"any"},
-{name:"outOf",label:"Maximum marks",type:"number",value:t.outOf||"100",min:1,max:100,step:"any"},
-{name:"difficulty",label:"Difficulty",type:"select",value:t.difficulty,options:["","Easy","Medium","Hard"].map(x=>({value:x,label:x||"Not set"}))},
-{name:"notes",label:"Notes",type:"textarea",value:t.notes,full:true}
-],creating?{type:"newtopic"}:{type:"topic",id:t.id})}
+function renderTopicChapterPicker(subject,selected){
+ const picker=document.querySelector("#modalFields [data-chapter-picker]");if(!picker)return;
+ const choices=state.chapters.filter(c=>c.subject===subject);
+ let chosen=(Array.isArray(selected)?selected:[]).filter(ch=>choices.some(c=>c.chapter===ch));
+ if(!chosen.length&&choices.length)chosen=[choices[0].chapter];
+ picker.innerHTML=choices.map(c=>`<label class="multi-topic-option"><input type="checkbox" name="chapters" value="${escapeHTML(c.chapter)}" ${chosen.includes(c.chapter)?"checked":""}><span>${escapeHTML(c.chapter)}</span></label>`).join("");
+}
+function topicForm(t,creating){
+ const chosen=Array.isArray(t.chapters)&&t.chapters.length?t.chapters:[t.chapter].filter(Boolean);
+ const chapterOptions=state.chapters.filter(c=>c.subject===t.subject).map(c=>({value:c.chapter,label:c.chapter}));
+ openModal(creating?"Add custom topic test":"Edit topic test",[
+  {name:"name",label:"Test name",value:t.name,required:true},
+  {name:"subject",label:"Subject",type:"select",value:t.subject,options:["Physics","Chemistry","Mathematics"].map(x=>({value:x,label:x}))},
+  {name:"chapters",label:"Topics included",type:"multiCheckbox",value:chosen,options:chapterOptions,full:true},
+  {name:"status",label:"Status",type:"select",value:t.status,options:["Not Started","Planned","Attempted","Needs Retest"].map(x=>({value:x,label:x}))},
+  {name:"plannedDate",label:"Planned date (DD/MM/YYYY)",type:"dateText",value:formatDateForInput(t.plannedDate||defaultPlanDate())},
+  {name:"actualDate",label:"Actual test date",type:"date",value:t.actualDate},
+  {name:"marks",label:"Marks scored (out of 100)",type:"number",value:t.marks,min:0,max:100,step:"any"},
+  {name:"outOf",label:"Maximum marks",type:"number",value:t.outOf||"100",min:1,max:100,step:"any"},
+  {name:"difficulty",label:"Difficulty",type:"select",value:t.difficulty,options:["","Easy","Medium","Hard"].map(x=>({value:x,label:x||"Not set"}))},
+  {name:"notes",label:"Notes",type:"textarea",value:t.notes,full:true}
+ ],creating?{type:"newtopic"}:{type:"topic",id:t.id});
+ const subject=document.querySelector('#modalFields select[name="subject"]');
+ if(subject)subject.addEventListener("change",()=>renderTopicChapterPicker(subject.value,[]));
+}
 function openTopicModal(){topicForm({name:"My custom test",subject:"Physics",chapter:state.chapters[0].chapter,status:"Not Started",plannedDate:"",actualDate:"",marks:"",outOf:"100",difficulty:"",notes:""},true)}
 function openPlannedTopicModal(){topicForm({name:"Planned topic test",subject:"Physics",chapter:state.chapters[0].chapter,status:"Planned",plannedDate:formatDateForInput(defaultPlanDate()),actualDate:"",marks:"",outOf:"100",difficulty:"",notes:""},true)}
 function quickTopic(subject,chapter){
  const same=(a,b)=>String(a||"").trim().toLowerCase()===String(b||"").trim().toLowerCase();
- let t=state.topics.find(x=>same(x.subject,subject)&&same(x.chapter,chapter));
+ let t=state.topics.find(x=>same(x.subject,subject)&&(same(x.chapter,chapter)||(Array.isArray(x.chapters)&&x.chapters.some(ch=>same(ch,chapter)))));
  const c=state.chapters.find(x=>same(x.subject,subject)&&same(x.chapter,chapter));
  if(!t){
-  t={id:"topic-linked-"+Date.now(),subject:subject,chapter:chapter,name:chapter+" Topic Test",source:"Chapter topic test",status:"Not Started",plannedDate:"",actualDate:"",marks:"",outOf:"100",difficulty:"",notes:"",custom:false};
+  t={id:"topic-linked-"+Date.now(),subject:subject,chapter:chapter,chapters:[chapter],name:chapter+" Topic Test",source:"Chapter topic test",status:"Not Started",plannedDate:"",actualDate:"",marks:"",outOf:"100",difficulty:"",notes:"",custom:false};
   state.topics.unshift(t);
   try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}
  }
