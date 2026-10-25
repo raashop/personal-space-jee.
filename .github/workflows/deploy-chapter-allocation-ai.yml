@@ -13,6 +13,7 @@ jobs:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
       SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -29,8 +30,19 @@ jobs:
           test -n "$SUPABASE_PROJECT_REF" || (echo "::error::Add SUPABASE_PROJECT_REF in repository Actions secrets." && exit 1)
           test -n "$GEMINI_API_KEY" || (echo "::error::Add GEMINI_API_KEY in repository Actions secrets." && exit 1)
 
-      - name: Store Gemini API key as a Supabase secret
-        run: supabase secrets set --project-ref "$SUPABASE_PROJECT_REF" GEMINI_API_KEY="$GEMINI_API_KEY" GEMINI_MODEL="gemini-3.5-flash-lite"
+      - name: Store Gemini API key and model as Supabase secrets
+        run: supabase secrets set --project-ref "$SUPABASE_PROJECT_REF" GEMINI_API_KEY="$GEMINI_API_KEY" GEMINI_MODEL="gemini-3.1-flash-lite"
 
-      - name: Deploy authenticated Gemini Edge Function
-        run: supabase functions deploy chapter-allocation --project-ref "$SUPABASE_PROJECT_REF"
+      - name: Store optional YouTube Data API key
+        shell: bash
+        run: |
+          if [ -n "$YOUTUBE_API_KEY" ]; then
+            supabase secrets set --project-ref "$SUPABASE_PROJECT_REF" YOUTUBE_API_KEY="$YOUTUBE_API_KEY"
+          else
+            echo "::warning::YOUTUBE_API_KEY is not set; playlist totals and course progress will ask for it."
+          fi
+
+      - name: Deploy authenticated AI and course progress functions
+        run: |
+          supabase functions deploy chapter-allocation --project-ref "$SUPABASE_PROJECT_REF"
+          supabase functions deploy course-progress --project-ref "$SUPABASE_PROJECT_REF"
