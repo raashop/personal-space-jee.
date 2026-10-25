@@ -9,7 +9,6 @@
   const LAST_SYNC_KEY = "psJeePlannerLastSyncV1";
   const EXTENSION_SOURCE = "PS_JEE_TRACKER_EXTENSION";
   const PLANNER_SOURCE = "PS_JEE_PLANNER_PAGE";
-  let lastSignature = "";
 
   function pageIsConfigured(config) {
     if (!config || config.origin !== location.origin || typeof config.pathPrefix !== "string") return false;
@@ -25,10 +24,6 @@
       if (!pageIsConfigured(config)) return;
       const records = Array.isArray(data[STORE]) ? data[STORE] : [];
       const telegramLectures = Array.isArray(data[TELEGRAM_STORE]) ? data[TELEGRAM_STORE] : [];
-      const signature = JSON.stringify(records.map(row => [
-        row.videoId, row.watchedSeconds, row.lastWatchedAt, row.subject, row.chapter
-      ]));
-      lastSignature = signature;
       window.postMessage({
         source: EXTENSION_SOURCE,
         type: "LECTURES_UPDATED",
@@ -41,7 +36,8 @@
         [LAST_SYNC_KEY]: {
           origin: location.origin,
           path: location.pathname,
-          count: records.length,
+          count: records.length + telegramLectures.length,
+          youtubeCount: records.length,
           telegramCount: telegramLectures.length,
           syncedAt: new Date().toISOString()
         }
