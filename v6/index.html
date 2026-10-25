@@ -5057,14 +5057,26 @@ function courseProgressData(course){
  const durationKnown=videos.length>0&&durationCount===videos.length&&!course.truncated&&videos.length>=total;
  return {watched,total,percent,mapped:Number(course.mappedCount)||videos.filter(v=>v.subject&&v.chapter).length,left:Math.max(0,total-watched),oneShot,totalDurationSeconds,watchedSeconds,remainingSeconds,durationKnown};
 }
+function timeLeftLine(durationSeconds,watchedSeconds){
+ const duration=Math.max(0,Number(durationSeconds)||0),watched=Math.max(0,Number(watchedSeconds)||0);
+ const known=duration>0,left=known?Math.max(0,duration-watched):0;
+ const pct=known?Math.max(0,Math.min(100,Math.round(left/duration*100))):0;
+ const value=known?durationLabel(left/60):"Duration pending";
+ return '<div class="time-left-line"><span>TIME LEFT</span><strong>'+escapeHTML(value)+'</strong><div class="time-left-track"><i style="width:'+pct+'%"></i></div></div>';
+}
 function courseProgressCard(course,showRemove){
  const progress=courseProgressData(course),title=escapeHTML(course.title||"YouTube course");
  const link=/^https:\/\/www\.youtube\.com\/playlist\?list=[\w-]+$/.test(course.url||"")?course.url:"#";
  const remove=showRemove?'<button type="button" class="study-course-remove" onclick="removeYoutubeCourse(\''+escapeAttr(course.playlistId)+'\')">Remove</button>':"";
- const timeText=progress.durationKnown?durationLabel(progress.remainingSeconds/60):"Time left unavailable";
- const count=progress.oneShot?'<span class="study-course-count time-left">Time left · '+escapeHTML(timeText)+'</span>':'<span class="study-course-count">'+progress.watched+' / '+progress.total+'</span>';
- const footer=progress.oneShot?'<span>Time left · '+escapeHTML(timeText)+'</span>':'<span>'+progress.left+' lecture'+(progress.left===1?"":"s")+' left · '+progress.percent+'% watched</span>';
- return '<article class="study-course-card"><div class="study-course-top"><div><strong>'+title+'</strong><small>'+escapeHTML(course.channelTitle||"YouTube playlist")+(progress.oneShot?"":" · "+progress.mapped+" lectures mapped to chapters")+'</small></div>'+count+'</div><div class="study-course-bar"><i style="width:'+progress.percent+'%"></i></div><div class="study-course-footer">'+footer+'<span><a href="'+escapeAttr(link)+'" target="_blank" rel="noopener noreferrer">Open playlist ↗</a> '+remove+'</span></div></article>';
+ if(progress.oneShot){
+  const timeText=progress.durationKnown?durationLabel(progress.remainingSeconds/60):"Duration pending";
+  return '<article class="study-course-card one-shot-card"><div class="study-course-top"><div><strong>'+title+'</strong><small>'+escapeHTML(course.channelTitle||"YouTube One Shot")+' · Single-session lecture</small></div><span class="study-course-count time-left">ONE SHOT</span></div>'+
+   timeLeftLine(progress.durationKnown?progress.totalDurationSeconds:0,progress.watchedSeconds)+
+   '<div class="study-course-footer"><span>'+escapeHTML(timeText)+' remaining</span><span><a href="'+escapeAttr(link)+'" target="_blank" rel="noopener noreferrer">Open video ↗</a> '+remove+'</span></div></article>';
+ }
+ return '<article class="study-course-card"><div class="study-course-top"><div><strong>'+title+'</strong><small>'+escapeHTML(course.channelTitle||"YouTube playlist")+' · '+progress.mapped+' lectures mapped to chapters</small></div><span class="study-course-count">'+progress.watched+' / '+progress.total+'</span></div>'+
+  '<div class="study-course-bar"><i style="width:'+progress.percent+'%"></i></div>'+
+  '<div class="study-course-footer"><strong>'+progress.left+' lecture'+(progress.left===1?"":"s")+' left</strong><span>'+progress.percent+'% watched · <a href="'+escapeAttr(link)+'" target="_blank" rel="noopener noreferrer">Open playlist ↗</a> '+remove+'</span></div></article>';
 }
 let youtubeOneShotDurationRefreshRunning=false;
 async function refreshSavedOneShotDurations(){
@@ -5240,25 +5252,37 @@ function removeYoutubeCourse(playlistId){
  if(typeof queueYoutubeCloudSave==="function")queueYoutubeCloudSave();
  toast("Playlist progress removed. Lecture history is unchanged.");
 }
+function renderLectureOverviewMetrics(){
+ const youtubeRows=readYoutubeLectures(),telegramRows=readTelegramLectures();
+ const count=document.getElementById("psLectureCount"),minutes=document.getElementById("psLectureMinutes"),chapterCount=document.getElementById("psLectureChapters");
+ const allRows=[...youtubeRows,...telegramRows];
+ const watched=allRows.reduce((sum,row)=>sum+Math.max(0,Number(row.watchedSeconds)||0),0);
+ const chapters=new Set(allRows.map(row=>(row.subject||"")+"::"+(row.chapter||"")).filter(key=>key!=="::"));
+ if(count)count.textContent=allRows.length;
+ if(minutes)minutes.textContent=Math.round(watched/60)+" min";
+ if(chapterCount)chapterCount.textContent=chapters.size;
+}
 function renderYoutubeLectures(){
  const rows=readYoutubeLectures();
- const watched=rows.reduce((sum,row)=>sum+Math.max(0,Number(row.watchedSeconds)||0),0);
- const chapters=new Set(rows.map(row=>(row.subject||"")+"::"+(row.chapter||"")).filter(key=>key!=="::"));
- const count=document.getElementById("psLectureCount"),minutes=document.getElementById("psLectureMinutes"),chapterCount=document.getElementById("psLectureChapters");
- if(count)count.textContent=rows.length;if(minutes)minutes.textContent=Math.round(watched/60)+" min";if(chapterCount)chapterCount.textContent=chapters.size;
+ renderLectureOverviewMetrics();
  renderYoutubeCourseProgress();
  if(typeof renderStudyActivitySummary==="function")renderStudyActivitySummary();
  const list=document.getElementById("psLectureList");if(!list)return;
- if(!rows.length){list.className="empty-state";list.textContent="No lecture records yet. Connect the extension and play a matched JEE lecture. Import backup is optional.";return;}
+ if(!rows.length){list.className="empty-state";list.textContent="No YouTube lecture records yet. Connect the extension and play a matched JEE lecture.";return;}
  list.className="lecture-list";
+ const courses=readYoutubeCourses();
  list.innerHTML=rows.slice().sort((a,b)=>String(b.lastWatchedAt||"").localeCompare(String(a.lastWatchedAt||""))).map(row=>{
   const title=escapeHTML(row.title||"Untitled lecture"),subject=escapeHTML(row.subject||"Unmatched subject"),chapter=escapeHTML(row.chapter||"Unmatched chapter"),channel=escapeHTML(row.channel||"YouTube");
-  const watchedSeconds=Math.max(0,Number(row.watchedSeconds)||0),durationSeconds=Math.max(0,Number(row.durationSeconds)||0),mins=Math.round(watchedSeconds/60);
-  const oneShot=isOneShotTitle(row.title),remaining=durationSeconds?Math.max(0,durationSeconds-watchedSeconds):0;
-  const timeText=oneShot?(durationSeconds?"Time left · "+durationLabel(remaining/60):"Time left · duration not available yet"):(mins+" min watched");
+  const watchedSeconds=Math.max(0,Number(row.watchedSeconds)||0);
+  const courseVideo=courses.flatMap(course=>Array.isArray(course.videos)?course.videos:[]).find(video=>String(video.videoId)===String(row.videoId));
+  const durationSeconds=Math.max(0,Number(row.durationSeconds)||Number(courseVideo&&courseVideo.durationSeconds)||0);
+  const oneShot=isOneShotTitle(row.title),mins=Math.round(watchedSeconds/60);
   const date=row.lastWatchedAt?new Date(row.lastWatchedAt).toLocaleDateString():"";
   const url=/^https:\/\/(www\.)?youtube\.com\/watch\?v=[\w-]+/.test(row.url||"")?row.url:"#";
-  return '<article class="list-row" style="padding:14px 0;border-bottom:1px solid var(--line);display:flex;gap:12px;align-items:flex-start"><div style="flex:1;min-width:0"><strong>'+title+'</strong><div class="helper-note">'+subject+' · '+chapter+' · '+escapeHTML(timeText)+'</div><small style="color:var(--muted)">'+channel+(date?' · '+date:'')+'</small></div><a class="btn btn-secondary" href="'+escapeAttr(url)+'" target="_blank" rel="noopener">Open ↗</a></article>';
+  const time=oneShot?timeLeftLine(durationSeconds,watchedSeconds):'<div class="lecture-card-footer"><span>'+mins+' min watched</span><span>'+escapeHTML(date||"Playback recorded")+'</span></div>';
+  return '<article class="lecture-history-card youtube-history-card"><div class="lecture-history-top"><span class="lecture-history-badge '+(oneShot?'oneshot':'youtube')+'">'+(oneShot?'ONE SHOT':'YOUTUBE LECTURE')+'</span><span class="lecture-history-date">'+escapeHTML(date)+'</span></div>'+
+   '<strong class="lecture-card-title">'+title+'</strong><div class="lecture-card-meta">'+subject+' · '+chapter+' · '+channel+'</div>'+time+
+   '<div class="lecture-card-footer"><span>'+escapeHTML(oneShot?(durationSeconds?'Remaining runtime':'Waiting for video duration'):'Playback saved')+'</span><a href="'+escapeAttr(url)+'" target="_blank" rel="noopener noreferrer">Open ↗</a></div></article>';
  }).join("");
 }
 function plannerChapterForLecture(row){
@@ -5586,22 +5610,23 @@ async function analyzeTelegramCourses(force=false){
 }
 function renderTelegramImport(){
  const rows=readTelegramLectures();
- const preview=document.getElementById("psTelegramPreview");
- const count=document.getElementById("psTelegramCount");
- const list=document.getElementById("psTelegramList");
+ const preview=document.getElementById("psTelegramPreview"),count=document.getElementById("psTelegramCount"),list=document.getElementById("psTelegramList");
  if(preview&&!psTelegramPending)preview.textContent=rows.length?rows.length+" Telegram lecture(s) saved.":"Nothing imported yet.";
  if(count)count.textContent=rows.length+" IMPORTED";
+ renderLectureOverviewMetrics();
  if(list){
-  if(!rows.length){list.className="empty-state";list.textContent="No Telegram lectures imported yet. Add a title above to get started.";}
+  if(!rows.length){list.className="empty-state";list.textContent="No Telegram lectures yet. Import a lecture list or track Telegram Web playback.";}
   else{
    list.className="telegram-lecture-list";
    list.innerHTML=rows.slice().map((row,index)=>{
     const title=escapeHTML(row.title||"Untitled lecture"),subject=escapeHTML(row.subject||"Unmatched subject"),chapter=escapeHTML(row.chapter||"Unmatched chapter");
     const url=/^https:\/\/(t\.me|telegram\.me)\//i.test(row.url||"")?row.url:"";
-    const link=url?'<a href="'+escapeAttr(url)+'" target="_blank" rel="noopener noreferrer">Open Telegram post ↗</a>':'<span class="helper-note">No post link saved</span>';
+    const link=url?'<a href="'+escapeAttr(url)+'" target="_blank" rel="noopener noreferrer">Open post ↗</a>':'<span>No post link</span>';
     const watched=Math.max(0,Number(row.watchedSeconds)||0),duration=Math.max(0,Number(row.durationSeconds)||0),oneShot=isOneShotTitle(row.title);
-    const timeText=oneShot?(duration?"Time left · "+durationLabel(Math.max(0,duration-watched)/60):"Time left · duration not available yet"):(watched?durationLabel(watched/60)+" watched":"Not watched yet");
-    return '<article class="telegram-lecture-card"><div class="telegram-lecture-top"><span class="telegram-tag">'+escapeHTML(row.source||"Telegram import")+'</span><button class="btn btn-quiet telegram-remove" type="button" data-telegram-remove="'+index+'" aria-label="Remove '+title+'">Remove</button></div><strong class="telegram-title">'+title+'</strong><div class="telegram-chapter">'+subject+' · '+chapter+'</div><div class="helper-note">'+escapeHTML(timeText)+'</div><div class="telegram-card-footer">'+link+'</div></article>';
+    const time=oneShot?timeLeftLine(duration,watched):'<div class="lecture-card-footer"><span>'+(watched?durationLabel(watched/60)+" watched":"Not watched yet")+'</span><span>'+escapeHTML(row.source||"Telegram")+'</span></div>';
+    return '<article class="telegram-lecture-card lecture-history-card telegram-history-card"><div class="lecture-history-top"><span class="lecture-history-badge '+(oneShot?'oneshot':'telegram')+'">'+(oneShot?'ONE SHOT':'TELEGRAM LECTURE')+'</span><button class="btn btn-quiet telegram-remove" type="button" data-telegram-remove="'+index+'" aria-label="Remove '+title+'">Remove</button></div>'+
+     '<strong class="telegram-title lecture-card-title">'+title+'</strong><div class="telegram-chapter">'+subject+' · '+chapter+'</div>'+time+
+     '<div class="lecture-card-footer"><span>'+escapeHTML(row.source||"Telegram import")+'</span>'+link+'</div></article>';
    }).join("");
    list.querySelectorAll("[data-telegram-remove]").forEach(button=>button.addEventListener("click",()=>{
     const idx=Number(button.getAttribute("data-telegram-remove")),latest=readTelegramLectures();
