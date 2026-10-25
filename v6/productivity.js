@@ -196,17 +196,13 @@
       {value:"Revise chapter",label:"Revise chapter"},
       {value:"Solve PYQs",label:"Solve PYQs"},
       {value:"Take topic test",label:"Take topic test"},
-      {value:"Review mistakes",label:"Review mistakes"},
-      {value:"Custom task",label:"Other / personal task"}
+      {value:"Review mistakes",label:"Review mistakes"}
     ];
     const fields=[
       {name:"date",label:"Day",type:"date",value:date,required:true},
-      {name:"taskType",label:"What do you want to do?",type:"select",value:"Study chapter",options:taskActions},
-      {name:"subject",label:"Subject",type:"select",value:sub,options:[{value:"General",label:"General / admin"},{value:"Physics",label:"Physics"},{value:"Chemistry",label:"Chemistry"},{value:"Mathematics",label:"Mathematics"}]},
-      {name:"chapter",label:"Choose chapter",type:"select",value:"",options:[{value:"",label:"Select a chapter"}].concat(state.chapters.filter(c=>c.subject===sub).map(c=>({value:c.chapter,label:chapterDisplayName(c.subject,c.chapter)})))},
-      {name:"customTitle",label:"Optional task note (only for a personal task)",type:"text",value:"",placeholder:"Leave blank for an automatic chapter-based name"},
-      {name:"estimate",label:"Estimated minutes",type:"number",value:45,min:0,max:1440},
-      {name:"priority",label:"Priority",type:"select",value:"Normal",options:["Low","Normal","High"].map(x=>({value:x,label:x}))}
+      {name:"taskType",label:"What are you doing?",type:"select",value:"Study chapter",options:taskActions},
+      {name:"subject",label:"Subject",type:"select",value:sub,options:[{value:"Physics",label:"Physics"},{value:"Chemistry",label:"Chemistry"},{value:"Mathematics",label:"Mathematics"}]},
+      {name:"chapter",label:"Choose chapter",type:"select",value:"",options:[{value:"",label:"Choose a chapter…"}].concat(state.chapters.filter(c=>c.subject===sub).map(c=>({value:c.chapter,label:chapterDisplayName(c.subject,c.chapter)})))}
     ];
     openModal("Add a chapter task",fields,{type:"dailyTask"});
   };
@@ -577,10 +573,9 @@
     }else if(ctx.type==="dailyTask"){
       const action=v.taskType||"Study chapter",subject=v.subject||"General",chapter=v.chapter||"",custom=(v.customTitle||"").trim();
       const chapterLabel=chapter?chapterDisplayName(subject,chapter):"";
-      if(action==="Custom task"&&!custom){toast("Add a short label for your personal task.");return;}
-      if(action!=="Custom task"&&!chapter&&["Study chapter","Revise chapter","Solve PYQs","Take topic test"].includes(action)){toast("Choose a subject and chapter first. You can select it from the chapter list.");return;}
-      const title=action==="Custom task"?custom:action+(chapterLabel?": "+chapterLabel:(" · "+subject))+(custom?" — "+custom:"");
-      state.dailyTasks.push({id:"task-"+Date.now(),date:v.date||todayISO(),title:title,taskType:action,subject:subject,chapter:chapter,estimate:Math.max(0,Number(v.estimate)||0),priority:v.priority||"Normal",done:false,completedAt:"",createdAt:new Date().toISOString()});
+      if(!chapter&&["Study chapter","Revise chapter","Solve PYQs","Take topic test","Review mistakes"].includes(action)){toast("Choose a subject and chapter first. You can select it from the chapter list.");return;}
+      const title=action+(chapterLabel?": "+chapterLabel:(" · "+subject));
+      state.dailyTasks.push({id:"task-"+Date.now(),date:v.date||todayISO(),title:title,taskType:action,subject:subject,chapter:chapter,estimate:45,priority:"Normal",done:false,completedAt:"",createdAt:new Date().toISOString()});
     }else if(ctx.type==="mistake"){
       const old=ctx.id?state.studyMistakes.find(x=>x.id===ctx.id):null;
       const record={id:old?old.id:"mistake-"+Date.now(),date:v.date||todayISO(),subject:v.subject||"General",chapter:v.chapter||"",errorType:v.errorType||"Concept gap",title:(v.title||"").trim(),prompt:v.prompt||"",reason:v.reason||"",takeaway:v.takeaway||"",reviewDate:v.status==="Mastered"?"":(v.reviewDate||addDays(todayISO(),1)),status:v.status||"Needs Review",updatedAt:new Date().toISOString()};
