@@ -83,7 +83,9 @@ Use only the exact supplied subject and chapter names. Identify the chapter a le
       try { data = JSON.parse(raw); } catch { continue; }
       if (!response.ok) {
         console.error("Gemini chapter mapping failed:", response.status, raw.slice(0, 600));
-        continue;
+        throw new Error(response.status === 429
+          ? "Gemini rate limit reached while matching playlist titles. Wait a little and retry."
+          : "Gemini could not map the playlist titles. Check GEMINI_API_KEY, the model and free-tier quota.");
       }
       const textOutput = (data?.candidates?.[0]?.content?.parts || [])
         .filter((part: any) => typeof part?.text === "string").map((part: any) => part.text).join("\n");
@@ -96,6 +98,7 @@ Use only the exact supplied subject and chapter names. Identify the chapter a le
       }
     } catch (error) {
       console.error("Gemini mapping batch failed:", String(error).slice(0, 500));
+      throw error instanceof Error ? error : new Error("Gemini chapter mapping failed. Check the API key and quota.");
     }
   }
   return mapped;
@@ -145,7 +148,7 @@ Deno.serve(async (req: Request) => {
 
     const videos: Array<{videoId:string;title:string;position:number}> = [];
     let pageToken = "";
-    const fetchLimit = Math.min(totalLectures, 500);
+    const fetchLimit = Math.min(totalLectures, 2000);
     while (videos.length < fetchLimit) {
       const itemsUrl = new URL("https://www.googleapis.com/youtube/v3/playlistItems");
       itemsUrl.searchParams.set("part", "snippet,contentDetails");
