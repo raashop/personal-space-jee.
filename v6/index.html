@@ -4632,10 +4632,11 @@ async function addYoutubeCourse(event){
   const session=sessionResult.data&&sessionResult.data.session;
   if(!session||!session.access_token)throw new Error("Sign in through Backup & Sync first.");
   const cfg=cloudSettings();
+  const syllabusChapters=(state.chapters||[]).filter(ch=>!subject||ch.subject===subject).map(ch=>({subject:ch.subject,chapter:ch.chapter,class:ch.class||""}));
   const response=await fetch(cfg.url+"/functions/v1/course-progress",{
    method:"POST",
    headers:{"Content-Type":"application/json","apikey":cfg.key,"Authorization":"Bearer "+session.access_token},
-   body:JSON.stringify({playlistUrl,subject,chapters:(state.chapters||[]).map(ch=>({subject:ch.subject,chapter:ch.chapter,class:ch.class||""}))})
+   body:JSON.stringify({playlistUrl,subject,chapters:syllabusChapters})
   });
   let payload={};try{payload=await response.json();}catch(e){}
   if(!response.ok)throw new Error(payload.error||("Course progress function returned HTTP "+response.status+". Deploy the latest workflow and add YOUTUBE_API_KEY."));
