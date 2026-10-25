@@ -181,7 +181,7 @@
         session.saving = false;
         // If playback advanced while storage was being written, immediately
         // drain the remainder so a pause/navigation cannot lose the last seconds.
-        if (session.pendingSeconds >= 0.25) flushSession(session);
+        if (session.pendingSeconds >= 5 || session.video.paused || session.video.ended || activeSession !== session) flushSession(session);
       }
     })();
   }
