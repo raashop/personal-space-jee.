@@ -43,11 +43,8 @@
     { id: "topic", label: "Topic tests", detail: "Plan a chapter-based test or log a score", group: "Navigate", key: "3" },
     { id: "litmus", label: "LITMUS schedule", detail: "Part tests and full mocks", group: "Navigate", key: "4" },
     { id: "pyq", label: "PYQ practice", detail: "Record previous-year question practice", group: "Navigate", key: "5" },
-    { id: "daily", label: "Daily study journal", detail: "Tasks, study sessions and focus timer", group: "Navigate", key: "6" },
-    { id: "performance", label: "Performance studio", detail: "Study-time charts and weekly comparisons", group: "Navigate", key: "7" },
-    { id: "mistakes", label: "Mistake bank", detail: "Errors, takeaways and revision queue", group: "Navigate", key: "8" },
-    { id: "notes", label: "Study notes", detail: "Formulas, doubts and useful reminders", group: "Navigate" },
-    { id: "goals", label: "Goals and habits", detail: "Targets and small daily habit checklist", group: "Navigate" }
+    { id: "lectures", label: "Lecture Tracker", detail: "YouTube and Telegram lectures, progress and time left", group: "Navigate", key: "6" },
+    { id: "performance", label: "Performance studio", detail: "Study-time charts and weekly comparisons", group: "Navigate", key: "7" }
   ];
   let activeTheme = "daylight";
   let selectedIndex = 0;
@@ -329,7 +326,7 @@
         key: "?",
         run: function () { openShortcuts(); }
       }
-    ]);
+    ]).filter(function (command) { return !["focus:start", "study:log", "mistake:add"].includes(command.id); });
   }
 
   function renderCommandRows(query) {
@@ -703,7 +700,7 @@
         return;
       }
       const number = Number(event.key);
-      if (number >= 1 && number <= 8) {
+      if (number >= 1 && number <= 7) {
         const page = PAGE_COMMANDS[number - 1];
         if (page) goToPage(page.id);
       }
