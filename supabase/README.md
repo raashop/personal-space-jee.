@@ -1,62 +1,54 @@
-# Chapter Allocation AI setup
+# Gemini AI chapter allocation setup
 
-The website UI and the secure Supabase Edge Function source are committed. Actual AI requests will work only after the function is deployed to your Supabase project and an OpenAI API key is set in Supabase Secrets.
+The Chapter Allocation UI and Gemini-powered Supabase Edge Function are committed. To activate live AI, create a Gemini API key, save it as a GitHub Actions repository secret, and run the deployment workflow. The key is then stored as a Supabase Edge Function secret; it is never added to the website JavaScript.
 
-## 1) Confirm you have a Supabase project
+## 1) Get a Gemini API key
 
-In the Supabase Dashboard, open your project and copy its Project URL and Publishable key from Project Settings → API. In Personal Space V6, open **Backup & Sync**, enter those values, then sign in to the same Supabase project. Use only the Publishable key in the browser. Never put a Supabase secret/service-role key or an OpenAI API key in website settings or in GitHub.
+1. Open [Google AI Studio API keys](https://aistudio.google.com/apikey).
+2. Sign in with your Google account.
+3. Choose **Create API key**. If asked, choose or create a Google Cloud project.
+4. Copy the key and keep it private. Do not paste it in this repository, into the website, or into a chat.
 
-## 2) Add the OpenAI secret
+Gemini API has a free tier for selected models with usage limits. Availability and request quotas depend on the model and account; check [Gemini API pricing](https://ai.google.dev/gemini-api/docs/pricing) and your usage dashboard before relying on it. Free-tier data use can differ from paid-tier terms, so review Google's current data-use terms.
 
-In the Supabase Dashboard, open Edge Functions → Secrets (sometimes shown as Edge Function Secrets) and add:
+## 2) Add three GitHub Actions secrets
 
-- Name: `OPENAI_API_KEY`
-- Value: your OpenAI API key
+In this GitHub repository, open **Settings → Secrets and variables → Actions → New repository secret**. Add the following names exactly:
 
-Optional model setting:
+- `SUPABASE_ACCESS_TOKEN`: Create a personal access token in your Supabase account's Access Tokens page. Do not use a service-role key here.
+- `SUPABASE_PROJECT_REF`: Your project reference from the Supabase Dashboard URL, like `https://supabase.com/dashboard/project/<project-ref>`.
+- `GEMINI_API_KEY`: The key you just created in Google AI Studio.
 
-- Name: `OPENAI_MODEL`
-- Value: `gpt-4.1-mini`
+Do not add these values to source code or issue comments. GitHub Actions stores them as encrypted secrets.
 
-The AI key remains on the server. Do not commit it to this repository. OpenAI API usage may incur separate charges.
+## 3) Deploy the Gemini function
 
-## 3) Deploy the function
+1. Open the repository's **Actions** tab.
+2. Choose **Deploy Chapter Allocation AI**.
+3. Tap **Run workflow**, select the `personal-space-v6` branch, and run it.
+4. Wait for the workflow to finish successfully.
 
-**Fastest route: the included GitHub Actions workflow.** It deploys the function and writes the OpenAI key into Supabase Secrets without putting the key in the site or committing it to Git.
+The workflow links the selected Supabase project, stores `GEMINI_API_KEY` and `GEMINI_MODEL` as Supabase Edge Function Secrets, then deploys the authenticated `chapter-allocation` function. The default model is `gemini-3.5-flash-lite`. If it is unavailable for your project, update the model in the workflow to a model enabled for your Gemini API account.
 
-1. In GitHub, open this repository's **Settings → Secrets and variables → Actions** and add these repository secrets:
-   - `SUPABASE_ACCESS_TOKEN`: a Supabase personal access token from your Supabase account's Access Tokens page (not a service-role key).
-   - `SUPABASE_PROJECT_REF`: the project ref from the Supabase Dashboard URL `https://supabase.com/dashboard/project/<project-ref>`.
-   - `OPENAI_API_KEY`: your OpenAI API key.
-2. Open the repository's **Actions** tab and select **Deploy Chapter Allocation AI**.
-3. Click **Run workflow** and select the `personal-space-v6` branch.
-4. Wait for the workflow to finish successfully. It deploys the authenticated `chapter-allocation` function and stores `OPENAI_API_KEY` and `OPENAI_MODEL` as Supabase Edge Function Secrets.
+This workflow is manual only. It does not run on every commit. The function requires authenticated Supabase users; do not turn off JWT verification.
 
-The workflow is manual only; it will not run or deploy just because you commit code. Do not add secrets to source files or issue comments.
+## 4) Connect it to your website
 
-Alternative CLI route, from a local clone of this repository:
+1. Open the deployed [Personal Space V6 site](https://raashop.github.io/personal-space-jee/v6/).
+2. Open **Backup & Sync** and enter your Supabase Project URL and **Publishable** key. Use the Publishable key only; never put a Supabase secret or service-role key in the browser.
+3. Sign in through Backup & Sync to the same Supabase project used by the deployment workflow.
+4. Create a planned topic test with a future date and select its chapters.
+5. Return to the dashboard's **Chapter Allocation** panel and press **Generate AI allocation**.
 
-1. Install Node.js 20+ and the Supabase CLI: `npm install supabase --save-dev`.
-2. Sign in: `npx supabase login`.
-3. Link the project: `npx supabase link --project-ref <project-ref>`.
-4. Add the OpenAI secret with `npx supabase secrets set OPENAI_API_KEY=your-key OPENAI_MODEL=gpt-4.1-mini`.
-5. Deploy: `npx supabase functions deploy chapter-allocation`.
-
-The `supabase/config.toml` keeps JWT verification enabled. Do not deploy with `--no-verify-jwt`; the function is intended for signed-in users only.
-
-## 4) Use it
-
-1. Open the deployed GitHub Pages website and configure Backup & Sync with the same Supabase Project URL and Publishable key.
-2. Sign in to Supabase using the site's Backup & Sync panel.
-3. Create a planned topic test with a future date and select its chapters.
-4. Open the dashboard's **Chapter Allocation** panel and press **Generate AI allocation**.
-
-The AI produces estimated total hours per chapter, priority, the number of days to revisit each chapter, and a short rationale. Chapter focus days may overlap across multiple chapters; this deliberately isn't an hourly timetable.
+Gemini will estimate hours and priorities per chapter, suggest how many days to revisit each chapter, explain its reasoning, and reserve time for the rest of the JEE syllabus. This is a flexible workload allocation, not an hourly timetable.
 
 ## Troubleshooting
 
-- **AI service isn't configured yet**: add `OPENAI_API_KEY` to Edge Function Secrets and wait a moment before trying again.
-- **401 / sign in**: sign in through Backup & Sync and ensure the Edge Function's JWT verification is enabled.
-- **404 / function not found**: deploy the function named exactly `chapter-allocation` to the same Supabase project whose URL is stored in the site.
-- **AI key rejected or provider error**: check the OpenAI API key, API project billing/usage limits, and `OPENAI_MODEL`.
-- The current function has a lightweight per-runtime request limit; for a public multi-user launch, add a persistent per-user quota table and monitoring.
+- **AI service isn't configured yet**: add `GEMINI_API_KEY` to GitHub Actions secrets, rerun the workflow, and check that it succeeds.
+- **401 / sign in**: sign in through Backup & Sync. The function is configured to verify Supabase JWTs.
+- **404 / function not found**: deploy the function to the same Supabase project whose URL is saved in the website settings.
+- **Gemini rejects the API key or model**: check the key, model availability and Google AI Studio project settings.
+- **Quota / 429**: you've reached a request limit. Check the AI Studio usage page and retry after the quota resets.
+- **The dashboard still shows old text or layout**: wait for GitHub Pages to deploy, then refresh the page.
+
+The website sends selected JEE chapter names, subject, preparation status, test date and workload estimates to the backend. It does not need to send your email or password to Gemini. Keep personal information out of chapter names and test titles.
