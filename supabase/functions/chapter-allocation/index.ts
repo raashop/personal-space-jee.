@@ -114,8 +114,8 @@ Deno.serve(async (req: Request) => {
   if (!apiKey) return json({ error: "AI service isn't configured yet. Add GEMINI_API_KEY to Supabase Edge Function Secrets." }, 503, origin);
 
   // Default to a current, fast model; override via the GEMINI_MODEL secret if needed.
-  const model = Deno.env.get("GEMINI_MODEL") || "gemini-3.5-flash-lite";
-  const hoursPerDay = Math.max(6, Math.min(10, Number.isFinite(dailyStudyHours) ? dailyStudyHours : 6.5));
+  const model = Deno.env.get("GEMINI_MODEL") || "gemini-3.1-flash-lite";
+  const hoursPerDay = Math.max(0.5, Math.min(14, Number.isFinite(dailyStudyHours) ? dailyStudyHours : 6.5));
   const safeTest = {
     name: String(test.name).slice(0, 160),
     date: String(test.date || "").slice(0, 20),
@@ -133,7 +133,7 @@ Deno.serve(async (req: Request) => {
   const instructions = `You are an expert JEE Main chapter workload allocator. Return one valid JSON object only.
 Estimate how many total study hours and how many distinct days each listed chapter deserves before the test.
 Use chapter size, conceptual difficulty, expected problem-solving practice, preparation status, and time remaining. Use baselineHours as a rough starting point, not a hard limit. Heavy chapters usually need more time than short chapters; a chapter marked Exam Ready needs much less time than Not Ready, unless it's very large.
-The learner has 6+ hours/day but wants balance: reserve about 35% of available study capacity for the broader JEE syllabus, ongoing chapters, spaced revision and buffer. Keep the sum of chapter hours at or below testChapterBudgetHours unless a brief warning explains why the test syllabus is unrealistic. Never propose a schedule with clock times.
+Use the learner's supplied dailyStudyHours as their real available time. Reserve about 35% of available study capacity for the broader JEE syllabus, ongoing chapters, spaced revision and buffer. Keep the sum of chapter hours at or below testChapterBudgetHours unless a brief warning explains why the test syllabus is unrealistic. Never propose a schedule with clock times.
 For each chapter, choose focusDays as the number of separate days on which to revisit/focus on it. This can overlap with the days allocated to other chapters; the values do not add up to daysRemaining. Prioritize high-weight workload, weak chapters, and test urgency. Give concise actionable study focus, not a timetable.
 Output exactly this shape:
 {"summary":"short recommendation","chapters":[{"id":"0","chapter":"exact supplied chapter title","subject":"exact supplied subject","estimatedHours":3.5,"focusDays":2,"priority":"High","reason":"brief explanation","focus":"what to do: concepts, examples, PYQs or revision"}],"testPrepHours":10,"syllabusHoursPerDay":2.3,"warnings":[]}
