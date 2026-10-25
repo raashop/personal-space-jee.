@@ -1855,7 +1855,7 @@ td strong {
   }
 }
 </style>
-<link rel="stylesheet" href="./edge.css">
+<link rel="stylesheet" href="./edge.css?v=20261025-layout2">
 </head>
 <body>
 <div class="shell">
@@ -1909,13 +1909,13 @@ td strong {
      <div class="hero-ring-caption"><strong id="doneHero">0 / 54</strong><span>chapters completed</span></div>
     </div>
    </section>
-  </div>
 
   <div class="metric-grid dashboard-metrics">
    <button class="metric metric-clickable" type="button" onclick="openDashboardDrilldown('done')" aria-label="View chapters marked done"><div class="metric-top"><div class="metric-icon metric-icon-book">▤</div><label>CHAPTERS DONE</label><span class="metric-arrow">↗</span></div><strong id="readyMetric">0 / 54</strong><small>Marked done in the chapter planner</small></button>
    <button class="metric metric-clickable" type="button" onclick="openDashboardDrilldown('attempts')" aria-label="View all test attempts and scores"><div class="metric-top"><div class="metric-icon metric-icon-tests">✓</div><label>TEST ATTEMPTS</label><span class="metric-arrow">↗</span></div><strong id="testMetric">0</strong><small id="testMetricHint">Topic tests · LITMUS tests · view marks</small></button>
    <button class="metric metric-clickable" type="button" onclick="openDashboardDrilldown('needs')" aria-label="View chapters that need work"><div class="metric-top"><div class="metric-icon metric-icon-revision">↻</div><label>CHAPTERS NEED WORK</label><span class="metric-arrow">↗</span></div><strong id="needsWorkMetric">0</strong><small>Chapters to revise</small></button>
    <button class="metric metric-clickable planned-metric" type="button" onclick="openDashboardDrilldown('planned')" aria-label="View planned topic tests"><div class="metric-top"><div class="metric-icon metric-icon-calendar">▦</div><label>PLANNED TESTS</label><span class="metric-arrow">↗</span></div><strong id="plannedMetricCount">0</strong><small id="plannedMetricHint">Open your upcoming tests</small></button>
+  </div>
   </div>
 
   <div class="section-head dashboard-section-head"><div><h3>Your subject progress</h3><p>Physics, Chemistry and Mathematics — updated from your chapter statuses.</p></div><button class="small-btn" type="button" onclick="openReadinessReport()">View progress ↗</button></div>
@@ -3182,7 +3182,7 @@ function renderChapters(){
   const checkpoints=["r1","r2","r3","notes","pyq"].filter(k=>Boolean(c[k])).length;
   let value=checkpoints*20;
   if(c.prep==="In Progress")value=Math.max(30,value);
-  if(c.prep==="Needs Work")value=Math.max(15,value);
+  if(c.prep==="Needs Work")value=Math.max(60,value);
   if(c.topicAttempted)value=Math.max(65,value);
   return Math.min(95,value);
  };
@@ -3191,7 +3191,7 @@ function renderChapters(){
   const progress=progressFor(c);
   const options=statusOptions.map(([value,label])=>'<option value="'+value+'" '+(c.prep===value?'selected':'')+'>'+label+'</option>').join("");
   const subject=escapeAttr(c.subject),chapter=escapeAttr(c.chapter);
-  return '<tr class="chapter-table-row">'+
+  return '<tr class="chapter-table-row status-row-'+meta.css+'">'+
    '<td class="chapter-row-number">'+(i+1)+'</td>'+
    '<td class="chapter-row-name"><strong>'+escapeHTML(chapterDisplayName(c.subject,c.chapter))+'</strong><small>'+escapeHTML(c.class||"JEE Main")+' · '+escapeHTML(c.subject)+'</small></td>'+
    '<td><select class="chapter-status-chip status-'+meta.css+'" aria-label="Preparation status for '+escapeHTML(c.chapter)+'" onchange="setPrep(\''+subject+'\',\''+chapter+'\',this.value)">'+options+'</select></td>'+
@@ -4274,7 +4274,7 @@ if(e.target.matches('#modalFields [name="subject"]')&&["topic","newtopic"].inclu
 );
 renderAll();
 </script>
-<script src="./productivity.js"></script>
-<script src="./edge.js"></script>
+<script src="./productivity.js?v=20261025-layout2"></script>
+<script src="./edge.js?v=20261025-layout2"></script>
 </body>
 </html>
