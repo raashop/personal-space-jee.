@@ -1934,6 +1934,70 @@ td strong {
 
 </style>
 <link rel="stylesheet" href="./edge.css?v=20261025-layout3">
+<style id="personal-space-study-activity">
+/* Preserve the dashboard hero and four metric cards; only replace the content beneath them. */
+.study-activity-panel{margin:18px 0 20px;min-width:0}
+.study-activity-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:14px 0 18px}
+.study-activity-stat{display:grid;gap:6px;align-content:start;min-width:0;padding:14px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(145deg,#fff,#f8fbfa)}
+.study-activity-stat small{font-size:11px;color:var(--muted);line-height:1.35}
+.study-activity-stat strong{font-size:23px;letter-spacing:-.04em}
+.study-activity-stat>span:last-child{font-size:10px;color:var(--muted)}
+.study-activity-icon{display:grid;place-items:center;width:30px;height:30px;border-radius:9px;background:#e8f2ff;color:#2784d8;font-weight:900}
+.study-activity-icon.yt{background:#ffe9e8;color:#d83e39}.study-activity-icon.tg{background:#e7f2ff;color:#2685c7}.study-activity-icon.done{background:#e1f6eb;color:#15966a}
+.study-activity-lower{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:18px}
+.study-activity-subhead{display:flex;justify-content:space-between;gap:8px;align-items:baseline;margin:0 0 10px}
+.study-activity-subhead strong{font-size:13px}.study-activity-subhead span{font-size:10px;color:var(--muted);text-align:right}
+.study-course-progress-list{display:grid;gap:10px;min-width:0}
+.study-course-card{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--surface,#fff);min-width:0}
+.study-course-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.study-course-top strong{font-size:12px;line-height:1.45;overflow-wrap:anywhere}.study-course-top small{display:block;color:var(--muted);font-size:10px;margin-top:3px}
+.study-course-count{font-size:11px;font-weight:800;white-space:nowrap}
+.study-course-bar{height:7px;background:#e9eef2;border-radius:99px;overflow:hidden;margin-top:10px}.study-course-bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#2784d8,#15966a)}
+.study-course-footer{display:flex;gap:8px;align-items:center;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:7px}
+.study-course-remove{border:0;background:transparent;color:var(--muted);font-size:11px;cursor:pointer;text-decoration:underline}
+.study-activity-chapter-list{display:flex;flex-wrap:wrap;gap:7px;align-content:start}
+.study-chapter-chip{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 10px;display:flex;align-items:center;gap:7px;text-align:left;cursor:pointer;color:var(--ink)}
+.study-chapter-chip small{font-size:10px;color:var(--muted)}.study-chapter-chip:hover,.chapter-name-link:hover{border-color:#8abca5;color:#14764d}
+.chapter-name-link{border:0;background:transparent;padding:0;color:var(--ink);font:inherit;text-align:left;font-weight:800;line-height:1.4;cursor:pointer;border-bottom:1px dashed transparent}
+.chapter-lecture-meta{display:block;font-size:10px;color:#19734e!important;margin-top:4px}
+.chapter-lecture-mini{height:4px;max-width:180px;background:#e6f2ea;border-radius:99px;overflow:hidden;margin-top:4px}.chapter-lecture-mini i{display:block;height:100%;background:linear-gradient(90deg,#2784d8,#15966a)}
+#page-lectures .course-add-form{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(160px,.8fr) auto;gap:10px;align-items:end}
+#page-lectures .course-add-form label,#chapterAllocationPanel .allocation-input-grid label{display:grid;gap:6px;font-size:11px;font-weight:750;color:var(--muted);min-width:0}
+#page-lectures .course-add-form .btn{min-height:42px}
+#chapterAllocationPanel .allocation-input-grid{display:grid;grid-template-columns:minmax(110px,.6fr) minmax(0,1.4fr);gap:9px}
+#chapterAllocationPanel .allocation-chapter-picker{display:grid;gap:5px;max-height:230px;overflow:auto;padding:7px;border:1px solid var(--line);border-radius:12px;background:var(--surface,#fff)}
+#chapterAllocationPanel .allocation-chapter-choice{display:flex;gap:8px;align-items:center;padding:7px 8px;border-radius:8px;cursor:pointer;font-size:11px;line-height:1.35}
+#chapterAllocationPanel .allocation-chapter-choice:hover{background:#f2f8f5}
+#chapterAllocationPanel .allocation-chapter-choice input{accent-color:#16845b}
+#chapterAllocationPanel .allocation-chapter-choice span{flex:1;min-width:0}
+#chapterAllocationPanel .allocation-chapter-choice small{display:block;color:var(--muted);font-size:10px;margin-top:2px}
+#chapterAllocationPanel .allocation-chapter-choice .alloc-check-status{font-size:9px;border-radius:99px;padding:3px 6px;background:#eef2f5;color:#637282;white-space:nowrap}
+#chapterAllocationPanel .allocation-chapter-choice .alloc-check-status.progress{background:#e7f1ff;color:#2676c4}
+#chapterAllocationPanel .allocation-chapter-choice .alloc-check-status.needs{background:#fff2d9;color:#94620e}
+#chapterAllocationPanel .allocation-chapter-name{border:0;background:transparent;padding:0;font:inherit;font-weight:800;color:var(--ink);text-align:left;cursor:pointer}
+#chapterAllocationPanel .allocation-chapter-name:hover{text-decoration:underline;color:#16784f}
+#chapterAllocationPanel .allocation-chapter-top{display:flex;justify-content:space-between;gap:10px;align-items:center}
+#chapterAllocationPanel .allocation-priority{font-size:10px;font-weight:800;border-radius:99px;padding:4px 8px;background:var(--surface-2,#f0f2f5)}
+#chapterAllocationPanel .allocation-priority-high{color:#ba493f;background:#fff0ed}
+#chapterAllocationPanel .allocation-priority-medium{color:#8a6418;background:#fff6db}
+#chapterAllocationPanel .allocation-priority-low{color:#18734e;background:#e5f7ed}
+#chapterAllocationPanel .allocation-ai-summary{padding:11px 12px;border:1px solid var(--line);border-radius:12px;margin-bottom:12px}
+#chapterAllocationPanel .allocation-ai-summary p{font-size:13px;line-height:1.5;margin:5px 0 0}
+#chapterAllocationPanel .allocation-reason{font-size:12px;color:var(--muted);line-height:1.45;margin-top:5px}
+#chapterAllocationPanel .allocation-warning{font-size:12px;line-height:1.5;background:#fff5e8;color:#87541a;border-radius:10px;padding:10px;margin-top:10px}
+#chapterAllocationPanel #chapterAllocationAIButton:disabled{opacity:.65;cursor:wait}
+#page-chapters .chapter-name-link{max-width:100%;word-break:normal}
+#page-chapters .chapter-table .status-row-needs-work{background:#fffaf0}
+#page-chapters .chapter-table tr.status-row-needs-work .progress-fill{background:#d28a35!important}
+#page-chapters .chapter-status-chip.status-needs-work{background:#fff0d5!important;color:#8e5a09!important;border-color:#e8c47e!important}
+#page-chapters .chapter-status-chip.status-not-started{background:#eef2f5!important;color:#64748b!important;border-color:#d8e0e7!important}
+#page-chapters .chapter-status-chip.status-in-progress{background:#e7f1ff!important;color:#1e67b1!important;border-color:#b8d4f5!important}
+#page-chapters .chapter-status-chip.status-completed{background:#e2f6eb!important;color:#16724b!important;border-color:#a9dfc2!important}
+.ring-subject-arc{stroke-width:9;stroke-linecap:butt;filter:none}
+.study-activity-panel .empty{padding:12px;border:1px dashed var(--line);border-radius:10px;color:var(--muted);font-size:11px}
+@media(max-width:1000px){.study-activity-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.study-activity-lower{grid-template-columns:1fr}#page-lectures .course-add-form{grid-template-columns:1fr 1fr}#page-lectures .course-add-form .btn{grid-column:1/-1}}
+@media(max-width:560px){.study-activity-grid{gap:7px}.study-activity-stat{padding:10px}.study-activity-stat strong{font-size:19px}#page-lectures .course-add-form{grid-template-columns:1fr}#chapterAllocationPanel .allocation-input-grid{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
 <div class="shell">
@@ -1983,7 +2047,7 @@ td strong {
     </div>
     <div class="hero-side">
      <button type="button" class="ring ring-action" id="overallRing" aria-label="Open detailed chapter readiness report" title="Open chapter readiness report" onclick="openReadinessReport()">
-      <svg class="ring-svg" viewBox="0 0 160 160" aria-hidden="true"><defs><linearGradient id="readinessGradient" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#2784d8"/><stop offset="100%" stop-color="#15966a"/></linearGradient></defs><circle class="ring-track" cx="80" cy="80" r="69.5"/><circle class="ring-arc ring-value" id="ringArc" cx="80" cy="80" r="69.5"/></svg>
+      <svg class="ring-svg" viewBox="0 0 160 160" aria-hidden="true"><circle class="ring-track" cx="80" cy="80" r="69.5"/><circle class="ring-arc ring-value ring-subject-arc" id="ringPhysics" cx="80" cy="80" r="69.5" style="stroke:#2784d8"/><circle class="ring-arc ring-value ring-subject-arc" id="ringChemistry" cx="80" cy="80" r="69.5" style="stroke:#15966a"/><circle class="ring-arc ring-value ring-subject-arc" id="ringMathematics" cx="80" cy="80" r="69.5" style="stroke:#8064c7"/></svg>
       <div class="ring-inner"><strong id="overallPct">0%</strong><span>chapters done</span><i class="ring-dot" aria-hidden="true"></i></div>
      </button>
      <div class="hero-ring-caption"><strong id="doneHero">0 / 54</strong><span>chapters completed</span></div>
@@ -1998,8 +2062,19 @@ td strong {
   </div>
   </div>
 
-  <div class="section-head dashboard-section-head"><div><h3>Your subject progress</h3><p>Physics, Chemistry and Mathematics — updated from your chapter statuses.</p></div><button class="small-btn" type="button" onclick="openReadinessReport()">View progress ↗</button></div>
-  <div class="subject-grid" id="subjectCards"></div>
+  <section class="panel study-activity-panel" id="studyActivityPanel">
+   <div class="dashboard-panel-head"><div><h2>Study Activity</h2><p>Today's study sessions, tracked lectures and chapters touched.</p></div><button class="small-btn" type="button" onclick="go('lectures')">Open lecture tracker ↗</button></div>
+   <div class="study-activity-grid">
+    <article class="study-activity-stat"><span class="study-activity-icon">◷</span><small>Study time logged today</small><strong id="studyActivityHours">0m</strong><span id="studyActivityHoursMeta">From your study sessions</span></article>
+    <article class="study-activity-stat"><span class="study-activity-icon yt">▶</span><small>YouTube watch time</small><strong id="studyActivityYoutubeTime">0m</strong><span id="studyActivityYoutubeMeta">Total tracked playback</span></article>
+    <article class="study-activity-stat"><span class="study-activity-icon tg">↗</span><small>Telegram lectures</small><strong id="studyActivityTelegram">0</strong><span id="studyActivityTelegramMeta">Tracked lecture posts</span></article>
+    <article class="study-activity-stat"><span class="study-activity-icon done">✓</span><small>Chapters touched today</small><strong id="studyActivityChapters">0</strong><span id="studyActivityChaptersMeta">From sessions, tasks and lectures</span></article>
+   </div>
+   <div class="study-activity-lower">
+    <section><div class="study-activity-subhead"><strong>Course progress</strong><span>Totals pulled from saved YouTube playlists</span></div><div id="studyCourseProgressList" class="study-course-progress-list"><div class="empty">Add a YouTube playlist in Lecture Tracker to see total lectures and progress.</div></div></section>
+    <section><div class="study-activity-subhead"><strong>Chapters studied today</strong><span>Tap a chapter to open it</span></div><div id="studyActivityChapterList" class="study-activity-chapter-list"><div class="empty">Your chapter activity will appear here.</div></div></section>
+   </div>
+  </section>
 
   <div class="dashboard-main-layout">
    <div class="dashboard-main-stack" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start">
@@ -2009,12 +2084,19 @@ td strong {
      <div class="upcoming-list" id="upcomingList"></div>
     </section>
     <section class="panel" id="chapterAllocationPanel">
-     <div class="dashboard-panel-head"><div><h2>Chapter Allocation</h2><p>What to focus on before your next test.</p></div><span class="planned-count-badge">SMART PLAN</span></div>
-     <label for="allocationTestSelect" class="field-label" style="display:block;margin:12px 0 6px">Choose a planned topic test</label>
-     <select id="allocationTestSelect" class="control" style="width:100%" onchange="renderChapterAllocation()"><option value="">No planned topic tests</option></select>
-     <div id="chapterAllocationResults" style="margin-top:14px"><div class="empty">Create a topic test with chapters and a date to get a chapter workload estimate.</div></div>
-     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button type="button" class="btn btn-primary" id="chapterAllocationAIButton" onclick="requestAIChapterAllocation()">Generate AI allocation ✦</button><button type="button" class="small-btn" onclick="go('topic')">Manage topic tests ↗</button></div>
-     <div id="chapterAllocationAIStatus" class="allocation-note" role="status" aria-live="polite">AI allocation requires Supabase sign-in and the one-time Edge Function setup.</div>
+     <div class="dashboard-panel-head"><div><h2>Chapter Allocation</h2><p>Choose any unfinished chapters and tell AI how much time you have.</p></div><span class="planned-count-badge">AI PLAN</span></div>
+     <label for="allocationPlanMode" class="field-label" style="display:block;margin:12px 0 6px">What are you planning for?</label>
+     <select id="allocationPlanMode" class="control" style="width:100%" onchange="saveAllocationMode();renderChapterAllocation()"><option value="test">Upcoming topic test</option><option value="chapters">My chapters (To do / In Progress / Needs Work)</option></select>
+     <div id="allocationTestControls" style="margin-top:10px"><label for="allocationTestSelect" class="field-label" style="display:block;margin:0 0 6px">Choose a planned topic test</label><select id="allocationTestSelect" class="control" style="width:100%" onchange="renderChapterAllocation()"><option value="">No planned topic tests</option></select></div>
+     <div id="allocationManualControls" hidden style="margin-top:10px">
+      <div class="allocation-input-grid"><label>Days available<input id="allocationDaysInput" class="control" type="number" min="1" max="90" step="1" value="5" onchange="saveChapterAllocationPrefs();renderChapterAllocation()"></label><label>Chapter status<select id="allocationChapterStatusFilter" class="control" onchange="renderAllocationChapterPicker()"><option value="active">To do / In Progress / Needs Work</option><option value="all">All chapters, including Done</option><option value="todo">To do only</option><option value="progress">In Progress only</option><option value="needs">Needs Work only</option></select></label></div>
+      <label for="allocationChapterSearch" class="field-label" style="display:block;margin:10px 0 6px">Find chapters to include</label><input id="allocationChapterSearch" class="control" type="search" placeholder="Search Physics, Chemistry or Maths…" oninput="renderAllocationChapterPicker()">
+      <div id="allocationChapterPicker" class="allocation-chapter-picker"></div><div id="allocationSelectionMeta" class="helper-note" style="margin-top:6px">Select up to 20 chapters for one AI allocation.</div>
+     </div>
+     <label for="allocationDailyHoursInput" class="field-label" style="display:block;margin:10px 0 6px">How many hours can you study each day?</label><input id="allocationDailyHoursInput" class="control" type="number" min="0.5" max="14" step="0.5" value="6.5" onchange="saveChapterAllocationPrefs();renderChapterAllocation()">
+     <div id="chapterAllocationResults" style="margin-top:14px"><div class="empty">Choose an upcoming test or select chapters to build a plan.</div></div>
+     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button type="button" class="btn btn-primary" id="chapterAllocationAIButton" onclick="requestAIChapterAllocation()">Generate AI allocation ✦</button><button type="button" class="small-btn" onclick="go('topic')">Manage topic tests ↗</button><button type="button" class="small-btn" onclick="clearAllocationSelection()">Clear chapter selection</button></div>
+     <div id="chapterAllocationAIStatus" class="allocation-note" role="status" aria-live="polite">Sign in through Backup &amp; Sync, choose a plan and set your available time.</div>
     </section>
    </div>
    <aside class="dashboard-side-stack">
@@ -2044,7 +2126,7 @@ td strong {
   <div class="panel chapter-progress-banner">
    <div class="chapter-progress-summary"><div><strong id="chapterProgressTitle">Class 11 Physics Progress</strong><span id="chapterProgressCount">0 / 20 chapters</span></div><div class="chapter-progress-value"><strong id="chapterProgressPercent">0%</strong><span id="chapterProgressRightLabel">Chapters completed</span></div></div>
    <div class="chapter-overall-track"><div class="chapter-overall-fill" id="chapterProgressFill" style="width:0%"></div></div>
-   <div class="chapter-legend"><span><i class="legend-not-started"></i>Not Started</span><span><i class="legend-in-progress"></i>In Progress</span><span><i class="legend-revision"></i>Revision</span><span><i class="legend-testing"></i>Testing</span><span><i class="legend-completed"></i>Completed</span></div>
+   <div class="chapter-legend"><span><i class="legend-not-started"></i>To do</span><span><i class="legend-in-progress"></i>In Progress</span><span><i class="legend-revision"></i>Needs Work</span><span><i class="legend-testing"></i>Testing</span><span><i class="legend-completed"></i>✓ Done</span></div>
   </div>
   <div class="chapter-summary" id="chapterSummary" hidden></div>
   <div class="table-card chapter-table-card"><div class="table-scroll"><table class="chapter-table"><thead><tr><th>#</th><th>Chapter</th><th>Status</th><th>Progress</th><th>Actions</th></tr></thead><tbody id="chapterList"></tbody></table></div></div>
@@ -2098,6 +2180,16 @@ td strong {
    <article class="stat-card"><span class="stat-label">Tracked lectures</span><strong id="psLectureCount">0</strong><small>Unique YouTube videos</small></article>
    <article class="stat-card"><span class="stat-label">Watch time</span><strong id="psLectureMinutes">0 min</strong><small>Accumulated playback time</small></article>
    <article class="stat-card"><span class="stat-label">Chapters touched</span><strong id="psLectureChapters">0</strong><small>Matched to your syllabus</small></article>
+  </div>
+  <div class="panel youtube-course-manager" style="margin-bottom:16px">
+   <div class="panel-head"><div><h3>Course &amp; playlist progress</h3><p>Paste a public or unlisted YouTube playlist. We fetch its real lecture count, then use Gemini to match lesson titles to your chapter planner.</p></div></div>
+   <form id="psCourseForm" class="course-add-form" onsubmit="addYoutubeCourse(event)">
+    <label>Playlist URL<input id="psCoursePlaylistUrl" class="control" type="url" placeholder="https://www.youtube.com/playlist?list=…" required></label>
+    <label>Subject (optional)<select id="psCourseSubject" class="control"><option value="">Auto-detect from lesson titles</option><option>Physics</option><option>Chemistry</option><option>Mathematics</option></select></label>
+    <button class="btn btn-primary" type="submit" id="psCourseAddButton">Find total lectures &amp; track progress ✦</button>
+   </form>
+   <div id="psCourseStatus" class="switch-note" role="status" aria-live="polite" style="margin-top:12px">Requires the YouTube Data API key in GitHub Secrets; the playlist must be public or unlisted.</div>
+   <div id="psCourseProgressList" class="study-course-progress-list" style="margin-top:12px"><div class="empty">No playlist courses added yet.</div></div>
   </div>
   <div class="panel">
    <div class="panel-head"><div><h3>Lecture history</h3><p>Automatically synced from your connected Brave extension.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-secondary" type="button" onclick="document.getElementById('psLectureImportFile').click()">Import backup (optional)</button><button class="btn btn-secondary" type="button" onclick="exportYoutubeLectures()">Export backup ↓</button></div></div>
