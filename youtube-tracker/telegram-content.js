@@ -94,9 +94,10 @@
   }
   function textHasChapter(text) {
     const t=normalize(text);
+    const shortAliases=new Set(["goc","ktg","wpe","aod","emi","p c"]);
     return CHAPTERS.some(item=>[item[1],...item[2]].some(term=>{
       const n=normalize(term);
-      return n.length>=4 && t.includes(n);
+      return n.length>=4 ? t.includes(n) : shortAliases.has(n)&&(" "+t+" ").includes(" "+n+" ");
     }));
   }
   const nearbyCaptionCache=new WeakMap();
