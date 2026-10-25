@@ -1856,18 +1856,18 @@ td strong {
 }
 
 /* Focused layouts for the YouTube and Telegram utility pages */
-#page-lectures,#page-telegram{width:100%;max-width:1120px;margin:0 auto;padding-bottom:28px;min-width:0}
-#page-lectures .page-hero,#page-telegram .page-hero{align-items:center;padding:clamp(16px,2.5vw,24px);background:linear-gradient(120deg,#fff 0%,#f4fbf7 100%);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);margin-bottom:16px}
-#page-lectures .page-hero h2,#page-telegram .page-hero h2{font-size:clamp(22px,2.3vw,28px);line-height:1.15}
-#page-lectures .page-hero p,#page-telegram .page-hero p{max-width:680px;font-size:12px;line-height:1.65}
+#page-lectures,#telegram-section{width:100%;max-width:1120px;margin:0 auto;padding-bottom:28px;min-width:0}
+#page-lectures .page-hero,#telegram-section .page-hero{align-items:center;padding:clamp(16px,2.5vw,24px);background:linear-gradient(120deg,#fff 0%,#f4fbf7 100%);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);margin-bottom:16px}
+#page-lectures .page-hero h2,#telegram-section .page-hero h2{font-size:clamp(22px,2.3vw,28px);line-height:1.15}
+#page-lectures .page-hero p,#telegram-section .page-hero p{max-width:680px;font-size:12px;line-height:1.65}
 #page-lectures .dashboard-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0 0 16px}
 #page-lectures .stat-card{min-width:0;padding:17px 18px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(145deg,#fff,#f8fcf9);box-shadow:0 5px 16px #244f3c07}
 #page-lectures .stat-label{display:block;font-size:10px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
 #page-lectures .stat-card strong{display:block;font-size:clamp(23px,2.5vw,31px);line-height:1.1;letter-spacing:-.05em;color:var(--ink);overflow-wrap:anywhere}
 #page-lectures .stat-card small{display:block;margin-top:7px;font-size:10px;line-height:1.5;color:var(--muted)}
-#page-lectures .panel,#page-telegram .panel{padding:clamp(15px,2.4vw,22px);margin-top:14px}
+#page-lectures .panel,#telegram-section .panel{padding:clamp(15px,2.4vw,22px);margin-top:14px}
 #page-lectures .panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:14px}
-#page-lectures .panel-head h3,#page-telegram .panel h3{font-size:15px;margin:0 0 5px}
+#page-lectures .panel-head h3,#telegram-section .panel h3{font-size:15px;margin:0 0 5px}
 #page-lectures .panel-head p{font-size:11px;line-height:1.6;color:var(--muted);margin:0}
 #psLectureSyncStatus{font-size:11px;padding:13px 15px;border-radius:13px;background:#f0f8f3;color:#426e57;border:1px solid #dceee3;overflow-wrap:anywhere}
 #psLectureSyncStatus[data-state="error"]{background:#fff5f3;border-color:#f2d7d2;color:#934d43}
@@ -1876,40 +1876,40 @@ td strong {
 #page-lectures .list-row{padding:14px;border:1px solid var(--line);border-radius:14px;background:#fff;min-width:0;overflow-wrap:anywhere}
 #page-lectures .list-row strong{font-size:12px;line-height:1.55}
 #page-lectures .list-row small{font-size:10px;color:var(--muted);line-height:1.6}
-#page-lectures .howto-list,#page-telegram .howto-list{padding-left:22px;margin:12px 0 0;color:var(--muted);font-size:11px;line-height:1.9}
-#page-lectures .howto-list li,#page-telegram .howto-list li{padding-left:3px;margin:4px 0}
-#page-lectures code,#page-telegram code{background:#f0f5f2;padding:2px 5px;border-radius:5px;font-size:.95em;overflow-wrap:anywhere}
-#page-telegram .panel>p{font-size:11px;line-height:1.7}
-#page-telegram #psTelegramForm{max-width:760px}
-#page-telegram #psTelegramForm label{display:grid;gap:7px;font-size:11px;font-weight:750;color:#526b5f;line-height:1.5}
-#page-telegram #psTelegramForm input,#page-telegram #psTelegramForm select{width:100%;max-width:100%;min-height:42px;background:#fff}
-#page-telegram #psTelegramPreview{overflow-wrap:anywhere;font-size:11px;line-height:1.7}
-#page-telegram .telegram-step{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--line)}
-#page-telegram .telegram-step:last-child{border-bottom:0}
-#page-telegram .telegram-step-num{width:27px;height:27px;flex:none;display:grid;place-items:center;border-radius:9px;background:#e6f5ec;color:#237852;font-weight:850;font-size:11px}
+#page-lectures .howto-list,#telegram-section .howto-list{padding-left:22px;margin:12px 0 0;color:var(--muted);font-size:11px;line-height:1.9}
+#page-lectures .howto-list li,#telegram-section .howto-list li{padding-left:3px;margin:4px 0}
+#page-lectures code,#telegram-section code{background:#f0f5f2;padding:2px 5px;border-radius:5px;font-size:.95em;overflow-wrap:anywhere}
+#telegram-section .panel>p{font-size:11px;line-height:1.7}
+#telegram-section #psTelegramForm{max-width:760px}
+#telegram-section #psTelegramForm label{display:grid;gap:7px;font-size:11px;font-weight:750;color:#526b5f;line-height:1.5}
+#telegram-section #psTelegramForm input,#telegram-section #psTelegramForm select{width:100%;max-width:100%;min-height:42px;background:#fff}
+#telegram-section #psTelegramPreview{overflow-wrap:anywhere;font-size:11px;line-height:1.7}
+#telegram-section .telegram-step{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--line)}
+#telegram-section .telegram-step:last-child{border-bottom:0}
+#telegram-section .telegram-step-num{width:27px;height:27px;flex:none;display:grid;place-items:center;border-radius:9px;background:#e6f5ec;color:#237852;font-weight:850;font-size:11px}
 @media(max-width:760px){
  #page-lectures .dashboard-grid{grid-template-columns:1fr;gap:9px}
  #page-lectures .stat-card{padding:14px 15px}
  #page-lectures .lecture-list{grid-template-columns:1fr}
- #page-lectures .page-hero,#page-telegram .page-hero{align-items:flex-start;flex-direction:column}
+ #page-lectures .page-hero,#telegram-section .page-hero{align-items:flex-start;flex-direction:column}
  #page-lectures .panel-head{flex-direction:column}
  #page-lectures .panel-head>div:last-child{width:100%}
  #page-lectures .panel-head>div:last-child .btn{flex:1}
- #page-telegram .modal-actions{flex-wrap:wrap;justify-content:flex-start}
+ #telegram-section .modal-actions{flex-wrap:wrap;justify-content:flex-start}
 }
 
 
-#page-telegram .telegram-lecture-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-#page-telegram .telegram-lecture-card{display:flex;flex-direction:column;gap:10px;min-width:0;padding:15px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(145deg,#fff,#f9fcfa)}
-#page-telegram .telegram-lecture-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
-#page-telegram .telegram-tag{display:inline-flex;max-width:100%;padding:5px 8px;border-radius:7px;background:#eef7f1;color:#42745a;font-size:9px;font-weight:800;overflow-wrap:anywhere}
-#page-telegram .telegram-remove{padding:6px 9px;font-size:10px}
-#page-telegram .telegram-title{font-size:12px;line-height:1.6;overflow-wrap:anywhere}
-#page-telegram .telegram-chapter{font-size:10px;line-height:1.6;color:#4b7a62;overflow-wrap:anywhere}
-#page-telegram .telegram-card-footer{padding-top:9px;border-top:1px solid var(--line);font-size:10px}
-#page-telegram .telegram-card-footer a{color:#267b59;font-weight:800;text-decoration:none}
-#page-telegram .telegram-card-footer a:hover{text-decoration:underline}
-@media(max-width:760px){#page-telegram .telegram-lecture-list{grid-template-columns:1fr}}
+#telegram-section .telegram-lecture-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#telegram-section .telegram-lecture-card{display:flex;flex-direction:column;gap:10px;min-width:0;padding:15px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(145deg,#fff,#f9fcfa)}
+#telegram-section .telegram-lecture-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+#telegram-section .telegram-tag{display:inline-flex;max-width:100%;padding:5px 8px;border-radius:7px;background:#eef7f1;color:#42745a;font-size:9px;font-weight:800;overflow-wrap:anywhere}
+#telegram-section .telegram-remove{padding:6px 9px;font-size:10px}
+#telegram-section .telegram-title{font-size:12px;line-height:1.6;overflow-wrap:anywhere}
+#telegram-section .telegram-chapter{font-size:10px;line-height:1.6;color:#4b7a62;overflow-wrap:anywhere}
+#telegram-section .telegram-card-footer{padding-top:9px;border-top:1px solid var(--line);font-size:10px}
+#telegram-section .telegram-card-footer a{color:#267b59;font-weight:800;text-decoration:none}
+#telegram-section .telegram-card-footer a:hover{text-decoration:underline}
+@media(max-width:760px){#telegram-section .telegram-lecture-list{grid-template-columns:1fr}}
 
 
 
@@ -2271,6 +2271,18 @@ td strong {
 }
 @media(prefers-reduced-motion:reduce){#chapterAllocationPanel .allocation-day-tab{transition:none}}
 </style>
+
+<style id="ps-v6-removed-workspace-pages">
+#page-daily,#page-mistakes,#page-notes,#page-goals{display:none!important}
+#telegram-section{margin-top:28px;padding-top:8px;border-top:1px solid var(--line,#e4ece8)}
+#telegram-section .telegram-section-heading{margin-top:0;align-items:center}
+#telegram-section .telegram-section-heading h3{margin:0;font-size:18px}
+#telegram-section .telegram-section-heading p{margin-top:5px;max-width:650px;font-size:11px;line-height:1.5;color:var(--muted)}
+#psTelegramCourseAnalysisPanel .panel-head{align-items:center;gap:12px}
+#psTelegramCourseAnalysisPanel .study-course-card{margin:8px 0}
+#psTelegramCourseAnalysisPanel .study-course-count.time-left{font-size:10px;white-space:normal;max-width:145px;text-align:right}
+@media(max-width:680px){#psTelegramCourseAnalysisPanel .panel-head{align-items:flex-start;flex-direction:column}#psTelegramCourseAnalysisPanel .study-course-count.time-left{max-width:none;text-align:left}}
+</style>
 </head>
 <body>
 <div class="shell">
@@ -2283,14 +2295,9 @@ td strong {
   <button data-page="topic"><span class="nav-icon">◷</span>Topic Tests</button>
   <button data-page="litmus"><span class="nav-icon">▦</span>LITMUS Schedule</button>
   <button data-page="pyq"><span class="nav-icon">✎</span>PYQ Practice</button>
-   <button data-page="daily"><span class="nav-icon">◷</span>Daily Journal</button>
-  <button data-page="performance"><span class="nav-icon">↗</span>Performance</button>
-  <button data-page="mistakes"><span class="nav-icon">⌁</span>Mistake Bank</button>
-  <button data-page="notes"><span class="nav-icon">▤</span>Notes</button>
-  <button data-page="goals"><span class="nav-icon">◎</span>Goals &amp; Habits</button>
-  <button data-page="lectures"><span class="nav-icon">▶</span>YouTube Lectures</button>
-  <button data-page="telegram"><span class="nav-icon">↗</span>Telegram Import</button>
-  <button type="button" data-page="backup" onclick="openCloudSettings()"><span class="nav-icon">☁</span>Backup &amp; Sync</button>
+     <button data-page="performance"><span class="nav-icon">↗</span>Performance</button>
+        <button data-page="lectures"><span class="nav-icon">▶</span>Lecture Tracker</button>
+    <button type="button" data-page="backup" onclick="openCloudSettings()"><span class="nav-icon">☁</span>Backup &amp; Sync</button>
  </nav>
  <div class="side-bottom">
   <details class="sidebar-sync-details"><summary>Cloud sync status</summary><div class="sync-state"><span class="sync-dot"></span><div><strong id="syncStatus">Saved on this device</strong><div id="syncDetail">Your progress autosaves as you work.</div></div></div><button class="btn btn-secondary" style="width:100%" onclick="openCloudSettings()">Manage cloud sync</button><div class="side-foot">Your study data stays in this browser unless you connect cloud sync. Export a backup anytime.</div></details>
@@ -2338,17 +2345,16 @@ td strong {
   <div class="dashboard-main-layout dashboard-main-layout-optimized">
    <div class="dashboard-main-stack dashboard-main-stack-optimized">
   <section class="panel study-activity-panel" id="studyActivityPanel">
-   <div class="dashboard-panel-head"><div><h2>Study Activity</h2><p>Today's hours and chapter progress from YouTube, Telegram and study sessions.</p></div><button class="small-btn" type="button" onclick="go('lectures')">Lecture tracker ↗</button></div>
+   <div class="dashboard-panel-head"><div><h2>Study Activity</h2><p>Actual lecture playback time and chapters studied today.</p></div><button class="small-btn" type="button" onclick="go('lectures')">Lecture tracker ↗</button></div>
    <div class="study-activity-grid">
-    <article class="study-activity-stat"><span class="study-activity-icon">◷</span><small>Total study time today</small><strong id="studyActivityHours">0m</strong><span id="studyActivityHoursMeta">Study log + tracked playback</span></article>
+    <article class="study-activity-stat"><span class="study-activity-icon">◷</span><small>Total study time today</small><strong id="studyActivityHours">0m</strong><span id="studyActivityHoursMeta">YouTube + Telegram playback only</span></article>
     <article class="study-activity-stat"><span class="study-activity-icon yt">▶</span><small>YouTube time today</small><strong id="studyActivityYoutubeTime">0m</strong><span id="studyActivityYoutubeMeta">Tracked playback today</span></article>
     <article class="study-activity-stat"><span class="study-activity-icon tg">↗</span><small>Telegram time today</small><strong id="studyActivityTelegram">0m</strong><span id="studyActivityTelegramMeta">Tracked playback today</span></article>
-    <article class="study-activity-stat"><span class="study-activity-icon done">✓</span><small>Chapters done today</small><strong id="studyActivityChapters">0</strong><span id="studyActivityChaptersMeta">Chapters touched today</span></article>
+    <article class="study-activity-stat"><span class="study-activity-icon done">✓</span><small>Chapters studied today</small><strong id="studyActivityChapters">0</strong><span id="studyActivityChaptersMeta">From lecture playback</span></article>
    </div>
    <div class="study-activity-lower">
     <section><div class="study-activity-subhead"><strong>Chapters studied today</strong><span>Tap a chapter to open it</span></div><div id="studyActivityChapterList" class="study-activity-chapter-list"><div class="empty">Your chapter activity will appear here.</div></div></section>
    </div>
-   <div id="studyActivityDailyPlan" class="study-activity-daily-plan"></div>
   </section>
   <section class="panel dashboard-coming-panel">
      <div class="dashboard-panel-head"><div><h2>Coming Up</h2><p>Your next topic tests and LITMUS deadlines.</p></div><span class="planned-count-badge"><strong id="upcomingCount">0</strong><span>up next</span></span></div>
@@ -2469,7 +2475,7 @@ td strong {
 <div class="modal-backdrop" id="modalBackdrop" onclick="if(event.target===this)closeModal()"><section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-head"><h3 id="modalTitle">Edit</h3><button type="button" class="small-btn" onclick="closeModal()">✕ Close</button></div><div class="modal-sub" id="modalSub">Your changes save to this workspace.</div><form id="modalForm" onsubmit="saveModal(event)"><div class="form-grid" id="modalFields"></div><div class="modal-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button><button type="submit" class="btn btn-primary">Save changes</button></div></form></section></div>
 <div class="cloud-gate" id="cloudGate"><section class="cloud-card" role="dialog" aria-modal="true" aria-labelledby="cloudTitle"><div style="display:flex;align-items:center;gap:10px"><div class="brandmark">☁</div><div><h3 id="cloudTitle">Cloud sync settings</h3><div class="helper-note">Connect your own Supabase project.</div></div></div><p>Offline mode works without setup. For cross-device sync, enter your Supabase Project URL and Publishable key. Never use a secret or service-role key in a browser.</p><div class="cloud-grid" id="cloudAuthForm"><label>Supabase Project URL<input id="cloudUrl" type="url" placeholder="https://your-project.supabase.co" autocomplete="url"></label><label>Publishable key<input id="cloudKey" type="password" placeholder="sb_publishable_…" autocomplete="off"></label><label>Email<input id="cloudEmail" type="email" placeholder="you@example.com" autocomplete="email"></label><label>Password<input id="cloudPassword" type="password" placeholder="Your password" autocomplete="current-password"></label></div><div class="cloud-actions" id="cloudAuthActions"><button class="btn btn-primary" onclick="cloudSignIn()" type="button">Sign in</button><button class="btn btn-secondary" onclick="cloudSignUp()" type="button">Create account</button></div><div class="cloud-actions"><button class="btn btn-quiet" onclick="cloudOffline()" type="button">Continue offline</button><button class="btn btn-secondary" onclick="cloudUploadLocal()" type="button" id="cloudUploadButton">Upload local data</button><button class="btn btn-secondary" onclick="cloudRestoreCloud()" type="button" id="cloudRestoreButton">Restore cloud backup</button><button class="btn btn-secondary" onclick="cloudSignOut()" type="button" id="cloudSignOutButton">Sign out</button></div><div id="cloudMessage" class="switch-note" role="status" aria-live="polite" style="margin-top:13px">Your current local tracker is safe.</div><div class="modal-actions"><button class="btn btn-secondary" onclick="closeCloudSettings()" type="button">Close settings</button></div></section></div>
 <section class="page" id="page-lectures">
-  <div class="page-hero"><div><h2>YouTube Lectures</h2><p>Watch a JEE lecture in YouTube; this page receives matched records automatically. Chapters move to In Progress, never directly to mastered.</p></div><span class="status-pill" style="align-self:flex-start;white-space:nowrap">AUTO SYNC</span></div>
+  <div class="page-hero"><div><h2>Lecture Tracker</h2><p>YouTube playlists, Telegram Web playback, imported lectures and course progress in one place.</p></div><span class="status-pill" style="align-self:flex-start;white-space:nowrap">AUTO SYNC</span></div>
   <div id="psLectureSyncStatus" class="switch-note" role="status" aria-live="polite" style="margin-bottom:16px">Waiting for the browser extension connection. Connect this planner once from the extension popup.</div>
   <div class="dashboard-grid" style="margin-bottom:18px">
    <article class="stat-card"><span class="stat-label">Tracked lectures</span><strong id="psLectureCount">0</strong><small>Unique YouTube videos</small></article>
@@ -2500,10 +2506,9 @@ td strong {
    </ol>
    <p class="helper-note">The tracker uses video title and chapter keywords, not transcripts. It tracks YouTube in this browser; it cannot see lectures watched in the Android YouTube app or a different browser profile. Export is kept only as an optional backup.</p>
   </div>
- </section>
-<input type="file" id="psLectureImportFile" accept=".json,application/json" hidden onchange="importYoutubeLectures(event)">
-<section class="page" id="page-telegram">
-  <div class="page-hero"><div><h2>Telegram lecture import</h2><p>Bring in only the JEE lecture posts you choose. Your private chats are not scanned.</p></div><button type="button" class="btn btn-primary" onclick="document.getElementById('psTelegramFile').click()">Import JSON / CSV ↑</button></div>
+  <div id="telegram-section">
+
+  <div class="section-head telegram-section-heading"><div><h3>Telegram Web &amp; imports</h3><p>Track Telegram playback or import a chosen lecture list. YouTube and Telegram now live in this same tracker.</p></div><button type="button" class="btn btn-primary" onclick="document.getElementById('psTelegramFile').click()">Import JSON / CSV ↑</button></div>
   <div class="panel" style="border:1px solid #cfe8d9;background:linear-gradient(135deg,#f8fcf9,#fff)">
    <h3>Automatic tracking in Telegram Web</h3>
    <p class="helper-note">The Personal Space extension can detect a playable video in Telegram Web, record its playback time, and sync a matched lecture here. It works in Brave on the Telegram website, not inside the Telegram Android app.</p>
@@ -2531,6 +2536,12 @@ td strong {
    <div class="panel-head"><div><h3>Imported Telegram lectures</h3><p>Saved lecture links and matched chapters appear here.</p></div><span class="small-count" id="psTelegramCount">0 IMPORTED</span></div>
    <div id="psTelegramList" class="empty-state">No Telegram lectures imported yet. Add a title above to get started.</div>
   </div>
+
+  <div class="panel" style="margin-top:16px" id="psTelegramCourseAnalysisPanel">
+   <div class="panel-head"><div><h3>AI course progress</h3><p>AI groups imported Telegram lecture titles by course, teacher and year, then counts remaining entries from your import.</p></div><button type="button" class="btn btn-secondary" onclick="analyzeTelegramCourses(true)">Analyze courses ✦</button></div>
+   <div id="psTelegramCourseAnalysisStatus" class="switch-note" role="status" aria-live="polite" style="margin-bottom:12px">Import Telegram lecture data to calculate course totals and lectures left.</div>
+   <div id="psTelegramCourseProgressList" class="study-course-progress-list"><div class="empty">Your imported Telegram courses will appear here.</div></div>
+  </div>
   <div class="panel" style="margin-top:16px">
    <h3>Import selected Telegram export</h3>
    <p class="helper-note">You may import a small JSON file containing a <code>lectures</code> array or a CSV with columns <code>title,url,subject,chapter</code>. Only selected/known JEE lecture entries are imported. A Telegram export can contain private messages, so choose only the file you intend to share with the planner.</p>
@@ -2545,7 +2556,11 @@ td strong {
    <div class="telegram-step"><span class="telegram-step-num">4</span><div><strong>Import only what you need</strong><div class="helper-note">For a file import, use the sample CSV format or a JSON file with a lectures array. Avoid uploading a full Telegram export containing private messages.</div></div></div>
    <p class="helper-note">Telegram bots cannot see your entire account history. This workflow imports only information you explicitly paste or upload. Never enter your Telegram login code, password, session string, API hash or bot token here.</p>
   </div>
+  </div>
+
  </section>
+<input type="file" id="psLectureImportFile" accept=".json,application/json" hidden onchange="importYoutubeLectures(event)">
+
 
 <input type="file" id="importFile" accept=".json,application/json" hidden onchange="importData(event)">
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -4889,14 +4904,15 @@ clearTimeout(toastTimer2);
 toastTimer2=setTimeout(()=>el.classList.remove("show"),2600);
 }
 function go(page){
+if(page==="telegram")page="lectures";
+if(["daily","mistakes","notes","goals"].includes(page))return;
 if(!document.getElementById("page-"+page))return;
 currentPage=page;
 document.querySelectorAll(".page").forEach(n=>n.classList.toggle("active",n.id==="page-"+page));
 document.querySelectorAll("nav [data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
 const title={
 dashboard:["YOUR STUDY SPACE","Welcome back, Raash.","Small sessions add up. Let’s make today count."],chapters:["SYLLABUS TRACKER","Chapter tracker","Make each chapter feel manageable."],topic:["PRACTICE & REVIEW","Topic test planner","Plan a test, log the score and keep chapter progress connected."],litmus:["TEST SERIES","LITMUS schedule","Your part tests and full mocks, with dates and marks."],pyq:["PREVIOUS-YEAR QUESTIONS","PYQ practice log","Track accuracy and build confidence by chapter."],
-lectures:["LECTURE TRACKER","YouTube Lectures","Track watched JEE lectures and connect them to your chapter planner."],
-telegram:["LECTURE IMPORT","Telegram Import","Choose specific Telegram lecture posts to add to your study tracker."]
+lectures:["LECTURE TRACKER","Lecture Tracker","Track YouTube and Telegram lecture playback and course progress together."]
 }
 [page];
 document.getElementById("pageCrumb").textContent=title[0];
@@ -4911,8 +4927,7 @@ if(page==="chapters")renderChapters();
 if(page==="topic")renderTopics();
 if(page==="litmus")renderLitmus();
 if(page==="pyq")renderPyq();
-if(page==="lectures")renderYoutubeLectures();
-if(page==="telegram")renderTelegramImport();
+if(page==="lectures"){renderYoutubeLectures();renderTelegramImport();scheduleTelegramCourseAnalysis();}
 }
 
 const PS_LECTURE_KEY = "personal-space-youtube-lectures-v1";
