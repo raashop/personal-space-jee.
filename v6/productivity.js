@@ -8,7 +8,9 @@
     if(!Array.isArray(state.dailyReviews)) state.dailyReviews=[];
     if(!Array.isArray(state.studyMistakes)) state.studyMistakes=[];
     if(!Array.isArray(state.weeklyReviews)) state.weeklyReviews=[];
-    if(!state.studyGoals) state.studyGoals={dailyMinutes:180,weeklyDays:6};
+    if(!state.studyGoals) state.studyGoals={dailyMinutes:300,weeklyDays:6,weeklyTopicTests:3,weeklyPyqQuestions:500};
+    if(state.studyGoals.weeklyTopicTests===undefined)state.studyGoals.weeklyTopicTests=3;
+    if(state.studyGoals.weeklyPyqQuestions===undefined)state.studyGoals.weeklyPyqQuestions=500;
   };
   ensure();
   const isoDate = d => {
@@ -50,15 +52,22 @@
     </div></details>
   </section>
   <section class="page" id="page-performance">
-    <div class="page-hero"><div><h2>Performance studio</h2><p>Your real study record, not a made-up score. Compare days, subjects and weeks to learn what is working and what needs adjusting.</p></div><button class="btn btn-secondary" onclick="openWeeklyReviewModal()">Weekly reflection ✎</button></div>
-    <div class="performance-controls"><div><label for="performanceRange">REPORT WINDOW</label><select id="performanceRange" class="control" onchange="renderPerformance()"><option value="7">Last 7 days</option><option value="14">Last 14 days</option><option value="30">Last 30 days</option></select></div><div><label for="performanceGoalDaily">DAILY STUDY TARGET</label><div class="goal-input"><input class="control" id="performanceGoalDaily" type="number" min="15" max="900" step="15" value="180"><span>min</span></div></div><div><label for="performanceGoalDays">WEEKLY STUDY DAYS</label><select class="control" id="performanceGoalDays"><option value="3">3 days</option><option value="4">4 days</option><option value="5">5 days</option><option value="6" selected>6 days</option><option value="7">7 days</option></select></div><button class="btn btn-primary goal-save" onclick="saveStudyGoals()">Save targets</button></div>
+    <div class="page-hero performance-hero"><div><h2>Performance Studio</h2><p>Analyse your progress, find patterns and stay on track.</p></div><div class="performance-range-tabs" role="group" aria-label="Performance report range"><button type="button" class="active" data-performance-range="7" onclick="setPerformanceRange(7)">7 Days</button><button type="button" data-performance-range="14" onclick="setPerformanceRange(14)">14 Days</button><button type="button" data-performance-range="30" onclick="setPerformanceRange(30)">30 Days</button></div></div>
+    <select id="performanceRange" class="control performance-range-native" aria-label="Report window" onchange="renderPerformance()"><option value="7" selected>Last 7 days</option><option value="14">Last 14 days</option><option value="30">Last 30 days</option></select>
     <div class="performance-kpis" id="performanceKpis"></div>
-    <div class="performance-grid"><section class="panel"><div class="daily-section-head"><div><h3>Study minutes by day</h3><p id="minutesChartHint">Your logged sessions over the selected period.</p></div><span class="badge blue">Actual time</span></div><div id="minutesChart" class="minutes-chart"></div></section><section class="panel"><div class="daily-section-head"><div><h3>Where your time went</h3><p>Study minutes grouped by subject.</p></div></div><div id="subjectTimeBreakdown" class="subject-time-breakdown"></div></section></div>
-    <div class="performance-grid"><section class="panel"><div class="daily-section-head"><div><h3>This week vs last week</h3><p>Compare tracked work for the last two 7-day windows.</p></div></div><div id="weekComparison" class="week-comparison"></div></section><section class="panel"><div class="daily-section-head"><div><h3>Your patterns</h3><p>Helpful suggestions from the numbers you've logged.</p></div></div><div id="performanceInsights" class="performance-insights"></div></section></div>
-    <section class="panel weekly-table-panel"><div class="daily-section-head"><div><h3>Daily breakdown</h3><p id="performanceTableHint">Each day adds up from your study sessions and tasks.</p></div><button class="small-btn" onclick="go('daily')">Open daily log ↗</button></div><div class="table-scroll"><table><thead><tr><th>Date</th><th>Study time</th><th>Sessions</th><th>Tasks done</th><th>Task completion</th><th>Reflection</th></tr></thead><tbody id="performanceRows"></tbody></table></div></section>
-    <section class="panel weekly-review-card"><div class="daily-section-head"><div><h3>Weekly review</h3><p>Review your wins, friction and one change for next week.</p></div><span class="badge green" id="weeklyReviewStatus">Not written yet</span></div><div id="weeklyReviewContent" class="weekly-review-content"></div><button class="btn btn-primary" onclick="openWeeklyReviewModal()">Write / update weekly review</button></section>
+    <div class="performance-grid performance-charts-grid"><section class="panel"><div class="daily-section-head"><div><h3>Daily Study Time</h3><p id="minutesChartHint">Your logged sessions over the selected period.</p></div><span class="badge blue">Actual time</span></div><div id="minutesChart" class="minutes-chart"></div></section><section class="panel"><div class="daily-section-head"><div><h3>Subject-wise Study Time</h3><p>See where your tracked study time went.</p></div></div><div id="subjectTimeBreakdown" class="subject-time-breakdown"></div></section></div>
+    <div class="performance-grid performance-lower-grid">
+      <section class="panel"><div class="daily-section-head"><div><h3>Weekly Comparison</h3><p>Compare study time and completed tasks.</p></div></div><div id="weekComparison" class="week-comparison"></div></section>
+      <section class="panel performance-goals-panel"><div class="daily-section-head"><div><h3>Goals &amp; Targets</h3><p>Keep your weekly effort aligned with your plan.</p></div><button class="small-btn" type="button" onclick="togglePerformanceGoalsEditor()">Edit</button></div><div id="performanceGoalsSummary" class="performance-goals-summary"></div>
+       <details id="performanceGoalsEditor" class="performance-goals-editor"><summary>Update targets</summary><div class="performance-controls"><div><label for="performanceGoalDaily">DAILY STUDY TARGET</label><div class="goal-input"><input class="control" id="performanceGoalDaily" type="number" min="15" max="900" step="15" value="300"><span>min</span></div></div><div><label for="performanceGoalDays">WEEKLY STUDY DAYS</label><select class="control" id="performanceGoalDays"><option value="3">3 days</option><option value="4">4 days</option><option value="5">5 days</option><option value="6" selected>6 days</option><option value="7">7 days</option></select></div><div><label for="performanceGoalTopics">WEEKLY TOPIC TESTS</label><input class="control" id="performanceGoalTopics" type="number" min="1" max="30" value="3"></div><div><label for="performanceGoalPyqs">WEEKLY PYQ QUESTIONS</label><input class="control" id="performanceGoalPyqs" type="number" min="10" max="5000" step="10" value="500"></div><button class="btn btn-primary goal-save" onclick="saveStudyGoals()">Save targets</button></div></details>
+      </section>
+    </div>
+    <details class="performance-more-details"><summary>Patterns, daily breakdown and weekly review</summary>
+      <section class="panel performance-insights-panel"><div class="daily-section-head"><div><h3>Your Patterns</h3><p>Helpful suggestions from the numbers you've logged.</p></div></div><div id="performanceInsights" class="performance-insights"></div></section>
+      <section class="panel weekly-table-panel"><div class="daily-section-head"><div><h3>Daily Breakdown</h3><p id="performanceTableHint">Each day adds up from your study sessions and tasks.</p></div><button class="small-btn" onclick="go('daily')">Open daily log ↗</button></div><div class="table-scroll"><table><thead><tr><th>Date</th><th>Study time</th><th>Sessions</th><th>Tasks done</th><th>Task completion</th><th>Reflection</th></tr></thead><tbody id="performanceRows"></tbody></table></div></section>
+      <section class="panel weekly-review-card"><div class="daily-section-head"><div><h3>Weekly Review</h3><p>Review your wins, friction and one change for next week.</p></div><span class="badge green" id="weeklyReviewStatus">Not written yet</span></div><div id="weeklyReviewContent" class="weekly-review-content"></div><button class="btn btn-primary" onclick="openWeeklyReviewModal()">Write / update weekly review</button></section>
+    </details>
   </section>
-
   <section class="page" id="page-mistakes">
     <div class="page-hero"><div><h2>Mistake Bank</h2><p>Learn from mistakes. Track, revise and improve.</p></div><button class="btn btn-primary" onclick="openMistakeModal()">＋ Add Mistake</button></div>
     <div class="mistake-stats" id="mistakeStats" hidden></div>
@@ -208,25 +217,58 @@
     const start=addDays(todayISO(),-((new Date(todayISO()+"T12:00:00").getDay()+6)%7)),old=state.weeklyReviews.find(x=>x.weekStart===start)||{};
     openModal("Weekly review · week of "+niceDay(start),[{name:"wins",label:"What went well this week?",type:"textarea",value:old.wins||"",full:true},{name:"friction",label:"What wasted time or felt difficult?",type:"textarea",value:old.friction||"",full:true},{name:"learned",label:"What did you learn about your study habits?",type:"textarea",value:old.learned||"",full:true},{name:"next",label:"One adjustment for next week",type:"textarea",value:old.next||"",full:true}],{type:"weeklyReview",weekStart:start});
   };
+  window.setPerformanceRange=function(days){
+    const node=byId("performanceRange");if(node)node.value=String(days);
+    document.querySelectorAll("[data-performance-range]").forEach(button=>button.classList.toggle("active",Number(button.dataset.performanceRange)===Number(days)));
+    renderPerformance();
+  };
+  window.togglePerformanceGoalsEditor=function(){
+    const details=byId("performanceGoalsEditor");if(details)details.open=!details.open;
+  };
   window.saveStudyGoals=function(){
-    const daily=Math.max(15,Math.min(900,Number(byId("performanceGoalDaily").value)||180)),days=Math.max(3,Math.min(7,Number(byId("performanceGoalDays").value)||6));
-    state.studyGoals={dailyMinutes:daily,weeklyDays:days};saveState();renderPerformance();renderDailyLog();toast("Study targets saved.");
+    const daily=Math.max(15,Math.min(900,Number(byId("performanceGoalDaily").value)||300)),days=Math.max(3,Math.min(7,Number(byId("performanceGoalDays").value)||6));
+    const weeklyTopicTests=Math.max(1,Math.min(30,Number(byId("performanceGoalTopics")&&byId("performanceGoalTopics").value)||3));
+    const weeklyPyqQuestions=Math.max(10,Math.min(5000,Number(byId("performanceGoalPyqs")&&byId("performanceGoalPyqs").value)||500));
+    state.studyGoals={...(state.studyGoals||{}),dailyMinutes:daily,weeklyDays:days,weeklyTopicTests:weeklyTopicTests,weeklyPyqQuestions:weeklyPyqQuestions};
+    saveState();renderPerformance();renderDailyLog();toast("Study targets saved.");
   };
   window.renderPerformance=function(){
     ensure();const range=Math.max(7,Math.min(30,Number(byId("performanceRange").value)||7)),today=todayISO(),start=addDays(today,-(range-1)),prevStart=addDays(start,-range),prevEnd=addDays(start,-1),days=[];
-    byId("performanceGoalDaily").value=state.studyGoals.dailyMinutes||180;byId("performanceGoalDays").value=String(state.studyGoals.weeklyDays||6);
+    byId("performanceGoalDaily").value=state.studyGoals.dailyMinutes||300;byId("performanceGoalDays").value=String(state.studyGoals.weeklyDays||6);if(byId("performanceGoalTopics"))byId("performanceGoalTopics").value=String(state.studyGoals.weeklyTopicTests||3);if(byId("performanceGoalPyqs"))byId("performanceGoalPyqs").value=String(state.studyGoals.weeklyPyqQuestions||500);
     for(let i=0;i<range;i++)days.push(addDays(start,i));
     const logs=state.studySessions.filter(s=>s.date>=start&&s.date<=today),mins=sum(logs),activeDays=unique(logs.filter(s=>Number(s.minutes)>0).map(s=>s.date)).length,tasksIn=state.dailyTasks.filter(t=>t.date>=start&&t.date<=today),tasksDone=tasksIn.filter(t=>t.done).length,taskPct=tasksIn.length?pct(tasksDone,tasksIn.length):0;
     const previous=state.studySessions.filter(s=>s.date>=prevStart&&s.date<=prevEnd),prevMins=sum(previous),prevDays=unique(previous.filter(s=>Number(s.minutes)>0).map(s=>s.date)).length;
-    const kpis=[["Study time",Math.floor(mins/60)+"h "+mins%60+"m",range+" day window"],["Active study days",activeDays, "In the selected date window"],["Focus sessions",logs.length,"Across all subjects"],["Task completion",tasksIn.length?taskPct+"%":"—",tasksDone+" of "+tasksIn.length+" tasks done"]];
+    const streakCursor=new Date(today+"T12:00:00");
+    let currentStreak=0;
+    if(!isStudyDay(today))streakCursor.setDate(streakCursor.getDate()-1);
+    while(currentStreak<366&&isStudyDay(addDays(today,-(Math.max(0,Math.round((new Date(today+"T12:00:00")-streakCursor)/86400000)))))){break;}
+    const currentDayKey=streakCursor.toISOString().slice(0,10);
+    let streakDate=currentDayKey;
+    while(currentStreak<366&&isStudyDay(streakDate)){currentStreak++;streakDate=addDays(streakDate,-1);}
+    const kpis=[["Total Study Time",(mins/60).toFixed(1)+"h",range+" day window"],["Average per Day",(mins/range/60).toFixed(1)+"h","Tracked daily average"],["Tasks Completed",tasksDone+" / "+tasksIn.length,tasksIn.length?taskPct+"% completion":"No tasks planned"],["Study Streak",currentStreak+" day"+(currentStreak===1?"":"s"),"Consecutive study days"]];
     byId("performanceKpis").innerHTML=kpis.map((x,i)=>'<div class="performance-kpi"><small>'+x[0]+'</small><strong>'+x[1]+'</strong><span>'+x[2]+'</span></div>').join("");
+    document.querySelectorAll("[data-performance-range]").forEach(button=>button.classList.toggle("active",Number(button.dataset.performanceRange)===range));
+    const weekDateStart=addDays(today,-6),weekDateEnd=today;
+    const topicTarget=Number(state.studyGoals.weeklyTopicTests)||3,pyqTarget=Number(state.studyGoals.weeklyPyqQuestions)||500;
+    const recentTopics=(state.topics||[]).filter(t=>t.status==="Attempted"&&String(t.actualDate||"")>=weekDateStart&&String(t.actualDate||"")<=weekDateEnd).length;
+    const recentPyqQuestions=(state.pyqs||[]).filter(p=>String(p.date||"")>=weekDateStart&&String(p.date||"")<=weekDateEnd).reduce((n,p)=>n+(Number(p.attempted)||0),0);
+    const dailyGoal=Number(state.studyGoals.dailyMinutes)||300,weeklyGoalDays=Number(state.studyGoals.weeklyDays)||6;
+    const sevenDays=Array.from({length:7},(_,i)=>addDays(today,i-6));
+    const recentStudyDays=sevenDays.filter(d=>isStudyDay(d)).length;
+    const goalRows=[
+      ["Daily Study Target",Math.round(mins/range)+" / "+dailyGoal+" min",Math.min(100,Math.round((mins/range)/dailyGoal*100)),"Average per day"],
+      ["Weekly Study Days",recentStudyDays+" / "+weeklyGoalDays+" days",Math.min(100,Math.round(recentStudyDays/weeklyGoalDays*100)),"Days with completed tasks or logged study"],
+      ["Topic Tests",recentTopics+" / "+topicTarget,Math.min(100,Math.round(recentTopics/topicTarget*100)),"Attempted in the last 7 days"],
+      ["PYQs Solved",recentPyqQuestions+" / "+pyqTarget,Math.min(100,Math.round(recentPyqQuestions/pyqTarget*100)),"Questions logged in the last 7 days"]
+    ];
+    if(byId("performanceGoalsSummary"))byId("performanceGoalsSummary").innerHTML=goalRows.map((g,i)=>'<div class="performance-goal-row"><div class="performance-goal-row-head"><strong>'+g[0]+'</strong><span>'+g[1]+'</span></div><div class="progress-track"><div class="progress-fill" style="width:'+g[2]+'%;--subject:'+(i===1?"#2784d8":"#15966a")+'"></div></div><small>'+g[3]+'</small></div>').join("");
     const max=Math.max(30,...days.map(d=>dayMinutes(d)));
     byId("minutesChart").innerHTML=days.map(d=>{const m=dayMinutes(d),height=Math.max(m?5:2,Math.round(m/max*100));return '<div class="chart-column"><div class="chart-value">'+(m?m:"")+'</div><div class="chart-track" title="'+escapeAttr(niceDay(d)+": "+m+" minutes")+'"><div class="chart-bar '+(d===today?"is-today":"")+'" style="height:'+height+'%"></div></div><small>'+new Date(d+"T12:00:00").toLocaleDateString("en-IN",{weekday:"short"}).slice(0,2)+'</small><span>'+new Date(d+"T12:00:00").getDate()+'</span></div>'}).join("");
     byId("minutesChartHint").textContent=mins+" minutes logged across "+activeDays+" active day(s).";
     const bySubject=subjectNames.map(s=>({name:s,minutes:sum(logs.filter(x=>x.subject===s)),color:chapterColor(s)})),subjectTotal=sum(bySubject);
     byId("subjectTimeBreakdown").innerHTML=bySubject.map(s=>'<div class="subject-time-row"><div class="subject-time-top"><span><i style="background:'+s.color+'"></i>'+s.name+'</span><strong>'+s.minutes+' min</strong></div><div class="progress-track"><div class="progress-fill" style="width:'+pct(s.minutes,subjectTotal)+'%;--subject:'+s.color+'"></div></div><small>'+pct(s.minutes,subjectTotal)+'% of logged time</small></div>').join("")+(subjectTotal?'':'<p class="helper-note">Log a study session to begin seeing your subject split.</p>');
     const diff=mins-prevMins,delta=prevMins?pct(Math.abs(diff),prevMins):0,dir=diff>0?"more":diff<0?"less":"the same amount of";
-    const studyStreak=(()=>{let n=0,d=today;while(isStudyDay(d)){n++;d=addDays(d,-1);}return n;})();
+    const studyStreak=currentStreak;
     byId("weekComparison").innerHTML='<div class="comparison-pair"><div><small>Current window</small><strong>'+mins+' min</strong><span>'+activeDays+' active days</span></div><div><small>Previous '+range+' days</small><strong>'+prevMins+' min</strong><span>'+prevDays+' active days</span></div></div><div class="comparison-delta '+(diff>=0?'positive':'negative')+'">'+(diff===0?'Same study time as the previous window':(diff>0?'↑ ':'↓ ')+delta+'% '+dir+' than the previous window')+'</div><div class="comparison-mini"><span>Current daily avg.</span><strong>'+Math.round(mins/range)+' min</strong><span>Current streak</span><strong>'+studyStreak+' day'+(studyStreak===1?'':'s')+'</strong></div>';
     const insights=[];
     if(!mins)insights.push(["Start with the record","Log your next study session. Your charts and comparisons will become useful once actual time is recorded."]);
