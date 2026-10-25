@@ -87,9 +87,39 @@
     }
     return null;
   }
+  function textHasChapter(text) {
+    const t=normalize(text);
+    return CHAPTERS.some(item=>[item[1],...item[2]].some(term=>{
+      const n=normalize(term);
+      return n.length>=4 && t.includes(n);
+    }));
+  }
+  function findNearbyLectureCaption(video) {
+    const vr=video.getBoundingClientRect();
+    const cx=(vr.left+vr.right)/2, cy=(vr.top+vr.bottom)/2;
+    let best=null, bestScore=Infinity;
+    // Telegram may render the caption outside the video ancestry. Search only
+    // visible, nearby text elements that independently look like study content.
+    for(const el of document.querySelectorAll("div,span,p,a")) {
+      if(!el.isConnected || !el.getClientRects().length) continue;
+      const style=getComputedStyle(el);
+      if(style.display==="none" || style.visibility==="hidden" || Number(style.opacity)===0) continue;
+      const text=String(el.innerText||"").replace(/\s+/g," ").trim();
+      if(text.length<8 || text.length>500 || !textHasChapter(text) || !isLecturePost(text)) continue;
+      const r=el.getBoundingClientRect();
+      if(!r.width || !r.height) continue;
+      const dx=Math.max(0,vr.left-r.right,r.left-vr.right);
+      const dy=Math.max(0,vr.top-r.bottom,r.top-vr.bottom);
+      const distance=Math.hypot(dx,dy);
+      if(distance>1000) continue;
+      const areaPenalty=Math.min(180,Math.sqrt(r.width*r.height)*0.08);
+      const score=distance + text.length*0.28 + areaPenalty + el.childElementCount*2;
+      if(score<bestScore) { bestScore=score; best={element:el,text,score}; }
+    }
+    return best;
+  }
   function getContext(video) {
-    // Captions may be a sibling of the player or rendered in Telegram's media viewer.
-    const clean = node => String(node?.innerText || "").replace(/\s+/g," ").trim();
+    const clean=node=>String(node?.innerText||"").replace(/\s+/g," ").trim();
     const ancestors=[];
     let node=video.parentElement;
     for(let depth=0;node&&depth<22;depth++,node=node.parentElement) {
@@ -105,45 +135,30 @@
     for(const selector of overlaySelectors) {
       try {
         for(const el of document.querySelectorAll(selector)) {
-          if(el.getClientRects().length===0) continue;
+          if(!el.getClientRects().length) continue;
           const text=clean(el);
           if(text.length>4&&text.length<3000&&!captionTexts.includes(text)) captionTexts.push(text);
         }
       } catch {}
     }
-    // If the active viewer exposes a caption as a text sibling, inspect the
-    // nearest media-viewer container rather than scanning unrelated chat posts.
     const viewer=video.closest?.('[class*="media-viewer"], [class*="MediaViewer"], [class*="viewer-container"]');
     const viewerText=clean(viewer);
-    const localTexts=[...captionTexts,...ancestors].filter(Boolean);
-    const allText=[video.getAttribute("aria-label")||"",video.getAttribute("title")||"",viewerText,...localTexts].filter(Boolean).join(" · ").slice(0,16000);
-    const normalized=normalize(allText);
-    const chapterHit=CHAPTERS.some(item=>[item[1],...item[2]].some(term=>{
-      const n=normalize(term);
-      return n.length>=4&&normalized.includes(n);
-    }));
-    const cueHit=isLecturePost(allText);
-    const bestText=captionTexts.find(text=>{
-      const n=normalize(text);
-      const hasChapter=CHAPTERS.some(item=>[item[1],...item[2]].some(term=>{
-        const phrase=normalize(term);
-        return phrase.length>=4&&n.includes(phrase);
-      }));
-      return hasChapter&&isLecturePost(text);
-    })||ancestors.find(text=>{
-      const n=normalize(text);
-      const hasChapter=CHAPTERS.some(item=>[item[1],...item[2]].some(term=>{
-        const phrase=normalize(term);
-        return phrase.length>=4&&n.includes(phrase);
-      }));
-      return hasChapter&&isLecturePost(text);
-    })||captionTexts[0]||ancestors.find(text=>text.length>12)||"";
-    const anchor=video.closest?.('[data-message-id], [data-mid]') ||
-      video.parentElement?.closest?.('[data-message-id], [data-mid]');
+    const baseTexts=[video.getAttribute("aria-label")||"",video.getAttribute("title")||"",viewerText,...captionTexts,...ancestors].filter(Boolean);
+    let allText=baseTexts.join(" · ").slice(0,16000);
+    let nearby=null;
+    if(!textHasChapter(allText) || !isLecturePost(allText)) {
+      nearby=findNearbyLectureCaption(video);
+      if(nearby) allText=(allText+" · "+nearby.text).slice(0,18000);
+    }
+    const candidates=[...captionTexts,...ancestors];
+    const bestText=candidates.find(text=>textHasChapter(text)&&isLecturePost(text)) ||
+      nearby?.text || captionTexts[0] || ancestors.find(text=>text.length>12) || "";
+    const anchor=(nearby?.element || video).closest?.('[data-message-id], [data-mid]') ||
+      video.closest?.('[data-message-id], [data-mid]');
     const msgId=anchor?.getAttribute("data-message-id")||anchor?.getAttribute("data-mid")||"";
     const link=anchor?.querySelector?.('a[href*="t.me/"],a[href*="telegram.me/"]');
     const title=(video.getAttribute("aria-label")||video.getAttribute("title")||bestText||"Telegram video").trim().slice(0,180);
-    return {title,sourceText:allText,url:link?.href||location.href,msgId,boxText:bestText,chapterHint:chapterHit,cueHint:cueHit};
+    return {title,sourceText:allText,url:link?.href||location.href,msgId,boxText:bestText};
   }
   const tracked=new WeakMap();
   function attach(video) {
@@ -165,7 +180,7 @@
           return;
         }
         const signature=context.msgId+"|"+context.title+"|"+match.chapter;
-        if(signature!==lastContext){lastContext=signature;recordId="tgweb-"+(context.msgId||btoa(unescape(encodeURIComponent(context.url))).replace(/[^a-z0-9]/gi,"").slice(-24));}
+        if(signature!==lastContext){lastContext=signature;const key=context.msgId||context.url+"|"+context.title;let hash=2166136261;for(let i=0;i<key.length;i++)hash=Math.imul(hash^key.charCodeAt(i),16777619);recordId="tgweb-"+(hash>>>0).toString(36);}
         if(video.paused||video.ended||delta<=0){
           report("matched-paused","Recognized "+match.subject+" · "+match.chapter+". Press Play; recorded time increases while the video plays.",{title:context.title,subject:match.subject,chapter:match.chapter,videoId:recordId});
           return;
