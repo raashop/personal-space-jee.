@@ -4584,9 +4584,11 @@ function renderStudyActivitySummary(){
  const today=typeof todayISO==="function"?todayISO():localDateKey(new Date().toISOString());
  const sessions=Array.isArray(state.studySessions)?state.studySessions:[];
  const todaySessions=sessions.filter(item=>String(item.date||"")===today);
- const minutes=todaySessions.reduce((sum,item)=>sum+(Number(item.minutes)||0),0);
+ const sessionMinutes=todaySessions.reduce((sum,item)=>sum+(Number(item.minutes)||0),0);
+ const dailyLectureSeconds=dailyLectureSecondsFor(today),trackedLectureMinutes=Math.round(dailyLectureSeconds/60);
+ const minutes=sessionMinutes+trackedLectureMinutes;
  const sessionNode=document.getElementById("studyActivityHours");if(sessionNode)sessionNode.textContent=durationLabel(minutes);
- const sessionMeta=document.getElementById("studyActivityHoursMeta");if(sessionMeta)sessionMeta.textContent=todaySessions.length+" logged study session"+(todaySessions.length===1?"":"s");
+ const sessionMeta=document.getElementById("studyActivityHoursMeta");if(sessionMeta)sessionMeta.textContent=durationLabel(sessionMinutes)+" sessions + "+durationLabel(trackedLectureMinutes)+" new lecture playback · avoid logging the same lesson twice";
  const ytRows=readYoutubeLectures(),tgRows=typeof readTelegramLectures==="function"?readTelegramLectures():[];
  const ytSeconds=ytRows.reduce((sum,row)=>sum+(Number(row.watchedSeconds)||0),0);
  const tgSeconds=tgRows.reduce((sum,row)=>sum+(Number(row.watchedSeconds)||0),0);
@@ -4693,6 +4695,25 @@ function plannerChapterForLecture(row){
  }
  return null;
 }
+const PS_DAILY_LECTURE_SECONDS_KEY="personal-space-daily-lecture-seconds-v1";
+function recordDailyLectureSeconds(source,id,seconds,timestamp){
+ const amount=Math.max(0,Number(seconds)||0);if(!amount)return;
+ const day=localDateKey(timestamp||new Date().toISOString());if(!day)return;
+ try{
+  const daily=JSON.parse(localStorage.getItem(PS_DAILY_LECTURE_SECONDS_KEY)||"{}");
+  if(!daily[day]||typeof daily[day]!=="object")daily[day]={};
+  const key=String(source)+":"+String(id);
+  daily[day][key]=(Number(daily[day][key])||0)+amount;
+  const days=Object.keys(daily).sort();while(days.length>60){delete daily[days.shift()];}
+  localStorage.setItem(PS_DAILY_LECTURE_SECONDS_KEY,JSON.stringify(daily));
+ }catch(e){}
+}
+function dailyLectureSecondsFor(day){
+ try{
+  const daily=JSON.parse(localStorage.getItem(PS_DAILY_LECTURE_SECONDS_KEY)||"{}");
+  return Object.values(daily[day]||{}).reduce((sum,value)=>sum+(Number(value)||0),0);
+ }catch(e){return 0;}
+}
 function mergeYoutubeLectureRows(incomingRows){
  const rows=Array.isArray(incomingRows)?incomingRows:[];
  const existing=readYoutubeLectures();
@@ -4703,6 +4724,14 @@ function mergeYoutubeLectureRows(incomingRows){
   const id=String(incomingRaw.videoId);
   const old=byId.get(id);
   const incoming={...incomingRaw,videoId:id};
+  const nowDay=typeof todayISO==="function"?todayISO():localDateKey(new Date().toISOString());
+  const incomingLastDay=localDateKey(incoming.lastWatchedAt||"");
+  if(incomingLastDay===nowDay){
+   const priorSeconds=old?Number(old.watchedSeconds)||0:0;
+   const nextSeconds=Number(incoming.watchedSeconds)||0;
+   const delta=old?Math.max(0,nextSeconds-priorSeconds):(localDateKey(incoming.firstWatchedAt||"")===nowDay?nextSeconds:0);
+   if(delta>0)recordDailyLectureSeconds("youtube",id,delta,incoming.lastWatchedAt);
+  }
   const merged=old?{
    ...old,...incoming,
    watchedSeconds:Math.max(Number(old.watchedSeconds)||0,Number(incoming.watchedSeconds)||0),
@@ -4740,6 +4769,13 @@ function mergeTelegramPlaybackRows(incomingRows){
   if(!raw||!raw.id||!raw.subject||!raw.chapter)continue;
   const id=String(raw.id),old=byId.get(id);
   const row=old?{...old,...raw,watchedSeconds:Math.max(Number(old.watchedSeconds)||0,Number(raw.watchedSeconds)||0),addedAt:old.addedAt||raw.firstWatchedAt||new Date().toISOString()}:{...raw,addedAt:raw.firstWatchedAt||new Date().toISOString()};
+  const nowDay=typeof todayISO==="function"?todayISO():localDateKey(new Date().toISOString());
+  if(localDateKey(raw.lastWatchedAt||"")===nowDay){
+   const priorSeconds=old?Number(old.watchedSeconds)||0:0;
+   const nextSeconds=Number(raw.watchedSeconds)||0;
+   const delta=old?Math.max(0,nextSeconds-priorSeconds):(localDateKey(raw.firstWatchedAt||"")===nowDay?nextSeconds:0);
+   if(delta>0)recordDailyLectureSeconds("telegram",id,delta,raw.lastWatchedAt);
+  }
   const changed=!old||Number(row.watchedSeconds||0)!==Number(old.watchedSeconds||0)||row.title!==old.title||row.chapter!==old.chapter||row.lastWatchedAt!==old.lastWatchedAt;
   if(!old){added++;recordsChanged=true;byId.set(id,row);}
   else if(changed){updated++;recordsChanged=true;byId.set(id,row);}
