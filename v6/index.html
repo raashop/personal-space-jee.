@@ -2016,7 +2016,7 @@ td strong {
 .dashboard-main-layout.dashboard-main-layout-optimized>.dashboard-main-stack{width:100%;min-width:0}
 .dashboard-main-layout-optimized .dashboard-coming-panel .upcoming-list{grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));align-items:start}
 #chapterAllocationPanel{position:relative;isolation:isolate;overflow:hidden;min-width:0;padding:clamp(16px,2.2vw,26px)!important;border:1px solid #dbe8e5!important;border-radius:20px!important;background:radial-gradient(ellipse at 8% 0%,rgba(39,132,216,.065),transparent 42%),radial-gradient(ellipse at 100% 5%,rgba(21,150,106,.075),transparent 40%),#fff!important;box-shadow:0 12px 34px rgba(25,67,78,.075)!important;animation:allocation-panel-in .45s cubic-bezier(.2,.75,.25,1) both}
-#chapterAllocationPanel:before{content:"";position:absolute;left:0;top:0;height:3px;width:100%;background:linear-gradient(90deg,#2784d8,#15966a,#8064c7);z-index:-1}
+#chapterAllocationPanel:before{content:"";position:absolute;left:0;top:0;height:3px;width:100%;background:linear-gradient(90deg,#2784d8,#15966a,#8064c7);z-index:0}#chapterAllocationPanel>*{position:relative;z-index:1}
 #chapterAllocationPanel .dashboard-panel-head{align-items:center;margin-bottom:16px}
 #chapterAllocationPanel .dashboard-panel-head h2{font-size:clamp(17px,1.5vw,21px);letter-spacing:-.035em}
 #chapterAllocationPanel .dashboard-panel-head p{font-size:12px;line-height:1.5}
@@ -3480,7 +3480,7 @@ function renderChapterAllocation(){
  (cached?'<div class="allocation-ai-summary"><strong>Gemini recommendation</strong><p>'+escapeHTML(cached.summary||"Balance these chapters with ongoing JEE syllabus progress.")+'</p></div>':'<div class="allocation-note">Choose any chapter, then generate an AI workload plan. Click a chapter title below to open its planner details.</div>')+
  '<div class="allocation-result-grid">'+chapters.map(ch=>{
   const focusDays=ch.focusDays||Math.max(1,Math.ceil(ch.hours/2.5)),subjectClass=ch.subject==="Physics"?"physics":ch.subject==="Chemistry"?"chemistry":"maths";
-  return '<article class="allocation-chapter '+subjectClass+'"><div class="allocation-chapter-top"><button type="button" class="allocation-chapter-name" onclick="openDashboardEntry(\'chapter\',\'\',\''+escapeAttr(ch.subject)+'\',\''+escapeAttr(ch.chapter)+'\')">'+escapeHTML(chapterDisplayName(ch.subject,ch.chapter))+'</button><span class="allocation-priority '+(priorities[ch.priority]||"")+'">'+escapeHTML(ch.priority||"Estimated")+'</span></div><div class="allocation-meta"><span>'+escapeHTML(ch.subject)+' · '+escapeHTML(ch.class||"JEE Main")+'</span><strong>'+ch.hours+'h · '+focusDays+' focus day'+(focusDays===1?"":"s")+'</strong></div><div class="allocation-bar"><span style="width:'+Math.round(ch.hours/maxHours*100)+'%"></span></div>'+
+  return '<article class="allocation-chapter '+subjectClass+'"><div class="allocation-chapter-top"><button type="button" class="allocation-chapter-name" data-open-chapter-subject="'+escapeAttr(ch.subject)+'" data-open-chapter-name="'+escapeAttr(ch.chapter)+'">'+escapeHTML(chapterDisplayName(ch.subject,ch.chapter))+'</button><span class="allocation-priority '+(priorities[ch.priority]||"")+'">'+escapeHTML(ch.priority||"Estimated")+'</span></div><div class="allocation-meta"><span>'+escapeHTML(ch.subject)+' · '+escapeHTML(ch.class||"JEE Main")+'</span><strong>'+ch.hours+'h · '+focusDays+' focus day'+(focusDays===1?"":"s")+'</strong></div><div class="allocation-bar"><span style="width:'+Math.round(ch.hours/maxHours*100)+'%"></span></div>'+
   (ch.focus?'<div class="allocation-note allocation-focus">'+escapeHTML(ch.focus)+'</div>':'')+(ch.reason?'<div class="allocation-reason">'+escapeHTML(ch.reason)+'</div>':'')+'</article>';
  }).join("")+'</div>'+
  (cached&&Array.isArray(cached.warnings)&&cached.warnings.length?'<div class="allocation-warning">'+cached.warnings.map(w=>escapeHTML(w)).join("<br>")+'</div>':'')+
@@ -3613,12 +3613,13 @@ function renderDashboard(){
    if(item){
     chapterLinks=topicChapters(item).map(name=>{
      const chapter=state.chapters.find(c=>c.subject===item.subject&&c.chapter===name);
-     return '<button type="button" class="upcoming-chapter-link" onclick="openDashboardEntry(\'chapter\',\'\',\''+escapeAttr(item.subject)+'\',\''+escapeAttr(name)+'\')"><span>'+escapeHTML(chapterDisplayName(item.subject,name))+'</span><small>' + escapeHTML(chapter?(chapter.prep==="Not Ready"?"To do":chapter.prep==="Exam Ready"?"✓ Done":chapter.prep==="Needs Work"?"Needs Work":"In Progress"):"Open chapter") + ' ↗</small></button>';
+     return '<button type="button" class="upcoming-chapter-link" data-open-chapter-subject="'+escapeAttr(item.subject)+'" data-open-chapter-name="'+escapeAttr(name)+'"><span>'+escapeHTML(chapterDisplayName(item.subject,name))+'</span><small>' + escapeHTML(chapter?(chapter.prep==="Not Ready"?"To do":chapter.prep==="Exam Ready"?"✓ Done":chapter.prep==="Needs Work"?"Needs Work":"In Progress"):"Open chapter") + ' ↗</small></button>';
     }).join("");
    }
   }
   return '<div class="upcoming-item">'+primary+(chapterLinks?'<div class="upcoming-chapter-links">'+chapterLinks+'</div>':'')+'</div>';
  }).join("")||'<div class="empty">No upcoming dates saved. Plan a topic test or open the LITMUS schedule.</div>';
+ if(upcomingList)upcomingList.querySelectorAll("[data-open-chapter-subject][data-open-chapter-name]").forEach(button=>button.addEventListener("click",()=>openDashboardEntry("chapter","",button.getAttribute("data-open-chapter-subject"),button.getAttribute("data-open-chapter-name"))));
  const upcomingCount=document.getElementById("upcomingCount");
  if(upcomingCount)upcomingCount.textContent=future.length;
 
@@ -3716,10 +3717,10 @@ function renderChapters(){
   const subject=escapeAttr(c.subject),chapter=escapeAttr(c.chapter);
   return '<tr class="chapter-table-row status-row-'+meta.css+'">'+
    '<td class="chapter-row-number">'+(i+1)+'</td>'+
-   '<td class="chapter-row-name"><button class="chapter-name-link" type="button" onclick="editChapter(\''+subject+'\',\''+chapter+'\')">'+escapeHTML(chapterDisplayName(c.subject,c.chapter))+'</button><small>'+escapeHTML(c.class||"JEE Main")+' · '+escapeHTML(c.subject)+'</small>'+lectureInfo+'</td>'+
+   '<td class="chapter-row-name"><button class="chapter-name-link" type="button" data-open-chapter-subject="'+subject+'" data-open-chapter-name="'+chapter+'">'+escapeHTML(chapterDisplayName(c.subject,c.chapter))+'</button><small>'+escapeHTML(c.class||"JEE Main")+' · '+escapeHTML(c.subject)+'</small>'+lectureInfo+'</td>'+
    '<td><select class="chapter-status-chip status-'+meta.css+'" aria-label="Preparation status for '+escapeHTML(c.chapter)+'" onchange="setPrep(\''+subject+'\',\''+chapter+'\',this.value)">'+options+'</select></td>'+
    '<td class="chapter-progress-cell"><div class="chapter-row-progress"><div class="progress-track"><div class="progress-fill" style="width:'+progress+'%;--subject:'+(c.prep==="Exam Ready"?"#15966a":c.prep==="Needs Work"?"#d28a35":"#4a9be8")+'"></div></div><span>'+progress+'%</span></div></td>'+
-   '<td><div class="chapter-row-actions"><button class="chapter-open-btn" type="button" onclick="editChapter(\''+subject+'\',\''+chapter+'\')">Open</button><button class="chapter-test-btn" type="button" title="Plan a topic test for this chapter" onclick="quickTopic(\''+subject+'\',\''+chapter+'\')">＋</button></div></td>'+
+   '<td><div class="chapter-row-actions"><button class="chapter-open-btn" type="button" data-open-chapter-subject="'+subject+'" data-open-chapter-name="'+chapter+'">Open</button><button class="chapter-test-btn" type="button" title="Plan a topic test for this chapter" onclick="quickTopic(\''+subject+'\',\''+chapter+'\')">＋</button></div></td>'+
   '</tr>';
  }).join("")||'<tr><td colspan="5"><div class="empty chapter-empty">No chapters match these filters. Try another status or search term.</div></td></tr>';
 }
@@ -5334,6 +5335,11 @@ if(e.target.matches('#modalFields [name="subject"]')&&["topic","newtopic"].inclu
 }
 }
 );
+document.addEventListener("click",function(event){
+ const chapterButton=event.target.closest("[data-open-chapter-subject][data-open-chapter-name]");
+ if(!chapterButton)return;
+ openDashboardEntry("chapter","",chapterButton.getAttribute("data-open-chapter-subject"),chapterButton.getAttribute("data-open-chapter-name"));
+});
 renderAll();
 setTimeout(requestYoutubeLectureSync,350);
 </script>
