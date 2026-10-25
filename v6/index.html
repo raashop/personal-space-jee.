@@ -4167,11 +4167,44 @@ function telegramChapterOptions(){
 function matchTelegramLecture(title,subjectOverride,chapterOverride){
  const clean=String(title||"").toLowerCase();
  if(subjectOverride&&chapterOverride)return state.chapters.find(c=>c.subject===subjectOverride&&c.chapter===chapterOverride)||null;
- const matches=state.chapters.map(ch=>({ch,score:Math.max(0,...String(ch.chapter+" "+ch.coverage).toLowerCase().split(/[^a-z0-9]+/).filter(w=>w.length>3).map(word=>clean.includes(word)?Math.min(word.length,18):0))})).filter(x=>x.score>0).sort((a,b)=>b.score-a.score);
- if(!matches.length)return null;
- const first=matches[0];
- if(matches.length>1&&first.score===matches[1].score&&first.ch.subject!==matches[1].ch.subject)return null;
- return first.ch;
+ const aliases={
+  "Units and Measurements":["units and measurements","dimensional analysis","measurement errors"],
+  "Kinematics":["kinematics","motion in a straight line","motion in a plane","projectile motion","relative velocity"],
+  "Laws of Motion":["laws of motion","newton's laws","friction","free body diagram"],
+  "Work, Energy and Power":["work energy power","work-energy theorem","conservation of energy"],
+  "Rotational Motion":["rotational motion","moment of inertia","angular momentum","torque"],
+  "Gravitation":["gravitation","kepler's laws","escape velocity","satellite motion"],
+  "Thermodynamics":["thermodynamics","first law of thermodynamics","heat engine"],
+  "Kinetic Theory of Gases":["kinetic theory of gases","kinetic theory"],
+  "Oscillations and Waves":["oscillations","simple harmonic motion","waves and sound"],
+  "Electrostatics":["electrostatics","electric charges and fields","electric potential","capacitance"],
+  "Current Electricity":["current electricity","kirchhoff","wheatstone bridge"],
+  "Optics":["ray optics","wave optics","young's double slit"],
+  "Chemical Kinetics":["chemical kinetics","rate law","order of reaction","half life","pseudo first order"],
+  "Biomolecules":["biomolecules","carbohydrates","proteins","tollens reagent","fehling solution"],
+  "Some Basic Concepts in Chemistry":["mole concept","stoichiometry"],
+  "Atomic Structure":["structure of atom","atomic structure","quantum numbers"],
+  "Chemical Bonding and Molecular Structure":["chemical bonding","molecular structure","vsepr","hybridisation"],
+  "Solutions":["colligative properties","raoult's law","solutions chemistry"],
+  "Equilibrium":["chemical equilibrium","ionic equilibrium","buffer solution"],
+  "Redox Reactions and Electrochemistry":["redox reactions","electrochemistry","nernst equation"],
+  "Integral Calculus":["indefinite integration","definite integration","integral calculus","area under curves"],
+  "Limit, Continuity and Differentiability":["limits","continuity","differentiability","derivatives"],
+  "Complex Numbers and Quadratic Equations":["complex numbers","quadratic equations","argand plane"],
+  "Matrices and Determinants":["matrices and determinants","inverse of a matrix"],
+  "Sequence and Series":["sequences and series","arithmetic progression","geometric progression"],
+  "Vector Algebra":["vector algebra","dot product","cross product"],
+  "Statistics and Probability":["statistics and probability","probability","mean variance"],
+  "Three-Dimensional Geometry":["three dimensional geometry","3d geometry","direction cosines"]
+ };
+ const ranked=state.chapters.map(ch=>{
+  const names=[ch.chapter].concat(aliases[ch.chapter]||[]);
+  const hit=names.filter(term=>clean.includes(term.toLowerCase())).sort((a,b)=>b.length-a.length)[0];
+  return {ch,score:hit?hit.length:0};
+ }).filter(item=>item.score>=5).sort((a,b)=>b.score-a.score);
+ if(!ranked.length)return null;
+ if(ranked.length>1&&ranked[0].score===ranked[1].score&&ranked[0].ch.subject!==ranked[1].ch.subject)return null;
+ return ranked[0].ch;
 }
 function renderTelegramImport(){
  const rows=readTelegramLectures();
