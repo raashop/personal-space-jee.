@@ -89,7 +89,14 @@
 
   const EXCLUDE = ["official music video","lyric video","full episode","anime episode","movie trailer","gameplay","reaction video","reaction channel","vlog","meme compilation"];
   const videoId = () => {
-    try { return new URL(location.href).searchParams.get("v"); } catch { return null; }
+    try {
+      const url = new URL(location.href);
+      const fromQuery = url.searchParams.get("v");
+      if (fromQuery) return fromQuery;
+      const parts = url.pathname.split("/").filter(Boolean);
+      if (["shorts", "live", "embed", "v"].includes(parts[0]) && parts[1]) return parts[1];
+      return null;
+    } catch { return null; }
   };
   const videoTitle = () => (
     document.querySelector("h1.ytd-watch-metadata yt-formatted-string")?.textContent ||
