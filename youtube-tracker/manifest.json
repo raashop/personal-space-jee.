@@ -1,16 +1,22 @@
 {
   "manifest_version": 3,
   "name": "Personal Space — JEE Lecture Tracker",
-  "version": "1.1.0",
-  "description": "Recognises likely JEE lectures on YouTube, tracks watched time, and exports records for Personal Space V6.",
+  "version": "1.2.0",
+  "description": "Automatically tracks recognized JEE lecture playback and syncs records to your Personal Space planner.",
   "permissions": [
     "storage",
-    "activeTab"
+    "activeTab",
+    "scripting"
   ],
   "host_permissions": [
     "https://www.youtube.com/*",
     "https://youtube.com/*",
     "https://m.youtube.com/*"
+  ],
+  "optional_host_permissions": [
+    "https://*/*",
+    "http://localhost/*",
+    "http://127.0.0.1/*"
   ],
   "content_scripts": [
     {
