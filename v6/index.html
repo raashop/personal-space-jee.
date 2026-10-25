@@ -4508,6 +4508,144 @@ function readYoutubeLectures(){
 function writeYoutubeLectures(rows){
  try{localStorage.setItem(PS_LECTURE_KEY,JSON.stringify(rows));}catch(e){toast("Could not save lecture history in this browser.");}
 }
+const PS_COURSES_KEY="personal-space-youtube-courses-v1";
+function readYoutubeCourses(){
+ try{const rows=JSON.parse(localStorage.getItem(PS_COURSES_KEY)||"[]");return Array.isArray(rows)?rows:[];}catch(e){return [];}
+}
+function writeYoutubeCourses(rows){
+ try{localStorage.setItem(PS_COURSES_KEY,JSON.stringify(rows));}catch(e){toast("Could not save playlist progress in this browser.");}
+}
+function mergeYoutubeCourses(incoming){
+ const rows=readYoutubeCourses(),byId=new Map(rows.filter(c=>c&&c.playlistId).map(c=>[String(c.playlistId),c]));
+ (Array.isArray(incoming)?incoming:[]).forEach(course=>{if(course&&course.playlistId&&Array.isArray(course.videos))byId.set(String(course.playlistId),course);});
+ writeYoutubeCourses(Array.from(byId.values()).slice(-100));
+ renderYoutubeCourseProgress();
+ if(typeof queueYoutubeCloudSave==="function")queueYoutubeCloudSave();
+}
+function durationLabel(minutes){
+ const value=Math.max(0,Math.round(Number(minutes)||0));
+ return value>=60?Math.floor(value/60)+"h "+(value%60)+"m":value+"m";
+}
+function courseProgressData(course){
+ const watchedIds=new Set(readYoutubeLectures().filter(row=>row&&row.videoId&&(Number(row.watchedSeconds)||0)>0).map(row=>String(row.videoId)));
+ const videos=Array.isArray(course.videos)?course.videos:[];
+ const watched=videos.filter(video=>watchedIds.has(String(video.videoId))).length;
+ const total=Math.max(Number(course.totalLectures)||0,videos.length);
+ return {watched,total,percent:total?Math.max(0,Math.min(100,Math.round(watched/total*100))):0,mapped:Number(course.mappedCount)||videos.filter(v=>v.subject&&v.chapter).length};
+}
+function courseProgressCard(course,showRemove){
+ const progress=courseProgressData(course),title=escapeHTML(course.title||"YouTube course");
+ const link=/^https:\/\/www\.youtube\.com\/playlist\?list=[\w-]+$/.test(course.url||"")?course.url:"#";
+ const remove=showRemove?'<button type="button" class="study-course-remove" onclick="removeYoutubeCourse(\''+escapeAttr(course.playlistId)+'\')">Remove</button>':"";
+ return '<article class="study-course-card"><div class="study-course-top"><div><strong>'+title+'</strong><small>'+escapeHTML(course.channelTitle||"YouTube playlist")+' · '+progress.mapped+' lectures matched to chapters</small></div><span class="study-course-count">'+progress.watched+' / '+progress.total+'</span></div><div class="study-course-bar"><i style="width:'+progress.percent+'%"></i></div><div class="study-course-footer"><span>'+progress.percent+'% watched · YouTube total '+progress.total+'</span><span><a href="'+escapeAttr(link)+'" target="_blank" rel="noopener noreferrer">Open playlist ↗</a> '+remove+'</span></div></article>';
+}
+function renderYoutubeCourseProgress(){
+ const courses=readYoutubeCourses();
+ const dash=document.getElementById("studyCourseProgressList"),page=document.getElementById("psCourseProgressList");
+ const empty='<div class="empty">Add a YouTube playlist in Lecture Tracker to see the actual total lecture count and progress.</div>';
+ if(dash)dash.innerHTML=courses.length?courses.slice(-4).reverse().map(course=>courseProgressCard(course,false)).join(""):empty;
+ if(page)page.innerHTML=courses.length?courses.slice().reverse().map(course=>courseProgressCard(course,true)).join(""):'<div class="empty">No playlist courses added yet.</div>';
+}
+function getChapterLectureProgress(subject,chapter){
+ const allCourses=readYoutubeCourses(),watchedRows=readYoutubeLectures().filter(row=>row&&row.videoId&&(Number(row.watchedSeconds)||0)>0);
+ const watchedIds=new Set(watchedRows.map(row=>String(row.videoId)));
+ const matchedIds=new Set(),watchedMatchedIds=new Set();
+ allCourses.forEach(course=>(Array.isArray(course.videos)?course.videos:[]).forEach(video=>{
+  let videoSubject=video.subject||"",videoChapter=video.chapter||"";
+  if(!videoSubject||!videoChapter){
+   const tracked=watchedRows.find(row=>String(row.videoId)===String(video.videoId));
+   if(tracked){videoSubject=tracked.subject||videoSubject;videoChapter=tracked.chapter||videoChapter;}
+  }
+  if(videoSubject===subject&&videoChapter===chapter){
+   const id=String(video.videoId);matchedIds.add(id);if(watchedIds.has(id))watchedMatchedIds.add(id);
+  }
+ }));
+ const trackedRows=new Set(watchedRows.filter(row=>row.subject===subject&&row.chapter===chapter).map(row=>String(row.videoId||row.title)));
+ const total=matchedIds.size,watched=total?Array.from(matchedIds).filter(id=>watchedIds.has(id)).length:trackedRows.size;
+ return {total,watched,percent:total?Math.round(watched/total*100):0,tracked:trackedRows.size>0};
+}
+function localDateKey(value){
+ if(!value)return "";
+ const date=new Date(value);if(Number.isNaN(date.getTime()))return String(value).slice(0,10);
+ return date.getFullYear()+"-"+String(date.getMonth()+1).padStart(2,"0")+"-"+String(date.getDate()).padStart(2,"0");
+}
+function renderStudyActivitySummary(){
+ const today=typeof todayISO==="function"?todayISO():localDateKey(new Date().toISOString());
+ const sessions=Array.isArray(state.studySessions)?state.studySessions:[];
+ const todaySessions=sessions.filter(item=>String(item.date||"")===today);
+ const minutes=todaySessions.reduce((sum,item)=>sum+(Number(item.minutes)||0),0);
+ const sessionNode=document.getElementById("studyActivityHours");if(sessionNode)sessionNode.textContent=durationLabel(minutes);
+ const sessionMeta=document.getElementById("studyActivityHoursMeta");if(sessionMeta)sessionMeta.textContent=todaySessions.length+" logged study session"+(todaySessions.length===1?"":"s");
+ const ytRows=readYoutubeLectures(),tgRows=typeof readTelegramLectures==="function"?readTelegramLectures():[];
+ const ytSeconds=ytRows.reduce((sum,row)=>sum+(Number(row.watchedSeconds)||0),0);
+ const tgSeconds=tgRows.reduce((sum,row)=>sum+(Number(row.watchedSeconds)||0),0);
+ const ytNode=document.getElementById("studyActivityYoutubeTime");if(ytNode)ytNode.textContent=durationLabel(ytSeconds/60);
+ const ytMeta=document.getElementById("studyActivityYoutubeMeta");if(ytMeta)ytMeta.textContent=ytRows.filter(row=>(Number(row.watchedSeconds)||0)>0).length+" videos with recorded watch time";
+ const tgNode=document.getElementById("studyActivityTelegram");if(tgNode)tgNode.textContent=tgRows.length;
+ const tgMeta=document.getElementById("studyActivityTelegramMeta");if(tgMeta)tgMeta.textContent=durationLabel(tgSeconds/60)+" tracked playback";
+ const chapters=new Map();
+ const addChapter=(subject,chapter)=>{
+  if(!subject||!chapter)return;
+  const found=state.chapters.find(item=>item.subject===subject&&item.chapter===chapter);
+  if(!found)return;
+  const key=allocationChapterKey(found);chapters.set(key,found);
+ };
+ todaySessions.forEach(item=>addChapter(item.subject,item.chapter));
+ (Array.isArray(state.dailyTasks)?state.dailyTasks:[]).filter(item=>item.date===today&&item.done).forEach(item=>addChapter(item.subject,item.chapter));
+ ytRows.filter(row=>(Number(row.watchedSeconds)||0)>0&&localDateKey(row.lastWatchedAt)===today).forEach(row=>addChapter(row.subject,row.chapter));
+ tgRows.filter(row=>(Number(row.watchedSeconds)||0)>0&&localDateKey(row.lastWatchedAt)===today).forEach(row=>addChapter(row.subject,row.chapter));
+ const chapterList=document.getElementById("studyActivityChapterList");
+ if(chapterList)chapterList.innerHTML=chapters.size?Array.from(chapters.values()).map(ch=>{
+  const color=ch.subject==="Physics"?"#2784d8":ch.subject==="Chemistry"?"#15966a":"#8064c7";
+  return '<button type="button" class="study-chapter-chip" onclick="openDashboardEntry(\'chapter\',\'\',\''+escapeAttr(ch.subject)+'\',\''+escapeAttr(ch.chapter)+'\')"><span style="width:8px;height:8px;border-radius:50%;background:'+color+'"></span><span>'+escapeHTML(chapterDisplayName(ch.subject,ch.chapter))+'</span><small>'+escapeHTML(ch.subject)+' ↗</small></button>';
+ }).join(""):'<div class="empty">No chapters logged today yet. Log a session or watch a matched lecture.</div>';
+ const chapterCount=document.getElementById("studyActivityChapters");if(chapterCount)chapterCount.textContent=chapters.size;
+ const chapterMeta=document.getElementById("studyActivityChaptersMeta");if(chapterMeta)chapterMeta.textContent=chapters.size+" unique chapter"+(chapters.size===1?"":"s")+" touched today";
+ renderYoutubeCourseProgress();
+}
+async function addYoutubeCourse(event){
+ if(event)event.preventDefault();
+ const urlNode=document.getElementById("psCoursePlaylistUrl"),subjectNode=document.getElementById("psCourseSubject");
+ const status=document.getElementById("psCourseStatus"),button=document.getElementById("psCourseAddButton");
+ const playlistUrl=urlNode?urlNode.value.trim():"",subject=subjectNode?subjectNode.value:"";
+ if(!playlistUrl){if(status)status.textContent="Paste a YouTube playlist URL first.";return;}
+ try{
+  if(button){button.disabled=true;button.textContent="Finding lecture total and matching chapters…";}
+  if(status)status.textContent="Reading playlist totals and using Gemini to match the lesson titles to your syllabus…";
+  restoreCloudSettings();
+  if(!cloudClient)cloudClient=cloudCreateClient();
+  const sessionResult=await cloudClient.auth.getSession();
+  if(sessionResult.error)throw sessionResult.error;
+  const session=sessionResult.data&&sessionResult.data.session;
+  if(!session||!session.access_token)throw new Error("Sign in through Backup & Sync first.");
+  const cfg=cloudSettings();
+  const response=await fetch(cfg.url+"/functions/v1/course-progress",{
+   method:"POST",
+   headers:{"Content-Type":"application/json","apikey":cfg.key,"Authorization":"Bearer "+session.access_token},
+   body:JSON.stringify({playlistUrl,subject,chapters:(state.chapters||[]).map(ch=>({subject:ch.subject,chapter:ch.chapter,class:ch.class||""}))})
+  });
+  let payload={};try{payload=await response.json();}catch(e){}
+  if(!response.ok)throw new Error(payload.error||("Course progress function returned HTTP "+response.status+". Deploy the latest workflow and add YOUTUBE_API_KEY."));
+  if(!payload.course||!payload.course.playlistId)throw new Error("No playlist data was returned.");
+  const current=readYoutubeCourses().filter(course=>course.playlistId!==payload.course.playlistId);
+  current.push(payload.course);writeYoutubeCourses(current.slice(-100));
+  if(status)status.textContent=payload.notice||("Added "+payload.course.title+" · "+payload.course.totalLectures+" total lectures · "+payload.course.mappedCount+" chapter matches.");
+  if(urlNode)urlNode.value="";
+  renderYoutubeCourseProgress();renderStudyActivitySummary();renderChapters();renderDashboard();
+  if(typeof queueYoutubeCloudSave==="function")queueYoutubeCloudSave();
+  toast("Course progress added: "+payload.course.totalLectures+" lectures found.");
+ }catch(error){
+  if(status)status.textContent=error&&error.message?error.message:"Could not add this playlist.";
+ }finally{
+  if(button){button.disabled=false;button.textContent="Find total lectures & track progress ✦";}
+ }
+}
+function removeYoutubeCourse(playlistId){
+ const courses=readYoutubeCourses().filter(course=>String(course.playlistId)!==String(playlistId));
+ writeYoutubeCourses(courses);renderYoutubeCourseProgress();renderStudyActivitySummary();renderChapters();
+ if(typeof queueYoutubeCloudSave==="function")queueYoutubeCloudSave();
+ toast("Playlist progress removed. Lecture history is unchanged.");
+}
 function renderYoutubeLectures(){
  const rows=readYoutubeLectures();
  const watched=rows.reduce((sum,row)=>sum+Math.max(0,Number(row.watchedSeconds)||0),0);
