@@ -216,9 +216,58 @@ Only use supplied chapter ids/titles/subjects. estimatedHours must be 0.5 to 20 
   const budget = planningInput.testChapterBudgetHours;
   const warnings = Array.isArray(parsed.warnings) ? parsed.warnings.slice(0, 3).map((x: unknown) => String(x).slice(0, 240)) : [];
   if (totalHours > budget) warnings.unshift(`Estimated chapter work (${totalHours} h) exceeds the recommended test-prep budget (${budget} h). Prioritize High chapters and adjust the plan.`);
+  const rawDaily = Array.isArray(parsed.dailySchedule) ? parsed.dailySchedule : [];
+  const dailySchedule = Array.from({ length: Math.floor(daysRemaining) }, (_, index) => {
+    const dayNumber = index + 1;
+    const rawDay = rawDaily.find((d: any) => Number(d?.day) === dayNumber) || {};
+    const rawFocus = Array.isArray(rawDay.focus) ? rawDay.focus : [];
+    const focus = rawFocus.map((item: any) => {
+      const match = safeChapters.find((c: any) => c.chapter === String(item?.chapter || "") && c.subject === String(item?.subject || ""));
+      if (!match) return null;
+      const rawHours = Number(item?.hours);
+      return {
+        chapter: match.chapter,
+        subject: match.subject,
+        hours: Math.max(0.5, Math.min(6, Math.round((Number.isFinite(rawHours) ? rawHours : 1) * 2) / 2)),
+        task: String(item?.task || "Review concepts and solve JEE questions.").slice(0, 180),
+      };
+    }).filter(Boolean).slice(0, 8) as Array<{chapter:string;subject:string;hours:number;task:string}>;
+    const totalHours = Math.round(focus.reduce((sum: number, item) => sum + item.hours, 0) * 10) / 10;
+    return {
+      day: dayNumber,
+      focus,
+      totalHours,
+      broaderJeeHours: Math.max(0, Math.round((hoursPerDay - totalHours) * 10) / 10),
+    };
+  });
+  const normalizedDailyTotal = dailySchedule.reduce((sum, day) => sum + day.totalHours, 0);
+  if (normalizedDailyTotal === 0 && allocations.length) {
+    // If Gemini didn't give the optional dailySchedule, deterministically spread its estimates across days.
+    for (const item of allocations) {
+      let remaining = item.estimatedHours;
+      let cursor = (item.priority === "High" ? 0 : item.priority === "Medium" ? 1 : 2) % dailySchedule.length;
+      let safety = 0;
+      while (remaining > 0.01 && safety++ < 200) {
+        const day = dailySchedule.slice().sort((a, b) => a.totalHours - b.totalHours)[0];
+        const hours = Math.min(1.5, remaining);
+        day.focus.push({
+          chapter: item.chapter,
+          subject: item.subject,
+          hours,
+          task: String(item.focus || "Review concepts and solve JEE questions.").slice(0, 180),
+        });
+        day.totalHours = Math.round((day.totalHours + hours) * 10) / 10;
+        day.broaderJeeHours = Math.max(0, Math.round((hoursPerDay - day.totalHours) * 10) / 10);
+        remaining = Math.round((remaining - hours) * 10) / 10;
+        cursor++;
+      }
+    }
+  }
+
   return json({
     summary: String(parsed.summary || "Prioritize the highest-workload chapters, and keep time for the rest of your JEE syllabus.").slice(0, 500),
     chapters: allocations,
+    dailySchedule,
     totalHours,
     daysRemaining: Math.floor(daysRemaining),
     testPrepHoursPerDay: Math.round((totalHours / Math.max(1, Math.floor(daysRemaining))) * 10) / 10,
