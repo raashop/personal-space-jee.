@@ -452,7 +452,7 @@
     const studyDays=weekDays.filter(day=>isStudyDay(day)).length;
     const topics=(state.topics||[]).filter(t=>t.status==="Attempted"&&String(t.actualDate||"")>=weekStart&&String(t.actualDate||"")<=today).length;
     const pyqs=(state.pyqs||[]).filter(p=>String(p.date||"")>=weekStart&&String(p.date||"")<=today).reduce((n,p)=>n+(Number(p.attempted)||0),0);
-    byId("goalTodayStudyTime").textContent+(minutes/60).toFixed(minutes%60===0?0:1)+"h";
+    byId("goalTodayStudyTime").textContent=(minutes/60).toFixed(minutes%60===0?0:1)+"h";
     byId("goalTodayStudyTarget").textContent="Target · "+(dailyGoal/60).toFixed(dailyGoal%60===0?0:1)+"h";
     byId("goalTodayProgressBar").style.width=Math.min(100,Math.round(minutes/dailyGoal*100))+"%";
     byId("goalWeeklyStudyDays").textContent=studyDays+" / "+daysGoal;
