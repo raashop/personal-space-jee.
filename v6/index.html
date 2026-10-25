@@ -2327,7 +2327,7 @@ const clone=x=>JSON.parse(JSON.stringify(x));
 function initialState(){
  const chapters=[];
  Object.entries(BASE.subjects).forEach(([subject,list])=>list.forEach(x=>chapters.push({
-...x,prep:"Not Ready",r1:false,r2:false,r3:false,notes:false,pyq:false,topicAttempted:false,latestDate:"",marks:"",outOf:"",difficulty:""
+...x,prep:"Not Ready",statusTouched:false,r1:false,r2:false,r3:false,notes:false,pyq:false,topicAttempted:false,latestDate:"",marks:"",outOf:"",difficulty:""
 }
 )));
  const topics=chapters.map((c,i)=>({
@@ -2437,6 +2437,8 @@ function aggregateLegacyChapter(rows){
  if(statuses.length&&statuses.every(x=>x==="Exam Ready"))prep="Exam Ready";
  else if(statuses.includes("Needs Work"))prep="Needs Work";
  else if(statuses.includes("In Progress")||statuses.includes("Exam Ready"))prep="In Progress";
+ const hasEvidence=unique.some(r=>Boolean(r.statusTouched)||Boolean(r.r1)||Boolean(r.r2)||Boolean(r.r3)||Boolean(r.notes)||Boolean(r.pyq)||Boolean(r.topicAttempted)||Boolean(r.latestDate)||String(r.marks??"")!==""||Boolean(r.difficulty));
+ if(prep==="Needs Work"&&!hasEvidence)prep="Not Ready";
  const result={
 prep
 }
@@ -2488,10 +2490,13 @@ subject:ch.subject,chapter:target
 );
  const chapters=defaults.chapters.map(ch=>{
   const key=plannerChapterKey(ch),savedExact=exact.get(key);
-  if(savedExact)return {
-...ch,...savedExact,subject:ch.subject,chapter:ch.chapter,class:ch.class,coverage:ch.coverage
-}
-;
+  if(savedExact){
+   const relatedTopics=oldTopics.filter(t=>t&&t.subject===ch.subject&&topicChapters(t).includes(ch.chapter));
+   const hasTopicActivity=relatedTopics.some(t=>t.status!=="Not Started"||t.plannedDate||t.actualDate||String(t.marks??"")!==""||t.notes||t.difficulty);
+   const hasChapterActivity=Boolean(savedExact.statusTouched)||Boolean(savedExact.r1)||Boolean(savedExact.r2)||Boolean(savedExact.r3)||Boolean(savedExact.notes)||Boolean(savedExact.pyq)||Boolean(savedExact.topicAttempted)||Boolean(savedExact.latestDate)||String(savedExact.marks??"")!==""||Boolean(savedExact.difficulty);
+   const untouchedRevision=savedExact.prep==="Needs Work"&&!hasChapterActivity&&!hasTopicActivity;
+   return {...ch,...savedExact,prep:untouchedRevision?"Not Ready":(savedExact.prep||"Not Ready"),statusTouched:Boolean(savedExact.statusTouched),subject:ch.subject,chapter:ch.chapter,class:ch.class,coverage:ch.coverage};
+  }
   const records=mapped.get(key)||[];
   return records.length?{
 ...ch,...aggregateLegacyChapter(records),subject:ch.subject,chapter:ch.chapter,class:ch.class,coverage:ch.coverage
@@ -3209,7 +3214,7 @@ function renderChapters(){
 function setPrep(subject,chapter,prep){
 const c=state.chapters.find(x=>x.subject===subject&&x.chapter===chapter);
 if(!c)return;
-c.prep=prep;
+c.prep=prep;c.statusTouched=true;
 saveState();
 toast("Chapter status updated.");
 }
@@ -3629,7 +3634,7 @@ return;
  if(ctx.type==="chapter"){
 const c=state.chapters.find(x=>x.subject===ctx.subject&&x.chapter===ctx.chapter);
 if(c)Object.assign(c,{
-prep:v.prep,r1:v.r1==="true",r2:v.r2==="true",r3:v.r3==="true",notes:v.notes==="true",pyq:v.pyq==="true",difficulty:v.difficulty||"",latestDate:v.latestDate||"",marks:v.marks??"",outOf:v.outOf??""
+prep:v.prep,statusTouched:true,r1:v.r1==="true",r2:v.r2==="true",r3:v.r3==="true",notes:v.notes==="true",pyq:v.pyq==="true",difficulty:v.difficulty||"",latestDate:v.latestDate||"",marks:v.marks??"",outOf:v.outOf??""
 }
 );
 }
