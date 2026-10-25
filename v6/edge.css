@@ -5248,3 +5248,32 @@ html[data-edge-theme="daylight"] .chapter-table-row:has(.status-not-started) .pr
     display: none;
   }
 }
+
+
+/* Warning hierarchy: incomplete chapter states use a soft red signal. */
+html[data-edge-theme="daylight"] .chapter-status-chip.status-in-progress {
+  color: #b95755;
+  background: #fff3f1 !important;
+  border-color: #f2dcd8 !important;
+}
+html[data-edge-theme="daylight"] .chapter-status-chip.status-revision {
+  color: #b74655;
+  background: #ffedf0 !important;
+  border-color: #f4d4db !important;
+}
+html[data-edge-theme="daylight"] .chapter-status-chip.status-not-started {
+  color: #b23d4b;
+  background: #ffe9ec !important;
+  border-color: #f2cfd5 !important;
+}
+html[data-edge-theme="daylight"] .legend-in-progress {
+  background: #df8b7d;
+}
+html[data-edge-theme="daylight"] .legend-revision {
+  background: #d85d69;
+}
+html[data-edge-theme="daylight"] .chapter-table-row:has(.status-in-progress) .progress-fill,
+html[data-edge-theme="daylight"] .chapter-table-row:has(.status-revision) .progress-fill,
+html[data-edge-theme="daylight"] .chapter-table-row:has(.status-not-started) .progress-fill {
+  background: #d85d69 !important;
+}
