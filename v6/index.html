@@ -1886,77 +1886,80 @@ td strong {
   <div class="top-actions"><div class="today-chip" id="todayText">Today</div><button class="icon-button" title="Workspace settings" onclick="openSettings()" aria-label="Workspace settings">⚙</button></div>
  </header>
  <section class="page active" id="page-dashboard">
-  <section class="hero dashboard-countdown-hero">
-   <div class="countdown-focus">
-    <div class="eyebrow">JEE MAIN <span class="eyebrow-dot">·</span> SESSION 1</div>
-    <div class="countdown">
-     <strong id="daysLeft">—</strong>
-     <div class="countdown-labels">
-      <div class="days-caption">DAYS LEFT</div>
-      <button type="button" class="countdown-target" onclick="changeCountdownTarget()" title="Choose the countdown target date" aria-expanded="false" aria-controls="countdownDateEditor"><span id="countdownDateLabel">30 JAN 2027</span><span class="edit-date-icon" aria-hidden="true">✎</span></button>
-      <small class="countdown-context">Personal countdown · editable</small>
-      <div class="countdown-date-editor" id="countdownDateEditor" hidden><label for="countdownTargetInput">Countdown target date</label><div class="countdown-editor-row"><input id="countdownTargetInput" type="date" value="2027-01-30" aria-label="Countdown target date"><button class="small-btn" type="button" onclick="saveCountdownTarget()">Save date</button></div><small>Your selected date is saved in this browser.</small></div>
+  <div class="dashboard-top-grid">
+   <section class="hero dashboard-countdown-hero">
+    <div class="countdown-focus">
+     <div class="eyebrow">JEE MAIN <span class="eyebrow-dot">·</span> SESSION 1</div>
+     <div class="countdown">
+      <strong id="daysLeft">—</strong>
+      <div class="countdown-labels">
+       <div class="days-caption">DAYS LEFT</div>
+       <button type="button" class="countdown-target" onclick="changeCountdownTarget()" title="Choose the countdown target date" aria-expanded="false" aria-controls="countdownDateEditor"><span id="countdownDateLabel">30 JAN 2027</span><span class="edit-date-icon" aria-hidden="true">✎</span></button>
+       <small class="countdown-context">Personal countdown</small>
+       <div class="countdown-date-editor" id="countdownDateEditor" hidden><label for="countdownTargetInput">Countdown target date</label><div class="countdown-editor-row"><input id="countdownTargetInput" type="date" value="2027-01-30" aria-label="Countdown target date"><button class="small-btn" type="button" onclick="saveCountdownTarget()">Save date</button></div><small>Your selected date is saved in this browser.</small></div>
+      </div>
      </div>
+     <div class="hero-actions"><button class="btn primary" onclick="openReadinessReport()">Chapter progress <span aria-hidden="true">→</span></button><button class="btn ghost" onclick="openPlannedTopicModal()">Plan a test</button></div>
     </div>
-    <div class="hero-actions"><button class="btn primary" onclick="go('chapters')">Open Chapter Planner <span aria-hidden="true">→</span></button><button class="btn ghost" onclick="go('topic')">Topic Tests</button></div>
-   </div>
-   <div class="hero-side">
-    <button type="button" class="ring ring-action" id="overallRing" aria-label="Open detailed chapter readiness report" title="Open chapter readiness report" onclick="openReadinessReport()">
-     <svg class="ring-svg" viewBox="0 0 160 160" aria-hidden="true"><defs><linearGradient id="readinessGradient" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#2784d8"/><stop offset="100%" stop-color="#15966a"/></linearGradient></defs><circle class="ring-track" cx="80" cy="80" r="69.5"/><circle class="ring-arc ring-value" id="ringArc" cx="80" cy="80" r="69.5"/></svg>
-     <div class="ring-inner"><strong id="overallPct">0%</strong><span>chapters done</span><i class="ring-dot" aria-hidden="true"></i></div>
-    </button>
-    <div class="hero-ring-caption"><strong id="doneHero">0 / 54</strong><span>chapters completed</span></div>
-   </div>
-  </section>
+    <div class="hero-side">
+     <button type="button" class="ring ring-action" id="overallRing" aria-label="Open detailed chapter readiness report" title="Open chapter readiness report" onclick="openReadinessReport()">
+      <svg class="ring-svg" viewBox="0 0 160 160" aria-hidden="true"><defs><linearGradient id="readinessGradient" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#2784d8"/><stop offset="100%" stop-color="#15966a"/></linearGradient></defs><circle class="ring-track" cx="80" cy="80" r="69.5"/><circle class="ring-arc ring-value" id="ringArc" cx="80" cy="80" r="69.5"/></svg>
+      <div class="ring-inner"><strong id="overallPct">0%</strong><span>chapters done</span><i class="ring-dot" aria-hidden="true"></i></div>
+     </button>
+     <div class="hero-ring-caption"><strong id="doneHero">0 / 54</strong><span>chapters completed</span></div>
+    </div>
+   </section>
 
-  <div class="metric-grid dashboard-metrics">
-   <button class="metric metric-clickable" type="button" onclick="go('chapters');document.getElementById('chapterStatus').value='Exam Ready';renderChapters()" aria-label="View chapters marked done"><div class="metric-top"><div class="metric-icon metric-icon-book">▤</div><label>CHAPTERS DONE</label><span class="metric-arrow">↗</span></div><strong id="readyMetric">0 / 54</strong><small>Marked done in the chapter planner</small></button>
-   <button class="metric metric-clickable" type="button" onclick="openAttemptReport()" aria-label="View all test attempts and scores"><div class="metric-top"><div class="metric-icon metric-icon-tests">✓</div><label>TEST ATTEMPTS</label><span class="metric-arrow">↗</span></div><strong id="testMetric">0</strong><small id="testMetricHint">Topic tests · LITMUS tests · view marks</small></button>
-   <button class="metric metric-clickable" type="button" onclick="go('chapters');document.getElementById('chapterStatus').value='Needs Work';renderChapters()" aria-label="Open chapters that need work"><div class="metric-top"><div class="metric-icon metric-icon-revision">↻</div><label>CHAPTERS NEED WORK</label><span class="metric-arrow">↗</span></div><strong id="needsWorkMetric">0</strong><small>Chapters to revise</small></button>
-   <button class="metric metric-clickable planned-metric" type="button" onclick="go('topic');document.getElementById('topicFilter').value='Planned';renderTopics()" aria-label="View planned topic tests"><div class="metric-top"><div class="metric-icon metric-icon-calendar">▦</div><label>PLANNED TESTS</label><span class="metric-arrow">↗</span></div><strong id="plannedMetricCount">0</strong><small id="plannedMetricHint">Click to view or plan a test</small></button>
+   <aside class="panel dashboard-launch-panel">
+    <div class="dashboard-panel-head"><div><h2>Jump back in</h2><p>Three useful actions, right where you need them.</p></div></div>
+    <button class="dashboard-launch-action launch-blue" type="button" onclick="openReadinessReport()"><span class="launch-icon">▤</span><span><strong>Chapter planner</strong><small>Check subject and chapter progress</small></span><span class="launch-arrow">↗</span></button>
+    <button class="dashboard-launch-action launch-violet" type="button" onclick="openAttemptTestModal()"><span class="launch-icon">✓</span><span><strong>Attempt a test</strong><small>Pick a planned test to review</small></span><span class="launch-arrow">↗</span></button>
+    <button class="dashboard-launch-action launch-green" type="button" onclick="openPlannedTopicModal()"><span class="launch-icon">＋</span><span><strong>Plan a test</strong><small>Choose a subject and chapters</small></span><span class="launch-arrow">↗</span></button>
+   </aside>
   </div>
 
-  <div class="section-head dashboard-section-head"><div><h3>Your subject progress</h3><p>Physics, Chemistry and Mathematics — updated from your chapter statuses.</p></div><button class="small-btn" type="button" onclick="go('chapters')">Open Chapter Planner ↗</button></div>
+  <div class="metric-grid dashboard-metrics">
+   <button class="metric metric-clickable" type="button" onclick="openDashboardDrilldown('done')" aria-label="View chapters marked done"><div class="metric-top"><div class="metric-icon metric-icon-book">▤</div><label>CHAPTERS DONE</label><span class="metric-arrow">↗</span></div><strong id="readyMetric">0 / 54</strong><small>Marked done in the chapter planner</small></button>
+   <button class="metric metric-clickable" type="button" onclick="openDashboardDrilldown('attempts')" aria-label="View all test attempts and scores"><div class="metric-top"><div class="metric-icon metric-icon-tests">✓</div><label>TEST ATTEMPTS</label><span class="metric-arrow">↗</span></div><strong id="testMetric">0</strong><small id="testMetricHint">Topic tests · LITMUS tests · view marks</small></button>
+   <button class="metric metric-clickable" type="button" onclick="openDashboardDrilldown('needs')" aria-label="View chapters that need work"><div class="metric-top"><div class="metric-icon metric-icon-revision">↻</div><label>CHAPTERS NEED WORK</label><span class="metric-arrow">↗</span></div><strong id="needsWorkMetric">0</strong><small>Chapters to revise</small></button>
+   <button class="metric metric-clickable planned-metric" type="button" onclick="openDashboardDrilldown('planned')" aria-label="View planned topic tests"><div class="metric-top"><div class="metric-icon metric-icon-calendar">▦</div><label>PLANNED TESTS</label><span class="metric-arrow">↗</span></div><strong id="plannedMetricCount">0</strong><small id="plannedMetricHint">Open your upcoming tests</small></button>
+  </div>
+
+  <div class="section-head dashboard-section-head"><div><h3>Your subject progress</h3><p>Physics, Chemistry and Mathematics — updated from your chapter statuses.</p></div><button class="small-btn" type="button" onclick="openReadinessReport()">View progress ↗</button></div>
   <div class="subject-grid" id="subjectCards"></div>
 
   <div class="dashboard-main-layout">
    <div class="dashboard-main-stack">
     <section class="panel dashboard-plan-panel">
-     <div class="dashboard-panel-head"><div><h2>Today's Plan</h2><p>Your tasks for the current day. Tick them off as you finish.</p></div><button class="btn btn-primary" onclick="go('daily');openDailyTaskModal()">＋ Add Task</button></div>
+     <div class="dashboard-panel-head"><div><h2>Today's Plan</h2><p>Choose a subject and chapter; the task title is filled in for you.</p></div><button class="btn btn-primary" onclick="focusDashboardTaskQuickAdd()">＋ Add Task</button></div>
+     <div class="dashboard-quick-add" id="dashboardTaskQuickAdd">
+      <label><span>Action</span><select class="control" id="dashboardTaskAction"><option value="Study chapter">Study chapter</option><option value="Revise chapter">Revise chapter</option><option value="Solve PYQs">Solve PYQs</option><option value="Take topic test">Take topic test</option><option value="Review mistakes">Review mistakes</option></select></label>
+      <label><span>Subject</span><select class="control" id="dashboardTaskSubject" onchange="updateDashboardTaskChapters()"><option value="Physics">Physics</option><option value="Chemistry">Chemistry</option><option value="Mathematics">Mathematics</option></select></label>
+      <label class="dashboard-task-chapter-field"><span>Chapter</span><select class="control" id="dashboardTaskChapter"></select></label>
+      <button class="btn btn-primary dashboard-quick-add-button" type="button" onclick="addDashboardTask()">Add task</button>
+     </div>
      <div class="dashboard-plan-meta" id="dashboardPlanMeta">No tasks added for today yet.</div>
-     <div class="dashboard-task-preview" id="dashboardTodayPlan"><div class="dashboard-plan-empty"><strong>Your day is still open.</strong><span>Add a chapter-based task to get started.</span></div></div>
-     <div class="dashboard-plan-footer"><button class="btn btn-secondary" onclick="go('daily')">Open Daily Journal ↗</button><button class="small-btn" onclick="go('daily');openDailyTaskModal()">Add another task ＋</button></div>
+     <div class="dashboard-task-preview" id="dashboardTodayPlan"><div class="dashboard-plan-empty"><strong>Your day is still open.</strong><span>Choose a chapter above to add your first task.</span></div></div>
+     <div class="dashboard-plan-footer"><button class="btn btn-secondary" onclick="go('daily')">Open Daily Journal ↗</button><button class="small-btn" onclick="go('daily')">Full study log ↗</button></div>
     </section>
     <section class="panel dashboard-coming-panel">
      <div class="dashboard-panel-head"><div><h2>Coming Up</h2><p>Your next topic tests and LITMUS deadlines.</p></div><span class="planned-count-badge"><strong id="upcomingCount">0</strong><span>up next</span></span></div>
      <div class="planned-next-note" id="plannedMetricHintSecondary">Your upcoming tests will appear here.</div>
      <div class="upcoming-list" id="upcomingList"></div>
-     <div class="dashboard-plan-footer"><button class="btn btn-secondary" onclick="go('topic')">Plan a Topic Test ↗</button><button class="small-btn" onclick="go('litmus')">Open LITMUS ↗</button></div>
     </section>
    </div>
    <aside class="dashboard-side-stack">
-    <section class="panel dashboard-quick-panel">
-     <div class="dashboard-panel-head"><div><h2>Quick Actions</h2><p>Jump into your next useful step.</p></div></div>
-     <div class="dashboard-quick-grid">
-      <button class="dashboard-quick-action" onclick="go('daily');if(!/stop/i.test(document.getElementById('timerStartButton').textContent)){setTimerPreset(25);toggleFocusTimer()}"><span class="dashboard-quick-icon quick-green">◷</span><span><strong>Start Focus Timer</strong><small>One focused session</small></span><span class="quick-arrow">↗</span></button>
-      <button class="dashboard-quick-action" onclick="go('daily');openStudySessionModal()"><span class="dashboard-quick-icon quick-blue">＋</span><span><strong>Add Study Log</strong><small>Record study time</small></span><span class="quick-arrow">↗</span></button>
-      <button class="dashboard-quick-action" onclick="go('topic');openPlannedTopicModal()"><span class="dashboard-quick-icon quick-violet">▦</span><span><strong>Create Topic Test</strong><small>Test a selected chapter</small></span><span class="quick-arrow">↗</span></button>
-      <button class="dashboard-quick-action" onclick="go('pyq');openPyqModal()"><span class="dashboard-quick-icon quick-orange">✎</span><span><strong>Practice PYQs</strong><small>Log question practice</small></span><span class="quick-arrow">↗</span></button>
-      <button class="dashboard-quick-action" onclick="go('mistakes');openMistakeModal()"><span class="dashboard-quick-icon quick-red">↻</span><span><strong>Log a Mistake</strong><small>Schedule a review</small></span><span class="quick-arrow">↗</span></button>
-      <button class="dashboard-quick-action" onclick="go('notes')"><span class="dashboard-quick-icon quick-blue">▤</span><span><strong>Open Notes</strong><small>Capture a formula or doubt</small></span><span class="quick-arrow">↗</span></button>
-     </div>
-    </section>
-    <section class="panel dashboard-focus-panel">
-     <div class="dashboard-panel-head"><div><h2>Next Focus</h2><p>One practical recommendation from your tracker.</p></div></div>
-     <h3 id="focusTitle">Start with one chapter.</h3><p id="focusBody">Choose a small concept to move forward today.</p>
-     <div class="focus-stats"><div class="focus-stat"><strong id="focusNeeds">0</strong><small>need work</small></div><div class="focus-stat"><strong id="focusActive">0</strong><small>in progress</small></div></div>
-     <button class="btn btn-secondary" onclick="go('chapters');document.getElementById('chapterStatus').value='Needs Work';renderChapters()">Review weak chapters ↗</button>
-    </section>
     <section class="panel dashboard-today-summary">
-     <div class="dashboard-panel-head"><div><h2>Today's Summary</h2><p>Changes with your daily log.</p></div></div>
+     <div class="dashboard-panel-head"><div><h2>Today's Summary</h2><p>Updates when you tick a task or log study time.</p></div></div>
      <div class="dashboard-mini-summary"><div><span class="summary-mini-icon">◷</span><div><strong id="dashboardTodayMinutes">0m</strong><small>study time</small></div></div><div><span class="summary-mini-icon">✓</span><div><strong id="dashboardTodayTasks">0 / 0</strong><small>tasks done</small></div></div></div>
      <div class="daily-summary-meter"><div class="daily-summary-meter-head"><span>Daily target</span><strong id="dashboardTargetLabel">0 / 300 min</strong></div><div class="progress-track"><div class="progress-fill" id="dashboardTargetFill" style="width:0%"></div></div></div>
      <button class="small-btn" onclick="go('daily')">View Daily Journal ↗</button>
+    </section>
+    <section class="panel dashboard-focus-panel">
+     <div class="dashboard-panel-head"><div><h2>Next Focus</h2><p>A gentle suggestion based on your tracker.</p></div></div>
+     <h3 id="focusTitle">Start with one chapter.</h3><p id="focusBody">Choose a small concept to move forward today.</p>
+     <div class="focus-stats"><div class="focus-stat"><strong id="focusNeeds">0</strong><small>need work</small></div><div class="focus-stat"><strong id="focusActive">0</strong><small>in progress</small></div></div>
+     <button class="btn btn-secondary" onclick="openDashboardDrilldown('needs')">Review weak chapters ↗</button>
     </section>
    </aside>
   </div>
@@ -2324,7 +2327,7 @@ const clone=x=>JSON.parse(JSON.stringify(x));
 function initialState(){
  const chapters=[];
  Object.entries(BASE.subjects).forEach(([subject,list])=>list.forEach(x=>chapters.push({
-...x,prep:"Not Ready",r1:false,r2:false,r3:false,notes:false,pyq:false,topicAttempted:false,latestDate:"",marks:"",outOf:"",difficulty:""
+...x,prep:"Not Ready",statusTouched:false,r1:false,r2:false,r3:false,notes:false,pyq:false,topicAttempted:false,latestDate:"",marks:"",outOf:"",difficulty:""
 }
 )));
  const topics=chapters.map((c,i)=>({
@@ -2434,6 +2437,8 @@ function aggregateLegacyChapter(rows){
  if(statuses.length&&statuses.every(x=>x==="Exam Ready"))prep="Exam Ready";
  else if(statuses.includes("Needs Work"))prep="Needs Work";
  else if(statuses.includes("In Progress")||statuses.includes("Exam Ready"))prep="In Progress";
+ const hasEvidence=unique.some(r=>Boolean(r.statusTouched)||Boolean(r.r1)||Boolean(r.r2)||Boolean(r.r3)||Boolean(r.notes)||Boolean(r.pyq)||Boolean(r.topicAttempted)||Boolean(r.latestDate)||String(r.marks??"")!==""||Boolean(r.difficulty));
+ if(prep==="Needs Work"&&!hasEvidence)prep="Not Ready";
  const result={
 prep
 }
@@ -2485,10 +2490,13 @@ subject:ch.subject,chapter:target
 );
  const chapters=defaults.chapters.map(ch=>{
   const key=plannerChapterKey(ch),savedExact=exact.get(key);
-  if(savedExact)return {
-...ch,...savedExact,subject:ch.subject,chapter:ch.chapter,class:ch.class,coverage:ch.coverage
-}
-;
+  if(savedExact){
+   const relatedTopics=oldTopics.filter(t=>t&&t.subject===ch.subject&&topicChapters(t).includes(ch.chapter));
+   const hasTopicActivity=relatedTopics.some(t=>t.status!=="Not Started"||t.plannedDate||t.actualDate||String(t.marks??"")!==""||t.notes||t.difficulty);
+   const hasChapterActivity=Boolean(savedExact.statusTouched)||Boolean(savedExact.r1)||Boolean(savedExact.r2)||Boolean(savedExact.r3)||Boolean(savedExact.notes)||Boolean(savedExact.pyq)||Boolean(savedExact.topicAttempted)||Boolean(savedExact.latestDate)||String(savedExact.marks??"")!==""||Boolean(savedExact.difficulty);
+   const untouchedRevision=savedExact.prep==="Needs Work"&&!hasChapterActivity&&!hasTopicActivity;
+   return {...ch,...savedExact,prep:untouchedRevision?"Not Ready":(savedExact.prep||"Not Ready"),statusTouched:Boolean(savedExact.statusTouched),subject:ch.subject,chapter:ch.chapter,class:ch.class,coverage:ch.coverage};
+  }
   const records=mapped.get(key)||[];
   return records.length?{
 ...ch,...aggregateLegacyChapter(records),subject:ch.subject,chapter:ch.chapter,class:ch.class,coverage:ch.coverage
@@ -2828,6 +2836,117 @@ function saveCountdownTarget(){
  renderDashboard();
  toast("Countdown target saved.");
 }
+function ensureDashboardDrilldown(){
+ let backdrop=document.getElementById("dashboardDrilldownBackdrop");
+ if(backdrop)return backdrop;
+ backdrop=document.createElement("div");
+ backdrop.id="dashboardDrilldownBackdrop";
+ backdrop.className="dashboard-drilldown-backdrop";
+ backdrop.innerHTML='<section class="dashboard-drilldown" role="dialog" aria-modal="true" aria-labelledby="dashboardDrilldownTitle"><header class="dashboard-drilldown-head"><div><span class="dashboard-drilldown-kicker">YOUR STUDY SPACE</span><h2 id="dashboardDrilldownTitle">Details</h2><p id="dashboardDrilldownSubtitle"></p></div><button type="button" class="dashboard-drilldown-close" aria-label="Close details" title="Close">×</button></header><div id="dashboardDrilldownBody" class="dashboard-drilldown-body"></div><footer class="dashboard-drilldown-footer"><span>Changes save to your planner automatically.</span><button type="button" class="btn btn-secondary" onclick="closeDashboardDrilldown()">Back to dashboard</button></footer></section>';
+ backdrop.addEventListener("click",event=>{if(event.target===backdrop)closeDashboardDrilldown();});
+ document.addEventListener("keydown",event=>{if(event.key==="Escape")closeDashboardDrilldown();});
+ backdrop.querySelector(".dashboard-drilldown-close").addEventListener("click",closeDashboardDrilldown);
+ document.body.appendChild(backdrop);
+ return backdrop;
+}
+function closeDashboardDrilldown(){
+ const backdrop=document.getElementById("dashboardDrilldownBackdrop");
+ if(backdrop)backdrop.classList.remove("is-open");
+ document.body.classList.remove("dashboard-drilldown-open");
+}
+function openDashboardDrilldown(kind,subject){
+ const chapters=Array.isArray(state.chapters)?state.chapters:[];
+ const topics=Array.isArray(state.topics)?state.topics:[];
+ const litmus=Array.isArray(state.litmus)?state.litmus:[];
+ let title="Study details",subtitle="A closer look at your progress.",entries=[];
+ if(kind==="done"){
+  title="Chapters done";subtitle="Chapters currently marked completed.";
+  entries=chapters.filter(c=>c.prep==="Exam Ready").map(c=>({type:"chapter",subject:c.subject,chapter:c.chapter,title:chapterDisplayName(c.subject,c.chapter),meta:c.subject+" · Completed",status:"Completed",tone:"done"}));
+ }else if(kind==="needs"){
+  title="Chapters that need work";subtitle="Only chapters deliberately marked for revision appear here.";
+  entries=chapters.filter(c=>c.prep==="Needs Work").map(c=>({type:"chapter",subject:c.subject,chapter:c.chapter,title:chapterDisplayName(c.subject,c.chapter),meta:c.subject+" · "+(c.class||"JEE Main"),status:"Revision",tone:"warning"}));
+ }else if(kind==="notStarted"){
+  title="Not started";subtitle="These chapters have not been marked as studied yet.";
+  entries=chapters.filter(c=>c.prep==="Not Ready").map(c=>({type:"chapter",subject:c.subject,chapter:c.chapter,title:chapterDisplayName(c.subject,c.chapter),meta:c.subject+" · "+(c.class||"JEE Main"),status:"Not started",tone:"warning"}));
+ }else if(kind==="status"){
+  title=subject==="Exam Ready"?"Completed chapters":subject==="Needs Work"?"Chapters that need work":subject==="In Progress"?"Chapters in progress":"Not started";
+  subtitle="Click a row to review its chapter details without leaving the dashboard.";
+  entries=chapters.filter(c=>c.prep===subject).map(c=>({type:"chapter",subject:c.subject,chapter:c.chapter,title:chapterDisplayName(c.subject,c.chapter),meta:c.subject+" · "+(c.class||"JEE Main"),status:subject==="Exam Ready"?"Completed":subject==="Needs Work"?"Revision":subject==="In Progress"?"In progress":"Not started",tone:subject==="Exam Ready"?"done":subject==="Needs Work"||subject==="Not Ready"?"warning":"active"}));
+ }else if(kind==="subject"){
+  title=subject+" chapters";subtitle="Chapter progress and status for "+subject+".";
+  entries=chapters.filter(c=>c.subject===subject).map(c=>({type:"chapter",subject:c.subject,chapter:c.chapter,title:chapterDisplayName(c.subject,c.chapter),meta:c.subject+" · "+(c.class||"JEE Main"),status:c.prep==="Exam Ready"?"Completed":c.prep==="Needs Work"?"Revision":c.prep==="In Progress"?"In progress":"Not started",tone:c.prep==="Exam Ready"?"done":c.prep==="Needs Work"||c.prep==="Not Ready"?"warning":c.prep==="In Progress"?"active":"warning"}));
+ }else if(kind==="planned"){
+  title="Planned tests";subtitle="Open a planned topic test to change its date, status or score.";
+  entries=topics.filter(t=>t.status==="Planned").map(t=>({type:"topic",id:t.id,title:topicDisplayName(t),meta:(t.subject||"General")+" · "+topicChapterLabel(t),status:t.plannedDate?formatNiceDate(t.plannedDate):"Date not set",tone:"active"}));
+ }else if(kind==="attempts"){
+  title="Test attempts";subtitle="Open an attempted test to review its marks and notes.";
+  entries=topics.filter(t=>t.status==="Attempted").map(t=>({type:"topic",id:t.id,title:topicDisplayName(t),meta:(t.subject||"General")+" · "+topicChapterLabel(t),status:t.marks!==""&&Number(t.outOf)>0?String(t.marks)+" / "+String(t.outOf):"Attempted · score not entered",tone:"done"}))
+   .concat(litmus.filter(t=>t.status==="Attempted").map(t=>({type:"litmus",id:t.id,title:t.name||"LITMUS test",meta:"LITMUS · "+(t.type||"Test"),status:t.marks!==""&&Number(t.outOf)>0?String(t.marks)+" / "+String(t.outOf):"Attempted · score not entered",tone:"done"})));
+ }
+ const backdrop=ensureDashboardDrilldown();
+ const titleNode=document.getElementById("dashboardDrilldownTitle");
+ const subtitleNode=document.getElementById("dashboardDrilldownSubtitle");
+ const body=document.getElementById("dashboardDrilldownBody");
+ titleNode.textContent=title;subtitleNode.textContent=subtitle;
+ body.innerHTML=entries.length?entries.map(item=>'<button type="button" class="dashboard-drilldown-row" data-entry-type="'+escapeAttr(item.type)+'" data-entry-id="'+escapeAttr(item.id||"")+'" data-entry-subject="'+escapeAttr(item.subject||"")+'" data-entry-chapter="'+escapeAttr(item.chapter||"")+'"><span class="dashboard-drilldown-dot tone-'+escapeAttr(item.tone||"active")+'"></span><span class="dashboard-drilldown-copy"><strong>'+escapeHTML(item.title)+'</strong><small>'+escapeHTML(item.meta||"")+'</small></span><span class="dashboard-drilldown-status tone-'+escapeAttr(item.tone||"active")+'">'+escapeHTML(item.status||"Open")+'</span><span class="dashboard-drilldown-arrow">↗</span></button>').join(""):'<div class="dashboard-drilldown-empty"><strong>Nothing here yet</strong><span>'+(kind==="planned"?"Create a test and it will appear here.":kind==="attempts"?"When you record a test attempt, it will appear here.":"No items match this view yet.")+'</span>'+(kind==="planned"?'<button type="button" class="btn btn-primary" id="dashboardDrilldownPlanTest">＋ Plan a test</button>':"")+'</div>';
+ body.querySelectorAll("[data-entry-type]").forEach(button=>button.addEventListener("click",function(){
+  const type=this.getAttribute("data-entry-type"),id=this.getAttribute("data-entry-id"),sub=this.getAttribute("data-entry-subject"),chapter=this.getAttribute("data-entry-chapter");
+  closeDashboardDrilldown();
+  openDashboardEntry(type,id,sub,chapter);
+ }));
+ const planButton=document.getElementById("dashboardDrilldownPlanTest");
+ if(planButton)planButton.addEventListener("click",function(){closeDashboardDrilldown();openPlannedTopicModal();});
+ backdrop.classList.add("is-open");
+ document.body.classList.add("dashboard-drilldown-open");
+ const close=backdrop.querySelector(".dashboard-drilldown-close");
+ if(close)close.focus({preventScroll:true});
+}
+function openDashboardEntry(type,id,subject,chapter){
+ if(type==="chapter"){editChapter(subject,chapter);return;}
+ if(type==="topic"){editTopic(id);return;}
+ if(type==="litmus"){editLitmus(id);return;}
+}
+function openAttemptTestModal(){
+ const planned=(Array.isArray(state.topics)?state.topics:[]).filter(t=>t.status==="Planned");
+ if(planned.length){openDashboardDrilldown("planned");return;}
+ const backdrop=ensureDashboardDrilldown();
+ document.getElementById("dashboardDrilldownTitle").textContent="No planned tests yet";
+ document.getElementById("dashboardDrilldownSubtitle").textContent="Plan a topic test first. It will appear here for easy access.";
+ document.getElementById("dashboardDrilldownBody").innerHTML='<div class="dashboard-drilldown-empty"><strong>Start with a quick test plan</strong><span>Choose a subject and one or more chapters; the test name is generated for you.</span><button type="button" class="btn btn-primary" id="dashboardDrilldownPlanTest">＋ Plan a test</button></div>';
+ document.getElementById("dashboardDrilldownPlanTest").addEventListener("click",function(){closeDashboardDrilldown();openPlannedTopicModal();});
+ backdrop.classList.add("is-open");document.body.classList.add("dashboard-drilldown-open");
+}
+function openDashboardUpcoming(type,id){
+ if(type==="topic"){openDashboardEntry("topic",id);return;}
+ if(type==="litmus"){openDashboardEntry("litmus",id);return;}
+}
+function updateDashboardTaskChapters(){
+ const subjectNode=document.getElementById("dashboardTaskSubject"),chapterNode=document.getElementById("dashboardTaskChapter");
+ if(!subjectNode||!chapterNode)return;
+ const subject=subjectNode.value,previous=chapterNode.value;
+ const chapters=(Array.isArray(state.chapters)?state.chapters:[]).filter(c=>c.subject===subject);
+ chapterNode.innerHTML='<option value="">Choose a chapter…</option>'+chapters.map(c=>'<option value="'+escapeAttr(c.chapter)+'">'+escapeHTML(chapterDisplayName(c.subject,c.chapter))+'</option>').join("");
+ if(previous&&chapters.some(c=>c.chapter===previous))chapterNode.value=previous;
+}
+function focusDashboardTaskQuickAdd(){
+ const chapter=document.getElementById("dashboardTaskChapter");
+ const section=document.getElementById("dashboardTaskQuickAdd");
+ if(section)section.scrollIntoView({behavior:"smooth",block:"center"});
+ if(chapter)chapter.focus({preventScroll:true});
+}
+function addDashboardTask(){
+ const actionNode=document.getElementById("dashboardTaskAction"),subjectNode=document.getElementById("dashboardTaskSubject"),chapterNode=document.getElementById("dashboardTaskChapter");
+ if(!actionNode||!subjectNode||!chapterNode)return;
+ const action=actionNode.value,subject=subjectNode.value,chapter=chapterNode.value;
+ if(!chapter){toast("Choose a chapter first.");chapterNode.focus();return;}
+ if(!Array.isArray(state.dailyTasks))state.dailyTasks=[];
+ const title=action+": "+chapterDisplayName(subject,chapter);
+ state.dailyTasks.push({id:"task-"+Date.now(),date:todayISO(),title,taskType:action,subject,chapter,estimate:45,priority:"Normal",done:false,completedAt:"",createdAt:new Date().toISOString()});
+ saveState();
+ renderDashboardPlanPreview();
+ toast("Added to today's plan.");
+}
+
 function renderDashboardPlanPreview(){
  const list=document.getElementById("dashboardTodayPlan");
  const date=typeof todayISO==="function"?todayISO():new Date().toISOString().slice(0,10);
@@ -2897,33 +3016,21 @@ function closeReadinessReport(){
 }
 function openReadinessSubject(subject){
  closeReadinessReport();
- setChapterSubject(subject);
- currentChapterYear="all";
- const search=document.getElementById("chapterSearch");if(search)search.value="";
- const status=document.getElementById("chapterStatus");if(status)status.value="all";
- setChapterYear("all");
- go("chapters");
- renderChapters();
+ openDashboardDrilldown("subject",subject);
 }
 function openReadinessChapter(subject,chapter){
- openReadinessSubject(subject);
- const search=document.getElementById("chapterSearch");if(search)search.value=chapter;
- renderChapters();
+ closeReadinessReport();
+ openDashboardEntry("chapter","",subject,chapter);
 }
 function openReadinessStatus(status){
  closeReadinessReport();
- const first=(state.chapters||[]).find(ch=>ch.prep===status);
- if(first)setChapterSubject(first.subject);
- const search=document.getElementById("chapterSearch");if(search)search.value="";
- const filter=document.getElementById("chapterStatus");if(filter)filter.value=status;
- setChapterYear("all");
- go("chapters");
- renderChapters();
+ openDashboardDrilldown("status",status);
 }
 document.addEventListener("keydown",event=>{
  if(event.key==="Escape")closeReadinessReport();
 });
 function renderDashboard(){
+ if(typeof updateDashboardTaskChapters==="function")updateDashboardTaskChapters();
  const chapters=Array.isArray(state.chapters)?state.chapters:[];
  const ready=chapters.filter(c=>c.prep==="Exam Ready").length;
  const total=chapters.length;
@@ -2989,18 +3096,19 @@ function renderDashboard(){
  if(subjectCards)subjectCards.innerHTML=["Physics","Chemistry","Mathematics"].map(sub=>{
   const arr=chapters.filter(c=>c.subject===sub),complete=arr.filter(c=>c.prep==="Exam Ready").length,percent=pct(complete,arr.length),colour=colors[sub];
   const needs=arr.filter(c=>c.prep==="Needs Work").length;
-  return '<button type="button" class="subject-card '+sub.toLowerCase()+'" style="--subject:'+colour[0]+';--subject-soft:'+colour[1]+'" onclick="go(\'chapters\');setChapterSubject(\''+sub+'\')"><div class="subject-top"><span class="subject-mark">'+colour[2]+'</span><span class="badge">'+arr.length+' chapters</span></div><h3>'+escapeHTML(sub)+'</h3><p class="subject-stat">'+complete+' done · '+needs+' need work</p><div class="progress-track"><div class="progress-fill" style="--subject:'+colour[0]+';width:'+percent+'%"></div></div><div class="subject-foot"><span>'+percent+'% complete</span><span>Open subject ↗</span></div></button>';
+return '<button type="button" class="subject-card '+sub.toLowerCase()+'" style="--subject:'+colour[0]+';--subject-soft:'+colour[1]+'" data-dashboard-subject="'+sub+'"><div class="subject-top"><span class="subject-mark">'+colour[2]+'</span><span class="badge">'+arr.length+' chapters</span></div><h3>'+escapeHTML(sub)+'</h3><p class="subject-stat">'+complete+' done · '+needs+' need work</p><div class="progress-track"><div class="progress-fill" style="--subject:'+colour[0]+';width:'+percent+'%"></div></div><div class="subject-foot"><span>'+percent+'% complete</span><span>View chapters ↗</span></div></button>';
  }).join("");
+ if(subjectCards)subjectCards.querySelectorAll("[data-dashboard-subject]").forEach(button=>button.addEventListener("click",function(){openDashboardDrilldown("subject",this.getAttribute("data-dashboard-subject")||"Physics");}));
 
  const today=todayISO();
  const future=[
-  ...(Array.isArray(state.topics)?state.topics:[]).filter(t=>t.status==="Planned"&&t.plannedDate).map(t=>({date:t.plannedDate,name:topicDisplayName(t),meta:topicChapterLabel(t),kind:"Topic test",page:"topic"})),
-  ...(Array.isArray(state.litmus)?state.litmus:[]).filter(t=>t.deadline&&t.status!=="Attempted"&&t.status!=="Missed").map(t=>({date:t.deadline,name:t.name,meta:t.name.includes("Full Test")?"Full mock":"Part test",kind:"LITMUS",page:"litmus"}))
+  ...(Array.isArray(state.topics)?state.topics:[]).filter(t=>t.status==="Planned"&&t.plannedDate).map(t=>({date:t.plannedDate,name:topicDisplayName(t),meta:topicChapterLabel(t),kind:"Topic test",recordKind:"topic",id:t.id})),
+  ...(Array.isArray(state.litmus)?state.litmus:[]).filter(t=>t.deadline&&t.status!=="Attempted"&&t.status!=="Missed").map(t=>({date:t.deadline,name:t.name,meta:t.name.includes("Full Test")?"Full mock":"Part test",kind:"LITMUS",recordKind:"litmus",id:t.id}))
  ].filter(t=>t.date>=today).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,5);
  const upcomingList=document.getElementById("upcomingList");
  if(upcomingList)upcomingList.innerHTML=future.map(t=>{
   const date=new Date(t.date+"T00:00:00"),delta=Math.round((date-new Date(today+"T00:00:00"))/86400000);
-  return '<button type="button" class="upcoming-row" onclick="go(\''+t.page+'\')"><span class="date-block"><strong>'+date.getDate()+'</strong><small>'+date.toLocaleDateString("en-IN",{month:"short"})+'</small></span><span class="upcoming-info"><strong>'+escapeHTML(t.name)+'</strong><small>'+escapeHTML(t.kind+" · "+t.meta)+'</small></span><span class="upcoming-badge">'+(delta===0?"Today":delta===1?"Tomorrow":delta+"d")+'</span></button>';
+  return '<button type="button" class="upcoming-row" onclick="openDashboardUpcoming(\''+t.recordKind+'\',\''+escapeAttr(t.id)+'\')"><span class="date-block"><strong>'+date.getDate()+'</strong><small>'+date.toLocaleDateString("en-IN",{month:"short"})+'</small></span><span class="upcoming-info"><strong>'+escapeHTML(t.name)+'</strong><small>'+escapeHTML(t.kind+" · "+t.meta)+'</small></span><span class="upcoming-badge">'+(delta===0?"Today":delta===1?"Tomorrow":delta+"d")+'</span></button>';
  }).join("")||'<div class="empty">No upcoming dates saved. Plan a topic test or open the LITMUS schedule.</div>';
  const upcomingCount=document.getElementById("upcomingCount");
  if(upcomingCount)upcomingCount.textContent=future.length;
@@ -3108,7 +3216,7 @@ function renderChapters(){
 function setPrep(subject,chapter,prep){
 const c=state.chapters.find(x=>x.subject===subject&&x.chapter===chapter);
 if(!c)return;
-c.prep=prep;
+c.prep=prep;c.statusTouched=true;
 saveState();
 toast("Chapter status updated.");
 }
@@ -3528,7 +3636,7 @@ return;
  if(ctx.type==="chapter"){
 const c=state.chapters.find(x=>x.subject===ctx.subject&&x.chapter===ctx.chapter);
 if(c)Object.assign(c,{
-prep:v.prep,r1:v.r1==="true",r2:v.r2==="true",r3:v.r3==="true",notes:v.notes==="true",pyq:v.pyq==="true",difficulty:v.difficulty||"",latestDate:v.latestDate||"",marks:v.marks??"",outOf:v.outOf??""
+prep:v.prep,statusTouched:true,r1:v.r1==="true",r2:v.r2==="true",r3:v.r3==="true",notes:v.notes==="true",pyq:v.pyq==="true",difficulty:v.difficulty||"",latestDate:v.latestDate||"",marks:v.marks??"",outOf:v.outOf??""
 }
 );
 }
