@@ -8,7 +8,7 @@
   const root = doc.documentElement;
   const body = doc.body;
   const STORAGE = {
-    theme: "ps-v6-edge-theme-v2",
+    theme: "ps-v6-edge-theme-v3",
     motion: "ps-v6-edge-motion",
     focus: "ps-v6-edge-focus-mode"
   };
@@ -49,7 +49,7 @@
     { id: "notes", label: "Study notes", detail: "Formulas, doubts and useful reminders", group: "Navigate" },
     { id: "goals", label: "Goals and habits", detail: "Targets and small daily habit checklist", group: "Navigate" }
   ];
-  let activeTheme = readStorage(STORAGE.theme, "daylight");
+  let activeTheme = "daylight";
   let selectedIndex = 0;
   let commandRows = [];
   let savedFocus = doc.activeElement;
@@ -97,7 +97,7 @@
   }
 
   function setTheme(theme, announce) {
-    activeTheme = THEMES.includes(theme) ? theme : "daylight";
+    activeTheme = "daylight";
     root.setAttribute("data-edge-theme", activeTheme);
     writeStorage(STORAGE.theme, activeTheme);
     const button = doc.getElementById("psThemeToggle");
@@ -142,31 +142,17 @@
   function buildHeaderControls() {
     const actions = doc.querySelector(".top-actions");
     if (!actions) return;
-    if (!doc.getElementById("psThemeToggle")) {
-      const theme = doc.createElement("button");
-      theme.type = "button";
-      theme.id = "psThemeToggle";
-      theme.className = "icon-button";
-      theme.textContent = "◈";
-      theme.addEventListener("click", nextTheme);
-      actions.appendChild(theme);
-    }
-    if (!doc.getElementById("psMotionToggle")) {
-      const motion = doc.createElement("button");
-      motion.type = "button";
-      motion.id = "psMotionToggle";
-      motion.className = "icon-button";
-      motion.textContent = "✦";
-      motion.addEventListener("click", function () { setMotion(!motionOn, true); });
-      actions.appendChild(motion);
-    }
+    ["psThemeToggle", "psMotionToggle", "psEdgeOrb"].forEach(function (id) {
+      const old = doc.getElementById(id);
+      if (old) old.remove();
+    });
     if (!doc.getElementById("psCommandButton")) {
       const command = doc.createElement("button");
       command.type = "button";
       command.id = "psCommandButton";
       command.className = "icon-button";
       command.textContent = "⌘";
-      command.title = "Open command centre (Ctrl/⌘ + K)";
+      command.title = "Open command centre";
       command.setAttribute("aria-label", "Open command centre");
       command.addEventListener("click", openCommandPalette);
       actions.appendChild(command);
@@ -186,7 +172,7 @@
             '<div id="psCommandTitle" style="font-size:10px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--green);margin-bottom:3px">Command centre</div>' +
             '<input id="psCommandInput" class="ps-edge-command-input" type="search" autocomplete="off" spellcheck="false" placeholder="Search a page or action…" aria-label="Search commands">' +
           '</div>' +
-          '<kbd>ESC</kbd>' +
+          '<button type="button" class="ps-edge-command-close" id="psCommandClose" aria-label="Close command centre" title="Close command centre">×</button>' +
         '</div>' +
         '<div id="psCommandList" class="ps-edge-command-list"></div>' +
         '<div id="psCommandShortcutPanel" class="ps-edge-shortcuts" hidden>' +
@@ -205,6 +191,8 @@
     });
     doc.body.appendChild(backdrop);
     const input = doc.getElementById("psCommandInput");
+    const closeButton = doc.getElementById("psCommandClose");
+    if (closeButton) closeButton.addEventListener("click", closeCommandPalette);
     input.addEventListener("input", function () {
       selectedIndex = 0;
       renderCommandRows(input.value);
@@ -324,24 +312,6 @@
         }
       },
       {
-        id: "theme:cycle",
-        label: "Change colour theme",
-        detail: "Cycle Aurora neon, Ultraviolet and Daylight",
-        group: "Personalise",
-        glyph: ICONS.theme,
-        key: "",
-        run: function () { closeCommandPalette(); nextTheme(); }
-      },
-      {
-        id: "motion:toggle",
-        label: "Toggle motion effects",
-        detail: "Use smoother animation or reduced motion",
-        group: "Personalise",
-        glyph: "✦",
-        key: "",
-        run: function () { closeCommandPalette(); setMotion(!motionOn, true); }
-      },
-      {
         id: "focus:toggle",
         label: "Toggle focus mode",
         detail: "Reduce visual distractions while studying",
@@ -390,10 +360,6 @@
     });
     list.innerHTML = output;
     list.querySelectorAll("[data-command-index]").forEach(function (button) {
-      button.addEventListener("mouseenter", function () {
-        selectedIndex = Number(button.getAttribute("data-command-index")) || 0;
-        syncSelectedCommand();
-      });
       button.addEventListener("click", function () {
         const command = commandRows[Number(button.getAttribute("data-command-index"))];
         if (command) command.run();
@@ -868,18 +834,15 @@
 
   function initialise() {
     buildHeaderControls();
-    setTheme(THEMES.includes(activeTheme) ? activeTheme : "daylight", false);
+    setTheme("daylight", false);
     body.classList.toggle("ps-edge-focus-mode", readStorage(STORAGE.focus, "off") === "on");
     setMotion(motionOn, false);
     buildCommandPalette();
-    buildFloatingButton();
-    buildAmbientCanvas();
     buildKeyboardShortcuts();
     registerNavigationFeedback();
     addEnhancementLabels();
     wrapRenderFunctions();
     renderEdgeSignal();
-    observeCards();
     window.setTimeout(renderEdgeSignal, 180);
   }
 
