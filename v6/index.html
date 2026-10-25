@@ -2087,6 +2087,90 @@ td strong {
 @media(max-width:1080px){#chapterAllocationPanel .allocation-chapter-picker{grid-template-columns:repeat(2,minmax(0,1fr))}#chapterAllocationPanel .allocation-result-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:680px){.study-activity-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.study-activity-lower{grid-template-columns:minmax(0,1fr);gap:16px}#chapterAllocationPanel .allocation-chapter-picker,#chapterAllocationPanel .allocation-result-grid{grid-template-columns:minmax(0,1fr)}#chapterAllocationPanel .allocation-summary-strip{gap:7px}#chapterAllocationPanel .allocation-summary-stat{padding:11px 9px}#chapterAllocationPanel .allocation-summary-stat strong{font-size:19px}#chapterAllocationPanel .allocation-summary-stat small{font-size:9px}#chapterAllocationPanel .allocation-input-grid{grid-template-columns:minmax(0,1fr)}.dashboard-main-layout.dashboard-main-layout-optimized{gap:12px}#chapterAllocationPanel{padding:15px!important}}
 @media(prefers-reduced-motion:reduce){#chapterAllocationPanel,#chapterAllocationPanel .allocation-chapter-choice,#chapterAllocationPanel .allocation-chapter{animation:none!important;transition:none!important}}
+
+/* Dashboard layout: compact activity + upcoming stack on the left, expandable AI on the right. */
+html[data-edge-theme] .dashboard-main-layout.dashboard-main-layout-optimized,
+.dashboard-main-layout.dashboard-main-layout-optimized{display:grid!important;grid-template-columns:minmax(0,.94fr) minmax(0,1.06fr)!important;gap:16px;margin-top:16px;align-items:start}
+html[data-edge-theme] .dashboard-main-stack.dashboard-main-stack-optimized,
+.dashboard-main-stack.dashboard-main-stack-optimized{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:14px;min-width:0;align-content:start}
+html[data-edge-theme] .dashboard-main-layout.dashboard-main-layout-optimized>.dashboard-main-stack,
+.dashboard-main-layout.dashboard-main-layout-optimized>.dashboard-main-stack{width:auto;min-width:0}
+#studyActivityPanel{margin:0!important;padding:15px!important;min-width:0;border-radius:16px!important}
+#studyActivityPanel .dashboard-panel-head{margin-bottom:10px;align-items:center}
+#studyActivityPanel .dashboard-panel-head h2{font-size:16px;letter-spacing:-.025em}
+#studyActivityPanel .dashboard-panel-head p{font-size:10px;line-height:1.4;margin-top:3px}
+#studyActivityPanel .dashboard-panel-head .small-btn{font-size:10px;padding:6px 8px;white-space:nowrap}
+#studyActivityPanel .study-activity-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:10px 0 12px}
+#studyActivityPanel .study-activity-stat{display:grid;grid-template-columns:26px minmax(0,1fr);column-gap:8px;row-gap:2px;align-items:center;padding:9px;border-radius:11px;background:var(--surface,#fff);min-height:74px}
+#studyActivityPanel .study-activity-icon{grid-row:span 2;width:26px;height:26px;border-radius:8px;font-size:12px}
+#studyActivityPanel .study-activity-stat small{font-size:9px;line-height:1.3}
+#studyActivityPanel .study-activity-stat strong{font-size:17px;line-height:1.1}
+#studyActivityPanel .study-activity-stat>span:last-child{grid-column:2;font-size:9px;line-height:1.25;overflow-wrap:anywhere}
+#studyActivityPanel .study-activity-lower{display:block}
+#studyActivityPanel .study-activity-subhead{margin:0 0 8px}
+#studyActivityPanel .study-activity-subhead strong{font-size:12px}
+#studyActivityPanel .study-activity-subhead span{font-size:9px}
+#studyActivityPanel .study-activity-chapter-list{display:grid;grid-template-columns:minmax(0,1fr);gap:7px;min-width:0}
+#studyActivityPanel .study-chapter-card{appearance:none;display:grid;gap:6px;width:100%;min-width:0;padding:10px 11px;border:1px solid var(--line);border-radius:12px;background:linear-gradient(135deg,#fff,#f8fbfc);color:var(--ink);text-align:left;cursor:pointer;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;animation:study-chapter-in .28s ease both}
+#studyActivityPanel .study-chapter-card:hover{transform:translateY(-1px);border-color:var(--chapter-accent);box-shadow:0 6px 18px rgba(26,65,86,.08)}
+#studyActivityPanel .study-chapter-card:focus-visible,#chapterAllocationToggle:focus-visible{outline:3px solid rgba(39,132,216,.3);outline-offset:2px}
+.study-chapter-card-head,.study-chapter-title,.study-chapter-details,.study-chapter-footer{display:flex;justify-content:space-between;align-items:center;gap:8px;min-width:0}
+.study-chapter-title{justify-content:flex-start;flex:1}
+.study-chapter-title i{width:7px;height:7px;border-radius:50%;background:var(--chapter-accent);flex:0 0 auto}
+.study-chapter-title strong{font-size:11px;line-height:1.35;overflow-wrap:anywhere}
+.study-chapter-state{font-size:8px;font-weight:800;color:#8d6216;background:#fff4dc;padding:4px 6px;border-radius:99px;white-space:nowrap}
+.study-chapter-state.is-done{background:#e2f7eb;color:#17784e}
+.study-chapter-details{font-size:9px;color:var(--muted);line-height:1.35;align-items:flex-start}
+.study-chapter-details>span{min-width:0;overflow-wrap:anywhere}
+.study-chapter-details strong{font-size:10px;color:var(--ink);white-space:nowrap}
+.study-chapter-progress{height:5px;border-radius:99px;background:#eaf0f3;overflow:hidden}
+.study-chapter-progress span{display:block;height:100%;border-radius:99px;transition:width .45s cubic-bezier(.2,.7,.2,1)}
+.study-chapter-footer{font-size:8px;color:var(--muted)}
+.study-chapter-footer small{font-size:8px}
+#chapterAllocationPanel{align-self:start;transition:box-shadow .2s ease,border-color .2s ease}
+#chapterAllocationPanel.is-expanded{box-shadow:0 16px 42px rgba(25,67,78,.105)!important;border-color:#c5ddd4!important}
+#chapterAllocationPanel .allocation-accordion-trigger{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;border:0;padding:0;background:transparent;color:var(--ink);text-align:left;cursor:pointer}
+#chapterAllocationPanel .allocation-accordion-copy{display:grid;gap:5px;min-width:0}
+#chapterAllocationPanel .allocation-accordion-copy strong{font-size:clamp(17px,1.5vw,21px);letter-spacing:-.035em}
+#chapterAllocationPanel .allocation-accordion-copy small{max-width:480px;font-size:11px;line-height:1.5;color:var(--muted)}
+#chapterAllocationPanel .allocation-accordion-side{display:flex;align-items:center;gap:10px;flex:0 0 auto}
+#chapterAllocationPanel .allocation-accordion-chevron{display:grid;place-items:center;width:32px;height:32px;border:1px solid #dce8e5;border-radius:10px;background:#f6faf8;color:#216d53;font-size:17px;transition:transform .2s ease,background .2s ease}
+#chapterAllocationPanel.is-expanded .allocation-accordion-chevron{background:#e7f5ee}
+#chapterAllocationPanel .allocation-collapsed-summary{margin-top:13px;padding:10px 12px;border:1px solid #e2ece8;border-radius:11px;background:rgba(244,250,247,.8);font-size:10px;line-height:1.4;color:#5e736b}
+#chapterAllocationPanel #chapterAllocationBody{padding-top:16px;margin-top:14px;border-top:1px solid #e6efeb;animation:allocation-body-in .24s ease both}
+#chapterAllocationPanel #chapterAllocationBody[hidden]{display:none!important}
+#chapterAllocationPanel .allocation-result-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+#chapterAllocationPanel .allocation-chapter{min-width:0;padding:12px;border:1px solid #e4ecea;border-radius:13px;background:rgba(255,255,255,.88);animation:allocation-body-in .28s ease both}
+#chapterAllocationPanel .allocation-chapter-name{overflow-wrap:anywhere}
+#chapterAllocationPanel .allocation-summary-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+#chapterAllocationPanel .allocation-summary-stat{min-width:0;padding:10px;border-radius:12px;background:#f6faf8;border:1px solid #e4eeea}
+#chapterAllocationPanel .allocation-summary-stat strong{display:block;font-size:18px;letter-spacing:-.04em}
+#chapterAllocationPanel .allocation-summary-stat small{display:block;margin-top:3px;font-size:9px;line-height:1.3;color:var(--muted)}
+#chapterAllocationPanel .allocation-note{font-size:10px;line-height:1.5}
+#chapterAllocationPanel .allocation-meta{flex-wrap:wrap;row-gap:4px;font-size:10px}
+#chapterAllocationPanel .allocation-priority{flex-shrink:0}
+#chapterAllocationPanel .allocation-bar{margin-top:8px}
+#chapterAllocationPanel .allocation-warning{overflow-wrap:anywhere}
+#chapterAllocationPanel .allocation-input-grid{grid-template-columns:minmax(0,1fr)}
+#chapterAllocationPanel .allocation-picker-tools{align-items:center;flex-wrap:wrap}
+#chapterAllocationPanel .allocation-chapter-picker{max-height:270px}
+#page-chapters .chapter-status-chip.status-needs-work{background:#fff0d5!important;color:#8e5a09!important;border-color:#e8c47e!important;box-shadow:inset 3px 0 #d28a35}
+#page-chapters .chapter-table tr.status-row-needs-work .chapter-status-chip{font-weight:800}
+@keyframes study-chapter-in{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+@keyframes allocation-body-in{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:980px){
+ html[data-edge-theme] .dashboard-main-layout.dashboard-main-layout-optimized,.dashboard-main-layout.dashboard-main-layout-optimized{grid-template-columns:minmax(0,1fr)!important}
+ #chapterAllocationPanel .allocation-result-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:600px){
+ #studyActivityPanel .study-activity-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #studyActivityPanel .dashboard-panel-head{align-items:flex-start}
+ #studyActivityPanel .dashboard-panel-head .small-btn{font-size:9px;padding:5px 6px}
+ #chapterAllocationPanel .allocation-result-grid{grid-template-columns:minmax(0,1fr)}
+ #chapterAllocationPanel .allocation-summary-strip{grid-template-columns:repeat(3,minmax(0,1fr))}
+ #chapterAllocationPanel .allocation-summary-stat strong{font-size:15px}
+ #chapterAllocationPanel .allocation-accordion-copy small{max-width:230px}
+}
 </style>
 </head>
 <body>
@@ -2152,29 +2236,35 @@ td strong {
   </div>
   </div>
 
+  <div class="dashboard-main-layout dashboard-main-layout-optimized">
+   <div class="dashboard-main-stack dashboard-main-stack-optimized">
   <section class="panel study-activity-panel" id="studyActivityPanel">
    <div class="dashboard-panel-head"><div><h2>Study Activity</h2><p>Today's study sessions, tracked lectures and chapters touched.</p></div><button class="small-btn" type="button" onclick="go('lectures')">Open lecture tracker ↗</button></div>
    <div class="study-activity-grid">
     <article class="study-activity-stat"><span class="study-activity-icon">◷</span><small>Study time logged today</small><strong id="studyActivityHours">0m</strong><span id="studyActivityHoursMeta">From your study sessions</span></article>
-    <article class="study-activity-stat"><span class="study-activity-icon yt">▶</span><small>YouTube watch time</small><strong id="studyActivityYoutubeTime">0m</strong><span id="studyActivityYoutubeMeta">Total tracked playback</span></article>
-    <article class="study-activity-stat"><span class="study-activity-icon tg">↗</span><small>Telegram lectures</small><strong id="studyActivityTelegram">0</strong><span id="studyActivityTelegramMeta">Tracked lecture posts</span></article>
-    <article class="study-activity-stat"><span class="study-activity-icon done">✓</span><small>Chapters studied / done today</small><strong id="studyActivityChapters">0</strong><span id="studyActivityChaptersMeta">From sessions, tasks and lectures</span></article>
+    <article class="study-activity-stat"><span class="study-activity-icon yt">▶</span><small>YouTube watch time today</small><strong id="studyActivityYoutubeTime">0m</strong><span id="studyActivityYoutubeMeta">Tracked playback today</span></article>
+    <article class="study-activity-stat"><span class="study-activity-icon tg">↗</span><small>Telegram watch time today</small><strong id="studyActivityTelegram">0m</strong><span id="studyActivityTelegramMeta">Tracked playback today</span></article>
+    <article class="study-activity-stat"><span class="study-activity-icon done">✓</span><small>Chapters done today</small><strong id="studyActivityChapters">0</strong><span id="studyActivityChaptersMeta">From sessions, tasks and lectures</span></article>
    </div>
    <div class="study-activity-lower">
-    <section><div class="study-activity-subhead"><strong>Course progress</strong><span>Totals pulled from saved YouTube playlists</span></div><div id="studyCourseProgressList" class="study-course-progress-list"><div class="empty">Add a YouTube playlist in Lecture Tracker to see total lectures and progress.</div></div></section>
+   <div class="study-activity-lower">
     <section><div class="study-activity-subhead"><strong>Chapters studied today</strong><span>Tap a chapter to open it</span></div><div id="studyActivityChapterList" class="study-activity-chapter-list"><div class="empty">Your chapter activity will appear here.</div></div></section>
-   </div>
-  </section>
 
-  <div class="dashboard-main-layout dashboard-main-layout-optimized">
-   <div class="dashboard-main-stack dashboard-main-stack-optimized">
+   </div>
+  </section>/section>
     <section class="panel dashboard-coming-panel">
      <div class="dashboard-panel-head"><div><h2>Coming Up</h2><p>Your next topic tests and LITMUS deadlines.</p></div><span class="planned-count-badge"><strong id="upcomingCount">0</strong><span>up next</span></span></div>
      <div class="planned-next-note" id="plannedMetricHintSecondary">Your upcoming tests will appear here.</div>
      <div class="upcoming-list" id="upcomingList"></div>
     </section>
+   </div>
     <section class="panel" id="chapterAllocationPanel">
-     <div class="dashboard-panel-head"><div><h2>Chapter Allocation</h2><p>Choose any unfinished chapters and tell AI how much time you have.</p></div><span class="planned-count-badge">AI PLAN</span></div>
+     <button type="button" class="allocation-accordion-trigger" id="chapterAllocationToggle" aria-expanded="false" aria-controls="chapterAllocationBody" onclick="toggleChapterAllocation()">
+      <span class="allocation-accordion-copy"><strong>Chapter Allocation</strong><small>Choose any chapters, set your time, and let Gemini build a flexible plan.</small></span>
+      <span class="allocation-accordion-side"><span class="planned-count-badge">GEMINI AI</span><span class="allocation-accordion-chevron" id="chapterAllocationChevron" aria-hidden="true">⌄</span></span>
+     </button>
+     <div class="allocation-collapsed-summary" id="chapterAllocationCollapsedSummary">Tap to select chapters and your available time.</div>
+     <div id="chapterAllocationBody" hidden>
      <label for="allocationPlanMode" class="field-label" style="display:block;margin:12px 0 6px">What are you planning for?</label>
      <select id="allocationPlanMode" class="control allocation-mode-select" style="width:100%" onchange="saveAllocationMode();renderChapterAllocation()"><option value="chapters">Pick my chapters</option><option value="test">Plan for an upcoming topic test</option></select>
      <div id="allocationTestControls" style="margin-top:10px"><label for="allocationTestSelect" class="field-label" style="display:block;margin:0 0 6px">Choose a planned topic test</label><select id="allocationTestSelect" class="control" style="width:100%" onchange="renderChapterAllocation()"><option value="">No planned topic tests</option></select></div>
@@ -2194,9 +2284,8 @@ td strong {
      <div id="chapterAllocationResults" style="margin-top:14px"><div class="empty">Choose an upcoming test or select chapters to build a plan.</div></div>
      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button type="button" class="btn btn-primary" id="chapterAllocationAIButton" onclick="requestAIChapterAllocation()">Generate AI allocation ✦</button><button type="button" class="small-btn" onclick="go('topic')">Manage topic tests ↗</button><button type="button" class="small-btn" onclick="clearAllocationSelection()">Clear chapter selection</button></div>
      <div id="chapterAllocationAIStatus" class="allocation-note" role="status" aria-live="polite">Sign in through Backup &amp; Sync, choose a plan and set your available time.</div>
+     </div>
     </section>
-   </div>
-
   </div>
  </section>
  <section class="page" id="page-chapters">
@@ -3456,6 +3545,35 @@ function getAllocationContext(){
  const chapters=topicChapters(test).map(name=>state.chapters.find(ch=>ch.subject===test.subject&&ch.chapter===name)||{subject:test.subject,chapter:name,prep:"Not Ready",class:""});
  return {mode,key:allocationPlanKey("test",test.id,daysRemaining,dailyStudyHours,chapters),test,daysRemaining,dailyStudyHours,chapters};
 }
+const ALLOCATION_ACCORDION_KEY="personal-space-allocation-expanded-v1";
+function applyChapterAllocationAccordion(open,remember){
+ const body=document.getElementById("chapterAllocationBody"),trigger=document.getElementById("chapterAllocationToggle"),chevron=document.getElementById("chapterAllocationChevron"),panel=document.getElementById("chapterAllocationPanel");
+ if(!body||!trigger)return;
+ body.hidden=!open;trigger.setAttribute("aria-expanded",String(Boolean(open)));
+ if(chevron)chevron.textContent=open?"⌃":"⌄";
+ if(panel)panel.classList.toggle("is-expanded",Boolean(open));
+ if(remember){try{localStorage.setItem(ALLOCATION_ACCORDION_KEY,open?"1":"0");}catch(e){}}
+}
+function restoreChapterAllocationAccordion(){
+ let open=false;try{open=localStorage.getItem(ALLOCATION_ACCORDION_KEY)==="1";}catch(e){}
+ applyChapterAllocationAccordion(open,false);
+}
+function toggleChapterAllocation(){
+ const body=document.getElementById("chapterAllocationBody");
+ applyChapterAllocationAccordion(Boolean(body&&body.hidden),true);
+ if(body&&!body.hidden)renderChapterAllocation();
+}
+function renderAllocationAccordionSummary(){
+ const node=document.getElementById("chapterAllocationCollapsedSummary");if(!node)return;
+ const prefs=readAllocationPrefs(),modeNode=document.getElementById("allocationPlanMode"),mode=modeNode?modeNode.value:prefs.mode;
+ if(mode==="chapters"){
+  const n=prefs.selected.length;
+  node.textContent=n?n+" chapter"+(n===1?"":"s")+" selected · "+prefs.days+" days · "+prefs.dailyHours+"h/day":"Tap to select any chapters · set days and daily study hours";
+ }else{
+  const select=document.getElementById("allocationTestSelect"),test=(state.topics||[]).find(item=>item.id===(select&&select.value));
+  node.textContent=test?topicDisplayName(test)+" · "+Math.max(1,Math.ceil((new Date(test.plannedDate+"T00:00:00")-new Date(new Date().toDateString()))/86400000))+" days · "+prefs.dailyHours+"h/day":"Select a planned test · set study hours";
+ }
+}
 function renderChapterAllocation(){
  const modeSelect=document.getElementById("allocationPlanMode"),testSelect=document.getElementById("allocationTestSelect"),testControls=document.getElementById("allocationTestControls"),manualControls=document.getElementById("allocationManualControls"),results=document.getElementById("chapterAllocationResults");
  if(!results)return;
@@ -3466,6 +3584,7 @@ function renderChapterAllocation(){
  if(testControls)testControls.hidden=mode==="chapters";if(manualControls)manualControls.hidden=mode!=="chapters";
  const tests=(state.topics||[]).filter(t=>t.status==="Planned"&&t.plannedDate&&topicChapters(t).length).sort((a,b)=>a.plannedDate.localeCompare(b.plannedDate));
  if(testSelect){const previous=testSelect.value;testSelect.innerHTML=tests.map(t=>'<option value="'+escapeAttr(t.id)+'">'+escapeHTML(topicDisplayName(t)+' · '+formatNiceDate(t.plannedDate))+'</option>').join("")||'<option value="">No planned topic tests</option>';if(tests.some(t=>t.id===previous))testSelect.value=previous;}
+ renderAllocationAccordionSummary();
  if(mode==="chapters")renderAllocationChapterPicker();
  const context=getAllocationContext();
  if(!context.test){results.innerHTML='<div class="empty">Create a planned topic test or choose “Pick my chapters” to add chapters directly.</div>';return;}
@@ -5340,6 +5459,7 @@ document.addEventListener("click",function(event){
  if(!chapterButton)return;
  openDashboardEntry("chapter","",chapterButton.getAttribute("data-open-chapter-subject"),chapterButton.getAttribute("data-open-chapter-name"));
 });
+restoreChapterAllocationAccordion();
 renderAll();
 setTimeout(requestYoutubeLectureSync,350);
 </script>
