@@ -1,6 +1,6 @@
 # Personal Space — JEE Lecture Tracker
 
-**Current extension version: 1.3.4**
+**Current extension version: 1.3.5**
 
 A Brave/Chromium extension that tracks recognized JEE lecture playback on YouTube and Telegram Web, maps video titles/captions to the JEE chapter table, and sends both sources to the Personal Space planner. Normal use does not require repeated export/import.
 
