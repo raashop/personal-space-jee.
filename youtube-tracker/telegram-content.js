@@ -262,6 +262,7 @@
     };
 
     video.addEventListener("play",()=>{lastTime=video.currentTime||0;report("playing","Telegram video is playing. Checking lecture title and chapter.");tick();});
+    video.addEventListener("loadedmetadata",()=>{nearbyCaptionCache.delete(video);lastTime=video.currentTime||0;pendingSeconds=0;lastContext="";tick();});
     video.addEventListener("seeking",()=>{seeking=true;lastTime=video.currentTime||0;});
     video.addEventListener("timeupdate",()=>tick(),{passive:true});
     video.addEventListener("pause",()=>tick(true));
