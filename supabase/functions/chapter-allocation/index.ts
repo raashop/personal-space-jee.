@@ -1,7 +1,7 @@
 // Supabase Edge Function: chapter-allocation
-// Secure server-side OpenAI integration for Personal Space V6.
+// Secure server-side Gemini integration for Personal Space V6.
 // Deploy with: supabase functions deploy chapter-allocation
-// Store OPENAI_API_KEY in Supabase Edge Function Secrets. Never commit keys.
+// Store GEMINI_API_KEY in Supabase Edge Function Secrets. Never commit keys.
 
 const corsHeaders = (origin: string | null) => {
   const allowed =
@@ -110,10 +110,11 @@ Deno.serve(async (req: Request) => {
     return json({ error: "Some chapter details are invalid. Refresh and try again." }, 400, origin);
   }
 
-  const apiKey = Deno.env.get("OPENAI_API_KEY");
-  if (!apiKey) return json({ error: "AI service isn't configured yet. Add OPENAI_API_KEY to Supabase Edge Function Secrets." }, 503, origin);
+  const apiKey = Deno.env.get("GEMINI_API_KEY");
+  if (!apiKey) return json({ error: "AI service isn't configured yet. Add GEMINI_API_KEY to Supabase Edge Function Secrets." }, 503, origin);
 
-  const model = Deno.env.get("OPENAI_MODEL") || "gpt-4.1-mini";
+  // Default to a current, fast model; override via the GEMINI_MODEL secret if needed.
+  const model = Deno.env.get("GEMINI_MODEL") || "gemini-3.5-flash-lite";
   const hoursPerDay = Math.max(6, Math.min(10, Number.isFinite(dailyStudyHours) ? dailyStudyHours : 6.5));
   const safeTest = {
     name: String(test.name).slice(0, 160),
@@ -140,47 +141,46 @@ Only use supplied chapter ids/titles/subjects. estimatedHours must be 0.5 to 20 
 
   let aiResponse: Response;
   try {
-    aiResponse = await fetch("https://api.openai.com/v1/responses", {
+    aiResponse = await fetch("https://generativelanguage.googleapis.com/v1beta/models/" + encodeURIComponent(model) + ":generateContent", {
       method: "POST",
-      headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      headers: { "x-goog-api-key": apiKey, "Content-Type": "application/json" },
       signal: AbortSignal.timeout(35_000),
       body: JSON.stringify({
-        model,
-        instructions,
-        input: JSON.stringify(planningInput),
-        text: { format: { type: "json_object" } },
-        max_output_tokens: 1800,
+        systemInstruction: { parts: [{ text: instructions }] },
+        contents: [{ role: "user", parts: [{ text: JSON.stringify(planningInput) }] }],
+        generationConfig: { responseMimeType: "application/json", temperature: 0.2, maxOutputTokens: 1800 },
       }),
     });
   } catch {
-    return json({ error: "Couldn't reach the AI provider. Check the Edge Function logs and try again." }, 502, origin);
+    return json({ error: "Unable to reach Gemini. Check the Edge Function logs and try again." }, 502, origin);
   }
-
   const responseText = await aiResponse.text();
-  if (!aiResponse.ok) {
-    console.error("OpenAI request failed:", aiResponse.status, responseText.slice(0, 1000));
-    return json({ error: aiResponse.status === 401 || aiResponse.status === 403
-      ? "The AI API key was rejected. Check OPENAI_API_KEY in Supabase Secrets."
-      : "The AI provider returned an error. Check the key, model setting and usage limits." }, 502, origin);
-  }
-
   let providerData: any;
   try { providerData = JSON.parse(responseText); } catch {
-    return json({ error: "The AI provider returned an unreadable response." }, 502, origin);
+    console.error("Gemini returned non-JSON HTTP response:", aiResponse.status, responseText.slice(0, 800));
+    return json({ error: "Gemini returned an unreadable response. Try again." }, 502, origin);
   }
-
-  let outputText = typeof providerData.output_text === "string" ? providerData.output_text : "";
-  if (!outputText && Array.isArray(providerData.output)) {
-    for (const item of providerData.output) {
-      for (const content of (item?.content || [])) {
-        if (content?.type === "output_text" && typeof content.text === "string") outputText += content.text;
-      }
-    }
+  if (!aiResponse.ok) {
+    console.error("Gemini request failed:", aiResponse.status, JSON.stringify(providerData).slice(0, 1000));
+    return json({ error: aiResponse.status === 400 || aiResponse.status === 401 || aiResponse.status === 403
+      ? "Gemini rejected the API key or model. Check GEMINI_API_KEY and GEMINI_MODEL in Supabase Secrets."
+      : aiResponse.status === 429
+      ? "Gemini free-tier quota or rate limit was reached. Check your AI Studio usage page and try later."
+      : "Gemini returned an error. Check model access and quota." }, 502, origin);
   }
-
+  const parts = providerData?.candidates?.[0]?.content?.parts;
+  const outputText = Array.isArray(parts)
+    ? parts.filter((part: any) => typeof part?.text === "string").map((part: any) => part.text).join("\n")
+    : "";
+  if (!outputText) {
+    const finishReason = providerData?.candidates?.[0]?.finishReason;
+    console.error("Gemini returned no text:", finishReason || "unknown finish reason");
+    return json({ error: "Gemini did not return an allocation. Try again." }, 502, origin);
+  }
   let parsed: any;
   try { parsed = JSON.parse(outputText); } catch {
-    return json({ error: "The AI returned an invalid allocation. Try again." }, 502, origin);
+    console.error("Gemini returned invalid JSON:", outputText.slice(0, 600));
+    return json({ error: "Gemini returned an invalid allocation. Try again." }, 502, origin);
   }
 
   const suppliedById = new Map(safeChapters.map((c: any) => [c.id, c]));
