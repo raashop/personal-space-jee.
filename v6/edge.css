@@ -52,28 +52,28 @@ html[data-edge-theme="ultraviolet"]  {
 }
 html[data-edge-theme="daylight"]  {
   color-scheme: light;
-  --bg: #f3f8f7;
+  --bg: #f3f7fc;
   --paper: #ffffff;
-  --ink: #132d33;
-  --muted: #617a80;
-  --line: rgba(29, 87, 96, .14);
-  --soft: #eaf4f4;
-  --blue: #147fa8;
-  --blue-soft: #e0f4fb;
-  --green: #05865e;
-  --green-soft: #ddf8ec;
-  --violet: #7058bd;
-  --violet-soft: #eee8ff;
-  --orange: #a66318;
-  --orange-soft: #fff0d9;
-  --red: #b63c5f;
-  --red-soft: #ffe8ef;
-  --shadow: 0 18px 60px rgba(30, 73, 77, .10);
-  --radius: 22px;
-  --edge-glow: rgba(24, 157, 170, .13);
-  --edge-panel: rgba(255, 255, 255, .82);
+  --ink: #17283f;
+  --muted: #687b92;
+  --line: #e1eaf4;
+  --soft: #edf4fb;
+  --blue: #2784d8;
+  --blue-soft: #e5f2ff;
+  --green: #15966a;
+  --green-soft: #e0f6ec;
+  --violet: #8064c7;
+  --violet-soft: #f0ebff;
+  --orange: #b87525;
+  --orange-soft: #fff3e1;
+  --red: #c85d6a;
+  --red-soft: #ffedf0;
+  --shadow: 0 10px 30px rgba(34, 69, 108, .07);
+  --radius: 18px;
+  --edge-glow: rgba(39, 132, 216, .10);
+  --edge-panel: rgba(255, 255, 255, .96);
   --edge-panel-solid: #ffffff;
-  --edge-grid: rgba(14, 115, 135, .045);
+  --edge-grid: rgba(39, 132, 216, .018);
 }
 html  {
   scroll-padding-top: 24px;
@@ -1328,4 +1328,262 @@ html:not([data-edge-theme="daylight"]) .check-button {
   color: var(--ink);
   background: color-mix(in srgb, var(--paper) 86%, var(--bg)) !important;
   border-color: var(--line) !important;
+}
+
+
+/* Reference dashboard skin — soft ice blue, white surfaces and quiet emerald accents. */
+html[data-edge-theme="daylight"] body {
+  background:
+    radial-gradient(ellipse at 0% 0%, rgba(65,145,220,.055), transparent 35%),
+    radial-gradient(ellipse at 100% 8%, rgba(35,167,120,.035), transparent 30%),
+    #f3f7fc;
+  color: #17283f;
+}
+html[data-edge-theme="daylight"] body::before {
+  opacity: .16;
+  background-size: 48px 48px;
+}
+html[data-edge-theme="daylight"] #ps-ambient {
+  opacity: .10;
+}
+html[data-edge-theme="daylight"] .sidebar {
+  background: rgba(249,252,255,.92);
+  border-color: #e2ebf4;
+  box-shadow: 8px 0 28px rgba(35,76,120,.035);
+  backdrop-filter: blur(18px);
+}
+html[data-edge-theme="daylight"] .brandmark {
+  color: #ffffff;
+  background: linear-gradient(145deg,#20a978,#2784d8);
+  box-shadow: 0 4px 12px rgba(26,141,103,.16);
+}
+html[data-edge-theme="daylight"] nav button {
+  border: 1px solid transparent;
+  border-radius: 11px;
+}
+html[data-edge-theme="daylight"] nav button.active {
+  color: #147b5a;
+  background: linear-gradient(100deg,#e3f7ee,#eaf4ff);
+  border-color: #d8eee5;
+  box-shadow: none;
+}
+html[data-edge-theme="daylight"] nav button.active .nav-icon {
+  color: #168b62;
+  background: #d5f3e5;
+  border-color: transparent;
+  box-shadow: none;
+}
+html[data-edge-theme="daylight"] nav button .nav-icon {
+  color: #66819c;
+  background: transparent;
+  border-color: transparent;
+}
+html[data-edge-theme="daylight"] .sync-state {
+  background: #f3f8fd;
+  border-color: #e4edf6;
+}
+html[data-edge-theme="daylight"] main {
+  padding-top: clamp(22px, 2.5vw, 34px);
+}
+html[data-edge-theme="daylight"] .topbar {
+  margin-bottom: 22px;
+}
+html[data-edge-theme="daylight"] .crumb,
+html[data-edge-theme="daylight"] .hero-eyebrow {
+  color: #178c63;
+}
+html[data-edge-theme="daylight"] .today-chip,
+html[data-edge-theme="daylight"] .icon-button {
+  background: rgba(255,255,255,.86);
+  border-color: #e2eaf4;
+  color: #566d84;
+  box-shadow: 0 3px 12px rgba(37,70,105,.035);
+}
+html[data-edge-theme="daylight"] .hero {
+  border: 1px solid #e1ebf6;
+  border-radius: 21px;
+  background: linear-gradient(115deg,#ffffff 0%,#f6faff 62%,#f0faf7 100%);
+  box-shadow: 0 10px 28px rgba(37,76,120,.055);
+}
+html[data-edge-theme="daylight"] .hero::before,
+html[data-edge-theme="daylight"] .hero::after {
+  display: none;
+  animation: none;
+}
+html[data-edge-theme="daylight"] .hero h2 {
+  color: #182a43;
+  background: none;
+  -webkit-text-fill-color: currentColor;
+  font-size: clamp(27px, 3vw, 40px);
+  letter-spacing: -.055em;
+}
+html[data-edge-theme="daylight"] .hero p {
+  color: #687b92;
+  line-height: 1.65;
+}
+html[data-edge-theme="daylight"] .btn {
+  border-radius: 11px;
+  box-shadow: none;
+}
+html[data-edge-theme="daylight"] .btn-primary {
+  color: #ffffff;
+  background: #15966a;
+  border: 1px solid #15966a;
+}
+html[data-edge-theme="daylight"] .btn-primary:hover {
+  background: #117e58;
+  box-shadow: 0 5px 14px rgba(21,150,106,.14);
+}
+html[data-edge-theme="daylight"] .btn-secondary {
+  color: #314a64;
+  background: #ffffff;
+  border-color: #dfe8f2;
+}
+html[data-edge-theme="daylight"] .btn-secondary:hover {
+  background: #f4f9ff;
+  border-color: #c8dcec;
+}
+html[data-edge-theme="daylight"] .metric,
+html[data-edge-theme="daylight"] .panel,
+html[data-edge-theme="daylight"] .chapter-card,
+html[data-edge-theme="daylight"] .table-card,
+html[data-edge-theme="daylight"] .subject-card,
+html[data-edge-theme="daylight"] .litmus-card,
+html[data-edge-theme="daylight"] .daily-section-panel,
+html[data-edge-theme="daylight"] .daily-stat,
+html[data-edge-theme="daylight"] .mistake-card,
+html[data-edge-theme="daylight"] .performance-card,
+html[data-edge-theme="daylight"] .focus-panel,
+html[data-edge-theme="daylight"] .pulse-panel,
+html[data-edge-theme="daylight"] .table-panel {
+  color: #17283f;
+  background: #ffffff;
+  border-color: #e2eaf4;
+  border-radius: 16px;
+  box-shadow: 0 5px 18px rgba(35,74,118,.045);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+html[data-edge-theme="daylight"] .metric {
+  padding: 16px 17px;
+}
+html[data-edge-theme="daylight"] .metric:hover,
+html[data-edge-theme="daylight"] .subject-card:hover {
+  transform: translateY(-2px);
+  border-color: #cbdfee;
+  box-shadow: 0 9px 24px rgba(35,74,118,.08);
+}
+html[data-edge-theme="daylight"] .metric strong,
+html[data-edge-theme="daylight"] .metric h3,
+html[data-edge-theme="daylight"] .metric label,
+html[data-edge-theme="daylight"] .panel h3,
+html[data-edge-theme="daylight"] .panel h4 {
+  color: #17283f;
+}
+html[data-edge-theme="daylight"] .metric small,
+html[data-edge-theme="daylight"] .panel-sub,
+html[data-edge-theme="daylight"] .helper-note,
+html[data-edge-theme="daylight"] .count-hint,
+html[data-edge-theme="daylight"] .cell-muted {
+  color: #687b92;
+}
+html[data-edge-theme="daylight"] .progress-ring {
+  filter: none;
+}
+html[data-edge-theme="daylight"] .ring-track {
+  stroke: #e7edf5;
+}
+html[data-edge-theme="daylight"] .ring-value {
+  stroke: #15966a;
+  filter: none;
+}
+html[data-edge-theme="daylight"] .hero-mini > div {
+  border-radius: 14px;
+  box-shadow: none;
+}
+html[data-edge-theme="daylight"] .hero-mini .countdown-stat {
+  background: linear-gradient(145deg,#effaf5,#f4f9ff);
+  border-color: #dcefe7;
+}
+html[data-edge-theme="daylight"] .hero-mini .countdown-stat strong {
+  color: #17283f;
+  text-shadow: none;
+}
+html[data-edge-theme="daylight"] .hero-mini .countdown-label {
+  color: #168b62;
+}
+html[data-edge-theme="daylight"] .focus-panel {
+  background: linear-gradient(135deg,#f0f8ff,#f3fbf7);
+  border-color: #dfeaf4;
+}
+html[data-edge-theme="daylight"] .focus-stat {
+  background: rgba(255,255,255,.82);
+  border-color: #e0eaf4;
+}
+html[data-edge-theme="daylight"] .subject-tab,
+html[data-edge-theme="daylight"] .year-tab,
+html[data-edge-theme="daylight"] .type-tab {
+  background: #ffffff;
+  border-color: #e1eaf4;
+}
+html[data-edge-theme="daylight"] .subject-tab.active,
+html[data-edge-theme="daylight"] .year-tab.active,
+html[data-edge-theme="daylight"] .type-tab.active {
+  background: #e8f7ef;
+  border-color: #cfeadb;
+  color: #16764f;
+  box-shadow: none;
+}
+html[data-edge-theme="daylight"] input,
+html[data-edge-theme="daylight"] select,
+html[data-edge-theme="daylight"] textarea,
+html[data-edge-theme="daylight"] .control,
+html[data-edge-theme="daylight"] .select-small,
+html[data-edge-theme="daylight"] .search {
+  background: #ffffff;
+  color: #17283f;
+  border-color: #dfe8f2;
+  border-radius: 10px;
+  box-shadow: none;
+}
+html[data-edge-theme="daylight"] .table-scroll {
+  background: #ffffff;
+  border-color: #e2eaf4;
+}
+html[data-edge-theme="daylight"] th {
+  color: #61758b;
+  background: #f5f8fc;
+}
+html[data-edge-theme="daylight"] td {
+  color: #243a53;
+  border-color: #edf1f6;
+}
+html[data-edge-theme="daylight"] tbody tr:hover {
+  background: #f4f9ff;
+}
+html[data-edge-theme="daylight"] .litmus-intro,
+html[data-edge-theme="daylight"] .litmus-next {
+  background: #ffffff;
+}
+html[data-edge-theme="daylight"] .ps-edge-signal {
+  border: 1px solid #dfe9f3;
+  background: linear-gradient(120deg,#ffffff,#f4faff);
+  box-shadow: 0 6px 20px rgba(35,74,118,.045);
+}
+html[data-edge-theme="daylight"] .ps-edge-signal h3 {
+  color: #17283f;
+}
+html[data-edge-theme="daylight"] .ps-edge-signal p,
+html[data-edge-theme="daylight"] .ps-edge-shortcut {
+  color: #687b92;
+}
+html[data-edge-theme="daylight"] .ps-edge-led {
+  background: #15966a;
+  box-shadow: 0 0 0 4px rgba(21,150,106,.11);
+}
+html[data-edge-theme="daylight"] .ps-edge-kicker {
+  color: #168b62;
+}
+html[data-edge-theme="daylight"] .ps-edge-seen {
+  animation: none;
 }
