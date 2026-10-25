@@ -4204,9 +4204,9 @@ window.addEventListener("message",event=>{
  }
  if(message.type!=="LECTURES_UPDATED"||message.format!=="personal-space-youtube-lectures-v1")return;
  youtubeSyncReceived=true;
- const result=mergeYoutubeLectureRows(Array.isArray(message.lectures)?message.lectures:[]);
  captureLectureDailyActivity(Array.isArray(message.lectures)?message.lectures:[],"YouTube");
  captureLectureDailyActivity(Array.isArray(message.telegramLectures)?message.telegramLectures:[],"Telegram");
+ const result=mergeYoutubeLectureRows(Array.isArray(message.lectures)?message.lectures:[]);
  const telegramResult=mergeTelegramPlaybackRows(Array.isArray(message.telegramLectures)?message.telegramLectures:[]);
  renderDashboard();
  const watchMinutes=Math.round(readYoutubeLectures().reduce((sum,row)=>sum+(Number(row.watchedSeconds)||0),0)/60);
