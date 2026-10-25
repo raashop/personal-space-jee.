@@ -2127,6 +2127,7 @@ html[data-edge-theme] .dashboard-main-layout.dashboard-main-layout-optimized>.da
 .study-chapter-progress span{display:block;height:100%;border-radius:99px;transition:width .45s cubic-bezier(.2,.7,.2,1)}
 .study-chapter-footer{font-size:8px;color:var(--muted)}
 .study-chapter-footer small{font-size:8px}
+.study-chapter-more{justify-self:start;border:0;background:transparent;color:#24785b;font-size:10px;font-weight:800;cursor:pointer;padding:6px 2px;text-align:left}.study-chapter-more:hover{text-decoration:underline}
 #chapterAllocationPanel{align-self:start;transition:box-shadow .2s ease,border-color .2s ease}
 #chapterAllocationPanel.is-expanded{box-shadow:0 16px 42px rgba(25,67,78,.105)!important;border-color:#c5ddd4!important}
 #chapterAllocationPanel .allocation-accordion-trigger{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;border:0;padding:0;background:transparent;color:var(--ink);text-align:left;cursor:pointer}
@@ -4800,9 +4801,9 @@ function renderStudyActivitySummary(){
   return '<button type="button" class="study-chapter-card" data-open-chapter-subject="'+escapeAttr(item.subject)+'" data-open-chapter-name="'+escapeAttr(item.chapter)+'" style="--chapter-accent:'+item.color+'">'+
    '<span class="study-chapter-card-head"><span class="study-chapter-title"><i></i><strong>'+escapeHTML(chapterDisplayName(item.subject,item.chapter))+'</strong></span><span class="study-chapter-state '+(item.done?'is-done':'')+'">'+(item.done?'✓ Done today':'Studied today')+'</span></span>'+
    '<span class="study-chapter-details"><span>'+escapeHTML(meta)+'</span><strong>'+durationLabel(item.studyMinutes)+'</strong></span>'+progressBar+
-   '<span class="study-chapter-footer"><small>'+escapeHTML(item.subject+' · '+item.meta)+'</small><small>'+durationLabel(item.studyMinutes)+' today</small></span>'+
+   '<span class="study-chapter-footer"><small>'+escapeHTML(item.subject+' · '+item.meta)+'</small><small>'+(item.progress.total?'Playlist mapped':'Open chapter ↗')+'</small></span>'+
   '</button>';
- }).join(""):'<div class="empty">No chapters logged today yet. Watch a matched lecture or log a study session to see chapter progress here.</div>';
+ }).join("")+(rendered.length>5?'<button type="button" class="study-chapter-more" onclick="go(\'chapters\')">+'+(rendered.length-5)+' more chapters · Open Chapter Planner ↗</button>':""):'<div class="empty">No chapters logged today yet. Watch a matched lecture or log a study session to see chapter progress here.</div>';
  const chapterCount=document.getElementById("studyActivityChapters");if(chapterCount)chapterCount.textContent=String(doneToday.length);
  const chapterMeta=document.getElementById("studyActivityChaptersMeta");if(chapterMeta)chapterMeta.textContent=chapterActivity.size+" chapter"+(chapterActivity.size===1?"":"s")+" touched today";
  renderYoutubeCourseProgress();
