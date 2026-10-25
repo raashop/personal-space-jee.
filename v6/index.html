@@ -5368,6 +5368,98 @@ function matchTelegramLecture(title,subjectOverride,chapterOverride){
  if(ranked.length>1&&ranked[0].score===ranked[1].score&&ranked[0].ch.subject!==ranked[1].ch.subject)return null;
  return ranked[0].ch;
 }
+const PS_TELEGRAM_COURSE_ANALYSIS_KEY="personal-space-telegram-course-analysis-v1";
+let telegramCourseAnalysisTimer=0,telegramCourseAnalysisBusy=false,telegramCourseAnalysisAttemptedSignature="";
+function normalizeTelegramLectureTitle(value){return String(value||"").toLowerCase().replace(/https?:\/\/[^\s]+/g," ").replace(/[^a-z0-9]+/g," ").trim().replace(/\s+/g," ");}
+function telegramCourseCanonicalRows(){
+ const source=readTelegramLectures(),byKey=new Map();
+ source.forEach(row=>{
+  if(!row||!String(row.title||"").trim())return;
+  const title=String(row.title||"").trim(),subject=String(row.subject||""),chapter=String(row.chapter||"");
+  const key=normalizeTelegramLectureTitle(title)+"|"+subject+"|"+chapter;
+  const old=byKey.get(key);
+  const ids=Array.from(new Set([String(row.id||""),...(old&&old.recordIds||[])].filter(Boolean)));
+  const candidate={...row,title,subject,chapter,recordIds:ids,durationSeconds:Math.max(0,Number(row.durationSeconds)||0),watchedSeconds:Math.max(0,Number(row.watchedSeconds)||0),year:Number(row.year)||Number((title.match(/\b20\d{2}\b/)||[])[0]||0)};
+  if(!old||candidate.watchedSeconds>old.watchedSeconds){
+   byKey.set(key,{...old,...candidate,id:String(row.id||old&&old.id||""),recordIds:ids,watchedSeconds:Math.max(candidate.watchedSeconds,Number(old&&old.watchedSeconds)||0),durationSeconds:Math.max(candidate.durationSeconds,Number(old&&old.durationSeconds)||0)});
+  }else{
+   byKey.set(key,{...old,recordIds:ids,watchedSeconds:Math.max(old.watchedSeconds,candidate.watchedSeconds),durationSeconds:Math.max(old.durationSeconds,candidate.durationSeconds)});
+  }
+ });
+ return Array.from(byKey.values());
+}
+function telegramCourseSignature(rows){
+ return JSON.stringify(rows.map(row=>({id:String(row.id||""),title:row.title,subject:row.subject,chapter:row.chapter,courseTitle:row.courseTitle||"",teacher:row.teacher||"",year:row.year||0,durationSeconds:Number(row.durationSeconds)||0,complete:Number(row.durationSeconds)>0?(Number(row.watchedSeconds)||0)>=Number(row.durationSeconds)*.9:(Number(row.watchedSeconds)||0)>0})).sort((a,b)=>a.id.localeCompare(b.id)));
+}
+function readTelegramCourseAnalysis(){try{return JSON.parse(localStorage.getItem(PS_TELEGRAM_COURSE_ANALYSIS_KEY)||"null");}catch(e){return null;}}
+function renderTelegramCourseAnalysis(){
+ const status=document.getElementById("psTelegramCourseAnalysisStatus"),list=document.getElementById("psTelegramCourseProgressList");
+ if(!status||!list)return;
+ const rows=telegramCourseCanonicalRows(),signature=telegramCourseSignature(rows),cache=readTelegramCourseAnalysis();
+ if(!rows.length){status.textContent="Import Telegram lecture data to calculate course totals and lectures left.";list.innerHTML='<div class="empty">No Telegram lectures to analyse yet.</div>';return;}
+ if(!cache||cache.signature!==signature||!cache.result||!Array.isArray(cache.result.courses)){
+  status.textContent="AI groups imported lecture titles by teacher, year and course. Counts are based only on entries in your imported data.";
+  list.innerHTML='<div class="empty">Course analysis will appear here after the imported lecture data is analysed.</div>';return;
+ }
+ status.textContent="AI course analysis · "+rows.length+" distinct imported lecture entries · updated "+new Date(cache.analyzedAt||Date.now()).toLocaleString();
+ const byId=new Map();rows.forEach(row=>(row.recordIds||[row.id]).forEach(id=>byId.set(String(id),row)));
+ list.innerHTML=(cache.result.courses||[]).map(course=>{
+  const ids=Array.isArray(course.recordIds)?course.recordIds:[];
+  const entries=Array.from(new Set(ids.map(id=>byId.get(String(id))).filter(Boolean)));
+  const total=Math.max(1,Number(course.totalLectures)||entries.length||1);
+  const watched=Math.max(0,Math.min(total,Number(course.watchedLectures)||0));
+  const left=Math.max(0,Number(course.lecturesLeft??(total-watched)));
+  const oneShot=course.type==="one-shot"||entries.some(row=>isOneShotTitle(row.title));
+  const remaining=Number(course.remainingTimeSeconds)||entries.reduce((sum,row)=>sum+Math.max(0,(Number(row.durationSeconds)||0)-(Number(row.watchedSeconds)||0)),0);
+  const durationKnown=course.durationKnown===true||(entries.length>0&&entries.every(row=>Number(row.durationSeconds)>0));
+  const timeText=durationKnown?durationLabel(remaining/60):"Time left unavailable until video duration is detected";
+  const totalSeconds=entries.reduce((sum,row)=>sum+(Number(row.durationSeconds)||0),0);
+  const watchedSeconds=entries.reduce((sum,row)=>sum+Math.min(Number(row.durationSeconds)||0,Number(row.watchedSeconds)||0),0);
+  const percent=oneShot?(totalSeconds?Math.max(0,Math.min(100,Math.round(watchedSeconds/totalSeconds*100))):0):Math.round(watched/total*100);
+  const title=String(course.courseTitle||(entries[0]&&entries[0].courseTitle)||(entries[0]&&entries[0].title)||"Telegram lecture set");
+  const meta=[course.teacher,course.year,course.subject,course.chapter].filter(value=>value&&String(value).trim()).join(" · ");
+  const count=oneShot?'<span class="study-course-count time-left">Time left · '+escapeHTML(timeText)+'</span>':'<span class="study-course-count">'+watched+' / '+total+'</span>';
+  const footer=oneShot?'<span>Time left · '+escapeHTML(timeText)+'</span>':'<span>'+left+' lecture'+(left===1?"":"s")+' left · '+watched+' of '+total+' watched</span>';
+  return '<article class="study-course-card"><div class="study-course-top"><div><strong>'+escapeHTML(title)+'</strong><small>'+escapeHTML(meta||"Based on imported Telegram data")+'</small></div>'+count+'</div><div class="study-course-bar"><i style="width:'+percent+'%"></i></div><div class="study-course-footer">'+footer+'<span>'+entries.length+' imported entr'+(entries.length===1?"y":"ies")+'</span></div></article>';
+ }).join("")||'<div class="empty">No course groups were returned. Import more Telegram lecture entries and analyse again.</div>';
+}
+function scheduleTelegramCourseAnalysis(force=false){
+ if(telegramCourseAnalysisTimer)clearTimeout(telegramCourseAnalysisTimer);
+ const rows=telegramCourseCanonicalRows();
+ if(!rows.length){renderTelegramCourseAnalysis();return;}
+ const signature=telegramCourseSignature(rows),cache=readTelegramCourseAnalysis();
+ if(!force&&cache&&cache.signature===signature){renderTelegramCourseAnalysis();return;}
+ if(!force&&telegramCourseAnalysisAttemptedSignature===signature)return;
+ telegramCourseAnalysisTimer=setTimeout(()=>analyzeTelegramCourses(force),650);
+}
+async function analyzeTelegramCourses(force=false){
+ if(telegramCourseAnalysisBusy)return;
+ const rows=telegramCourseCanonicalRows();
+ if(!rows.length){renderTelegramCourseAnalysis();return;}
+ const signature=telegramCourseSignature(rows),cache=readTelegramCourseAnalysis();
+ if(!force&&cache&&cache.signature===signature){renderTelegramCourseAnalysis();return;}
+ if(!force&&telegramCourseAnalysisAttemptedSignature===signature)return;
+ telegramCourseAnalysisAttemptedSignature=signature;telegramCourseAnalysisBusy=true;
+ const status=document.getElementById("psTelegramCourseAnalysisStatus"),list=document.getElementById("psTelegramCourseProgressList");
+ if(status)status.textContent="AI is grouping Telegram titles by teacher, year and course…";
+ if(list)list.innerHTML='<div class="empty">Analysing imported Telegram entries…</div>';
+ try{
+  restoreCloudSettings();if(!cloudClient)cloudClient=cloudCreateClient();
+  const sessionResult=await cloudClient.auth.getSession();if(sessionResult.error)throw sessionResult.error;
+  const session=sessionResult.data&&sessionResult.data.session;
+  if(!session||!session.access_token)throw new Error("Sign in through Backup & Sync to enable AI course grouping.");
+  const cfg=cloudSettings();if(!cfg.url||!cfg.key)throw new Error("Configure the Supabase Project URL and publishable key in Backup & Sync first.");
+  const input=rows.slice(-400).map(row=>({id:String(row.id||""),title:String(row.title||"").slice(0,220),subject:String(row.subject||"").slice(0,40),chapter:String(row.chapter||"").slice(0,100),courseTitle:String(row.courseTitle||row.course||row.series||"").slice(0,140),teacher:String(row.teacher||row.instructor||"").slice(0,100),year:Number(row.year)||0,source:String(row.source||"Telegram").slice(0,60),durationSeconds:Math.max(0,Number(row.durationSeconds)||0),watchedSeconds:Math.max(0,Number(row.watchedSeconds)||0),recordIds:row.recordIds||[row.id]}));
+  const response=await fetch(cfg.url+"/functions/v1/telegram-course-analysis",{method:"POST",headers:{"Content-Type":"application/json","apikey":cfg.key,"Authorization":"Bearer "+session.access_token},body:JSON.stringify({lectures:input})});
+  let payload={};try{payload=await response.json();}catch(e){}
+  if(!response.ok)throw new Error(payload.error||("AI Telegram analysis returned HTTP "+response.status+"."));
+  localStorage.setItem(PS_TELEGRAM_COURSE_ANALYSIS_KEY,JSON.stringify({signature,result:payload,analyzedAt:new Date().toISOString()}));
+  renderTelegramCourseAnalysis();
+ }catch(error){
+  if(status)status.textContent="AI course analysis unavailable: "+(error&&error.message?error.message:"Unknown error");
+  if(list)list.innerHTML='<div class="empty">Your imported lectures are still saved. Fix sign-in or the AI connection, then click Analyze courses.</div>';
+ }finally{telegramCourseAnalysisBusy=false;}
+}
 function renderTelegramImport(){
  const rows=readTelegramLectures();
  const preview=document.getElementById("psTelegramPreview");
@@ -5380,22 +5472,21 @@ function renderTelegramImport(){
   else{
    list.className="telegram-lecture-list";
    list.innerHTML=rows.slice().map((row,index)=>{
-    const title=escapeHTML(row.title||"Untitled lecture");
-    const subject=escapeHTML(row.subject||"Unmatched subject");
-    const chapter=escapeHTML(row.chapter||"Unmatched chapter");
+    const title=escapeHTML(row.title||"Untitled lecture"),subject=escapeHTML(row.subject||"Unmatched subject"),chapter=escapeHTML(row.chapter||"Unmatched chapter");
     const url=/^https:\/\/(t\.me|telegram\.me)\//i.test(row.url||"")?row.url:"";
     const link=url?'<a href="'+escapeAttr(url)+'" target="_blank" rel="noopener noreferrer">Open Telegram post ↗</a>':'<span class="helper-note">No post link saved</span>';
-    return '<article class="telegram-lecture-card"><div class="telegram-lecture-top"><span class="telegram-tag">'+escapeHTML(row.source||"Telegram import")+'</span><button class="btn btn-quiet telegram-remove" type="button" data-telegram-remove="'+index+'" aria-label="Remove '+title+'">Remove</button></div><strong class="telegram-title">'+title+'</strong><div class="telegram-chapter">'+subject+' · '+chapter+'</div><div class="telegram-card-footer">'+link+'</div></article>';
+    const watched=Math.max(0,Number(row.watchedSeconds)||0),duration=Math.max(0,Number(row.durationSeconds)||0),oneShot=isOneShotTitle(row.title);
+    const timeText=oneShot?(duration?"Time left · "+durationLabel(Math.max(0,duration-watched)/60):"Time left · duration not available yet"):(watched?durationLabel(watched/60)+" watched":"Not watched yet");
+    return '<article class="telegram-lecture-card"><div class="telegram-lecture-top"><span class="telegram-tag">'+escapeHTML(row.source||"Telegram import")+'</span><button class="btn btn-quiet telegram-remove" type="button" data-telegram-remove="'+index+'" aria-label="Remove '+title+'">Remove</button></div><strong class="telegram-title">'+title+'</strong><div class="telegram-chapter">'+subject+' · '+chapter+'</div><div class="helper-note">'+escapeHTML(timeText)+'</div><div class="telegram-card-footer">'+link+'</div></article>';
    }).join("");
    list.querySelectorAll("[data-telegram-remove]").forEach(button=>button.addEventListener("click",()=>{
-    const idx=Number(button.getAttribute("data-telegram-remove"));
-    const latest=readTelegramLectures();
+    const idx=Number(button.getAttribute("data-telegram-remove")),latest=readTelegramLectures();
     if(!Number.isInteger(idx)||idx<0||idx>=latest.length)return;
-    latest.splice(idx,1);writeTelegramLectures(latest);renderTelegramImport();toast("Telegram lecture removed. Chapter progress was not changed.");
+    latest.splice(idx,1);writeTelegramLectures(latest);localStorage.removeItem(PS_TELEGRAM_COURSE_ANALYSIS_KEY);renderTelegramImport();toast("Telegram lecture removed. Chapter progress was not changed.");
    }));
   }
  }
- telegramChapterOptions();
+ telegramChapterOptions();renderTelegramCourseAnalysis();scheduleTelegramCourseAnalysis();
 }
 document.getElementById("psTelegramSubject")?.addEventListener("change",telegramChapterOptions);
 document.getElementById("psTelegramForm")?.addEventListener("submit",function(event){
@@ -5419,18 +5510,17 @@ document.getElementById("psTelegramForm")?.addEventListener("submit",function(ev
 });
 function confirmTelegramLecture(){
  if(!psTelegramPending||!psTelegramPending.match)return;
- const item=psTelegramPending;
- const rows=readTelegramLectures();
- const key=item.url||item.title.toLowerCase();
+ const item=psTelegramPending,rows=readTelegramLectures(),key=item.url||item.title.toLowerCase();
  const exists=rows.find(r=>(r.url||r.title.toLowerCase())===key);
- if(!exists)rows.unshift({id:"tg-"+Date.now()+"-"+Math.random().toString(36).slice(2,7),title:item.title,url:item.url,subject:item.match.subject,chapter:item.match.chapter,source:item.source,addedAt:item.createdAt,watchedSeconds:0});
- writeTelegramLectures(rows.slice(0,1000));
+ if(!exists){
+  const year=Number((String(item.title).match(/\b20\d{2}\b/)||[])[0]||0);
+  rows.unshift({id:"tg-"+Date.now()+"-"+Math.random().toString(36).slice(2,7),title:item.title,url:item.url,subject:item.match.subject,chapter:item.match.chapter,source:item.source,addedAt:item.createdAt,courseTitle:"",teacher:"",year,durationSeconds:0,watchedSeconds:0});
+ }
+ writeTelegramLectures(rows.slice(0,1000));localStorage.removeItem(PS_TELEGRAM_COURSE_ANALYSIS_KEY);
  const ch=state.chapters.find(c=>c.subject===item.match.subject&&c.chapter===item.match.chapter);
- let changed=false;
- if(ch&&ch.prep==="Not Ready"){ch.prep="In Progress";ch.statusTouched=true;changed=true;saveState();}
- renderYoutubeLectures();
- psTelegramPending=null;
- document.getElementById("psTelegramPreview").textContent="Imported successfully. "+(changed?"Chapter moved to In Progress.":"Chapter status left unchanged.");
+ let changed=false;if(ch&&ch.prep==="Not Ready"){ch.prep="In Progress";ch.statusTouched=true;changed=true;saveState();}
+ renderYoutubeLectures();renderTelegramImport();psTelegramPending=null;
+ const preview=document.getElementById("psTelegramPreview");if(preview)preview.textContent="Imported successfully. "+(changed?"Chapter moved to In Progress.":"Chapter status left unchanged.");
 }
 function parseTelegramCsv(text){
  const lines=String(text||"").replace(/^\uFEFF/,"").split(/\r?\n/).filter(line=>line.trim());
@@ -5444,26 +5534,24 @@ function importTelegramFile(event){
  const reader=new FileReader();
  reader.onload=()=>{
   try{
-   const text=String(reader.result||"");
+   const sourceText=String(reader.result||"");
    let entries;
-   if(file.name.toLowerCase().endsWith(".csv"))entries=parseTelegramCsv(text);
-   else {const data=JSON.parse(text);entries=Array.isArray(data)?data:(Array.isArray(data.lectures)?data.lectures:[])}
-   if(!Array.isArray(entries)||!entries.length)throw new Error("No lecture rows found. Use CSV columns title,url,subject,chapter or JSON with a lectures array.");
-   let added=0,ambiguous=0;
-   const rows=readTelegramLectures();
+   if(file.name.toLowerCase().endsWith(".csv"))entries=parseTelegramCsv(sourceText);
+   else{const payload=JSON.parse(sourceText);entries=Array.isArray(payload)?payload:(Array.isArray(payload.lectures)?payload.lectures:[]);}
+   if(!Array.isArray(entries)||!entries.length)throw new Error("No lecture rows found. Use CSV columns title,url,subject,chapter and optional courseTitle,teacher,year,durationSeconds,watchedSeconds.");
+   let added=0,ambiguous=0;const rows=readTelegramLectures();
    entries.forEach(row=>{
-    const title=String(row.title||row.text||row.message||"").trim();
-    if(!title)return;
+    const title=String(row.title||row.text||row.message||"").trim();if(!title)return;
     const match=matchTelegramLecture(title,String(row.subject||""),String(row.chapter||""));
     if(!match){ambiguous++;return;}
-    const url=String(row.url||row.link||"").trim();
-    const key=url||title.toLowerCase();
+    const url=String(row.url||row.link||"").trim(),key=url||title.toLowerCase();
     if(rows.some(old=>(old.url||old.title.toLowerCase())===key))return;
-    rows.push({id:"tg-import-"+Date.now()+"-"+added,title,url,subject:match.subject,chapter:match.chapter,source:"Telegram file import",addedAt:new Date().toISOString(),watchedSeconds:0});added++;
-    const ch=state.chapters.find(c=>c.subject===match.subject&&c.chapter===match.chapter);
-    if(ch&&ch.prep==="Not Ready"){ch.prep="In Progress";ch.statusTouched=true;}
+    const year=Number(row.year)||Number((title.match(/\b20\d{2}\b/)||[])[0]||0);
+    rows.push({id:"tg-import-"+Date.now()+"-"+added,title,url,subject:match.subject,chapter:match.chapter,source:"Telegram file import",addedAt:new Date().toISOString(),courseTitle:String(row.courseTitle||row.course||row.series||""),teacher:String(row.teacher||row.instructor||""),year,durationSeconds:Math.max(0,Number(row.durationSeconds||row.duration)||0),watchedSeconds:Math.max(0,Number(row.watchedSeconds)||0)});added++;
+    const chapter=state.chapters.find(c=>c.subject===match.subject&&c.chapter===match.chapter);
+    if(chapter&&chapter.prep==="Not Ready"){chapter.prep="In Progress";chapter.statusTouched=true;}
    });
-   writeTelegramLectures(rows.slice(-1000));saveState();renderYoutubeLectures();renderTelegramImport();
+   writeTelegramLectures(rows.slice(-1000));localStorage.removeItem(PS_TELEGRAM_COURSE_ANALYSIS_KEY);saveState();renderYoutubeLectures();renderTelegramImport();
    toast("Imported "+added+" Telegram lecture(s). "+ambiguous+" row(s) need a clearer title or manual selection.");
   }catch(error){toast(error.message||"Could not import Telegram file.");}
   event.target.value="";
@@ -5471,7 +5559,7 @@ function importTelegramFile(event){
  reader.readAsText(file);
 }
 function downloadTelegramTemplate(){
- const csv='title,url,subject,chapter\r\n"Chemical Kinetics One Shot for JEE","https://t.me/example/123","Chemistry","Chemical Kinetics"\r\n';
+ const csv='title,url,subject,chapter,courseTitle,teacher,year,durationSeconds,watchedSeconds\r\n"Electrochemistry Lecture 01","https://t.me/example/123","Chemistry","Electrochemistry","Electrochemistry","Rajwant Sir",2025,5400,0\r\n';
  const url=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));const a=document.createElement("a");a.href=url;a.download="telegram-lecture-import-template.csv";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
 
