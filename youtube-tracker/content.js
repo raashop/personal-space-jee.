@@ -179,7 +179,9 @@
         reportStatus("error", "Tracker error: " + String(error?.message || error), session.title, null, session.id);
       } finally {
         session.saving = false;
-        // Playback might have continued during the write; save the remainder later.
+        // If playback advanced while storage was being written, immediately
+        // drain the remainder so a pause/navigation cannot lose the last seconds.
+        if (session.pendingSeconds >= 0.25) flushSession(session);
       }
     })();
   }
