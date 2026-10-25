@@ -5432,3 +5432,44 @@ html[data-edge-theme="daylight"] .legend-not-started { background: #d85d69 !impo
 html[data-edge-theme="daylight"] .legend-in-progress { background: #4a9be8 !important; }
 html[data-edge-theme="daylight"] .legend-revision { background: #d28a35 !important; }
 html[data-edge-theme="daylight"] .legend-completed { background: #15966a !important; }
+
+
+/* Personal Space v6 dashboard refresh — lecture activity and subject-coloured progress. */
+html[data-edge-theme="daylight"] .dashboard-top-grid{grid-template-columns:minmax(0,1fr)!important;gap:0!important}
+html[data-edge-theme="daylight"] .dashboard-top-grid>.dashboard-countdown-hero{grid-column:1/-1}
+html[data-edge-theme="daylight"] .dashboard-top-grid>.dashboard-metrics{grid-column:1/-1;grid-template-columns:repeat(4,minmax(0,1fr))!important}
+html[data-edge-theme="daylight"] .dashboard-top-grid>.dashboard-metrics .metric{min-height:112px}
+html[data-edge-theme="daylight"] .dashboard-ring-legend{display:flex;flex-wrap:wrap;justify-content:center;gap:7px 11px;max-width:182px;margin-top:2px}
+html[data-edge-theme="daylight"] .dashboard-ring-key{display:inline-flex;align-items:center;gap:5px;color:#71869a;font-size:8px;font-weight:800;white-space:nowrap}
+html[data-edge-theme="daylight"] .dashboard-ring-key i{display:inline-block;width:7px;height:7px;border-radius:50%}
+html[data-edge-theme="daylight"] .dashboard-countdown-hero .ring-subject-arc{fill:none;stroke-width:11;stroke-linecap:round;transform:rotate(-90deg);transform-origin:80px 80px;transition:stroke-dasharray .45s ease,stroke-dashoffset .45s ease}
+html[data-edge-theme="daylight"] .dashboard-countdown-hero .ring-physics-arc{stroke:#2784d8}
+html[data-edge-theme="daylight"] .dashboard-countdown-hero .ring-chemistry-arc{stroke:#15966a}
+html[data-edge-theme="daylight"] .dashboard-countdown-hero .ring-maths-arc{stroke:#8064c7}
+html[data-edge-theme="daylight"] .dashboard-lecture-overview{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:14px;margin:18px 0 8px}
+html[data-edge-theme="daylight"] .dashboard-lecture-card{min-width:0;padding:17px 18px;border:1px solid #e1eaf4;border-radius:17px;background:#fff;box-shadow:0 4px 15px rgba(35,74,118,.035)}
+html[data-edge-theme="daylight"] .dashboard-lecture-card h2{margin:0;color:#20364e;font-size:14px;letter-spacing:-.025em}
+html[data-edge-theme="daylight"] .dashboard-lecture-muted{margin:5px 0 13px;color:#7e92a7;font-size:9px;line-height:1.5}
+html[data-edge-theme="daylight"] .dashboard-lecture-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+html[data-edge-theme="daylight"] .dashboard-lecture-kpi{min-width:0;padding:10px;border:1px solid #e8eff5;border-radius:12px;background:#fbfdff}
+html[data-edge-theme="daylight"] .dashboard-lecture-kpi span{display:block;color:#7c91a6;font-size:8px;font-weight:850;text-transform:uppercase;letter-spacing:.06em;line-height:1.35}
+html[data-edge-theme="daylight"] .dashboard-lecture-kpi strong{display:block;margin-top:8px;color:#173650;font-size:clamp(18px,2vw,25px);letter-spacing:-.06em}
+html[data-edge-theme="daylight"] .dashboard-lecture-kpi small{display:block;margin-top:4px;color:#8194a8;font-size:8px;line-height:1.35}
+html[data-edge-theme="daylight"] .dashboard-lecture-source-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:12px;padding-top:10px;border-top:1px solid #edf2f7;color:#71869b;font-size:9px}
+html[data-edge-theme="daylight"] .dashboard-lecture-source-row strong{color:#2a4761}
+html[data-edge-theme="daylight"] .dashboard-recent-lectures{display:grid;gap:8px}
+html[data-edge-theme="daylight"] .dashboard-recent-row{display:flex;align-items:center;gap:9px;min-width:0;padding:9px;border:1px solid #e8eff5;border-radius:11px;background:#fbfdff}
+html[data-edge-theme="daylight"] .dashboard-recent-icon{display:grid;place-items:center;width:28px;height:28px;flex:none;border-radius:9px;color:#2784d8;background:#e5f2ff}
+html[data-edge-theme="daylight"] .dashboard-recent-copy{flex:1;min-width:0}
+html[data-edge-theme="daylight"] .dashboard-recent-copy strong{display:block;overflow:hidden;color:#304b64;font-size:10px;text-overflow:ellipsis;white-space:nowrap}
+html[data-edge-theme="daylight"] .dashboard-recent-copy small{display:block;margin-top:3px;color:#8194a8;font-size:8px}
+html[data-edge-theme="daylight"] .dashboard-lecture-link{display:inline-flex;align-items:center;margin-top:11px;color:#2784d8;font-size:9px;font-weight:850;text-decoration:none}
+html[data-edge-theme="daylight"] .dashboard-subject-inline{display:grid;gap:9px;margin-top:12px}
+html[data-edge-theme="daylight"] .dashboard-subject-inline-row{display:grid;grid-template-columns:78px minmax(0,1fr) 46px;align-items:center;gap:9px;color:#71869a;font-size:9px}
+html[data-edge-theme="daylight"] .dashboard-subject-inline-row strong{color:#304b64;text-align:right;font-size:9px}
+html[data-edge-theme="daylight"] .dashboard-subject-inline-track{height:6px;overflow:hidden;border-radius:999px;background:#edf2f7}
+html[data-edge-theme="daylight"] .dashboard-subject-inline-track>span{display:block;height:100%;border-radius:inherit;transition:width .45s ease}
+html[data-edge-theme="daylight"] .dashboard-lecture-empty{padding:14px 10px;border:1px dashed #dbe6f0;border-radius:11px;color:#7c91a6;font-size:9px;line-height:1.5;text-align:center}
+html[data-edge-theme="daylight"] .dashboard-source-note{margin-top:10px;color:#8194a8;font-size:8px;line-height:1.5}
+@media(max-width:1120px){html[data-edge-theme="daylight"] .dashboard-lecture-overview{grid-template-columns:1fr}html[data-edge-theme="daylight"] .dashboard-top-grid>.dashboard-metrics{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:560px){html[data-edge-theme="daylight"] .dashboard-top-grid>.dashboard-metrics{grid-template-columns:repeat(2,minmax(0,1fr))!important}html[data-edge-theme="daylight"] .dashboard-top-grid>.dashboard-metrics .metric{min-height:96px;padding:10px}html[data-edge-theme="daylight"] .dashboard-lecture-kpis{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}html[data-edge-theme="daylight"] .dashboard-lecture-kpi{padding:8px 7px}html[data-edge-theme="daylight"] .dashboard-subject-inline-row{grid-template-columns:70px minmax(0,1fr) 38px;gap:7px}}
