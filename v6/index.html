@@ -3174,8 +3174,8 @@ function chapterAllocationHours(chapter){
 function renderChapterAllocation(){
  const select=document.getElementById("allocationTestSelect"),results=document.getElementById("chapterAllocationResults");
  if(!select||!results)return;
- const today=new Date();today.setHours(0,0,0,0);
- const tests=(state.topics||[]).filter(t=>t.status==="Planned"&&t.plannedDate&&t.plannedDate>=today.toISOString().slice(0,10)&&topicChapters(t).length).sort((a,b)=>a.plannedDate.localeCompare(b.plannedDate));
+ const today=new Date();today.setHours(0,0,0,0);const todayKey=today.getFullYear()+"-"+String(today.getMonth()+1).padStart(2,"0")+"-"+String(today.getDate()).padStart(2,"0");
+ const tests=(state.topics||[]).filter(t=>t.status==="Planned"&&t.plannedDate&&t.plannedDate>=todayKey&&topicChapters(t).length).sort((a,b)=>a.plannedDate.localeCompare(b.plannedDate));
  const previous=select.value;
  select.innerHTML=tests.map(t=>'<option value="'+escapeAttr(t.id)+'">'+escapeHTML(topicDisplayName(t)+' · '+formatNiceDate(t.plannedDate))+'</option>').join("")||'<option value="">No planned topic tests</option>';
  if(tests.some(t=>t.id===previous))select.value=previous;
