@@ -171,8 +171,12 @@
     let lastTime=video.currentTime||0;
     let lastContext="";
     let recordId="";
+    let ticking=false;
+    let seeking=false;
     report("player-found","Telegram video player found. Checking its message text for a JEE chapter.");
     const tick=async()=>{
+      if(ticking)return;
+      ticking=true;
       try{
         const rect=video.getBoundingClientRect();
         const visible=rect.width>50&&rect.height>50&&rect.bottom>0&&rect.right>0&&rect.top<window.innerHeight&&rect.left<window.innerWidth;
@@ -182,6 +186,7 @@
         const now=video.currentTime||0;
         const delta=Math.max(0,Math.min(8,now-lastTime));
         lastTime=now;
+        if(seeking){seeking=false;return;}
         if(!match){
           report("unmatched","Not recorded: this post needs both a recognizable JEE chapter name and a lecture/study cue (such as Lecture, One Shot, Revision, PYQ, JEE or NEET).",{title:context.title});
           return;
@@ -204,9 +209,11 @@
         await chrome.storage.local.set({[STORE]:next});
         report("tracking","Tracking Telegram playback · "+match.subject+" · "+match.chapter+".",{title:context.title,subject:match.subject,chapter:match.chapter,videoId:recordId,watchedSeconds:row.watchedSeconds});
       }catch(error){report("error","Telegram tracker error: "+String(error?.message||error));}
+      finally{ticking=false;}
     };
     video.addEventListener("play",()=>{lastTime=video.currentTime||0;report("playing","Telegram video is playing. Checking lecture title and chapter.");tick();});
-    video.addEventListener("timeupdate",tick);
+    video.addEventListener("seeking",()=>{seeking=true;lastTime=video.currentTime||0;});
+    video.addEventListener("timeupdate",tick,{passive:true});
     video.addEventListener("pause",tick);
     const timer=setInterval(()=>{if(!video.isConnected){clearInterval(timer);return;}tick();},3000);
     tick();
