@@ -3024,6 +3024,7 @@ document.addEventListener("keydown",event=>{
  if(event.key==="Escape")closeReadinessReport();
 });
 function renderDashboard(){
+ if(typeof updateDashboardTaskChapters==="function")updateDashboardTaskChapters();
  const chapters=Array.isArray(state.chapters)?state.chapters:[];
  const ready=chapters.filter(c=>c.prep==="Exam Ready").length;
  const total=chapters.length;
@@ -3094,13 +3095,13 @@ return '<button type="button" class="subject-card '+sub.toLowerCase()+'" style="
 
  const today=todayISO();
  const future=[
-  ...(Array.isArray(state.topics)?state.topics:[]).filter(t=>t.status==="Planned"&&t.plannedDate).map(t=>({date:t.plannedDate,name:topicDisplayName(t),meta:topicChapterLabel(t),kind:"Topic test",page:"topic"})),
-  ...(Array.isArray(state.litmus)?state.litmus:[]).filter(t=>t.deadline&&t.status!=="Attempted"&&t.status!=="Missed").map(t=>({date:t.deadline,name:t.name,meta:t.name.includes("Full Test")?"Full mock":"Part test",kind:"LITMUS",page:"litmus"}))
+  ...(Array.isArray(state.topics)?state.topics:[]).filter(t=>t.status==="Planned"&&t.plannedDate).map(t=>({date:t.plannedDate,name:topicDisplayName(t),meta:topicChapterLabel(t),kind:"Topic test",recordKind:"topic",id:t.id})),
+  ...(Array.isArray(state.litmus)?state.litmus:[]).filter(t=>t.deadline&&t.status!=="Attempted"&&t.status!=="Missed").map(t=>({date:t.deadline,name:t.name,meta:t.name.includes("Full Test")?"Full mock":"Part test",kind:"LITMUS",recordKind:"litmus",id:t.id}))
  ].filter(t=>t.date>=today).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,5);
  const upcomingList=document.getElementById("upcomingList");
  if(upcomingList)upcomingList.innerHTML=future.map(t=>{
   const date=new Date(t.date+"T00:00:00"),delta=Math.round((date-new Date(today+"T00:00:00"))/86400000);
-  return '<button type="button" class="upcoming-row" onclick="go(\''+t.page+'\')"><span class="date-block"><strong>'+date.getDate()+'</strong><small>'+date.toLocaleDateString("en-IN",{month:"short"})+'</small></span><span class="upcoming-info"><strong>'+escapeHTML(t.name)+'</strong><small>'+escapeHTML(t.kind+" · "+t.meta)+'</small></span><span class="upcoming-badge">'+(delta===0?"Today":delta===1?"Tomorrow":delta+"d")+'</span></button>';
+  return '<button type="button" class="upcoming-row" onclick="openDashboardUpcoming(\''+t.recordKind+'\',\''+escapeAttr(t.id)+'\')"><span class="date-block"><strong>'+date.getDate()+'</strong><small>'+date.toLocaleDateString("en-IN",{month:"short"})+'</small></span><span class="upcoming-info"><strong>'+escapeHTML(t.name)+'</strong><small>'+escapeHTML(t.kind+" · "+t.meta)+'</small></span><span class="upcoming-badge">'+(delta===0?"Today":delta===1?"Tomorrow":delta+"d")+'</span></button>';
  }).join("")||'<div class="empty">No upcoming dates saved. Plan a topic test or open the LITMUS schedule.</div>';
  const upcomingCount=document.getElementById("upcomingCount");
  if(upcomingCount)upcomingCount.textContent=future.length;
