@@ -5580,9 +5580,12 @@ function renderTelegramCourseAnalysis(){
   const percent=oneShot?(totalSeconds?Math.max(0,Math.min(100,Math.round(watchedSeconds/totalSeconds*100))):0):Math.round(watched/total*100);
   const title=String(course.courseTitle||(entries[0]&&entries[0].courseTitle)||(entries[0]&&entries[0].title)||"Telegram lecture set");
   const meta=[course.teacher,course.year,course.subject,course.chapter].filter(value=>value&&String(value).trim()).join(" · ");
-  const count=oneShot?'<span class="study-course-count time-left">Time left · '+escapeHTML(timeText)+'</span>':'<span class="study-course-count">'+watched+' / '+total+'</span>';
-  const footer=oneShot?'<span>Time left · '+escapeHTML(timeText)+'</span>':'<span>'+left+' lecture'+(left===1?"":"s")+' left · '+watched+' of '+total+' watched</span>';
-  return '<article class="study-course-card"><div class="study-course-top"><div><strong>'+escapeHTML(title)+'</strong><small>'+escapeHTML(meta||"Based on imported Telegram data")+'</small></div>'+count+'</div><div class="study-course-bar"><i style="width:'+percent+'%"></i></div><div class="study-course-footer">'+footer+'<span>'+entries.length+' imported entr'+(entries.length===1?"y":"ies")+'</span></div></article>';
+  const count=oneShot?'<span class="study-course-count time-left">ONE SHOT</span>':'<span class="study-course-count">'+watched+' / '+total+'</span>';
+  const footer=oneShot?'<span>'+(durationKnown?escapeHTML(timeText)+' remaining':'Remaining duration pending')+'</span>':'<strong>'+left+' lecture'+(left===1?"":"s")+' left</strong>';
+  const courseDuration=entries.reduce((sum,row)=>sum+(Number(row.durationSeconds)||0),0);
+  const courseWatched=entries.reduce((sum,row)=>sum+(Number(row.watchedSeconds)||0),0);
+  const progressMarkup=oneShot?timeLeftLine(durationKnown?courseDuration:0,courseWatched):'<div class="study-course-bar"><i style="width:'+percent+'%"></i></div>';
+  return '<article class="study-course-card '+(oneShot?'one-shot-card':'')+'"><div class="study-course-top"><div><strong>'+escapeHTML(title)+'</strong><small>'+escapeHTML(meta||"Based on imported Telegram data")+'</small></div>'+count+'</div>'+progressMarkup+'<div class="study-course-footer">'+footer+'<span>'+entries.length+' imported entr'+(entries.length===1?"y":"ies")+'</span></div></article>';
  }).join("")||'<div class="empty">No course groups were returned. Import more Telegram lecture entries and analyse again.</div>';
 }
 function scheduleTelegramCourseAnalysis(force=false){
