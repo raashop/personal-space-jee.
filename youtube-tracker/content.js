@@ -1,6 +1,36 @@
 (() => {
   "use strict";
   const STORE = "psJeeLectureRecordsV1";
+  const STATUS_KEY = "psJeeLectureTrackerStatusV1";
+  let lastStatusSignature = "";
+  let lastStatusWriteAt = 0;
+
+  const normalizeText = value => String(value || "")
+    .toLowerCase()
+    .replace(/&/g, " and ")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim()
+    .replace(/\\s+/g, " ");
+
+  function reportStatus(type, message, title = "", match = null, id = "") {
+    const signature = JSON.stringify([type, message, title, match?.subject || "", match?.chapter || "", id]);
+    const now = Date.now();
+    if (signature === lastStatusSignature && now - lastStatusWriteAt < 15000) return;
+    lastStatusSignature = signature;
+    lastStatusWriteAt = now;
+    const status = {
+      type,
+      message,
+      title: String(title || "").slice(0, 240),
+      subject: match?.subject || "",
+      chapter: match?.chapter || "",
+      videoId: id || "",
+      url: location.href,
+      updatedAt: new Date().toISOString()
+    };
+    chrome.storage.local.set({ [STATUS_KEY]: status }).catch(() => {});
+  }
+
   const CHAPTERS = [
     ["Physics","Units and Measurements",["units and measurements","dimensional analysis","measurement errors"]],
     ["Physics","Kinematics",["kinematics","motion in a straight line","motion in a plane","projectile motion","relative velocity"]],
@@ -54,58 +84,113 @@
     ["Mathematics","Vector Algebra",["vector algebra","dot product","cross product"]],
     ["Mathematics","Statistics and Probability",["statistics and probability","probability","mean variance"]],
     ["Mathematics","Trigonometry",["trigonometric functions","trigonometry","inverse trigonometric functions"]]
-  ];
+  ].filter(item => Array.isArray(item) && Array.isArray(item[2]));
   CHAPTERS.sort((a, b) => Math.max(...b[2].map(term => term.length)) - Math.max(...a[2].map(term => term.length)));
+
   const JEE_HINTS = ["jee","mains","main 2027","advanced","ncert","one shot","one-shot","lecture","class 11","class 12","chapter","pyq","revision","unacademy","physics wallah","pw","competishun","vedantu","mathongo","allen","akash"];
   const EXCLUDE = ["official music video","lyric video","full episode","anime episode","movie trailer","gameplay","reaction","vlog","meme compilation"];
-  const videoId = () => new URL(location.href).searchParams.get("v");
-  const videoTitle = () => (document.querySelector("h1.ytd-watch-metadata yt-formatted-string")?.textContent || document.title.replace(/\s*-\s*YouTube$/, "")).trim();
-  const channelName = () => (document.querySelector("#channel-name a, ytd-channel-name a")?.textContent || "").trim();
+  const videoId = () => {
+    try { return new URL(location.href).searchParams.get("v"); } catch { return null; }
+  };
+  const videoTitle = () => (
+    document.querySelector("h1.ytd-watch-metadata yt-formatted-string")?.textContent ||
+    document.querySelector("h1")?.textContent ||
+    document.title.replace(/\\s*-\\s*YouTube$/, "")
+  ).trim();
+  const channelName = () => (
+    document.querySelector("#channel-name a, ytd-channel-name a, #owner #channel-name a")?.textContent || ""
+  ).trim();
+
   function classify(title, channel) {
-    const text = (title + " " + channel).toLowerCase();
-    if (EXCLUDE.some(word => text.includes(word))) return null;
-    const chapter = CHAPTERS.find(item => item[2].some(term => text.includes(term)));
+    const rawText = title + " " + channel;
+    const text = normalizeText(rawText);
+    if (EXCLUDE.some(word => text.includes(normalizeText(word)))) return null;
+    const chapter = CHAPTERS.find(item => item[2].some(term => text.includes(normalizeText(term))));
     if (!chapter) return null;
-    const hinted = JEE_HINTS.some(term => text.includes(term));
-    const academicFormat = /(lecture|one.?shot|revision|pyq|question|questions|numerical|concept|chapter|part\s*\d|session\s*\d|neet|jee)/i.test(title);
+    const hinted = JEE_HINTS.some(term => text.includes(normalizeText(term)));
+    const academicFormat = /\\b(lecture|one shot|revision|pyq|question|questions|numerical|concept|chapter|part\\s*\\d|session\\s*\\d|neet|jee)\\b/.test(normalizeText(title));
     if (!hinted && !academicFormat) return null;
     return { subject: chapter[0], chapter: chapter[1] };
   }
+
   function waitForVideo() {
     const video = document.querySelector("video");
     const id = videoId();
-    if (!video || !id) { setTimeout(waitForVideo, 1200); return; }
+    if (!video || !id) {
+      reportStatus("waiting", "Tracker script loaded, but it cannot see a YouTube watch player yet. Open a video URL and refresh that tab.", videoTitle());
+      setTimeout(waitForVideo, 1200);
+      return;
+    }
+
+    const titleAtStart = videoTitle();
+    reportStatus("checking", "YouTube player found. Checking the title against JEE chapter names…", titleAtStart, null, id);
     let lastTime = video.currentTime || 0;
     let lastUrl = location.href;
+    let busy = false;
+
     setInterval(async () => {
-      if (location.href !== lastUrl) { location.reload(); return; }
-      const title = videoTitle();
-      const channel = channelName();
-      const match = classify(title, channel);
-      const now = video.currentTime || 0;
-      const delta = Math.max(0, Math.min(8, now - lastTime));
-      lastTime = now;
-      if (!match || video.paused || video.ended || delta <= 0) return;
-      const stored = await chrome.storage.local.get(STORE);
-      const rows = Array.isArray(stored[STORE]) ? stored[STORE] : [];
-      const existing = rows.find(row => row.videoId === id);
-      const record = existing || {
-        videoId: id, url: "https://www.youtube.com/watch?v=" + id,
-        title, channel, subject: match.subject, chapter: match.chapter,
-        watchedSeconds: 0, durationSeconds: Math.round(video.duration || 0),
-        firstWatchedAt: new Date().toISOString(), lastWatchedAt: new Date().toISOString(),
-        classification: "title-match"
-      };
-      record.title = title;
-      record.channel = channel;
-      record.subject = match.subject;
-      record.chapter = match.chapter;
-      record.durationSeconds = Math.round(video.duration || record.durationSeconds || 0);
-      record.watchedSeconds = Math.min(record.durationSeconds || Infinity, (record.watchedSeconds || 0) + delta);
-      record.lastWatchedAt = new Date().toISOString();
-      const updated = [record, ...rows.filter(row => row.videoId !== id)].slice(0, 500);
-      await chrome.storage.local.set({ [STORE]: updated });
+      if (location.href !== lastUrl) {
+        reportStatus("navigating", "YouTube changed videos. Reloading the tracker for the new video.", videoTitle(), null, videoId() || "");
+        location.reload();
+        return;
+      }
+      if (busy) return;
+      busy = true;
+      try {
+        const title = videoTitle();
+        const channel = channelName();
+        const match = classify(title, channel);
+        const now = video.currentTime || 0;
+        const delta = Math.max(0, Math.min(8, now - lastTime));
+        lastTime = now;
+
+        if (!match) {
+          reportStatus("unmatched", "Player found, but the title/channel did not match a known JEE chapter phrase. This tracker uses titles, not transcripts.", title, null, id);
+          return;
+        }
+        if (video.paused || video.ended) {
+          reportStatus("matched-paused", "Recognized " + match.subject + " · " + match.chapter + ". Press Play to record watch time.", title, match, id);
+          return;
+        }
+        if (delta <= 0) {
+          reportStatus("matched-waiting", "Recognized " + match.subject + " · " + match.chapter + ". Waiting for playback time to advance…", title, match, id);
+          return;
+        }
+
+        const stored = await chrome.storage.local.get(STORE);
+        const rows = Array.isArray(stored[STORE]) ? stored[STORE] : [];
+        const existing = rows.find(row => row.videoId === id);
+        const record = existing || {
+          videoId: id,
+          url: "https://www.youtube.com/watch?v=" + id,
+          title,
+          channel,
+          subject: match.subject,
+          chapter: match.chapter,
+          watchedSeconds: 0,
+          durationSeconds: Math.round(video.duration || 0),
+          firstWatchedAt: new Date().toISOString(),
+          lastWatchedAt: new Date().toISOString(),
+          classification: "title-match"
+        };
+        record.title = title;
+        record.channel = channel;
+        record.subject = match.subject;
+        record.chapter = match.chapter;
+        record.durationSeconds = Math.round(video.duration || record.durationSeconds || 0);
+        record.watchedSeconds = Math.min(record.durationSeconds || Infinity, (record.watchedSeconds || 0) + delta);
+        record.lastWatchedAt = new Date().toISOString();
+        const updated = [record, ...rows.filter(row => row.videoId !== id)].slice(0, 500);
+        await chrome.storage.local.set({ [STORE]: updated });
+        reportStatus("tracking", "Tracking watch time for " + match.subject + " · " + match.chapter + ".", title, match, id);
+      } catch (error) {
+        reportStatus("error", "Tracker error: " + String(error?.message || error), videoTitle(), null, id);
+      } finally {
+        busy = false;
+      }
     }, 5000);
   }
+
+  reportStatus("loaded", "Tracker script loaded on a YouTube watch page. Looking for the video player…", videoTitle());
   waitForVideo();
 })();
