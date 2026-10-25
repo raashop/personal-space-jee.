@@ -87,33 +87,38 @@
     }
     return null;
   }
-  function getMessageContainer(video) {
-    // Telegram Web's DOM differs between K and A layouts. Walk upward and
-    // prefer the smallest ancestor that contains a video plus useful caption text.
-    let node=video, fallback=video.parentElement;
-    for(let depth=0;node&&depth<16;depth++,node=node.parentElement) {
-      const text=String(node.innerText||node.textContent||"").replace(/\s+/g," ").trim();
-      if(text.length>4&&text.length<6000) {
-        if(!fallback || text.length < String(fallback.innerText||fallback.textContent||"").trim().length) fallback=node;
-        if(node.matches?.('[data-message-id], [data-mid], .Message, .message, .bubble, [class*="message"], [class*="Message"]')) return node;
-      }
-    }
-    return fallback || video.closest("figure")?.parentElement || video.parentElement;
-  }
   function getContext(video) {
-    const box=getMessageContainer(video);
-    const messageText=String(box?.innerText||box?.textContent||"").replace(/\s+/g," ").trim();
+    // Telegram's caption is often a sibling of the <video>, not a child of it.
+    // Collect visible text from successive ancestors and prefer the nearest
+    // ancestor that contains both a chapter phrase and a lecture cue.
     const videoTitle=video.getAttribute("aria-label")||video.getAttribute("title")||"";
-    // Include nearby visible caption/message text because Telegram may render
-    // the caption as a sibling of the player rather than inside its own node.
-    const parentText=String(video.parentElement?.innerText||video.parentElement?.textContent||"").replace(/\s+/g," ").trim();
-    const grandparentText=String(video.parentElement?.parentElement?.innerText||video.parentElement?.parentElement?.textContent||"").replace(/\s+/g," ").trim();
-    const sourceText=[videoTitle,messageText,parentText,grandparentText].filter(Boolean).join(" · ").slice(0,5000);
-    const link=box?.querySelector('a[href*="t.me/"],a[href*="telegram.me/"]');
-    const url=link?.href||location.href;
-    const msgId=box?.getAttribute("data-message-id")||box?.getAttribute("data-mid")||"";
-    const title=videoTitle.trim()||messageText.slice(0,180)||parentText.slice(0,180)||"Telegram video";
-    return {title,sourceText,url,msgId,boxText:messageText};
+    const ancestors=[];
+    let node=video.parentElement;
+    for(let depth=0;node&&depth<22;depth++,node=node.parentElement) {
+      const text=String(node.innerText||"").replace(/\\s+/g," ").trim();
+      if(text.length>4&&text.length<6000&&!ancestors.includes(text)) ancestors.push(text);
+    }
+    const allText=[videoTitle,...ancestors].filter(Boolean).join(" · ").slice(0,12000);
+    const normalized=normalize(allText);
+    const chapterHit=CHAPTERS.some(item=>[item[1],...item[2]].some(term=>{
+      const n=normalize(term);
+      return n.length>=4&&normalized.includes(n);
+    }));
+    const cueHit=isLecturePost(allText);
+    const bestText=ancestors.find(text=>{
+      const n=normalize(text);
+      const hasChapter=CHAPTERS.some(item=>[item[1],...item[2]].some(term=>{
+        const phrase=normalize(term);
+        return phrase.length>=4&&n.includes(phrase);
+      }));
+      return hasChapter&&isLecturePost(text);
+    })||ancestors.find(text=>text.length>12)||"";
+    const box=ancestors.find(text=>text.length>12)||"";
+    const link=node?.querySelector?.('a[href*="t.me/"],a[href*="telegram.me/"]');
+    const msgId=video.closest?.('[data-message-id], [data-mid]')?.getAttribute("data-message-id")||
+      video.closest?.('[data-message-id], [data-mid]')?.getAttribute("data-mid")||"";
+    const title=videoTitle.trim()||bestText.slice(0,180)||box.slice(0,180)||"Telegram video";
+    return {title,sourceText:allText,url:link?.href||location.href,msgId,boxText:bestText,chapterHint:chapterHit,cueHint:cueHit};
   }
   const tracked=new WeakMap();
   function attach(video) {
