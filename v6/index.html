@@ -2831,6 +2831,116 @@ function saveCountdownTarget(){
  renderDashboard();
  toast("Countdown target saved.");
 }
+function ensureDashboardDrilldown(){
+ let backdrop=document.getElementById("dashboardDrilldownBackdrop");
+ if(backdrop)return backdrop;
+ backdrop=document.createElement("div");
+ backdrop.id="dashboardDrilldownBackdrop";
+ backdrop.className="dashboard-drilldown-backdrop";
+ backdrop.innerHTML='<section class="dashboard-drilldown" role="dialog" aria-modal="true" aria-labelledby="dashboardDrilldownTitle"><header class="dashboard-drilldown-head"><div><span class="dashboard-drilldown-kicker">YOUR STUDY SPACE</span><h2 id="dashboardDrilldownTitle">Details</h2><p id="dashboardDrilldownSubtitle"></p></div><button type="button" class="dashboard-drilldown-close" aria-label="Close details" title="Close">×</button></header><div id="dashboardDrilldownBody" class="dashboard-drilldown-body"></div><footer class="dashboard-drilldown-footer"><span>Changes save to your planner automatically.</span><button type="button" class="btn btn-secondary" onclick="closeDashboardDrilldown()">Back to dashboard</button></footer></section>';
+ backdrop.addEventListener("click",event=>{if(event.target===backdrop)closeDashboardDrilldown();});
+ backdrop.querySelector(".dashboard-drilldown-close").addEventListener("click",closeDashboardDrilldown);
+ document.body.appendChild(backdrop);
+ return backdrop;
+}
+function closeDashboardDrilldown(){
+ const backdrop=document.getElementById("dashboardDrilldownBackdrop");
+ if(backdrop)backdrop.classList.remove("is-open");
+ document.body.classList.remove("dashboard-drilldown-open");
+}
+function openDashboardDrilldown(kind,subject){
+ const chapters=Array.isArray(state.chapters)?state.chapters:[];
+ const topics=Array.isArray(state.topics)?state.topics:[];
+ const litmus=Array.isArray(state.litmus)?state.litmus:[];
+ let title="Study details",subtitle="A closer look at your progress.",entries=[];
+ if(kind==="done"){
+  title="Chapters done";subtitle="Chapters currently marked completed.";
+  entries=chapters.filter(c=>c.prep==="Exam Ready").map(c=>({type:"chapter",subject:c.subject,chapter:c.chapter,title:chapterDisplayName(c.subject,c.chapter),meta:c.subject+" · Completed",status:"Completed",tone:"done"}));
+ }else if(kind==="needs"){
+  title="Chapters that need work";subtitle="Only chapters deliberately marked for revision appear here.";
+  entries=chapters.filter(c=>c.prep==="Needs Work").map(c=>({type:"chapter",subject:c.subject,chapter:c.chapter,title:chapterDisplayName(c.subject,c.chapter),meta:c.subject+" · "+(c.class||"JEE Main"),status:"Revision",tone:"warning"}));
+ }else if(kind==="notStarted"){
+  title="Not started";subtitle="These chapters have not been marked as studied yet.";
+  entries=chapters.filter(c=>c.prep==="Not Ready").map(c=>({type:"chapter",subject:c.subject,chapter:c.chapter,title:chapterDisplayName(c.subject,c.chapter),meta:c.subject+" · "+(c.class||"JEE Main"),status:"Not started",tone:"warning"}));
+ }else if(kind==="status"){
+  title=subject==="Exam Ready"?"Completed chapters":subject==="Needs Work"?"Chapters that need work":subject==="In Progress"?"Chapters in progress":"Not started";
+  subtitle="Click a row to review its chapter details without leaving the dashboard.";
+  entries=chapters.filter(c=>c.prep===subject).map(c=>({type:"chapter",subject:c.subject,chapter:c.chapter,title:chapterDisplayName(c.subject,c.chapter),meta:c.subject+" · "+(c.class||"JEE Main"),status:subject==="Exam Ready"?"Completed":subject==="Needs Work"?"Revision":subject==="In Progress"?"In progress":"Not started",tone:subject==="Exam Ready"?"done":subject==="Needs Work"||subject==="Not Ready"?"warning":"active"}));
+ }else if(kind==="subject"){
+  title=subject+" chapters";subtitle="Chapter progress and status for "+subject+".";
+  entries=chapters.filter(c=>c.subject===subject).map(c=>({type:"chapter",subject:c.subject,chapter:c.chapter,title:chapterDisplayName(c.subject,c.chapter),meta:c.subject+" · "+(c.class||"JEE Main"),status:c.prep==="Exam Ready"?"Completed":c.prep==="Needs Work"?"Revision":c.prep==="In Progress"?"In progress":"Not started",tone:c.prep==="Exam Ready"?"done":c.prep==="Needs Work"||c.prep==="Not Ready"?"warning":c.prep==="In Progress"?"active":"warning"}));
+ }else if(kind==="planned"){
+  title="Planned tests";subtitle="Open a planned topic test to change its date, status or score.";
+  entries=topics.filter(t=>t.status==="Planned").map(t=>({type:"topic",id:t.id,title:topicDisplayName(t),meta:(t.subject||"General")+" · "+topicChapterLabel(t),status:t.plannedDate?formatNiceDate(t.plannedDate):"Date not set",tone:"active"}));
+ }else if(kind==="attempts"){
+  title="Test attempts";subtitle="Open an attempted test to review its marks and notes.";
+  entries=topics.filter(t=>t.status==="Attempted").map(t=>({type:"topic",id:t.id,title:topicDisplayName(t),meta:(t.subject||"General")+" · "+topicChapterLabel(t),status:t.marks!==""&&Number(t.outOf)>0?String(t.marks)+" / "+String(t.outOf):"Attempted · score not entered",tone:"done"}))
+   .concat(litmus.filter(t=>t.status==="Attempted").map(t=>({type:"litmus",id:t.id,title:t.name||"LITMUS test",meta:"LITMUS · "+(t.type||"Test"),status:t.marks!==""&&Number(t.outOf)>0?String(t.marks)+" / "+String(t.outOf):"Attempted · score not entered",tone:"done"})));
+ }
+ const backdrop=ensureDashboardDrilldown();
+ const titleNode=document.getElementById("dashboardDrilldownTitle");
+ const subtitleNode=document.getElementById("dashboardDrilldownSubtitle");
+ const body=document.getElementById("dashboardDrilldownBody");
+ titleNode.textContent=title;subtitleNode.textContent=subtitle;
+ body.innerHTML=entries.length?entries.map(item=>'<button type="button" class="dashboard-drilldown-row" data-entry-type="'+escapeAttr(item.type)+'" data-entry-id="'+escapeAttr(item.id||"")+'" data-entry-subject="'+escapeAttr(item.subject||"")+'" data-entry-chapter="'+escapeAttr(item.chapter||"")+'"><span class="dashboard-drilldown-dot tone-'+escapeAttr(item.tone||"active")+'"></span><span class="dashboard-drilldown-copy"><strong>'+escapeHTML(item.title)+'</strong><small>'+escapeHTML(item.meta||"")+'</small></span><span class="dashboard-drilldown-status tone-'+escapeAttr(item.tone||"active")+'">'+escapeHTML(item.status||"Open")+'</span><span class="dashboard-drilldown-arrow">↗</span></button>').join(""):'<div class="dashboard-drilldown-empty"><strong>Nothing here yet</strong><span>'+(kind==="planned"?"Create a test and it will appear here.":kind==="attempts"?"When you record a test attempt, it will appear here.":"No items match this view yet.")+'</span>'+(kind==="planned"?'<button type="button" class="btn btn-primary" id="dashboardDrilldownPlanTest">＋ Plan a test</button>':"")+'</div>';
+ body.querySelectorAll("[data-entry-type]").forEach(button=>button.addEventListener("click",function(){
+  const type=this.getAttribute("data-entry-type"),id=this.getAttribute("data-entry-id"),sub=this.getAttribute("data-entry-subject"),chapter=this.getAttribute("data-entry-chapter");
+  closeDashboardDrilldown();
+  openDashboardEntry(type,id,sub,chapter);
+ }));
+ const planButton=document.getElementById("dashboardDrilldownPlanTest");
+ if(planButton)planButton.addEventListener("click",function(){closeDashboardDrilldown();openPlannedTopicModal();});
+ backdrop.classList.add("is-open");
+ document.body.classList.add("dashboard-drilldown-open");
+ const close=backdrop.querySelector(".dashboard-drilldown-close");
+ if(close)close.focus({preventScroll:true});
+}
+function openDashboardEntry(type,id,subject,chapter){
+ if(type==="chapter"){editChapter(subject,chapter);return;}
+ if(type==="topic"){editTopic(id);return;}
+ if(type==="litmus"){editLitmus(id);return;}
+}
+function openAttemptTestModal(){
+ const planned=(Array.isArray(state.topics)?state.topics:[]).filter(t=>t.status==="Planned");
+ if(planned.length){openDashboardDrilldown("planned");return;}
+ const backdrop=ensureDashboardDrilldown();
+ document.getElementById("dashboardDrilldownTitle").textContent="No planned tests yet";
+ document.getElementById("dashboardDrilldownSubtitle").textContent="Plan a topic test first. It will appear here for easy access.";
+ document.getElementById("dashboardDrilldownBody").innerHTML='<div class="dashboard-drilldown-empty"><strong>Start with a quick test plan</strong><span>Choose a subject and one or more chapters; the test name is generated for you.</span><button type="button" class="btn btn-primary" id="dashboardDrilldownPlanTest">＋ Plan a test</button></div>';
+ document.getElementById("dashboardDrilldownPlanTest").addEventListener("click",function(){closeDashboardDrilldown();openPlannedTopicModal();});
+ backdrop.classList.add("is-open");document.body.classList.add("dashboard-drilldown-open");
+}
+function openDashboardUpcoming(type,id){
+ if(type==="topic"){openDashboardEntry("topic",id);return;}
+ if(type==="litmus"){openDashboardEntry("litmus",id);return;}
+}
+function updateDashboardTaskChapters(){
+ const subjectNode=document.getElementById("dashboardTaskSubject"),chapterNode=document.getElementById("dashboardTaskChapter");
+ if(!subjectNode||!chapterNode)return;
+ const subject=subjectNode.value,previous=chapterNode.value;
+ const chapters=(Array.isArray(state.chapters)?state.chapters:[]).filter(c=>c.subject===subject);
+ chapterNode.innerHTML='<option value="">Choose a chapter…</option>'+chapters.map(c=>'<option value="'+escapeAttr(c.chapter)+'">'+escapeHTML(chapterDisplayName(c.subject,c.chapter))+'</option>').join("");
+ if(previous&&chapters.some(c=>c.chapter===previous))chapterNode.value=previous;
+}
+function focusDashboardTaskQuickAdd(){
+ const chapter=document.getElementById("dashboardTaskChapter");
+ const section=document.getElementById("dashboardTaskQuickAdd");
+ if(section)section.scrollIntoView({behavior:"smooth",block:"center"});
+ if(chapter)chapter.focus({preventScroll:true});
+}
+function addDashboardTask(){
+ const actionNode=document.getElementById("dashboardTaskAction"),subjectNode=document.getElementById("dashboardTaskSubject"),chapterNode=document.getElementById("dashboardTaskChapter");
+ if(!actionNode||!subjectNode||!chapterNode)return;
+ const action=actionNode.value,subject=subjectNode.value,chapter=chapterNode.value;
+ if(!chapter){toast("Choose a chapter first.");chapterNode.focus();return;}
+ if(!Array.isArray(state.dailyTasks))state.dailyTasks=[];
+ const title=action+": "+chapterDisplayName(subject,chapter);
+ state.dailyTasks.push({id:"task-"+Date.now(),date:todayISO(),title,taskType:action,subject,chapter,estimate:45,priority:"Normal",done:false,completedAt:"",createdAt:new Date().toISOString()});
+ saveState();
+ renderDashboardPlanPreview();
+ toast("Added to today's plan.");
+}
+
 function renderDashboardPlanPreview(){
  const list=document.getElementById("dashboardTodayPlan");
  const date=typeof todayISO==="function"?todayISO():new Date().toISOString().slice(0,10);
@@ -2900,28 +3010,15 @@ function closeReadinessReport(){
 }
 function openReadinessSubject(subject){
  closeReadinessReport();
- setChapterSubject(subject);
- currentChapterYear="all";
- const search=document.getElementById("chapterSearch");if(search)search.value="";
- const status=document.getElementById("chapterStatus");if(status)status.value="all";
- setChapterYear("all");
- go("chapters");
- renderChapters();
+ openDashboardDrilldown("subject",subject);
 }
 function openReadinessChapter(subject,chapter){
- openReadinessSubject(subject);
- const search=document.getElementById("chapterSearch");if(search)search.value=chapter;
- renderChapters();
+ closeReadinessReport();
+ openDashboardEntry("chapter","",subject,chapter);
 }
 function openReadinessStatus(status){
  closeReadinessReport();
- const first=(state.chapters||[]).find(ch=>ch.prep===status);
- if(first)setChapterSubject(first.subject);
- const search=document.getElementById("chapterSearch");if(search)search.value="";
- const filter=document.getElementById("chapterStatus");if(filter)filter.value=status;
- setChapterYear("all");
- go("chapters");
- renderChapters();
+ openDashboardDrilldown("status",status);
 }
 document.addEventListener("keydown",event=>{
  if(event.key==="Escape")closeReadinessReport();
