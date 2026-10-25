@@ -92,7 +92,7 @@
       ["Focus sessions",items.length,"Recorded study blocks"],
       ["Tasks finished",done+" / "+tasks.length,tasks.length?pct(done,tasks.length)+"% complete":"No tasks planned"],
       ["Target",target+" min",Math.max(0,target-minutes)+" min left"]
-    ].map((x,i)=>'<div class="daily-stat"><small>'+x[0]+'</small><strong>'+x[1]+'</strong><div class="daily-stat-foot"><span>'+x[2]+'</span></div>'+(i===0?'<div class="progress-track"><div class="progress-fill" style="width:'+x[2]+';--subject:var(--green)"></div></div>':'')+'</div>').join("");
+    ].map((x,i)=>'<div class="daily-stat"><small>'+x[0]+'</small><strong>'+x[1]+'</strong><div class="daily-stat-foot"><span>'+x[2]+'</span></div>'+(i===0?'<div class="progress-track"><div class="progress-fill" style="width:'+(parseInt(x[2],10)||0)+'%;--subject:var(--green)"></div></div>':'')+'</div>').join("");
     byId("dailyTaskList").innerHTML=tasks.map(renderTaskItem).join("")||'<div class="empty"><strong>Your plan is still open.</strong>Add one clear task, like “Revise electrostatics formulas” or “Solve 20 mole concept PYQs”.</div>';
     byId("dailyTaskProgress").textContent=tasks.length?done+" / "+tasks.length+" complete":"No tasks for "+niceDay(date);
     byId("studySessionList").innerHTML=items.map(renderSessionItem).join("")||'<div class="empty"><strong>No study sessions logged for this day.</strong>Use the focus timer or add a session after studying. Your performance charts build from these records.</div>';
@@ -153,8 +153,9 @@
     timerRunning=false;const elapsed=Math.max(0,Math.round((Date.now()-timerStarted)/60000));
     byId("timerStartButton").textContent="Start focus ↗";byId("timerFootnote").textContent=completed?"Focus block complete — added to your study log.":"Timer stopped.";
     if(elapsed>0){
+      if(byId("dailyDate"))byId("dailyDate").value=todayISO();
       const subject=byId("timerSubject").value,chapter=byId("timerChapter").value,kind=byId("timerKind").value;
-      state.studySessions.unshift({id:"session-"+Date.now(),date:(byId("dailyDate")&&byId("dailyDate").value)||todayISO(),subject:subject,chapter:chapter,title:chapter?chapterDisplayName(subject,chapter):kind+" focus block",kind:kind,minutes:elapsed,focus:4,notes:completed?"Completed a "+timerChosen+" minute focus block.":"Timer stopped early; tracked elapsed time.",createdAt:new Date().toISOString()});
+      state.studySessions.unshift({id:"session-"+Date.now(),date:todayISO(),subject:subject,chapter:chapter,title:chapter?chapterDisplayName(subject,chapter):kind+" focus block",kind:kind,minutes:elapsed,focus:4,notes:completed?"Completed a "+timerChosen+" minute focus block.":"Timer stopped early; tracked elapsed time.",createdAt:new Date().toISOString()});
       saveState();renderDailyLog();
     }
     if(completed)toast("Focus block complete. Take a short break.");
@@ -180,7 +181,7 @@
     for(let i=0;i<range;i++)days.push(addDays(start,i));
     const logs=state.studySessions.filter(s=>s.date>=start&&s.date<=today),mins=sum(logs),activeDays=unique(logs.filter(s=>Number(s.minutes)>0).map(s=>s.date)).length,tasksIn=state.dailyTasks.filter(t=>t.date>=start&&t.date<=today),tasksDone=tasksIn.filter(t=>t.done).length,taskPct=tasksIn.length?pct(tasksDone,tasksIn.length):0;
     const previous=state.studySessions.filter(s=>s.date>=prevStart&&s.date<=prevEnd),prevMins=sum(previous),prevDays=unique(previous.filter(s=>Number(s.minutes)>0).map(s=>s.date)).length;
-    const kpis=[["Study time",Math.floor(mins/60)+"h "+mins%60+"m",range+" day window"],["Active study days",activeDays, "Target: "+(state.studyGoals.weeklyDays||6)+" days / 7"],["Focus sessions",logs.length,"Across all subjects"],["Task completion",tasksIn.length?taskPct+"%":"—",tasksDone+" of "+tasksIn.length+" tasks done"]];
+    const kpis=[["Study time",Math.floor(mins/60)+"h "+mins%60+"m",range+" day window"],["Active study days",activeDays, "In the selected date window"],["Focus sessions",logs.length,"Across all subjects"],["Task completion",tasksIn.length?taskPct+"%":"—",tasksDone+" of "+tasksIn.length+" tasks done"]];
     byId("performanceKpis").innerHTML=kpis.map((x,i)=>'<div class="performance-kpi"><small>'+x[0]+'</small><strong>'+x[1]+'</strong><span>'+x[2]+'</span></div>').join("");
     const max=Math.max(30,...days.map(d=>dayMinutes(d)));
     byId("minutesChart").innerHTML=days.map(d=>{const m=dayMinutes(d),height=Math.max(m?5:2,Math.round(m/max*100));return '<div class="chart-column"><div class="chart-value">'+(m?m:"")+'</div><div class="chart-track" title="'+escapeAttr(niceDay(d)+": "+m+" minutes")+'"><div class="chart-bar '+(d===today?"is-today":"")+'" style="height:'+height+'%"></div></div><small>'+new Date(d+"T12:00:00").toLocaleDateString("en-IN",{weekday:"short"}).slice(0,2)+'</small><span>'+new Date(d+"T12:00:00").getDate()+'</span></div>'}).join("");
