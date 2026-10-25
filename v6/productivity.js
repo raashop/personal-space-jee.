@@ -539,7 +539,7 @@
     chapter.innerHTML='<option value="">General / multiple chapters</option>'+opts.map(c=>'<option value="'+escapeAttr(c.chapter)+'">'+escapeHTML(chapterDisplayName(c.subject,c.chapter))+'</option>').join("");
     if(opts.some(c=>c.chapter===picked))chapter.value=picked;
   });
-  byId("dailyDate").value=todayISO();updateTimerChapters();
+  byId("dailyDate").value=todayISO();updateTimerChapters();paintTimerRing(0);
   /* Daily review prompt: gently surface the previous day without blocking the workspace. */
   const reviewDate=sessionStorage.getItem("ps-v6-last-open-date");
   if(reviewDate!==todayISO()){
