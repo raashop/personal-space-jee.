@@ -1885,10 +1885,10 @@ td strong {
  </header>
  <section class="page active" id="page-dashboard">
   <div class="metric-grid dashboard-kpis">
-   <article class="metric dashboard-countdown-card"><div class="metric-head"><div class="metric-icon" style="background:var(--green-soft);color:var(--green)">◷</div><label>JEE MAIN COUNTDOWN</label></div><strong id="daysLeft">—</strong><small id="countdownDateLabel">Target · 20 Jan 2027</small><button class="countdown-edit" type="button" onclick="setCountdownTarget()">Set exam date ↗</button></article>
-   <article class="metric"><div class="metric-head"><div class="metric-icon" style="background:var(--green-soft);color:var(--green)">✓</div><label>CHAPTERS DONE</label></div><strong id="readyMetric">0 / 54</strong><small>Marked done in your tracker</small></article>
-   <button class="metric metric-click" onclick="openAttemptReport()"><div class="metric-head"><div class="metric-icon" style="background:var(--blue-soft);color:var(--blue)">↗</div><label>TEST ATTEMPTS</label></div><strong id="testMetric">0</strong><small id="testMetricHint">Topic tests and LITMUS · view scores</small></button>
-   <button class="metric metric-click" onclick="go('chapters');document.getElementById('chapterStatus').value='Needs Work';renderChapters()"><div class="metric-head"><div class="metric-icon" style="background:var(--orange-soft);color:var(--orange)">↻</div><label>NEEDS WORK</label></div><strong id="needsWorkMetric">0</strong><small>Chapters to revisit</small></button>
+   <article class="metric dashboard-countdown-card"><div class="metric-head"><div class="metric-icon" style="background:var(--blue-soft);color:var(--blue)">▦</div><label>DAYS TO JEE MAIN</label></div><strong id="daysLeft">—</strong><small id="countdownDateLabel">Target · 20 Jan 2027</small><button class="countdown-edit" type="button" onclick="setCountdownTarget()">Set exam date ↗</button></article>
+   <article class="metric"><div class="metric-head"><div class="metric-icon" style="background:var(--green-soft);color:var(--green)">◷</div><label>TOTAL STUDY TIME</label></div><strong id="totalStudyTime">0h</strong><small>From your recorded study sessions</small></article>
+   <article class="metric"><div class="metric-head"><div class="metric-icon" style="background:var(--violet-soft);color:var(--violet)">◉</div><label>SYLLABUS PROGRESS</label></div><strong id="overallMetricPct">0%</strong><small>Of your chapters marked done</small></article>
+   <article class="metric"><div class="metric-head"><div class="metric-icon" style="background:var(--orange-soft);color:var(--orange)">♨</div><label>STUDY STREAK</label></div><strong id="studyStreakMetric">0 days</strong><small>Consecutive study days</small></article>
   </div>
 
   <div class="dashboard-primary-grid">
@@ -1913,11 +1913,26 @@ td strong {
 
   <section class="panel dashboard-quick-panel">
    <div class="dashboard-panel-head"><div><h2>Quick actions</h2><p>Pick up the next useful step without searching through pages.</p></div></div>
-   <div class="dashboard-quick-grid">
-    <button class="dashboard-quick-action" onclick="go('daily')"><span class="dashboard-quick-icon quick-green">◷</span><span><strong>Start focus timer</strong><small>Open a focused study block</small></span><span class="quick-arrow">↗</span></button>
-    <button class="dashboard-quick-action" onclick="go('daily');openStudySessionModal()"><span class="dashboard-quick-icon quick-blue">＋</span><span><strong>Log study session</strong><small>Record what you studied</small></span><span class="quick-arrow">↗</span></button>
-    <button class="dashboard-quick-action" onclick="go('topic');openPlannedTopicModal()"><span class="dashboard-quick-icon quick-violet">▦</span><span><strong>Plan a topic test</strong><small>Use chapter-aware tests</small></span><span class="quick-arrow">↗</span></button>
-    <button class="dashboard-quick-action" onclick="go('pyq');openPyqModal()"><span class="dashboard-quick-icon quick-orange">✎</span><span><strong>Practice PYQs</strong><small>Log a previous-year set</small></span><span class="quick-arrow">↗</span></button>
+   <div class="dashboard-quick-content">
+    <div class="dashboard-quick-grid">
+     <button class="dashboard-quick-action" onclick="go('daily')"><span class="dashboard-quick-icon quick-green">◷</span><span><strong>Start Focus Timer</strong><small>Focus on one thing</small></span></button>
+     <button class="dashboard-quick-action" onclick="go('daily');openStudySessionModal()"><span class="dashboard-quick-icon quick-blue">＋</span><span><strong>Add Study Log</strong><small>Record a session</small></span></button>
+     <button class="dashboard-quick-action" onclick="go('topic');openPlannedTopicModal()"><span class="dashboard-quick-icon quick-violet">▦</span><span><strong>Create Topic Test</strong><small>Practice by chapter</small></span></button>
+     <button class="dashboard-quick-action" onclick="go('pyq');openPyqModal()"><span class="dashboard-quick-icon quick-orange">✎</span><span><strong>Open PYQ Practice</strong><small>Keep practice moving</small></span></button>
+    </div>
+    <aside class="dashboard-quote-card">
+     <div class="dashboard-quote-copy">“Discipline is the bridge between goals and achievement.”</div>
+     <svg class="dashboard-landscape" viewBox="0 0 330 155" aria-hidden="true">
+      <defs><linearGradient id="skyRef" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#dff1fb"/><stop offset="1" stop-color="#f6fbff"/></linearGradient><linearGradient id="hillRef" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9fcdbb"/><stop offset="1" stop-color="#4d9a7f"/></linearGradient></defs>
+      <rect width="330" height="155" rx="12" fill="url(#skyRef)"/>
+      <circle cx="262" cy="31" r="13" fill="#fff4c9"/>
+      <path d="M0 105 L42 63 L73 91 L119 42 L170 97 L209 65 L260 105 L286 75 L330 106 V155 H0Z" fill="#c8e1e7"/>
+      <path d="M0 122 L60 78 L93 112 L150 73 L207 119 L265 81 L330 124 V155 H0Z" fill="#a7d2cc"/>
+      <path d="M0 132 Q50 91 100 126 T204 124 T330 119 V155 H0Z" fill="url(#hillRef)"/>
+      <path d="M0 145 Q72 118 124 142 T235 137 T330 143 V155 H0Z" fill="#317a68"/>
+      <g fill="#2a765f"><path d="M30 117 l-9 18 h18z M30 103 l-11 20 h22z M30 91 l-12 19 h24z"/><rect x="28" y="132" width="4" height="13" fill="#8d7257"/><path d="M70 130 l-8 16 h16z M70 118 l-10 17 h20z"/><rect x="68" y="143" width="4" height="8" fill="#8d7257"/><path d="M285 115 l-9 18 h18z M285 102 l-11 20 h22z M285 89 l-12 19 h24z"/><rect x="283" y="130" width="4" height="18" fill="#8d7257"/></g>
+     </svg>
+    </aside>
    </div>
   </section>
 
