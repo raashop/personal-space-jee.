@@ -157,10 +157,18 @@
     let busy = false;
 
     setInterval(async () => {
+      // YouTube is a single-page app. Rebind to the new player when the URL changes;
+      // never reload the whole page from the content script (it can cause refresh loops).
       if (location.href !== lastUrl) {
-        reportStatus("navigating", "YouTube changed videos. Reloading the tracker for the new video.", videoTitle(), null, videoId() || "");
-        location.reload();
-        return;
+        lastUrl = location.href;
+        lastTime = 0;
+        const nextId = videoId();
+        const nextVideo = document.querySelector("video");
+        if (!nextId || !nextVideo) {
+          reportStatus("waiting", "YouTube navigation detected. Waiting for the next video player…", videoTitle(), null, nextId || "");
+          return;
+        }
+        reportStatus("checking", "YouTube player found. Checking the title against JEE chapter names…", videoTitle(), null, nextId);
       }
       if (busy) return;
       busy = true;
