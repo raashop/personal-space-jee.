@@ -2147,6 +2147,65 @@ td strong {
 
 .study-daily-empty strong{font-size:10px;color:#284b5b}.study-daily-empty small,.study-daily-emptyline{font-size:9px;line-height:1.4;color:var(--muted)}
 </style>
+
+<style id="personal-space-v6-study-tracker-fixes">
+/* Keep allocation practical and legible without changing the v6 dashboard layout. */
+#chapterAllocationPanel.is-expanded{scroll-margin-top:18px}
+#chapterAllocationPanel .allocation-accordion-trigger{width:100%;text-align:left;cursor:pointer}
+#chapterAllocationPanel .allocation-accordion-copy{min-width:0;flex:1}
+#chapterAllocationPanel .allocation-collapsed-summary{line-height:1.45}
+#chapterAllocationPanel #chapterAllocationBody{padding-top:12px}
+#chapterAllocationPanel .allocation-controls-top{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;margin-bottom:16px}
+#chapterAllocationPanel .allocation-mode-row{display:grid;grid-template-columns:minmax(150px,1.15fr) repeat(2,minmax(120px,.8fr));gap:10px;align-items:end}
+#chapterAllocationPanel .allocation-field{display:grid;gap:6px;min-width:0}
+#chapterAllocationPanel .allocation-field>span{font-size:11px;font-weight:800;color:var(--muted,#6c7884)}
+#chapterAllocationPanel .allocation-field .control{width:100%;min-width:0;min-height:42px}
+#chapterAllocationPanel .allocation-picker-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+#chapterAllocationPanel .allocation-picker-heading>div{display:grid;gap:3px}
+#chapterAllocationPanel .allocation-picker-heading strong{font-size:13px}
+#chapterAllocationPanel .allocation-picker-heading span{font-size:11px;color:var(--muted,#6c7884)}
+#chapterAllocationPanel .allocation-picker-toolbar{display:grid;grid-template-columns:minmax(180px,1fr) auto;gap:10px;align-items:center;margin-bottom:10px}
+#chapterAllocationPanel .allocation-subject-filters{display:flex;gap:5px;flex-wrap:wrap}
+#chapterAllocationPanel .allocation-filter-pill{border:1px solid var(--line,#e4e9ed);border-radius:999px;padding:8px 11px;background:var(--surface,#fff);font-size:11px;font-weight:800;cursor:pointer;transition:background .16s,border-color .16s,transform .16s}
+#chapterAllocationPanel .allocation-filter-pill:hover{transform:translateY(-1px)}
+#chapterAllocationPanel .allocation-filter-pill.active{background:#eaf3fb;border-color:#b9d8f1;color:#246fa8}
+#chapterAllocationPanel .allocation-filter-pill.physics.active{background:#e8f3ff;border-color:#b7d8fb;color:#2476bd}
+#chapterAllocationPanel .allocation-filter-pill.chemistry.active{background:#e4f7ed;border-color:#b4e6cd;color:#16794e}
+#chapterAllocationPanel .allocation-filter-pill.maths.active{background:#f0ebff;border-color:#d5c9ff;color:#6d53b5}
+#chapterAllocationPanel .allocation-selected-strip{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 12px}
+#chapterAllocationPanel .allocation-selected-chip{display:inline-flex;align-items:center;gap:5px;max-width:100%;border:1px solid var(--line,#e4e9ed);border-radius:999px;padding:6px 10px;font-size:10px;font-weight:750;cursor:pointer;transition:transform .15s,box-shadow .15s}
+#chapterAllocationPanel .allocation-selected-chip:hover{transform:translateY(-1px);box-shadow:0 3px 10px #193c5414}
+#chapterAllocationPanel .allocation-selected-chip.physics{background:#eaf3ff;border-color:#c7e0fb;color:#246fa8}
+#chapterAllocationPanel .allocation-selected-chip.chemistry{background:#e4f7ed;border-color:#c2ead3;color:#16794e}
+#chapterAllocationPanel .allocation-selected-chip.maths{background:#f0ebff;border-color:#d8cefb;color:#6d53b5}
+#chapterAllocationPanel .allocation-chapter-picker{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;max-height:360px;overflow:auto;overscroll-behavior:contain;padding:2px 4px 4px 2px}
+#chapterAllocationPanel .allocation-chapter-choice{display:flex;align-items:center;gap:10px;min-width:0;padding:11px 12px;border:1px solid var(--line,#e4e9ed);border-radius:13px;background:var(--surface,#fff);cursor:pointer;transition:border-color .16s,background .16s,box-shadow .16s,transform .16s}
+#chapterAllocationPanel .allocation-chapter-choice:hover{transform:translateY(-1px);box-shadow:0 5px 16px #193c5410;border-color:#b9d4e7}
+#chapterAllocationPanel .allocation-chapter-choice input{width:16px;height:16px;flex:none;accent-color:#2784d8;cursor:pointer}
+#chapterAllocationPanel .allocation-choice-copy{display:grid;gap:4px;min-width:0;flex:1}
+#chapterAllocationPanel .allocation-choice-copy strong{font-size:11px;line-height:1.35;overflow-wrap:anywhere}
+#chapterAllocationPanel .allocation-choice-copy small{font-size:9px;color:var(--muted,#6c7884)}
+#chapterAllocationPanel .allocation-choice-check{display:grid;place-items:center;width:22px;height:22px;flex:none;border-radius:7px;background:#f2f5f7;color:transparent;font-size:12px;font-weight:900}
+#chapterAllocationPanel .allocation-chapter-choice.is-selected{border-color:#a9cde8;background:#f4f9ff}
+#chapterAllocationPanel .allocation-chapter-choice.is-selected .allocation-choice-check{background:#dceeff;color:#2476bd}
+#chapterAllocationPanel .allocation-chapter-choice.chemistry.is-selected{border-color:#a9dec1;background:#f1fbf5}
+#chapterAllocationPanel .allocation-chapter-choice.chemistry.is-selected .allocation-choice-check{background:#d8f3e4;color:#16794e}
+#chapterAllocationPanel .allocation-chapter-choice.maths.is-selected{border-color:#c8baf5;background:#f8f5ff}
+#chapterAllocationPanel .allocation-chapter-choice.maths.is-selected .allocation-choice-check{background:#e8e0ff;color:#6d53b5}
+#chapterAllocationPanel .allocation-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:14px}
+#chapterAllocationPanel .allocation-status{font-size:11px;line-height:1.5;margin-top:9px}
+.chapter-status-chip.status-needs-work{background:#fff0e6!important;border-color:#f2c39c!important;color:#a6531d!important}
+.chapter-table-row.status-row-needs-work{background:linear-gradient(90deg,#fff8f1 0%,rgba(255,255,255,0) 72%)}
+.chapter-table-row.status-row-needs-work .chapter-row-progress .progress-fill{background:#d28a35!important}
+@media(max-width:760px){
+ #chapterAllocationPanel .allocation-mode-row{grid-template-columns:1fr 1fr}
+ #chapterAllocationPanel .allocation-mode-row .allocation-field:first-child{grid-column:1/-1}
+ #chapterAllocationPanel .allocation-picker-toolbar{grid-template-columns:1fr}
+ #chapterAllocationPanel .allocation-chapter-picker{grid-template-columns:1fr;max-height:330px}
+ #chapterAllocationPanel .allocation-picker-heading{align-items:flex-start}
+}
+@media(prefers-reduced-motion:reduce){#chapterAllocationPanel .allocation-filter-pill,#chapterAllocationPanel .allocation-selected-chip,#chapterAllocationPanel .allocation-chapter-choice{transition:none}}
+</style>
 </head>
 <body>
 <div class="shell">
@@ -3490,7 +3549,7 @@ function renderAllocationChapterPicker(){
   const subjectOk=filter==="all"||ch.subject===filter,searchable=(ch.subject+" "+ch.chapter+" "+chapterDisplayName(ch.subject,ch.chapter)+" "+String(ch.class||"")).toLowerCase();
   return subjectOk&&searchable.includes(query);
  }).sort((a,b)=>["Physics","Chemistry","Mathematics"].indexOf(a.subject)-["Physics","Chemistry","Mathematics"].indexOf(b.subject)||String(a.class||"").localeCompare(String(b.class||""))||chapterDisplayName(a.subject,a.chapter).localeCompare(chapterDisplayName(b.subject,b.chapter)));
- const chosen=all.filter(ch=>selected.has(allocationChapterKey(ch)));
+ const chosen=(Array.isArray(state.chapters)?state.chapters:[]).filter(ch=>selected.has(allocationChapterKey(ch)));
  const chips=document.getElementById("allocationSelectedStrip");
  if(chips)chips.innerHTML=chosen.map(ch=>'<button type="button" class="allocation-selected-chip '+(ch.subject==="Physics"?"physics":ch.subject==="Chemistry"?"chemistry":"maths")+'" data-remove-allocation-chapter="'+escapeAttr(allocationChapterKey(ch))+'" title="Remove '+escapeAttr(chapterDisplayName(ch.subject,ch.chapter))+'">'+escapeHTML(chapterDisplayName(ch.subject,ch.chapter))+' ×</button>').join("");
  picker.innerHTML=all.map(ch=>{
@@ -3554,7 +3613,8 @@ function applyChapterAllocationAccordion(open,remember){
  if(remember){try{localStorage.setItem(ALLOCATION_ACCORDION_KEY,open?"1":"0");}catch(e){}}
 }
 function restoreChapterAllocationAccordion(){
- let open=false;try{open=localStorage.getItem(ALLOCATION_ACCORDION_KEY)==="1";}catch(e){}
+ // Keep the planning controls visible by default: the time and chapter inputs must not be hidden behind an extra click.
+ let open=true;try{const saved=localStorage.getItem(ALLOCATION_ACCORDION_KEY);if(saved!==null)open=saved==="1";}catch(e){}
  applyChapterAllocationAccordion(open,false);
 }
 function toggleChapterAllocation(){
