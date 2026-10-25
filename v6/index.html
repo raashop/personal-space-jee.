@@ -4955,18 +4955,34 @@ function durationLabel(minutes){
  const value=Math.max(0,Math.round(Number(minutes)||0));
  return value>=60?Math.floor(value/60)+"h "+(value%60)+"m":value+"m";
 }
+function isOneShotTitle(value){return /\bone[\s-]?shot\b|\boneshot\b/i.test(String(value||""));}
 function courseProgressData(course){
- const watchedIds=new Set(readYoutubeLectures().filter(row=>row&&row.videoId&&(Number(row.watchedSeconds)||0)>0).map(row=>String(row.videoId)));
+ const rows=readYoutubeLectures().filter(row=>row&&row.videoId);
+ const byId=new Map(rows.map(row=>[String(row.videoId),row]));
  const videos=Array.isArray(course.videos)?course.videos:[];
- const watched=videos.filter(video=>watchedIds.has(String(video.videoId))).length;
  const total=Math.max(Number(course.totalLectures)||0,videos.length);
- return {watched,total,percent:total?Math.max(0,Math.min(100,Math.round(watched/total*100))):0,mapped:Number(course.mappedCount)||videos.filter(v=>v.subject&&v.chapter).length};
+ let watched=0,totalDurationSeconds=0,watchedSeconds=0,remainingSeconds=0,durationCount=0;
+ videos.forEach(video=>{
+  const row=byId.get(String(video.videoId));
+  const duration=Math.max(0,Number(video.durationSeconds)||Number(row&&row.durationSeconds)||0);
+  const seconds=Math.max(0,Number(row&&row.watchedSeconds)||0);
+  if(duration>0){durationCount++;totalDurationSeconds+=duration;watchedSeconds+=Math.min(duration,seconds);remainingSeconds+=Math.max(0,duration-seconds);}
+  if(seconds>0&&(duration>0?seconds>=duration*.9:true))watched++;
+ });
+ const allTitles=String(course.title||"")+" "+videos.map(video=>video.title||"").join(" ");
+ const oneShot=isOneShotTitle(course.title)||(videos.length===1&&isOneShotTitle(allTitles));
+ const percent=oneShot&&totalDurationSeconds?Math.max(0,Math.min(100,Math.round(watchedSeconds/totalDurationSeconds*100))):total?Math.max(0,Math.min(100,Math.round(watched/total*100))):0;
+ const durationKnown=videos.length>0&&durationCount===videos.length&&!course.truncated&&videos.length>=total;
+ return {watched,total,percent,mapped:Number(course.mappedCount)||videos.filter(v=>v.subject&&v.chapter).length,left:Math.max(0,total-watched),oneShot,totalDurationSeconds,watchedSeconds,remainingSeconds,durationKnown};
 }
 function courseProgressCard(course,showRemove){
  const progress=courseProgressData(course),title=escapeHTML(course.title||"YouTube course");
  const link=/^https:\/\/www\.youtube\.com\/playlist\?list=[\w-]+$/.test(course.url||"")?course.url:"#";
  const remove=showRemove?'<button type="button" class="study-course-remove" onclick="removeYoutubeCourse(\''+escapeAttr(course.playlistId)+'\')">Remove</button>':"";
- return '<article class="study-course-card"><div class="study-course-top"><div><strong>'+title+'</strong><small>'+escapeHTML(course.channelTitle||"YouTube playlist")+' · '+progress.mapped+' lectures matched to chapters</small></div><span class="study-course-count">'+progress.watched+' / '+progress.total+'</span></div><div class="study-course-bar"><i style="width:'+progress.percent+'%"></i></div><div class="study-course-footer"><span>'+progress.percent+'% watched · YouTube total '+progress.total+'</span><span><a href="'+escapeAttr(link)+'" target="_blank" rel="noopener noreferrer">Open playlist ↗</a> '+remove+'</span></div></article>';
+ const timeText=progress.durationKnown?durationLabel(progress.remainingSeconds/60):"Time left unavailable";
+ const count=progress.oneShot?'<span class="study-course-count time-left">Time left · '+escapeHTML(timeText)+'</span>':'<span class="study-course-count">'+progress.watched+' / '+progress.total+'</span>';
+ const footer=progress.oneShot?'<span>Time left · '+escapeHTML(timeText)+'</span>':'<span>'+progress.left+' lecture'+(progress.left===1?"":"s")+' left · '+progress.percent+'% watched</span>';
+ return '<article class="study-course-card"><div class="study-course-top"><div><strong>'+title+'</strong><small>'+escapeHTML(course.channelTitle||"YouTube playlist")+(progress.oneShot?"":" · "+progress.mapped+" lectures mapped to chapters")+'</small></div>'+count+'</div><div class="study-course-bar"><i style="width:'+progress.percent+'%"></i></div><div class="study-course-footer">'+footer+'<span><a href="'+escapeAttr(link)+'" target="_blank" rel="noopener noreferrer">Open playlist ↗</a> '+remove+'</span></div></article>';
 }
 function renderYoutubeCourseProgress(){
  const courses=readYoutubeCourses();
@@ -4999,75 +5015,64 @@ function localDateKey(value){
 }
 function renderStudyActivitySummary(){
  const today=typeof todayISO==="function"?todayISO():localDateKey(new Date().toISOString());
- const sessions=Array.isArray(state.studySessions)?state.studySessions:[];
- const todaySessions=sessions.filter(item=>String(item.date||"")===today);
- const sessionMinutes=todaySessions.reduce((sum,item)=>sum+(Number(item.minutes)||0),0);
  const ledger=readDailyLectureLedger(),todayLedger=ledger[today]&&typeof ledger[today]==="object"?ledger[today]:{};
- const sourceSeconds=(prefix)=>Object.entries(todayLedger).reduce((sum,entry)=>sum+(String(entry[0]).startsWith(prefix)?Math.max(0,Number(entry[1])||0):0),0);
+ const sourceSeconds=prefix=>Object.entries(todayLedger).reduce((sum,entry)=>sum+(String(entry[0]).startsWith(prefix)?Math.max(0,Number(entry[1])||0):0),0);
  const youtubeSecondsToday=sourceSeconds("youtube:"),telegramSecondsToday=sourceSeconds("telegram:");
+ const totalMinutes=Math.round((youtubeSecondsToday+telegramSecondsToday)/60);
+ const totalNode=document.getElementById("studyActivityHours");if(totalNode)totalNode.textContent=durationLabel(totalMinutes);
+ const totalMeta=document.getElementById("studyActivityHoursMeta");if(totalMeta)totalMeta.textContent="YouTube + Telegram playback only";
+ const ytKeys=Object.keys(todayLedger).filter(key=>key.startsWith("youtube:")&&(Number(todayLedger[key])||0)>0);
+ const tgKeys=Object.keys(todayLedger).filter(key=>key.startsWith("telegram:")&&(Number(todayLedger[key])||0)>0);
+ const ytNode=document.getElementById("studyActivityYoutubeTime");if(ytNode)ytNode.textContent=durationLabel(youtubeSecondsToday/60);
+ const ytMeta=document.getElementById("studyActivityYoutubeMeta");if(ytMeta)ytMeta.textContent=ytKeys.length+" video"+(ytKeys.length===1?"":"s")+" watched today";
+ const tgNode=document.getElementById("studyActivityTelegram");if(tgNode)tgNode.textContent=durationLabel(telegramSecondsToday/60);
+ const tgMeta=document.getElementById("studyActivityTelegramMeta");if(tgMeta)tgMeta.textContent=tgKeys.length+" Telegram item"+(tgKeys.length===1?"":"s")+" watched today";
  const ytRows=readYoutubeLectures(),tgRows=typeof readTelegramLectures==="function"?readTelegramLectures():[];
  const courseVideos=readYoutubeCourses().flatMap(course=>(Array.isArray(course.videos)?course.videos:[]));
- const todayYoutubeIds=new Set(Object.keys(todayLedger).filter(key=>key.startsWith("youtube:")&&(Number(todayLedger[key])||0)>0).map(key=>key.slice(8)));
- const trackedLectureMinutes=Math.round((youtubeSecondsToday+telegramSecondsToday)/60);
- const minutes=sessionMinutes+trackedLectureMinutes;
- const sessionNode=document.getElementById("studyActivityHours");if(sessionNode)sessionNode.textContent=durationLabel(minutes);
- const sessionMeta=document.getElementById("studyActivityHoursMeta");if(sessionMeta)sessionMeta.textContent=durationLabel(sessionMinutes)+" study log + "+durationLabel(trackedLectureMinutes)+" playback";
- const ytTodayCount=Object.keys(todayLedger).filter(key=>key.startsWith("youtube:")&&(Number(todayLedger[key])||0)>0).length;
- const tgTodayCount=Object.keys(todayLedger).filter(key=>key.startsWith("telegram:")&&(Number(todayLedger[key])||0)>0).length;
- const ytNode=document.getElementById("studyActivityYoutubeTime");if(ytNode)ytNode.textContent=durationLabel(youtubeSecondsToday/60);
- const ytMeta=document.getElementById("studyActivityYoutubeMeta");if(ytMeta)ytMeta.textContent=ytTodayCount+" video"+(ytTodayCount===1?"":"s")+" watched today";
- const tgNode=document.getElementById("studyActivityTelegram");if(tgNode)tgNode.textContent=durationLabel(telegramSecondsToday/60);
- const tgMeta=document.getElementById("studyActivityTelegramMeta");if(tgMeta)tgMeta.textContent=tgTodayCount+" Telegram item"+(tgTodayCount===1?"":"s")+" watched today";
- const chapterActivity=new Map();
+ const todayYoutubeIds=new Set(ytKeys.map(key=>key.slice(8)));
+ const activity=new Map();
  const addChapter=(subject,chapter)=>{
   if(!subject||!chapter)return null;
   const found=state.chapters.find(item=>item.subject===subject&&item.chapter===chapter);
   if(!found)return null;
   const key=allocationChapterKey(found);
-  if(!chapterActivity.has(key))chapterActivity.set(key,{chapter:found,sessionMinutes:0,doneToday:false});
-  return chapterActivity.get(key);
+  if(!activity.has(key))activity.set(key,{chapter:found});
+  return activity.get(key);
  };
- todaySessions.forEach(item=>{const record=addChapter(item.subject,item.chapter);if(record)record.sessionMinutes+=Math.max(0,Number(item.minutes)||0);});
- (Array.isArray(state.dailyTasks)?state.dailyTasks:[]).filter(item=>item.date===today&&item.done).forEach(item=>addChapter(item.subject,item.chapter));
  const ytTodayRows=ytRows.filter(row=>(Number(row.watchedSeconds)||0)>0&&localDateKey(row.lastWatchedAt||"")===today);
  const tgTodayRows=tgRows.filter(row=>(Number(row.watchedSeconds)||0)>0&&localDateKey(row.lastWatchedAt||"")===today);
  ytTodayRows.forEach(row=>addChapter(row.subject,row.chapter));
  courseVideos.filter(video=>todayYoutubeIds.has(String(video.videoId))&&video.subject&&video.chapter).forEach(video=>addChapter(video.subject,video.chapter));
  tgTodayRows.forEach(row=>addChapter(row.subject,row.chapter));
- const doneToday=(Array.isArray(state.chapters)?state.chapters:[]).filter(ch=>ch.prep==="Exam Ready"&&localDateKey(ch.prepUpdatedAt||"")===today);
- doneToday.forEach(ch=>{const record=addChapter(ch.subject,ch.chapter);if(record)record.doneToday=true;});
- const chapterList=document.getElementById("studyActivityChapterList");
- const rendered=Array.from(chapterActivity.values()).map(record=>{
+ const list=document.getElementById("studyActivityChapterList");
+ const rendered=Array.from(activity.values()).map(record=>{
   const ch=record.chapter;
-  const youtubeChapterIds=new Set(ytRows.filter(row=>row.subject===ch.subject&&row.chapter===ch.chapter).map(row=>String(row.videoId)));
-  courseVideos.filter(video=>video.subject===ch.subject&&video.chapter===ch.chapter).forEach(video=>youtubeChapterIds.add(String(video.videoId)));
-  const ytToday=Array.from(youtubeChapterIds).reduce((sum,id)=>sum+(Number(todayLedger["youtube:"+id])||0),0);
-  const tgToday=tgRows.filter(row=>row.subject===ch.subject&&row.chapter===ch.chapter).reduce((sum,row)=>sum+(Number(todayLedger["telegram:"+String(row.id)])||0),0);
-  const studyMinutes=record.sessionMinutes+Math.round((ytToday+tgToday)/60);
-  const lectureProgress=typeof getChapterLectureProgress==="function"?getChapterLectureProgress(ch.subject,ch.chapter):{total:0,watched:0,percent:0,tracked:false,telegramTracked:0};
-  const ytTracked=lectureProgress.watched;
-  const tgTracked=tgRows.filter(row=>row.subject===ch.subject&&row.chapter===ch.chapter&&(Number(row.watchedSeconds)||0)>0).length;
-  const lectureLabel=lectureProgress.total
-   ?lectureProgress.watched+" / "+lectureProgress.total+" YouTube lectures · "+lectureProgress.percent+"%"
-   :(ytTracked+tgTracked)+" tracked lecture"+(ytTracked+tgTracked===1?"":"s");
-  const extraLabel=tgTracked?tgTracked+" Telegram item"+(tgTracked===1?"":"s"):"";
-  const color=ch.subject==="Physics"?"#2784d8":ch.subject==="Chemistry"?"#15966a":"#8064c7";
-  return {subject:ch.subject,chapter:ch.chapter,studyMinutes,progress:lectureProgress,color,done:record.doneToday,lectureLabel,extraLabel,meta:ch.class||"JEE Main"};
- }).sort((a,b)=>Number(b.done)-Number(a.done)||b.studyMinutes-a.studyMinutes||a.chapter.localeCompare(b.chapter));
- if(chapterList)chapterList.innerHTML=rendered.length?rendered.slice(0,5).map(item=>{
-  const progressBar=item.progress.total?'<div class="study-chapter-progress"><span style="width:'+item.progress.percent+'%;background:'+item.color+'"></span></div>':'';
-  const meta=item.lectureLabel+(item.extraLabel?' · '+item.extraLabel:'');
+  const youtubeIds=new Set(ytRows.filter(row=>row.subject===ch.subject&&row.chapter===ch.chapter).map(row=>String(row.videoId)));
+  courseVideos.filter(video=>video.subject===ch.subject&&video.chapter===ch.chapter).forEach(video=>youtubeIds.add(String(video.videoId)));
+  const ytSeconds=Array.from(youtubeIds).reduce((sum,id)=>sum+(Number(todayLedger["youtube:"+id])||0),0);
+  const telegramIds=new Set(tgRows.filter(row=>row.subject===ch.subject&&row.chapter===ch.chapter).map(row=>String(row.id)));
+  const tgSeconds=Array.from(telegramIds).reduce((sum,id)=>sum+(Number(todayLedger["telegram:"+id])||0),0);
+  const studyMinutes=Math.round((ytSeconds+tgSeconds)/60);
+  const progress=typeof getChapterLectureProgress==="function"?getChapterLectureProgress(ch.subject,ch.chapter):{total:0,watched:0,percent:0,tracked:false,telegramTracked:0};
+  const telegramCount=tgTodayRows.filter(row=>row.subject===ch.subject&&row.chapter===ch.chapter).length;
+  const youtubeCount=ytTodayRows.filter(row=>row.subject===ch.subject&&row.chapter===ch.chapter).length;
+  const labels=[];
+  if(progress.total)labels.push(progress.watched+" / "+progress.total+" YouTube lectures");
+  else if(youtubeCount)labels.push(youtubeCount+" YouTube lecture"+(youtubeCount===1?"":"s"));
+  if(telegramCount)labels.push(telegramCount+" Telegram lecture"+(telegramCount===1?"":"s"));
+  return {subject:ch.subject,chapter:ch.chapter,studyMinutes,progress,color:ch.subject==="Physics"?"#2784d8":ch.subject==="Chemistry"?"#15966a":"#8064c7",meta:ch.class||"JEE Main",labels:labels.join(" · ")||"Lecture playback today"};
+ }).sort((a,b)=>b.studyMinutes-a.studyMinutes||a.chapter.localeCompare(b.chapter));
+ if(list)list.innerHTML=rendered.length?rendered.slice(0,8).map(item=>{
+  const bar=item.progress.total?'<div class="study-chapter-progress"><span style="width:'+item.progress.percent+'%;background:'+item.color+'"></span></div>':'';
   return '<button type="button" class="study-chapter-card" data-open-chapter-subject="'+escapeAttr(item.subject)+'" data-open-chapter-name="'+escapeAttr(item.chapter)+'" style="--chapter-accent:'+item.color+'">'+
-   '<span class="study-chapter-card-head"><span class="study-chapter-title"><i></i><strong>'+escapeHTML(chapterDisplayName(item.subject,item.chapter))+'</strong></span><span class="study-chapter-state '+(item.done?'is-done':'')+'">'+(item.done?'✓ Done today':'Studied today')+'</span></span>'+
-   '<span class="study-chapter-details"><span>'+escapeHTML(meta)+'</span><strong>'+durationLabel(item.studyMinutes)+'</strong></span>'+progressBar+
-   '<span class="study-chapter-footer"><small>'+escapeHTML(item.subject+' · '+item.meta)+'</small><small>'+(item.progress.total?'Playlist mapped':'Open chapter ↗')+'</small></span>'+
-  '</button>';
- }).join("")+(rendered.length>5?'<button type="button" class="study-chapter-more" onclick="go(\'chapters\')">+'+(rendered.length-5)+' more chapters · Open Chapter Planner ↗</button>':""):'<div class="empty">No chapters logged today yet. Watch a matched lecture or log a study session to see chapter progress here.</div>';
- const chapterCount=document.getElementById("studyActivityChapters");if(chapterCount)chapterCount.textContent=String(doneToday.length);
- const chapterMeta=document.getElementById("studyActivityChaptersMeta");if(chapterMeta)chapterMeta.textContent=chapterActivity.size+" chapter"+(chapterActivity.size===1?"":"s")+" touched today";
- const dailyPlanNode=document.getElementById("studyActivityDailyPlan");
- if(dailyPlanNode&&!dailyPlanNode.querySelector(".study-daily-item"))renderDashboardDailySchedule();
+   '<span class="study-chapter-card-head"><span class="study-chapter-title"><i></i><strong>'+escapeHTML(chapterDisplayName(item.subject,item.chapter))+'</strong></span><span class="study-chapter-state">Studied today</span></span>'+
+   '<span class="study-chapter-details"><span>'+escapeHTML(item.labels)+'</span><strong>'+durationLabel(item.studyMinutes)+'</strong></span>'+bar+
+   '<span class="study-chapter-footer"><small>'+escapeHTML(item.subject+" · "+item.meta)+'</small><small>Open chapter ↗</small></span></button>';
+ }).join("")+(rendered.length>8?'<button type="button" class="study-chapter-more" onclick="go(\'chapters\')">+'+(rendered.length-8)+' more chapters · Open Chapter Planner ↗</button>':""):'<div class="empty">No chapter lectures recorded today yet. Watch a matched YouTube or Telegram lecture to see chapter time here.</div>';
+ const chapterCount=document.getElementById("studyActivityChapters");if(chapterCount)chapterCount.textContent=String(activity.size);
+ const chapterMeta=document.getElementById("studyActivityChaptersMeta");if(chapterMeta)chapterMeta.textContent=activity.size+" chapter"+(activity.size===1?"":"s")+" from lecture playback today";
  renderYoutubeCourseProgress();
+ if(typeof renderTelegramCourseAnalysis==="function")renderTelegramCourseAnalysis();
 }
 async function addYoutubeCourse(event){
  if(event)event.preventDefault();
@@ -5117,27 +5122,21 @@ function renderYoutubeLectures(){
  const rows=readYoutubeLectures();
  const watched=rows.reduce((sum,row)=>sum+Math.max(0,Number(row.watchedSeconds)||0),0);
  const chapters=new Set(rows.map(row=>(row.subject||"")+"::"+(row.chapter||"")).filter(key=>key!=="::"));
- const count=document.getElementById("psLectureCount");
- const minutes=document.getElementById("psLectureMinutes");
- const chapterCount=document.getElementById("psLectureChapters");
- if(count)count.textContent=rows.length;
- if(minutes)minutes.textContent=Math.round(watched/60)+" min";
- if(chapterCount)chapterCount.textContent=chapters.size;
+ const count=document.getElementById("psLectureCount"),minutes=document.getElementById("psLectureMinutes"),chapterCount=document.getElementById("psLectureChapters");
+ if(count)count.textContent=rows.length;if(minutes)minutes.textContent=Math.round(watched/60)+" min";if(chapterCount)chapterCount.textContent=chapters.size;
  renderYoutubeCourseProgress();
  if(typeof renderStudyActivitySummary==="function")renderStudyActivitySummary();
- const list=document.getElementById("psLectureList");
- if(!list)return;
- if(!rows.length){list.className="empty-state";list.textContent="No lecture records yet. Connect the extension once above, then play a recognized JEE lecture. Import backup is optional.";return;}
+ const list=document.getElementById("psLectureList");if(!list)return;
+ if(!rows.length){list.className="empty-state";list.textContent="No lecture records yet. Connect the extension and play a matched JEE lecture. Import backup is optional.";return;}
  list.className="lecture-list";
  list.innerHTML=rows.slice().sort((a,b)=>String(b.lastWatchedAt||"").localeCompare(String(a.lastWatchedAt||""))).map(row=>{
-  const title=escapeHTML(row.title||"Untitled lecture");
-  const subject=escapeHTML(row.subject||"Unmatched subject");
-  const chapter=escapeHTML(row.chapter||"Unmatched chapter");
-  const channel=escapeHTML(row.channel||"YouTube");
-  const mins=Math.round((Number(row.watchedSeconds)||0)/60);
+  const title=escapeHTML(row.title||"Untitled lecture"),subject=escapeHTML(row.subject||"Unmatched subject"),chapter=escapeHTML(row.chapter||"Unmatched chapter"),channel=escapeHTML(row.channel||"YouTube");
+  const watchedSeconds=Math.max(0,Number(row.watchedSeconds)||0),durationSeconds=Math.max(0,Number(row.durationSeconds)||0),mins=Math.round(watchedSeconds/60);
+  const oneShot=isOneShotTitle(row.title),remaining=durationSeconds?Math.max(0,durationSeconds-watchedSeconds):0;
+  const timeText=oneShot?(durationSeconds?"Time left · "+durationLabel(remaining/60):"Time left · duration not available yet"):(mins+" min watched");
   const date=row.lastWatchedAt?new Date(row.lastWatchedAt).toLocaleDateString():"";
   const url=/^https:\/\/(www\.)?youtube\.com\/watch\?v=[\w-]+/.test(row.url||"")?row.url:"#";
-  return '<article class="list-row" style="padding:14px 0;border-bottom:1px solid var(--line);display:flex;gap:12px;align-items:flex-start"><div style="flex:1;min-width:0"><strong>'+title+'</strong><div class="helper-note">'+subject+' · '+chapter+' · '+mins+' min watched</div><small style="color:var(--muted)">'+channel+(date?' · '+date:'')+'</small></div><a class="btn btn-secondary" href="'+escapeAttr(url)+'" target="_blank" rel="noopener">Open ↗</a></article>';
+  return '<article class="list-row" style="padding:14px 0;border-bottom:1px solid var(--line);display:flex;gap:12px;align-items:flex-start"><div style="flex:1;min-width:0"><strong>'+title+'</strong><div class="helper-note">'+subject+' · '+chapter+' · '+escapeHTML(timeText)+'</div><small style="color:var(--muted)">'+channel+(date?' · '+date:'')+'</small></div><a class="btn btn-secondary" href="'+escapeAttr(url)+'" target="_blank" rel="noopener">Open ↗</a></article>';
  }).join("");
 }
 function plannerChapterForLecture(row){
