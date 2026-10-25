@@ -41,6 +41,7 @@
   <section class="page" id="page-daily">
     <div class="page-hero daily-journal-hero"><div><h2>Daily Study Journal</h2><p>Log what you study, track your time and build consistency.</p></div><button class="btn btn-primary" onclick="openDailyTaskModal()">＋ Add Task</button></div>
     <div class="daily-journal-toolbar"><div class="daily-date-pick"><label for="dailyDate">YOUR STUDY DAY</label><input class="control" type="date" id="dailyDate" onchange="renderDailyLog()"></div><div class="daily-date-actions"><button class="btn btn-secondary" onclick="setDailyDate(-1)">‹</button><button class="btn btn-secondary daily-today-button" onclick="setDailyDate(0)">Today</button><button class="btn btn-secondary" onclick="setDailyDate(1)">›</button></div></div>
+    <div class="daily-rollover-notice" id="dailyRolloverNotice" hidden><div><strong>Yesterday's plan needs your review</strong><span id="dailyRolloverText">Tick off completed work or carry unfinished tasks forward.</span></div><button type="button" class="btn btn-secondary" onclick="openYesterday()">Review yesterday</button><button type="button" class="btn btn-primary" onclick="carryOverTasks()">Carry unfinished</button></div>
     <div class="daily-stats" id="dailyStats" hidden></div>
     <div class="daily-layout daily-reference-layout">
       <div class="daily-main-column">
@@ -48,7 +49,7 @@
         <section class="panel daily-section-panel daily-study-log-panel"><div class="daily-section-head"><div><h3>Study Log</h3><p>Every session adds to your progress record.</p></div><button class="btn btn-primary" onclick="openStudySessionModal()">＋ Add Log</button></div><div id="studySessionList" class="study-session-list"></div><div class="daily-session-footer"><span class="badge blue" id="sessionCountBadge">0 sessions</span><span class="daily-summary-note">Tracked study time updates automatically.</span></div></section>
       </div>
       <div class="daily-side-column">
-        <section class="panel focus-timer-panel daily-focus-timer"><div class="daily-focus-top"><div class="timer-kicker">FOCUS TIMER</div><button type="button" class="timer-settings-button" onclick="document.getElementById('timerOptionsDetails').open=!document.getElementById('timerOptionsDetails').open" aria-label="Timer options">⚙</button></div><h3>One thing at a time.</h3><div class="timer-circle" id="focusTimerRing"><div class="timer-display" id="focusTimerDisplay">25:00</div><span class="timer-circle-caption">FOCUSED TIME</span></div><div class="timer-presets"><button class="type-tab active" data-timer-min="25" onclick="setTimerPreset(25)">Pomodoro</button><button class="type-tab" data-timer-min="50" onclick="setTimerPreset(50)">Deep Work</button><button class="type-tab" data-timer-min="90" onclick="setTimerPreset(90)">Long Session</button></div><div class="timer-actions"><button class="btn btn-primary" id="timerStartButton" onclick="toggleFocusTimer()">Start</button><button class="btn btn-secondary" id="timerResetButton" onclick="resetFocusTimer()" aria-label="Reset timer">↺</button></div><div class="timer-footnote" id="timerFootnote">Your time is saved in the study log.</div><details id="timerOptionsDetails" class="timer-options-details"><summary>Subject and session options</summary><div class="timer-form"><label class="form-field">Subject<select class="control" id="timerSubject" onchange="updateTimerChapters()"><option>Physics</option><option>Chemistry</option><option>Mathematics</option></select></label><label class="form-field">Chapter<select class="control" id="timerChapter"></select></label><label class="form-field">Session type<select class="control" id="timerKind"><option value="Study">Study</option><option value="Revision">Revision</option><option value="PYQ practice">PYQ practice</option><option value="Test review">Test review</option></select></label></div></details></section>
+        <section class="panel focus-timer-panel daily-focus-timer"><div class="daily-focus-top"><div class="timer-kicker">FOCUS TIMER</div><button type="button" class="timer-settings-button" onclick="document.getElementById('timerOptionsDetails').open=!document.getElementById('timerOptionsDetails').open" aria-label="Timer options">⚙</button></div><h3>One thing at a time.</h3><div class="timer-circle" id="focusTimerRing"><div class="timer-display" id="focusTimerDisplay">25:00</div><span class="timer-circle-caption">FOCUSED TIME</span></div><div class="timer-presets"><button class="type-tab active" data-timer-min="25" onclick="setTimerPreset(25)">Pomodoro</button><button class="type-tab" data-timer-min="50" onclick="setTimerPreset(50)">Deep Work</button><button class="type-tab" data-timer-min="90" onclick="setTimerPreset(90)">Long Session</button></div><div class="timer-actions"><button class="btn btn-primary" id="timerStartButton" onclick="toggleFocusTimer()">Start</button><button class="btn btn-secondary" id="timerResetButton" onclick="resetFocusTimer()" aria-label="Reset timer">↺</button></div><div class="timer-footnote" id="timerFootnote">Your time is saved in the study log.</div><details id="timerOptionsDetails" class="timer-options-details"><summary>Custom duration and session options</summary><div class="timer-custom-duration"><label class="form-field">Hours<input class="control" id="customTimerHours" type="number" min="0" max="24" step="1" value="0"></label><label class="form-field">Extra minutes<input class="control" id="customTimerMinutes" type="number" min="0" max="59" step="1" value="45"></label><button type="button" class="btn btn-secondary" onclick="setCustomTimerDuration()">Apply duration</button><small>Use up to 24 hours. The timer automatically logs elapsed minutes to your study history.</small></div><div class="timer-form"><label class="form-field">Subject<select class="control" id="timerSubject" onchange="updateTimerChapters()"><option>Physics</option><option>Chemistry</option><option>Mathematics</option></select></label><label class="form-field">Chapter<select class="control" id="timerChapter"></select></label><label class="form-field">Session type<select class="control" id="timerKind"><option value="Study">Study</option><option value="Revision">Revision</option><option value="PYQ practice">PYQ practice</option><option value="Test review">Test review</option></select></label></div></details></section>
         <section class="panel daily-summary-panel"><div class="daily-section-head"><div><h3>Today's Summary</h3><p>Your logged work for the selected day.</p></div></div><div class="daily-summary-main"><div><span class="summary-icon summary-time">◷</span><div><strong id="journalStudyTime">0h</strong><small>Study Time</small></div></div><div><span class="summary-icon summary-tasks">✓</span><div><strong id="journalTaskCount">0 / 0</strong><small>Tasks Done</small></div></div></div><div class="daily-summary-meter"><div class="daily-summary-meter-head"><span>Daily target</span><strong id="journalTargetLabel">0 / 180 min</strong></div><div class="progress-track"><div class="progress-fill" id="journalTargetFill" style="width:0%"></div></div></div><div class="daily-summary-bottom"><span id="journalSessionCount">0 sessions</span><span id="journalFocusQuality">Focus not rated</span></div></section>
       </div>
     </div>
@@ -148,6 +149,13 @@
     ensure();const selected=byId("dailyDate");if(!selected)return;
     if(!selected.value)selected.value=todayISO();
     const date=selected.value,items=sessionsFor(date).sort((a,b)=>String(b.createdAt||"").localeCompare(String(a.createdAt||""))),tasks=tasksFor(date),done=tasks.filter(t=>t.done).length,minutes=sum(items);
+    const rollover=byId("dailyRolloverNotice");
+    if(rollover){
+      const currentDate=todayISO(),yesterday=addDays(currentDate,-1),unfinishedYesterday=tasksFor(yesterday).filter(t=>!t.done);
+      const isToday=date===currentDate&&unfinishedYesterday.length>0;
+      rollover.hidden=!isToday;
+      if(isToday&&byId("dailyRolloverText"))byId("dailyRolloverText").textContent=unfinishedYesterday.length+" unfinished task"+(unfinishedYesterday.length===1?"":"s")+" from "+niceDay(yesterday)+". Review the old day or carry them forward without losing the history.";
+    }
     const target=Number(state.studyGoals.dailyMinutes)||180,review=dateReview(date);
     const journalStudyTime=byId("journalStudyTime");
     if(journalStudyTime)journalStudyTime.textContent=(minutes/60).toFixed(minutes%60===0?0:1)+"h";
@@ -182,14 +190,40 @@
   window.setDailyDate=function(delta){const input=byId("dailyDate");input.value=delta===0?todayISO():addDays(input.value||todayISO(),delta);renderDailyLog();};
   window.openYesterday=function(){byId("dailyDate").value=addDays(todayISO(),-1);go("daily");renderDailyLog();};
   window.openDailyTaskModal=function(){
-    const date=(byId("dailyDate")&&byId("dailyDate").value)||todayISO();
-    const fields=[{name:"date",label:"Day",type:"date",value:date,required:true},{name:"title",label:"What needs to get done?",type:"text",value:"",required:true},{name:"subject",label:"Subject",type:"select",value:currentChapterSubject,options:[{value:"General",label:"General / admin"},{value:"Physics",label:"Physics"},{value:"Chemistry",label:"Chemistry"},{value:"Mathematics",label:"Mathematics"}]},{name:"chapter",label:"Chapter (optional)",type:"select",value:"",options:[{value:"",label:"No chapter"}].concat(state.chapters.filter(c=>c.subject===currentChapterSubject).map(c=>({value:c.chapter,label:chapterDisplayName(c.subject,c.chapter)})))},{name:"estimate",label:"Estimated minutes",type:"number",value:30,min:0,max:600},{name:"priority",label:"Priority",type:"select",value:"Normal",options:["Low","Normal","High"].map(x=>({value:x,label:x}))}];
-    openModal("Add to daily plan",fields,{type:"dailyTask"});
+    const date=(byId("dailyDate")&&byId("dailyDate").value)||todayISO(),sub=currentChapterSubject||"Physics";
+    const taskActions=[
+      {value:"Study chapter",label:"Study chapter"},
+      {value:"Revise chapter",label:"Revise chapter"},
+      {value:"Solve PYQs",label:"Solve PYQs"},
+      {value:"Take topic test",label:"Take topic test"},
+      {value:"Review mistakes",label:"Review mistakes"},
+      {value:"Custom task",label:"Other / personal task"}
+    ];
+    const fields=[
+      {name:"date",label:"Day",type:"date",value:date,required:true},
+      {name:"taskType",label:"What do you want to do?",type:"select",value:"Study chapter",options:taskActions},
+      {name:"subject",label:"Subject",type:"select",value:sub,options:[{value:"General",label:"General / admin"},{value:"Physics",label:"Physics"},{value:"Chemistry",label:"Chemistry"},{value:"Mathematics",label:"Mathematics"}]},
+      {name:"chapter",label:"Choose chapter",type:"select",value:"",options:[{value:"",label:"Select a chapter"}].concat(state.chapters.filter(c=>c.subject===sub).map(c=>({value:c.chapter,label:chapterDisplayName(c.subject,c.chapter)})))},
+      {name:"customTitle",label:"Optional task note (only for a personal task)",type:"text",value:"",placeholder:"Leave blank for an automatic chapter-based name"},
+      {name:"estimate",label:"Estimated minutes",type:"number",value:45,min:0,max:1440},
+      {name:"priority",label:"Priority",type:"select",value:"Normal",options:["Low","Normal","High"].map(x=>({value:x,label:x}))}
+    ];
+    openModal("Add a chapter task",fields,{type:"dailyTask"});
   };
   window.openStudySessionModal=function(){
-    const date=(byId("dailyDate")&&byId("dailyDate").value)||todayISO(),sub=currentChapterSubject;
-    const fields=[{name:"date",label:"Study date",type:"date",value:date,required:true},{name:"kind",label:"Session type",type:"select",value:"Study",options:["Study","Revision","PYQ practice","Topic test","Mock analysis","Doubt clearing"].map(x=>({value:x,label:x}))},{name:"subject",label:"Subject",type:"select",value:sub,options:subjectNames.map(x=>({value:x,label:x}))},{name:"chapter",label:"Chapter",type:"select",value:"",options:[{value:"",label:"General / multiple chapters"}].concat(state.chapters.filter(c=>c.subject===sub).map(c=>({value:c.chapter,label:chapterDisplayName(c.subject,c.chapter)})))},{name:"title",label:"What did you work on?",type:"text",value:"",required:true},{name:"minutes",label:"Actual study time (minutes)",type:"number",value:45,min:1,max:600,required:true},{name:"focus",label:"Focus quality",type:"select",value:"3",options:[{value:"1",label:"1 · Distracted"},{value:"2",label:"2 · Uneven"},{value:"3",label:"3 · Okay"},{value:"4",label:"4 · Focused"},{value:"5",label:"5 · Deep focus"}]},{name:"notes",label:"What did you learn / what remains?",type:"textarea",value:"",full:true}];
-    openModal("Log a study session",fields,{type:"studySession"});
+    const date=(byId("dailyDate")&&byId("dailyDate").value)||todayISO(),sub=currentChapterSubject||"Physics";
+    const fields=[
+      {name:"date",label:"Study date",type:"date",value:date,required:true},
+      {name:"kind",label:"Session type",type:"select",value:"Study",options:["Study","Revision","PYQ practice","Topic test","Mock analysis","Doubt clearing"].map(x=>({value:x,label:x}))},
+      {name:"subject",label:"Subject",type:"select",value:sub,options:subjectNames.map(x=>({value:x,label:x}))},
+      {name:"chapter",label:"Chapter",type:"select",value:"",options:[{value:"",label:"General / multiple chapters"}].concat(state.chapters.filter(c=>c.subject===sub).map(c=>({value:c.chapter,label:chapterDisplayName(c.subject,c.chapter)})))},
+      {name:"title",label:"Session title",type:"text",value:"",required:true},
+      {name:"hours",label:"Hours",type:"number",value:0,min:0,max:24},
+      {name:"minutes",label:"Extra minutes",type:"number",value:45,min:0,max:59},
+      {name:"focus",label:"Focus quality",type:"select",value:"3",options:[{value:"1",label:"1 · Distracted"},{value:"2",label:"2 · Uneven"},{value:"3",label:"3 · Okay"},{value:"4",label:"4 · Focused"},{value:"5",label:"5 · Deep focus"}]},
+      {name:"notes",label:"What did you learn / what remains?",type:"textarea",value:"",full:true}
+    ];
+    openModal("Add a study session",fields,{type:"studySession"});
   };
   window.saveDailyReview=function(){
     const date=(byId("dailyDate")&&byId("dailyDate").value)||todayISO(),r={date:date,focus:byId("reviewFocus").value,energy:byId("reviewEnergy").value,wins:byId("reviewWins").value.trim(),blockers:byId("reviewBlockers").value.trim(),tomorrow:byId("reviewTomorrow").value.trim()};
@@ -211,6 +245,19 @@
     const sub=byId("timerSubject").value,sel=byId("timerChapter");if(!sel)return;
     const arr=state.chapters.filter(c=>c.subject===sub);
     sel.innerHTML='<option value="">General / multiple chapters</option>'+arr.map(c=>'<option value="'+escapeAttr(c.chapter)+'">'+escapeHTML(chapterDisplayName(c.subject,c.chapter))+'</option>').join("");
+  };
+  window.setCustomTimerDuration=function(){
+    if(timerRunning){toast("Stop the current timer before changing its duration.");return;}
+    const hours=Math.max(0,Math.min(24,Number(byId("customTimerHours")&&byId("customTimerHours").value)||0));
+    const minutes=Math.max(0,Math.min(59,Number(byId("customTimerMinutes")&&byId("customTimerMinutes").value)||0));
+    const total=Math.round(hours*60+minutes);
+    if(total<1||total>1440){toast("Choose a duration between 1 minute and 24 hours.");return;}
+    timerChosen=total;timerInitial=total*60;paintTimerRing(0);
+    byId("focusTimerDisplay").textContent=String(Math.floor(total/60)).padStart(2,"0")+":"+String(total%60).padStart(2,"0");
+    document.querySelectorAll("[data-timer-min]").forEach(b=>b.classList.remove("active"));
+    const footnote=byId("timerFootnote");if(footnote)footnote.textContent="Custom focus block · "+Math.floor(total/60)+"h "+(total%60)+"m. Ready when you are.";
+    const details=byId("timerOptionsDetails");if(details)details.open=false;
+    toast("Custom timer set.");
   };
   window.setTimerPreset=function(min){
     if(timerRunning){toast("Stop the current timer before changing its duration.");return;}
@@ -496,7 +543,7 @@
   window.renderAllProductivity=function(){renderDailyLog();renderPerformance();renderMistakes();renderNotes();renderGoals();window.renderDailyPulse();window.renderRevisionQueue();};
   /* Preserve the original app handlers and route extra work through the same save/cloud layer. */
   const originalSaveState=saveState;
-  saveState=function(){originalSaveState();if(byId("page-daily"))renderDailyLog();if(byId("page-performance"))renderPerformance();if(byId("page-mistakes"))renderMistakes();if(byId("page-notes"))renderNotes();if(byId("page-goals"))renderGoals();window.renderDailyPulse();window.renderRevisionQueue();};
+  saveState=function(){originalSaveState();if(byId("page-daily"))renderDailyLog();if(byId("page-performance"))renderPerformance();if(byId("page-mistakes"))renderMistakes();if(byId("page-notes"))renderNotes();if(byId("page-goals"))renderGoals();if(typeof renderDashboard==="function")renderDashboard();window.renderDailyPulse();window.renderRevisionQueue();};
   const originalRenderDashboard=renderDashboard;
   renderDashboard=function(){originalRenderDashboard();window.renderDailyPulse();};
   const originalGo=go;
@@ -515,11 +562,16 @@
     if(!modalContext||!["studySession","dailyTask","weeklyReview","mistake"].includes(modalContext.type))return originalSaveModal(e);
     e.preventDefault();const v=valuesFromForm(),ctx=modalContext;
     if(ctx.type==="studySession"){
-      const mins=Number(v.minutes);if(!v.title.trim()||!Number.isFinite(mins)||mins<1||mins>600){toast("Add a session title and a duration between 1 and 600 minutes.");return;}
-      state.studySessions.unshift({id:"session-"+Date.now(),date:v.date||todayISO(),kind:v.kind||"Study",subject:v.subject||"General",chapter:v.chapter||"",title:v.title.trim(),minutes:Math.round(mins),focus:Number(v.focus)||3,notes:v.notes||"",createdAt:new Date().toISOString()});
+      const hours=Math.max(0,Number(v.hours)||0),extraMinutes=Math.max(0,Number(v.minutes)||0),mins=Math.round(hours*60+extraMinutes);
+      if(!v.title.trim()||!Number.isFinite(mins)||mins<1||mins>1440){toast("Add a session title and a duration between 1 minute and 24 hours.");return;}
+      state.studySessions.unshift({id:"session-"+Date.now(),date:v.date||todayISO(),kind:v.kind||"Study",subject:v.subject||"General",chapter:v.chapter||"",title:v.title.trim(),minutes:mins,focus:Number(v.focus)||3,notes:v.notes||"",createdAt:new Date().toISOString()});
     }else if(ctx.type==="dailyTask"){
-      if(!v.title.trim()){toast("Give your task a clear name.");return;}
-      state.dailyTasks.push({id:"task-"+Date.now(),date:v.date||todayISO(),title:v.title.trim(),subject:v.subject||"General",chapter:v.chapter||"",estimate:Math.max(0,Number(v.estimate)||0),priority:v.priority||"Normal",done:false,completedAt:"",createdAt:new Date().toISOString()});
+      const action=v.taskType||"Study chapter",subject=v.subject||"General",chapter=v.chapter||"",custom=(v.customTitle||"").trim();
+      const chapterLabel=chapter?chapterDisplayName(subject,chapter):"";
+      if(action==="Custom task"&&!custom){toast("Add a short label for your personal task.");return;}
+      if(action!=="Custom task"&&!chapter&&["Study chapter","Revise chapter","Solve PYQs","Take topic test"].includes(action)){toast("Choose a subject and chapter first. You can select it from the chapter list.");return;}
+      const title=action==="Custom task"?custom:action+(chapterLabel?": "+chapterLabel:(" · "+subject))+(custom?" — "+custom:"");
+      state.dailyTasks.push({id:"task-"+Date.now(),date:v.date||todayISO(),title:title,taskType:action,subject:subject,chapter:chapter,estimate:Math.max(0,Number(v.estimate)||0),priority:v.priority||"Normal",done:false,completedAt:"",createdAt:new Date().toISOString()});
     }else if(ctx.type==="mistake"){
       const old=ctx.id?state.studyMistakes.find(x=>x.id===ctx.id):null;
       const record={id:old?old.id:"mistake-"+Date.now(),date:v.date||todayISO(),subject:v.subject||"General",chapter:v.chapter||"",errorType:v.errorType||"Concept gap",title:(v.title||"").trim(),prompt:v.prompt||"",reason:v.reason||"",takeaway:v.takeaway||"",reviewDate:v.status==="Mastered"?"":(v.reviewDate||addDays(todayISO(),1)),status:v.status||"Needs Review",updatedAt:new Date().toISOString()};
