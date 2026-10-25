@@ -172,55 +172,111 @@
     let lastTime=video.currentTime||0;
     let lastContext="";
     let recordId="";
+    let pendingSeconds=0;
     let ticking=false;
     let seeking=false;
     report("player-found","Telegram video player found. Checking its message text for a JEE chapter.");
-    const tick=async()=>{
+
+    const tick=async(forceFlush=false)=>{
       if(ticking)return;
       ticking=true;
+      let secondsToSave=0;
       try{
         const rect=video.getBoundingClientRect();
         const visible=rect.width>50&&rect.height>50&&rect.bottom>0&&rect.right>0&&rect.top<window.innerHeight&&rect.left<window.innerWidth;
         if(!visible){lastTime=video.currentTime||lastTime;return;}
+
         const context=getContext(video);
         const match=classify(context.sourceText);
         const now=video.currentTime||0;
-        const delta=Math.max(0,Math.min(8,now-lastTime));
+        const delta=now-lastTime;
         lastTime=now;
         if(seeking){seeking=false;return;}
+
         if(!match){
-          report("unmatched","Not recorded: this post needs both a recognizable JEE chapter name and a lecture/study cue (such as Lecture, One Shot, Revision, PYQ, JEE or NEET).",{title:context.title});
+          pendingSeconds=0;
+          report("unmatched","Not recorded: this post needs its own recognizable JEE chapter name plus a study cue (Lecture, One Shot, Revision, Questions, PYQ, JEE or NEET).",{title:context.title});
           return;
         }
+
         const signature=context.msgId+"|"+context.title+"|"+match.chapter;
-        if(signature!==lastContext){lastContext=signature;const key=context.msgId||context.url+"|"+context.title;let hash=2166136261;for(let i=0;i<key.length;i++)hash=Math.imul(hash^key.charCodeAt(i),16777619);recordId="tgweb-"+(hash>>>0).toString(36);}
-        if((video.paused||video.ended)&&delta<=0){
-          report("matched-paused","Recognized "+match.subject+" · "+match.chapter+". Video is paused or ended; press Play to record more watch time.",{title:context.title,subject:match.subject,chapter:match.chapter,videoId:recordId});
+        if(signature!==lastContext){
+          // Never carry seconds across a changed caption/chapter and attribute them
+          // to the next post.
+          if(lastContext)pendingSeconds=0;
+          lastContext=signature;
+          const key=context.msgId||context.url+"|"+context.title;
+          let hash=2166136261;
+          for(let i=0;i<key.length;i++)hash=Math.imul(hash^key.charCodeAt(i),16777619);
+          recordId="tgweb-"+(hash>>>0).toString(36);
+        }
+
+        if(delta>0&&delta<=8)pendingSeconds+=delta;
+        const paused=video.paused||video.ended;
+        const shouldFlush=pendingSeconds>=5||forceFlush||paused;
+
+        if(!shouldFlush||pendingSeconds<=0){
+          if(paused){
+            report("matched-paused","Recognized "+match.subject+" · "+match.chapter+". Video is paused or ended; saved watch time is retained.",{title:context.title,subject:match.subject,chapter:match.chapter,videoId:recordId});
+          }else if(delta<=0){
+            report("playing-waiting","Recognized "+match.subject+" · "+match.chapter+". Video is playing; waiting for playback time to advance.",{title:context.title,subject:match.subject,chapter:match.chapter,videoId:recordId});
+          }else{
+            report("tracking","Tracking Telegram playback · "+match.subject+" · "+match.chapter+". Watch time is accumulating.",{title:context.title,subject:match.subject,chapter:match.chapter,videoId:recordId});
+          }
           return;
         }
-        if(delta<=0){
-          report("playing-waiting","Recognized "+match.subject+" · "+match.chapter+". Video is playing; waiting for playback time to advance.",{title:context.title,subject:match.subject,chapter:match.chapter,videoId:recordId});
-          return;
-        }
+
+        secondsToSave=pendingSeconds;
+        pendingSeconds=0;
         const data=await chrome.storage.local.get(STORE);
         const rows=Array.isArray(data[STORE])?data[STORE]:[];
-        const old=rows.find(r=>r.id===recordId);
-        const row={...(old||{}),id:recordId,title:context.title,url:context.url,messageId:context.msgId,source:"Telegram Web",subject:match.subject,chapter:match.chapter,matchedPhrase:match.matchedPhrase,watchedSeconds:Math.min(86400,(Number(old?.watchedSeconds)||0)+delta),firstWatchedAt:old?.firstWatchedAt||new Date().toISOString(),lastWatchedAt:new Date().toISOString(),durationSeconds:Math.round(video.duration||old?.durationSeconds||0)};
-        const next=[row,...rows.filter(r=>r.id!==recordId)].slice(0,1000);
+        const old=rows.find(row=>row.id===recordId);
+        const row={
+          ...(old||{}),
+          id:recordId,
+          title:context.title,
+          url:context.url,
+          messageId:context.msgId,
+          source:"Telegram Web",
+          subject:match.subject,
+          chapter:match.chapter,
+          matchedPhrase:match.matchedPhrase,
+          watchedSeconds:Math.min(86400,(Number(old?.watchedSeconds)||0)+secondsToSave),
+          firstWatchedAt:old?.firstWatchedAt||new Date().toISOString(),
+          lastWatchedAt:new Date().toISOString(),
+          durationSeconds:Math.round(video.duration||old?.durationSeconds||0)
+        };
+        const next=[row,...rows.filter(item=>item.id!==recordId)].slice(0,1000);
         await chrome.storage.local.set({[STORE]:next});
-        report("tracking","Tracking Telegram playback · "+match.subject+" · "+match.chapter+".",{title:context.title,subject:match.subject,chapter:match.chapter,videoId:recordId,watchedSeconds:row.watchedSeconds});
-      }catch(error){report("error","Telegram tracker error: "+String(error?.message||error));}
-      finally{ticking=false;}
+        report(paused?"matched-paused":"tracking",
+          paused
+            ? "Recognized "+match.subject+" · "+match.chapter+". Playback paused; final watch time saved."
+            : "Tracking Telegram playback · "+match.subject+" · "+match.chapter+".",
+          {title:context.title,subject:match.subject,chapter:match.chapter,videoId:recordId,watchedSeconds:row.watchedSeconds});
+      }catch(error){
+        if(secondsToSave>0)pendingSeconds+=secondsToSave;
+        report("error","Telegram tracker error: "+String(error?.message||error));
+      }finally{
+        ticking=false;
+      }
     };
+
     video.addEventListener("play",()=>{lastTime=video.currentTime||0;report("playing","Telegram video is playing. Checking lecture title and chapter.");tick();});
     video.addEventListener("seeking",()=>{seeking=true;lastTime=video.currentTime||0;});
-    video.addEventListener("timeupdate",tick,{passive:true});
-    video.addEventListener("pause",tick);
+    video.addEventListener("timeupdate",()=>tick(),{passive:true});
+    video.addEventListener("pause",()=>tick(true));
+    video.addEventListener("ended",()=>tick(true));
     const timer=setInterval(()=>{if(!video.isConnected){clearInterval(timer);return;}tick();},3000);
     tick();
   }
+
+  let scanTimer=null;
   function scan(){document.querySelectorAll("video").forEach(attach);}
-  const observer=new MutationObserver(()=>scan());
+  function scheduleScan(){
+    if(scanTimer!==null)return;
+    scanTimer=setTimeout(()=>{scanTimer=null;scan();},180);
+  }
+  const observer=new MutationObserver(scheduleScan);
   observer.observe(document.documentElement,{childList:true,subtree:true});
   scan();
   report("loaded","Telegram Web tracker loaded. Open a channel post with a playable video.");
