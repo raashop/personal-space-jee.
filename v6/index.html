@@ -1884,6 +1884,7 @@ td strong {
 <main>
  <header class="topbar">
   <div><div class="crumb" id="pageCrumb">YOUR STUDY SPACE</div><h1 id="pageTitle">Welcome back, Raash! 👋</h1><div class="page-subtitle" id="pageSubtitle">Small sessions add up. Let’s make today count.</div></div>
+  <div class="global-search-wrap"><label class="global-search-control"><span aria-hidden="true">⌕</span><input id="globalSearchInput" type="search" placeholder="Search anything…" autocomplete="off" oninput="globalSearch(this.value)" onkeydown="globalSearchKeydown(event)" aria-label="Search chapters, tests, notes and mistakes"></label><div class="global-search-results" id="globalSearchResults" role="listbox"></div></div>
   <div class="top-actions"><div class="today-chip" id="todayText">Today</div><button class="icon-button" title="Backup and settings" onclick="openSettings()" aria-label="Backup and settings">⚙</button></div>
  </header>
  <section class="page active" id="page-dashboard">
@@ -2687,6 +2688,7 @@ c.difficulty="";
 }
 
 let currentPage="dashboard",currentChapterSubject="Physics",currentChapterYear="all",currentLitmusType="all",modalContext=null,toastTimer=null;
+let globalSearchItems=[];
 let cloudClient=null,cloudReady=false,cloudBackupAvailable=false,cloudUser=null,cloudTimer=null,cloudApplying=false,cloudSettingsKey="ps-cloud-settings-v2",offlineKey="ps-offline-mode-v1";
 function loadState(){
  try{
@@ -2806,6 +2808,50 @@ function renderDashboardPlanPreview(){
  });
  const more=list.querySelector("[data-dashboard-open-daily]");
  if(more)more.addEventListener("click",function(){if(typeof go==="function")go("daily");});
+}
+function globalSearch(query){
+ const holder=document.getElementById("globalSearchResults");
+ if(!holder)return;
+ const q=String(query||"").toLowerCase().trim();
+ if(q.length<2){holder.classList.remove("is-open");holder.innerHTML="";globalSearchItems=[];return;}
+ const candidates=[];
+ (state.chapters||[]).forEach(c=>candidates.push({kind:"chapter",title:chapterDisplayName(c.subject,c.chapter),meta:c.subject+" · "+(c.class||"JEE Main")+" · Chapter",page:"chapters",subject:c.subject,chapter:c.chapter,className:c.class||""}));
+ (state.topics||[]).forEach(t=>candidates.push({kind:"topic",title:topicDisplayName(t),meta:(t.subject||"General")+" · "+topicChapterLabel(t)+" · Topic test",page:"topic",id:t.id}));
+ (state.litmus||[]).forEach(t=>candidates.push({kind:"litmus",title:t.name||"LITMUS test",meta:"LITMUS schedule · "+(t.type||t.status||"Test"),page:"litmus",id:t.id}));
+ (state.pyqs||[]).forEach(p=>candidates.push({kind:"pyq",title:chapterDisplayName(p.subject,p.chapter),meta:(p.subject||"General")+" · PYQ practice · "+(p.year||""),page:"pyq",id:p.id,chapter:p.chapter,subject:p.subject}));
+ (state.studyMistakes||[]).forEach(m=>candidates.push({kind:"mistake",title:m.title||"Mistake",meta:(m.subject||"General")+" · Mistake Bank",page:"mistakes",id:m.id}));
+ (state.notes||[]).forEach(n=>candidates.push({kind:"note",title:n.title||"Study note",meta:(n.subject||"General")+" · Notes",page:"notes",id:n.id}));
+ const matches=candidates.filter(item=>(item.title+" "+item.meta).toLowerCase().includes(q)).slice(0,8);
+ globalSearchItems=matches;
+ holder.innerHTML=matches.map((item,index)=>'<button class="global-search-result" type="button" role="option" onclick="openGlobalSearchResult('+index+')"><strong>'+escapeHTML(item.title)+'</strong><small>'+escapeHTML(item.meta)+'</small></button>').join("")||'<div class="global-search-empty">No matches. Try a chapter, test, note or mistake.</div>';
+ holder.classList.add("is-open");
+}
+function globalSearchKeydown(event){
+ if(event.key==="Escape"){const holder=document.getElementById("globalSearchResults");if(holder)holder.classList.remove("is-open");event.target.blur();return;}
+ if(event.key==="Enter"){const holder=document.getElementById("globalSearchResults");if(holder&&holder.classList.contains("is-open")&&globalSearchItems.length){event.preventDefault();openGlobalSearchResult(0);}}
+}
+function openGlobalSearchResult(index){
+ const item=globalSearchItems[index];if(!item)return;
+ const holder=document.getElementById("globalSearchResults");if(holder)holder.classList.remove("is-open");
+ const input=document.getElementById("globalSearchInput");if(input)input.blur();
+ if(item.kind==="chapter"){
+  go("chapters");setChapterSubject(item.subject);
+  const yearSelect=document.getElementById("chapterYearSelect");
+  if(yearSelect&&["Class 11","Class 12"].includes(item.className))setChapterYear(item.className);else setChapterYear("all");
+  const search=document.getElementById("chapterSearch");if(search)search.value=item.chapter;
+  const filter=document.getElementById("chapterStatus");if(filter)filter.value="all";
+  renderChapters();
+ }else if(item.kind==="topic"){
+  go("topic");const search=document.getElementById("topicSearch");if(search)search.value=item.title;renderTopics();
+ }else if(item.kind==="litmus"){
+  go("litmus");const search=document.getElementById("litmusSearch");if(search)search.value=item.title;if(typeof renderLitmus==="function")renderLitmus();
+ }else if(item.kind==="pyq"){
+  go("pyq");const search=document.getElementById("pyqSearch");if(search)search.value=item.title;if(typeof renderPyq==="function")renderPyq();
+ }else if(item.kind==="mistake"){
+  go("mistakes");const search=document.getElementById("mistakeSearch");if(search)search.value=item.title;if(typeof renderMistakes==="function")renderMistakes();
+ }else if(item.kind==="note"){
+  go("notes");const search=document.getElementById("notesSearch");if(search)search.value=item.title;if(typeof renderNotes==="function")renderNotes();
+ }
 }
 function renderDashboard(){
  const chapters=state.chapters||[],ready=chapters.filter(c=>c.prep==="Exam Ready").length,total=chapters.length,work=chapters.filter(c=>c.prep==="Needs Work").length,active=chapters.filter(c=>c.prep==="In Progress").length;
