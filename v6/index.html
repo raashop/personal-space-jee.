@@ -3508,7 +3508,6 @@ function renderDashboard(){
  const active=chapters.filter(c=>c.prep==="In Progress").length;
  const notReady=chapters.filter(c=>c.prep==="Not Ready").length;
  const pc=pct(ready,total);
- const circumference=2*Math.PI*69.5;
  const pctNode=document.getElementById("overallPct");
  if(pctNode)pctNode.textContent=pc+"%";
  const subjectColors={Physics:"#2784d8",Chemistry:"#15966a",Mathematics:"#8064c7"};
