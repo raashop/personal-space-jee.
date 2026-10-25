@@ -88,7 +88,7 @@
   CHAPTERS.sort((a, b) => Math.max(...b[2].map(term => term.length)) - Math.max(...a[2].map(term => term.length)));
 
   const JEE_HINTS = ["jee","mains","main 2027","advanced","ncert","one shot","one-shot","lecture","class 11","class 12","chapter","pyq","revision","unacademy","physics wallah","pw","competishun","vedantu","mathongo","allen","akash"];
-  const EXCLUDE = ["official music video","lyric video","full episode","anime episode","movie trailer","gameplay","reaction","vlog","meme compilation"];
+  const EXCLUDE = ["official music video","lyric video","full episode","anime episode","movie trailer","gameplay","reaction video","reaction channel","vlog","meme compilation"];
   const videoId = () => {
     try { return new URL(location.href).searchParams.get("v"); } catch { return null; }
   };
