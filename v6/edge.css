@@ -5272,16 +5272,123 @@ html[data-edge-theme="daylight"] .legend-in-progress {
 html[data-edge-theme="daylight"] .legend-revision {
   background: #d85d69;
 }
-html[data-edge-theme="daylight"] .chapter-table-row:has(.status-in-progress) .progress-fill,
-html[data-edge-theme="daylight"] .chapter-table-row:has(.status-revision) .progress-fill,
-html[data-edge-theme="daylight"] .chapter-table-row:has(.status-not-started) .progress-fill {
-  background: #d85d69 !important;
-}
+/* Removed the old rule that incorrectly coloured all unfinished progress bars red. */
 
 
 /* Dashboard order: countdown hero, four metrics, subject progress, then planning panels. */
+html[data-edge-theme="daylight"] .dashboard-top-grid > .dashboard-countdown-hero {
+  min-height: 226px;
+  grid-template-columns: minmax(0, 1fr) 166px !important;
+}
+html[data-edge-theme="daylight"] .dashboard-top-grid .ring.ring-action {
+  width: 154px !important;
+  height: 154px !important;
+}
+html[data-edge-theme="daylight"] .dashboard-top-grid .ring-inner {
+  width: 112px !important;
+  height: 112px !important;
+}
+html[data-edge-theme="daylight"] .dashboard-top-grid > .dashboard-metrics {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  align-self: stretch;
+  align-content: stretch;
+  min-width: 0;
+  margin: 0;
+}
+html[data-edge-theme="daylight"] .dashboard-top-grid > .dashboard-metrics .metric {
+  min-width: 0;
+  min-height: 104px;
+  height: 100%;
+  padding: 12px 13px;
+  border-radius: 14px;
+}
+html[data-edge-theme="daylight"] .dashboard-top-grid > .dashboard-metrics .metric label {
+  font-size: 8px;
+  white-space: normal;
+  line-height: 1.3;
+}
+html[data-edge-theme="daylight"] .dashboard-top-grid > .dashboard-metrics .metric strong {
+  margin: 8px 0 3px;
+  font-size: clamp(20px, 2vw, 26px);
+}
+html[data-edge-theme="daylight"] .dashboard-top-grid > .dashboard-metrics .metric small {
+  font-size: 8px;
+  line-height: 1.3;
+}
+html[data-edge-theme="daylight"] #page-chapters .chapter-table select.chapter-status-chip.status-not-started {
+  color: #b23d4b !important;
+  background: #ffe9ec !important;
+  border-color: #f2cfd5 !important;
+}
+html[data-edge-theme="daylight"] #page-chapters .chapter-table select.chapter-status-chip.status-in-progress {
+  color: #1769aa !important;
+  background: #e1f0ff !important;
+  border-color: #b9dcfa !important;
+}
+html[data-edge-theme="daylight"] #page-chapters .chapter-table select.chapter-status-chip.status-revision {
+  color: #92540f !important;
+  background: #fff0d6 !important;
+  border-color: #f2d6a6 !important;
+}
+html[data-edge-theme="daylight"] #page-chapters .chapter-table select.chapter-status-chip.status-completed {
+  color: #14774f !important;
+  background: #e0f6ea !important;
+  border-color: #cdeedc !important;
+}
+html[data-edge-theme="daylight"] #page-chapters .chapter-table tr.status-row-not-started .progress-fill {
+  background: #d85d69 !important;
+}
+html[data-edge-theme="daylight"] #page-chapters .chapter-table tr.status-row-in-progress .progress-fill {
+  background: #4a9be8 !important;
+}
+html[data-edge-theme="daylight"] #page-chapters .chapter-table tr.status-row-revision .progress-fill {
+  background: #d28a35 !important;
+}
+html[data-edge-theme="daylight"] #page-chapters .chapter-table tr.status-row-completed .progress-fill {
+  background: #15966a !important;
+}
+html[data-edge-theme="daylight"] .legend-not-started { background: #d85d69 !important; }
+html[data-edge-theme="daylight"] .legend-in-progress { background: #4a9be8 !important; }
+html[data-edge-theme="daylight"] .legend-revision { background: #d28a35 !important; }
+html[data-edge-theme="daylight"] .legend-completed { background: #15966a !important; }
+@media (max-width: 900px) {
+  html[data-edge-theme="daylight"] .dashboard-top-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+  html[data-edge-theme="daylight"] .dashboard-top-grid > .dashboard-countdown-hero {
+    min-height: 190px;
+    grid-template-columns: minmax(0, 1fr) 154px !important;
+  }
+  html[data-edge-theme="daylight"] .dashboard-top-grid > .dashboard-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows: auto;
+  }
+}
+@media (max-width: 560px) {
+  html[data-edge-theme="daylight"] .dashboard-top-grid > .dashboard-countdown-hero {
+    min-height: 170px;
+    grid-template-columns: minmax(0, 1fr) 116px !important;
+    padding: 13px 12px;
+  }
+  html[data-edge-theme="daylight"] .dashboard-top-grid .ring.ring-action {
+    width: 108px !important;
+    height: 108px !important;
+  }
+  html[data-edge-theme="daylight"] .dashboard-top-grid .ring-inner {
+    width: 78px !important;
+    height: 78px !important;
+  }
+  html[data-edge-theme="daylight"] .dashboard-top-grid > .dashboard-metrics .metric {
+    min-height: 96px;
+    padding: 10px;
+  }
+}
+
 html[data-edge-theme="daylight"] .dashboard-top-grid {
-  grid-template-columns: minmax(0, 1fr) !important;
+  grid-template-columns: minmax(0, 1.65fr) minmax(300px, 1fr) !important;
 }
 html[data-edge-theme="daylight"] .dashboard-top-grid > .dashboard-countdown-hero {
   width: 100%;
