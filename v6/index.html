@@ -4990,7 +4990,7 @@ if(page==="telegram")page="lectures";
 if(["daily","mistakes","notes","goals"].includes(page))return;
 if(!document.getElementById("page-"+page))return;
 currentPage=page;
-document.querySelectorAll(".page").forEach(n=>n.classList.toggle("active",n.id==="page-"+page));
+document.querySelectorAll(".page").forEach(n=>{const active=n.id==="page-"+page;n.classList.toggle("active",active);n.style.display=active?"block":"none";});
 document.querySelectorAll("nav [data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
 const title={
 dashboard:["YOUR STUDY SPACE","Welcome back, Raash.","Small sessions add up. Let’s make today count."],chapters:["SYLLABUS TRACKER","Chapter tracker","Make each chapter feel manageable."],topic:["PRACTICE & REVIEW","Topic test planner","Plan a test, log the score and keep chapter progress connected."],litmus:["TEST SERIES","LITMUS schedule","Your part tests and full mocks, with dates and marks."],pyq:["PREVIOUS-YEAR QUESTIONS","PYQ practice log","Track accuracy and build confidence by chapter."],
