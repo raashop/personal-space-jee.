@@ -1122,3 +1122,121 @@ html:not([data-edge-theme="daylight"]) .mistake-takeaway small,
 html:not([data-edge-theme="daylight"]) .session-kind {
   color: var(--green);
 }
+
+
+/* Reference light skin for the daily journal, timer and analytics cards. */
+html[data-edge-theme="daylight"] .daily-stat,
+html[data-edge-theme="daylight"] .daily-task,
+html[data-edge-theme="daylight"] .study-session,
+html[data-edge-theme="daylight"] .focus-timer-panel,
+html[data-edge-theme="daylight"] .yesterday-panel,
+html[data-edge-theme="daylight"] .performance-controls,
+html[data-edge-theme="daylight"] .performance-kpi,
+html[data-edge-theme="daylight"] .comparison-pair > div,
+html[data-edge-theme="daylight"] .insight-row,
+html[data-edge-theme="daylight"] .weekly-review-card,
+html[data-edge-theme="daylight"] .weekly-review-quotes > div,
+html[data-edge-theme="daylight"] .pulse-panel > div,
+html[data-edge-theme="daylight"] .due-mistake-row,
+html[data-edge-theme="daylight"] .mistake-card {
+  color: #17283f;
+  background: #ffffff !important;
+  border-color: #e1eaf4 !important;
+  box-shadow: 0 5px 18px rgba(35,74,118,.045);
+}
+html[data-edge-theme="daylight"] .daily-task {
+  background: #fbfdff !important;
+  transition: background .18s ease, border-color .18s ease, transform .18s ease;
+}
+html[data-edge-theme="daylight"] .daily-task:hover {
+  background: #f4f9ff !important;
+  border-color: #cbdfee !important;
+}
+html[data-edge-theme="daylight"] .daily-task.is-done {
+  background: #f0faf5 !important;
+}
+html[data-edge-theme="daylight"] .task-check {
+  color: #ffffff;
+  background: #ffffff !important;
+  border-color: #d6e3ef !important;
+}
+html[data-edge-theme="daylight"] .task-check.checked {
+  background: #15966a !important;
+  border-color: #15966a !important;
+  color: #ffffff;
+}
+html[data-edge-theme="daylight"] .task-priority {
+  color: #687b92;
+  background: #eff4f9;
+}
+html[data-edge-theme="daylight"] .task-priority.high {
+  color: #b65360;
+  background: #fff0f1;
+}
+html[data-edge-theme="daylight"] .task-priority.low {
+  color: #2774b6;
+  background: #eaf4ff;
+}
+html[data-edge-theme="daylight"] .mini-delete:hover {
+  color: #b65360;
+  background: #fff0f1;
+}
+html[data-edge-theme="daylight"] .daily-task-footer,
+html[data-edge-theme="daylight"] .mistake-detail,
+html[data-edge-theme="daylight"] .mistake-card-footer,
+html[data-edge-theme="daylight"] .revision-queue-item {
+  border-color: #e9eff6;
+}
+html[data-edge-theme="daylight"] .focus-timer-panel {
+  background: linear-gradient(145deg,#f0f8ff,#f2fbf7) !important;
+  border-color: #dfeaf4 !important;
+}
+html[data-edge-theme="daylight"] .timer-display {
+  color: #17283f !important;
+  text-shadow: none;
+}
+html[data-edge-theme="daylight"] .timer-kicker,
+html[data-edge-theme="daylight"] .weekly-review-quotes small,
+html[data-edge-theme="daylight"] .session-kind,
+html[data-edge-theme="daylight"] .mistake-takeaway small {
+  color: #168b62;
+}
+html[data-edge-theme="daylight"] .timer-footnote,
+html[data-edge-theme="daylight"] .yesterday-summary p,
+html[data-edge-theme="daylight"] .weekly-review-quotes p,
+html[data-edge-theme="daylight"] .mistake-detail p,
+html[data-edge-theme="daylight"] .mistake-takeaway p,
+html[data-edge-theme="daylight"] .daily-stat-foot,
+html[data-edge-theme="daylight"] .task-meta,
+html[data-edge-theme="daylight"] .weekly-review-quotes p {
+  color: #687b92 !important;
+}
+html[data-edge-theme="daylight"] .daily-stat > strong,
+html[data-edge-theme="daylight"] .task-copy strong,
+html[data-edge-theme="daylight"] .study-session strong,
+html[data-edge-theme="daylight"] .performance-kpi strong,
+html[data-edge-theme="daylight"] .mistake-card h3,
+html[data-edge-theme="daylight"] .due-mistake-row strong {
+  color: #17283f;
+}
+html[data-edge-theme="daylight"] .comparison-pair > div {
+  background: #f5f9fd !important;
+}
+html[data-edge-theme="daylight"] .comparison-delta.positive,
+html[data-edge-theme="daylight"] .insight-number,
+html[data-edge-theme="daylight"] .mistake-takeaway {
+  color: #168052;
+  background: #e8f7ef !important;
+  border-color: #d7eee2 !important;
+}
+html[data-edge-theme="daylight"] .comparison-delta.negative {
+  color: #a66a28;
+  background: #fff4e4 !important;
+}
+html[data-edge-theme="daylight"] .mistake-card.mistake-overdue {
+  border-color: #f0d9bb !important;
+}
+html[data-edge-theme="daylight"] .mistake-detail small,
+html[data-edge-theme="daylight"] .mistake-takeaway small {
+  color: #687b92;
+}
