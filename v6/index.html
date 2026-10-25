@@ -2239,19 +2239,17 @@ html[data-edge-theme] .dashboard-main-layout.dashboard-main-layout-optimized>.da
   <div class="dashboard-main-layout dashboard-main-layout-optimized">
    <div class="dashboard-main-stack dashboard-main-stack-optimized">
   <section class="panel study-activity-panel" id="studyActivityPanel">
-   <div class="dashboard-panel-head"><div><h2>Study Activity</h2><p>Today's study sessions, tracked lectures and chapters touched.</p></div><button class="small-btn" type="button" onclick="go('lectures')">Open lecture tracker ↗</button></div>
+   <div class="dashboard-panel-head"><div><h2>Study Activity</h2><p>Today's hours and chapter progress from YouTube, Telegram and study sessions.</p></div><button class="small-btn" type="button" onclick="go('lectures')">Lecture tracker ↗</button></div>
    <div class="study-activity-grid">
-    <article class="study-activity-stat"><span class="study-activity-icon">◷</span><small>Study time logged today</small><strong id="studyActivityHours">0m</strong><span id="studyActivityHoursMeta">From your study sessions</span></article>
-    <article class="study-activity-stat"><span class="study-activity-icon yt">▶</span><small>YouTube watch time today</small><strong id="studyActivityYoutubeTime">0m</strong><span id="studyActivityYoutubeMeta">Tracked playback today</span></article>
-    <article class="study-activity-stat"><span class="study-activity-icon tg">↗</span><small>Telegram watch time today</small><strong id="studyActivityTelegram">0m</strong><span id="studyActivityTelegramMeta">Tracked playback today</span></article>
-    <article class="study-activity-stat"><span class="study-activity-icon done">✓</span><small>Chapters done today</small><strong id="studyActivityChapters">0</strong><span id="studyActivityChaptersMeta">From sessions, tasks and lectures</span></article>
+    <article class="study-activity-stat"><span class="study-activity-icon">◷</span><small>Total study time today</small><strong id="studyActivityHours">0m</strong><span id="studyActivityHoursMeta">Study log + tracked playback</span></article>
+    <article class="study-activity-stat"><span class="study-activity-icon yt">▶</span><small>YouTube time today</small><strong id="studyActivityYoutubeTime">0m</strong><span id="studyActivityYoutubeMeta">Tracked playback today</span></article>
+    <article class="study-activity-stat"><span class="study-activity-icon tg">↗</span><small>Telegram time today</small><strong id="studyActivityTelegram">0m</strong><span id="studyActivityTelegramMeta">Tracked playback today</span></article>
+    <article class="study-activity-stat"><span class="study-activity-icon done">✓</span><small>Chapters done today</small><strong id="studyActivityChapters">0</strong><span id="studyActivityChaptersMeta">Chapters touched today</span></article>
    </div>
-   <div class="study-activity-lower">
    <div class="study-activity-lower">
     <section><div class="study-activity-subhead"><strong>Chapters studied today</strong><span>Tap a chapter to open it</span></div><div id="studyActivityChapterList" class="study-activity-chapter-list"><div class="empty">Your chapter activity will appear here.</div></div></section>
-
    </div>
-  </section>/section>
+  </section>
     <section class="panel dashboard-coming-panel">
      <div class="dashboard-panel-head"><div><h2>Coming Up</h2><p>Your next topic tests and LITMUS deadlines.</p></div><span class="planned-count-badge"><strong id="upcomingCount">0</strong><span>up next</span></span></div>
      <div class="planned-next-note" id="plannedMetricHintSecondary">Your upcoming tests will appear here.</div>
