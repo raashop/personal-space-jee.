@@ -1938,7 +1938,7 @@ td strong {
     <section class="panel dashboard-quick-panel">
      <div class="dashboard-panel-head"><div><h2>Quick Actions</h2><p>Jump into your next useful step.</p></div></div>
      <div class="dashboard-quick-grid">
-      <button class="dashboard-quick-action" onclick="go('daily');setTimerPreset(25)"><span class="dashboard-quick-icon quick-green">◷</span><span><strong>Start Focus Timer</strong><small>One focused session</small></span><span class="quick-arrow">↗</span></button>
+      <button class="dashboard-quick-action" onclick="go('daily');if(!/stop/i.test(document.getElementById('timerStartButton').textContent)){setTimerPreset(25);toggleFocusTimer()}"><span class="dashboard-quick-icon quick-green">◷</span><span><strong>Start Focus Timer</strong><small>One focused session</small></span><span class="quick-arrow">↗</span></button>
       <button class="dashboard-quick-action" onclick="go('daily');openStudySessionModal()"><span class="dashboard-quick-icon quick-blue">＋</span><span><strong>Add Study Log</strong><small>Record study time</small></span><span class="quick-arrow">↗</span></button>
       <button class="dashboard-quick-action" onclick="go('topic');openPlannedTopicModal()"><span class="dashboard-quick-icon quick-violet">▦</span><span><strong>Create Topic Test</strong><small>Test a selected chapter</small></span><span class="quick-arrow">↗</span></button>
       <button class="dashboard-quick-action" onclick="go('pyq');openPyqModal()"><span class="dashboard-quick-icon quick-orange">✎</span><span><strong>Practice PYQs</strong><small>Log question practice</small></span><span class="quick-arrow">↗</span></button>
