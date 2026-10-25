@@ -253,7 +253,7 @@
     const total=Math.round(hours*60+minutes);
     if(total<1||total>1440){toast("Choose a duration between 1 minute and 24 hours.");return;}
     timerChosen=total;timerInitial=total*60;paintTimerRing(0);
-    byId("focusTimerDisplay").textContent=String(Math.floor(total/60)).padStart(2,"0")+":"+String(total%60).padStart(2,"0");
+    byId("focusTimerDisplay").textContent=formatTimerDuration(timerInitial);
     document.querySelectorAll("[data-timer-min]").forEach(b=>b.classList.remove("active"));
     const footnote=byId("timerFootnote");if(footnote)footnote.textContent="Custom focus block · "+Math.floor(total/60)+"h "+(total%60)+"m. Ready when you are.";
     const details=byId("timerOptionsDetails");if(details)details.open=false;
@@ -261,7 +261,7 @@
   };
   window.setTimerPreset=function(min){
     if(timerRunning){toast("Stop the current timer before changing its duration.");return;}
-    timerChosen=min;timerInitial=min*60;paintTimerRing(0);byId("focusTimerDisplay").textContent=String(min).padStart(2,"0")+":00";
+    timerChosen=min;timerInitial=min*60;paintTimerRing(0);byId("focusTimerDisplay").textContent=formatTimerDuration(timerInitial);
     document.querySelectorAll("[data-timer-min]").forEach(b=>b.classList.toggle("active",Number(b.dataset.timerMin)===min));
   };
   function paintTimerRing(progressDeg){
@@ -269,16 +269,25 @@
     const progress=Math.max(0,Math.min(360,Number(progressDeg)||0));
     ring.style.background="conic-gradient(from -90deg,#15966a 0deg,#44bd91 "+progress+"deg,#dff2e8 "+progress+"deg 360deg)";
   }
+  function formatTimerDuration(totalSeconds){
+    const total=Math.max(0,Math.ceil(Number(totalSeconds)||0));
+    if(total>=3600){
+      const hours=Math.floor(total/3600),minutes=Math.floor((total%3600)/60),seconds=total%60;
+      return String(hours).padStart(2,"0")+":"+String(minutes).padStart(2,"0")+":"+String(seconds).padStart(2,"0");
+    }
+    const minutes=Math.floor(total/60),seconds=total%60;
+    return String(minutes).padStart(2,"0")+":"+String(seconds).padStart(2,"0");
+  }
   function drawTimer(){
-    const secs=Math.max(0,Math.ceil((timerEnd-Date.now())/1000)),mins=Math.floor(secs/60),rem=secs%60;
-    byId("focusTimerDisplay").textContent=String(mins).padStart(2,"0")+":"+String(rem).padStart(2,"0");
+    const secs=Math.max(0,Math.ceil((timerEnd-Date.now())/1000));
+    byId("focusTimerDisplay").textContent=formatTimerDuration(secs);
     paintTimerRing(Math.round((1-secs/Math.max(1,timerInitial))*360));
     if(secs<=0){finishTimer(true);}
   }
   function finishTimer(completed){
     if(timerInterval){clearInterval(timerInterval);timerInterval=null;}
     timerRunning=false;const elapsed=Math.max(0,Math.round((Date.now()-timerStarted)/60000));
-    byId("timerStartButton").textContent="Start focus ↗";byId("timerFootnote").textContent=completed?"Focus block complete — added to your study log.":"Timer stopped.";
+    byId("timerStartButton").textContent="Start";byId("timerFootnote").textContent=completed?"Focus block complete — added to your study log.":"Timer stopped.";
     if(elapsed>0){
       if(byId("dailyDate"))byId("dailyDate").value=todayISO();
       const subject=byId("timerSubject").value,chapter=byId("timerChapter").value,kind=byId("timerKind").value;
@@ -293,7 +302,7 @@
     byId("timerStartButton").textContent="Stop & save";byId("timerFootnote").textContent="Focus mode is running. Stay with one task.";
     timerInterval=setInterval(drawTimer,250);drawTimer();
   };
-  window.resetFocusTimer=function(){if(timerRunning){toast("Stop the timer before resetting it.");return;}if(timerInterval)clearInterval(timerInterval);timerInitial=timerChosen*60;paintTimerRing(0);byId("focusTimerDisplay").textContent=String(timerChosen).padStart(2,"0")+":00";byId("timerFootnote").textContent="Timer reset. Ready when you are.";};
+  window.resetFocusTimer=function(){if(timerRunning){toast("Stop the timer before resetting it.");return;}if(timerInterval)clearInterval(timerInterval);timerInitial=timerChosen*60;paintTimerRing(0);byId("focusTimerDisplay").textContent=formatTimerDuration(timerInitial);byId("timerFootnote").textContent="Timer reset. Ready when you are.";};
   window.openWeeklyReviewModal=function(){
     const start=addDays(todayISO(),-((new Date(todayISO()+"T12:00:00").getDay()+6)%7)),old=state.weeklyReviews.find(x=>x.weekStart===start)||{};
     openModal("Weekly review · week of "+niceDay(start),[{name:"wins",label:"What went well this week?",type:"textarea",value:old.wins||"",full:true},{name:"friction",label:"What wasted time or felt difficult?",type:"textarea",value:old.friction||"",full:true},{name:"learned",label:"What did you learn about your study habits?",type:"textarea",value:old.learned||"",full:true},{name:"next",label:"One adjustment for next week",type:"textarea",value:old.next||"",full:true}],{type:"weeklyReview",weekStart:start});
@@ -600,4 +609,5 @@
     try{sessionStorage.setItem("ps-v6-last-open-date",todayISO());}catch(e){}
   }
   renderAllProductivity();
+  if(typeof renderDashboard==="function")renderDashboard();
 })();
