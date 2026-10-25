@@ -5416,10 +5416,12 @@ function telegramCourseCanonicalRows(){
  source.forEach(row=>{
   if(!row||!String(row.title||"").trim())return;
   const title=String(row.title||"").trim(),subject=String(row.subject||""),chapter=String(row.chapter||"");
-  const key=normalizeTelegramLectureTitle(title)+"|"+subject+"|"+chapter;
+  const courseTitle=String(row.courseTitle||row.course||row.series||""),teacher=String(row.teacher||row.instructor||"");
+  const year=Number(row.year)||Number((title.match(/\b20\d{2}\b/)||[])[0]||0);
+  const key=normalizeTelegramLectureTitle(title)+"|"+subject+"|"+chapter+"|"+normalizeTelegramLectureTitle(courseTitle)+"|"+normalizeTelegramLectureTitle(teacher)+"|"+year;
   const old=byKey.get(key);
   const ids=Array.from(new Set([String(row.id||""),...(old&&old.recordIds||[])].filter(Boolean)));
-  const candidate={...row,title,subject,chapter,recordIds:ids,durationSeconds:Math.max(0,Number(row.durationSeconds)||0),watchedSeconds:Math.max(0,Number(row.watchedSeconds)||0),year:Number(row.year)||Number((title.match(/\b20\d{2}\b/)||[])[0]||0)};
+  const candidate={...row,title,subject,chapter,courseTitle,teacher,year,recordIds:ids,durationSeconds:Math.max(0,Number(row.durationSeconds)||0),watchedSeconds:Math.max(0,Number(row.watchedSeconds)||0)};
   if(!old||candidate.watchedSeconds>old.watchedSeconds){
    byKey.set(key,{...old,...candidate,id:String(row.id||old&&old.id||""),recordIds:ids,watchedSeconds:Math.max(candidate.watchedSeconds,Number(old&&old.watchedSeconds)||0),durationSeconds:Math.max(candidate.durationSeconds,Number(old&&old.durationSeconds)||0)});
   }else{
