@@ -1874,6 +1874,7 @@ td strong {
   <button data-page="notes"><span class="nav-icon">▤</span>Notes</button>
   <button data-page="goals"><span class="nav-icon">◎</span>Goals &amp; Habits</button>
   <button data-page="lectures"><span class="nav-icon">▶</span>YouTube Lectures</button>
+  <button data-page="telegram"><span class="nav-icon">↗</span>Telegram Import</button>
   <button type="button" data-page="backup" onclick="openCloudSettings()"><span class="nav-icon">☁</span>Backup &amp; Sync</button>
  </nav>
  <div class="side-bottom">
@@ -2040,6 +2041,38 @@ td strong {
   </div>
  </section>
 <input type="file" id="psLectureImportFile" accept=".json,application/json" hidden onchange="importYoutubeLectures(event)">
+<section class="page" id="page-telegram">
+  <div class="page-hero"><div><h2>Telegram lecture import</h2><p>Bring in only the JEE lecture posts you choose. Your private chats are not scanned.</p></div><button type="button" class="btn btn-primary" onclick="document.getElementById('psTelegramFile').click()">Import JSON / CSV ↑</button></div>
+  <div class="panel">
+   <h3>Quick import</h3>
+   <p class="helper-note">Paste the Telegram post link and its lecture title below. We'll match it to the JEE syllabus and let you confirm before changing chapter progress.</p>
+   <form id="psTelegramForm" style="display:grid;gap:12px;margin-top:14px">
+    <label>Telegram message link (optional)<input id="psTelegramUrl" class="control" type="url" placeholder="https://t.me/channel/123"></label>
+    <label>Lecture title<input id="psTelegramTitle" class="control" type="text" placeholder="e.g. Chemical Kinetics One Shot for JEE Main" required></label>
+    <label>Subject<select id="psTelegramSubject" class="control"><option value="">Auto-detect (recommended)</option><option>Physics</option><option>Chemistry</option><option>Mathematics</option></select></label>
+    <label>Chapter<select id="psTelegramChapter" class="control"><option value="">Auto-detect (or choose subject first)</option></select></label>
+    <div class="modal-actions"><button class="btn btn-primary" type="submit">Match lecture &amp; preview</button><button class="btn btn-secondary" type="button" onclick="document.getElementById('psTelegramForm').reset();document.getElementById('psTelegramChapter').innerHTML='<option value=&quot;&quot;>Auto-detect (or choose subject first)</option>';">Clear</button></div>
+   </form>
+   <div id="psTelegramPreview" class="switch-note" role="status" aria-live="polite" style="margin-top:14px">Nothing imported yet.</div>
+  </div>
+  <div class="panel" style="margin-top:16px">
+   <h3>Import selected Telegram export</h3>
+   <p class="helper-note">You may import a small JSON file containing a <code>lectures</code> array or a CSV with columns <code>title,url,subject,chapter</code>. Only selected/known JEE lecture entries are imported. A Telegram export can contain private messages, so choose only the file you intend to share with the planner.</p>
+   <button class="btn btn-secondary" type="button" onclick="downloadTelegramTemplate()">Download sample CSV ↓</button>
+   <input type="file" id="psTelegramFile" accept=".json,.csv,application/json,text/csv" hidden onchange="importTelegramFile(event)">
+  </div>
+  <div class="panel" style="margin-top:16px">
+   <h3>How it works</h3>
+   <ol style="line-height:1.9;color:var(--muted);padding-left:22px">
+    <li>In Telegram, open the JEE lecture post and copy its link, or copy the lecture title.</li>
+    <li>Paste the title/link above; choose the subject/chapter if automatic matching misses it.</li>
+    <li>Preview the suggested match and confirm before a chapter status changes.</li>
+    <li>The lecture appears in your planner's imported lecture list.</li>
+   </ol>
+   <p class="helper-note">Telegram bots cannot see your entire account history. This workflow imports only information you explicitly paste or upload. Never enter your Telegram login code, password, session string, API hash or bot token here.</p>
+  </div>
+ </section>
+
 <input type="file" id="importFile" accept=".json,application/json" hidden onchange="importData(event)">
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -4029,7 +4062,8 @@ document.querySelectorAll(".page").forEach(n=>n.classList.toggle("active",n.id==
 document.querySelectorAll("nav [data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
 const title={
 dashboard:["YOUR STUDY SPACE","Welcome back, Raash.","Small sessions add up. Let’s make today count."],chapters:["SYLLABUS TRACKER","Chapter tracker","Make each chapter feel manageable."],topic:["PRACTICE & REVIEW","Topic test planner","Plan a test, log the score and keep chapter progress connected."],litmus:["TEST SERIES","LITMUS schedule","Your part tests and full mocks, with dates and marks."],pyq:["PREVIOUS-YEAR QUESTIONS","PYQ practice log","Track accuracy and build confidence by chapter."],
-lectures:["LECTURE TRACKER","YouTube Lectures","Track watched JEE lectures and connect them to your chapter planner."]
+lectures:["LECTURE TRACKER","YouTube Lectures","Track watched JEE lectures and connect them to your chapter planner."],
+telegram:["LECTURE IMPORT","Telegram Import","Choose specific Telegram lecture posts to add to your study tracker."]
 }
 [page];
 document.getElementById("pageCrumb").textContent=title[0];
@@ -4045,6 +4079,7 @@ if(page==="topic")renderTopics();
 if(page==="litmus")renderLitmus();
 if(page==="pyq")renderPyq();
 if(page==="lectures")renderYoutubeLectures();
+if(page==="telegram")renderTelegramImport();
 }
 
 const PS_LECTURE_KEY = "personal-space-youtube-lectures-v1";
@@ -4113,6 +4148,113 @@ function exportYoutubeLectures(){
  const payload={format:"personal-space-youtube-lectures-v1",exportedAt:new Date().toISOString(),lectures:readYoutubeLectures()};
  const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
  const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="personal-space-youtube-lectures-backup.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
+
+const PS_TELEGRAM_KEY = "personal-space-telegram-lectures-v1";
+let psTelegramPending = null;
+function readTelegramLectures(){try{const x=JSON.parse(localStorage.getItem(PS_TELEGRAM_KEY)||"[]");return Array.isArray(x)?x:[]}catch(e){return []}}
+function writeTelegramLectures(rows){try{localStorage.setItem(PS_TELEGRAM_KEY,JSON.stringify(rows))}catch(e){toast("Could not save Telegram lecture entries.")}}
+function telegramChapterOptions(){
+ const subject=document.getElementById("psTelegramSubject");
+ const chapter=document.getElementById("psTelegramChapter");
+ if(!subject||!chapter)return;
+ const old=chapter.value;
+ const candidates=state.chapters.filter(c=>!subject.value||c.subject===subject.value);
+ chapter.innerHTML='<option value="">Auto-detect chapter</option>'+candidates.map(c=>'<option value="'+escapeAttr(c.chapter)+'" data-subject="'+escapeAttr(c.subject)+'">'+escapeHTML(c.subject+' · '+c.chapter)+'</option>').join("");
+ if(old&&candidates.some(c=>c.chapter===old))chapter.value=old;
+}
+function matchTelegramLecture(title,subjectOverride,chapterOverride){
+ const clean=String(title||"").toLowerCase();
+ if(subjectOverride&&chapterOverride)return state.chapters.find(c=>c.subject===subjectOverride&&c.chapter===chapterOverride)||null;
+ const matches=state.chapters.map(ch=>({ch,score:Math.max(0,...String(ch.chapter+" "+ch.coverage).toLowerCase().split(/[^a-z0-9]+/).filter(w=>w.length>3).map(word=>clean.includes(word)?Math.min(word.length,18):0))})).filter(x=>x.score>0).sort((a,b)=>b.score-a.score);
+ if(!matches.length)return null;
+ const first=matches[0];
+ if(matches.length>1&&first.score===matches[1].score&&first.ch.subject!==matches[1].ch.subject)return null;
+ return first.ch;
+}
+function renderTelegramImport(){
+ const rows=readTelegramLectures();
+ const preview=document.getElementById("psTelegramPreview");
+ if(preview&&!psTelegramPending)preview.textContent=rows.length?rows.length+" Telegram lecture(s) imported previously.":"Nothing imported yet.";
+ telegramChapterOptions();
+}
+document.getElementById("psTelegramSubject")?.addEventListener("change",telegramChapterOptions);
+document.getElementById("psTelegramForm")?.addEventListener("submit",function(event){
+ event.preventDefault();
+ const title=document.getElementById("psTelegramTitle").value.trim();
+ const url=document.getElementById("psTelegramUrl").value.trim();
+ const subject=document.getElementById("psTelegramSubject").value;
+ const chapter=document.getElementById("psTelegramChapter").value;
+ if(!title){toast("Enter the lecture title first.");return;}
+ if(url&&!/^https:\/\/(t\.me|telegram\.me)\//i.test(url)){toast("Please use a Telegram message link, such as https://t.me/channel/123.");return;}
+ const matched=matchTelegramLecture(title,subject,chapter);
+ psTelegramPending={title,url,subject:matched?matched.subject:subject,chapter:matched?matched.chapter:chapter,match:matched,createdAt:new Date().toISOString(),source:"Telegram manual import"};
+ const preview=document.getElementById("psTelegramPreview");
+ if(!matched){
+  preview.innerHTML='<strong>No confident chapter match.</strong> Choose a subject and chapter above, then submit again.';
+  return;
+ }
+ preview.innerHTML='<strong>Suggested match</strong><div style="margin:6px 0">'+escapeHTML(matched.subject+' · '+matched.chapter)+'</div><div class="helper-note">Title: '+escapeHTML(title)+'</div><div class="modal-actions" style="margin-top:10px"><button type="button" class="btn btn-primary" id="psTelegramConfirm">Confirm import</button><button type="button" class="btn btn-secondary" id="psTelegramCancel">Cancel</button></div>';
+ document.getElementById("psTelegramConfirm").addEventListener("click",confirmTelegramLecture,{once:true});
+ document.getElementById("psTelegramCancel").addEventListener("click",()=>{psTelegramPending=null;preview.textContent="Import cancelled."},{once:true});
+});
+function confirmTelegramLecture(){
+ if(!psTelegramPending||!psTelegramPending.match)return;
+ const item=psTelegramPending;
+ const rows=readTelegramLectures();
+ const key=item.url||item.title.toLowerCase();
+ const exists=rows.find(r=>(r.url||r.title.toLowerCase())===key);
+ if(!exists)rows.unshift({id:"tg-"+Date.now()+"-"+Math.random().toString(36).slice(2,7),title:item.title,url:item.url,subject:item.match.subject,chapter:item.match.chapter,source:item.source,addedAt:item.createdAt,watchedSeconds:0});
+ writeTelegramLectures(rows.slice(0,1000));
+ const ch=state.chapters.find(c=>c.subject===item.match.subject&&c.chapter===item.match.chapter);
+ let changed=false;
+ if(ch&&ch.prep==="Not Ready"){ch.prep="In Progress";ch.statusTouched=true;changed=true;saveState();}
+ renderYoutubeLectures();
+ psTelegramPending=null;
+ document.getElementById("psTelegramPreview").textContent="Imported successfully. "+(changed?"Chapter moved to In Progress.":"Chapter status left unchanged.");
+}
+function parseTelegramCsv(text){
+ const lines=String(text||"").replace(/^\uFEFF/,"").split(/\r?\n/).filter(line=>line.trim());
+ if(!lines.length)return [];
+ const parseLine=line=>{const out=[];let cell="",quoted=false;for(let i=0;i<line.length;i++){const c=line[i];if(c==='"'&&line[i+1]==='"'&&quoted){cell+='"';i++}else if(c==='"'){quoted=!quoted}else if(c===","&&!quoted){out.push(cell);cell=""}else cell+=c}out.push(cell);return out};
+ const headers=parseLine(lines[0]).map(x=>x.trim().toLowerCase());
+ return lines.slice(1).map(line=>{const vals=parseLine(line);const row={};headers.forEach((h,i)=>row[h]=String(vals[i]||"").trim());return row}).filter(row=>row.title);
+}
+function importTelegramFile(event){
+ const file=event.target.files&&event.target.files[0];if(!file)return;
+ const reader=new FileReader();
+ reader.onload=()=>{
+  try{
+   const text=String(reader.result||"");
+   let entries;
+   if(file.name.toLowerCase().endsWith(".csv"))entries=parseTelegramCsv(text);
+   else {const data=JSON.parse(text);entries=Array.isArray(data)?data:(Array.isArray(data.lectures)?data.lectures:[])}
+   if(!Array.isArray(entries)||!entries.length)throw new Error("No lecture rows found. Use CSV columns title,url,subject,chapter or JSON with a lectures array.");
+   let added=0,ambiguous=0;
+   const rows=readTelegramLectures();
+   entries.forEach(row=>{
+    const title=String(row.title||row.text||row.message||"").trim();
+    if(!title)return;
+    const match=matchTelegramLecture(title,String(row.subject||""),String(row.chapter||""));
+    if(!match){ambiguous++;return;}
+    const url=String(row.url||row.link||"").trim();
+    const key=url||title.toLowerCase();
+    if(rows.some(old=>(old.url||old.title.toLowerCase())===key))return;
+    rows.push({id:"tg-import-"+Date.now()+"-"+added,title,url,subject:match.subject,chapter:match.chapter,source:"Telegram file import",addedAt:new Date().toISOString(),watchedSeconds:0});added++;
+    const ch=state.chapters.find(c=>c.subject===match.subject&&c.chapter===match.chapter);
+    if(ch&&ch.prep==="Not Ready"){ch.prep="In Progress";ch.statusTouched=true;}
+   });
+   writeTelegramLectures(rows.slice(-1000));saveState();renderYoutubeLectures();renderTelegramImport();
+   toast("Imported "+added+" Telegram lecture(s). "+ambiguous+" row(s) need a clearer title or manual selection.");
+  }catch(error){toast(error.message||"Could not import Telegram file.");}
+  event.target.value="";
+ };
+ reader.readAsText(file);
+}
+function downloadTelegramTemplate(){
+ const csv='title,url,subject,chapter\r\n"Chemical Kinetics One Shot for JEE","https://t.me/example/123","Chemistry","Chemical Kinetics"\r\n';
+ const url=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));const a=document.createElement("a");a.href=url;a.download="telegram-lecture-import-template.csv";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
 
 document.getElementById("nav").addEventListener("click",e=>{
