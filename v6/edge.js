@@ -45,9 +45,6 @@
     { id: "pyq", label: "PYQ practice", detail: "Record previous-year question practice", group: "Navigate", key: "5" },
     { id: "daily", label: "Daily study journal", detail: "Tasks, study sessions and focus timer", group: "Navigate", key: "6" },
     { id: "performance", label: "Performance studio", detail: "Study-time charts and weekly comparisons", group: "Navigate", key: "7" },
-    { id: "mistakes", label: "Mistake bank", detail: "Errors, takeaways and revision queue", group: "Navigate", key: "8" },
-    { id: "notes", label: "Study notes", detail: "Formulas, doubts and useful reminders", group: "Navigate" },
-    { id: "goals", label: "Goals and habits", detail: "Targets and small daily habit checklist", group: "Navigate" }
   ];
   let activeTheme = "daylight";
   let selectedIndex = 0;
