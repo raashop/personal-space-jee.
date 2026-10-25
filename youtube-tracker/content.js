@@ -109,7 +109,7 @@
     if (!chapter) return null;
     const hinted = JEE_HINTS.some(term => text.includes(normalizeText(term)));
     const academicFormat = /\b(lecture|one shot|revision|pyq|question|questions|numerical|concept|chapter|part\s*\d|session\s*\d|neet|jee)\b/.test(normalizeText(title));
-    if (!hinted && !academicFormat) return null;
+    // A known chapter phrase is enough to count as a match; title/channel hints are too strict for real lecture titles.
     return { subject: chapter[0], chapter: chapter[1] };
   }
 
