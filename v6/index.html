@@ -4595,9 +4595,10 @@ const r=await cloudClient.from("study_data").select("data").eq("user_id",user.id
 if(!r.error&&r.data?.data?.state){
 cloudBackupAvailable=true;
 const cloudLectures=Array.isArray(r.data.data.youtubeLectures)?r.data.data.youtubeLectures:[];
-if(cloudLectures.length)mergeYoutubeLectureRows(cloudLectures);
+const cloudLectureMerge=cloudLectures.length?mergeYoutubeLectureRows(cloudLectures):null;
 cloudReady=true;
 document.getElementById("syncStatus").textContent="Cloud sync enabled";
+if(cloudLectureMerge&&(cloudLectureMerge.recordsChanged||cloudLectureMerge.stateChanged))queueYoutubeCloudSave();
 }
 }
 }
