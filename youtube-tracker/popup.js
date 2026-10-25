@@ -26,7 +26,11 @@ function showConnectionMessage(message, isError = false) {
 function pathPrefixFromUrl(url) {
   const path = url.pathname || "/";
   if (path.endsWith(".html") || path.endsWith(".htm")) return path.slice(0, path.lastIndexOf("/") + 1) || "/";
-  return path.endsWith("/") ? path : path + "/";
+  return path === "/" ? "/" : path.replace(/\\/+$/, "");
+}
+function pathnameMatches(pathname, prefix) {
+  if (!prefix || prefix === "/") return true;
+  return pathname === prefix || pathname.startsWith(prefix.endsWith("/") ? prefix : prefix + "/");
 }
 function matchPatternFor(url) {
   if (url.protocol === "https:") return "https://" + url.hostname + "/*";
@@ -79,7 +83,7 @@ async function connectPlanner() {
     if (tab?.id && tab.url) {
       try {
         const activeUrl = new URL(tab.url);
-        if (activeUrl.origin === config.origin && activeUrl.pathname.startsWith(config.pathPrefix)) {
+        if (activeUrl.origin === config.origin && pathnameMatches(activeUrl.pathname, config.pathPrefix)) {
           await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ["planner-sync.js"] });
           injected = true;
         }
