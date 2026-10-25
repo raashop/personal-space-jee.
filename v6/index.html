@@ -1898,6 +1898,19 @@ td strong {
  #page-telegram .modal-actions{flex-wrap:wrap;justify-content:flex-start}
 }
 
+
+#page-telegram .telegram-lecture-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#page-telegram .telegram-lecture-card{display:flex;flex-direction:column;gap:10px;min-width:0;padding:15px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(145deg,#fff,#f9fcfa)}
+#page-telegram .telegram-lecture-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+#page-telegram .telegram-tag{display:inline-flex;max-width:100%;padding:5px 8px;border-radius:7px;background:#eef7f1;color:#42745a;font-size:9px;font-weight:800;overflow-wrap:anywhere}
+#page-telegram .telegram-remove{padding:6px 9px;font-size:10px}
+#page-telegram .telegram-title{font-size:12px;line-height:1.6;overflow-wrap:anywhere}
+#page-telegram .telegram-chapter{font-size:10px;line-height:1.6;color:#4b7a62;overflow-wrap:anywhere}
+#page-telegram .telegram-card-footer{padding-top:9px;border-top:1px solid var(--line);font-size:10px}
+#page-telegram .telegram-card-footer a{color:#267b59;font-weight:800;text-decoration:none}
+#page-telegram .telegram-card-footer a:hover{text-decoration:underline}
+@media(max-width:760px){#page-telegram .telegram-lecture-list{grid-template-columns:1fr}}
+
 </style>
 <link rel="stylesheet" href="./edge.css?v=20261025-layout3">
 </head>
@@ -2098,6 +2111,10 @@ td strong {
     <div class="modal-actions"><button class="btn btn-primary" type="submit">Match lecture &amp; preview</button><button class="btn btn-secondary" type="button" onclick="document.getElementById('psTelegramForm').reset();document.getElementById('psTelegramChapter').innerHTML='<option value=&quot;&quot;>Auto-detect (or choose subject first)</option>';">Clear</button></div>
    </form>
    <div id="psTelegramPreview" class="switch-note" role="status" aria-live="polite" style="margin-top:14px">Nothing imported yet.</div>
+  </div>
+  <div class="panel" style="margin-top:16px">
+   <div class="panel-head"><div><h3>Imported Telegram lectures</h3><p>Saved lecture links and matched chapters appear here.</p></div><span class="small-count" id="psTelegramCount">0 IMPORTED</span></div>
+   <div id="psTelegramList" class="empty-state">No Telegram lectures imported yet. Add a title above to get started.</div>
   </div>
   <div class="panel" style="margin-top:16px">
    <h3>Import selected Telegram export</h3>
@@ -4323,7 +4340,30 @@ function matchTelegramLecture(title,subjectOverride,chapterOverride){
 function renderTelegramImport(){
  const rows=readTelegramLectures();
  const preview=document.getElementById("psTelegramPreview");
- if(preview&&!psTelegramPending)preview.textContent=rows.length?rows.length+" Telegram lecture(s) imported previously.":"Nothing imported yet.";
+ const count=document.getElementById("psTelegramCount");
+ const list=document.getElementById("psTelegramList");
+ if(preview&&!psTelegramPending)preview.textContent=rows.length?rows.length+" Telegram lecture(s) saved.":"Nothing imported yet.";
+ if(count)count.textContent=rows.length+" IMPORTED";
+ if(list){
+  if(!rows.length){list.className="empty-state";list.textContent="No Telegram lectures imported yet. Add a title above to get started.";}
+  else{
+   list.className="telegram-lecture-list";
+   list.innerHTML=rows.slice().map((row,index)=>{
+    const title=escapeHTML(row.title||"Untitled lecture");
+    const subject=escapeHTML(row.subject||"Unmatched subject");
+    const chapter=escapeHTML(row.chapter||"Unmatched chapter");
+    const url=/^https:\/\/(t\.me|telegram\.me)\//i.test(row.url||"")?row.url:"";
+    const link=url?'<a href="'+escapeAttr(url)+'" target="_blank" rel="noopener noreferrer">Open Telegram post ↗</a>':'<span class="helper-note">No post link saved</span>';
+    return '<article class="telegram-lecture-card"><div class="telegram-lecture-top"><span class="telegram-tag">'+escapeHTML(row.source||"Telegram import")+'</span><button class="btn btn-quiet telegram-remove" type="button" data-telegram-remove="'+index+'" aria-label="Remove '+title+'">Remove</button></div><strong class="telegram-title">'+title+'</strong><div class="telegram-chapter">'+subject+' · '+chapter+'</div><div class="telegram-card-footer">'+link+'</div></article>';
+   }).join("");
+   list.querySelectorAll("[data-telegram-remove]").forEach(button=>button.addEventListener("click",()=>{
+    const idx=Number(button.getAttribute("data-telegram-remove"));
+    const latest=readTelegramLectures();
+    if(!Number.isInteger(idx)||idx<0||idx>=latest.length)return;
+    latest.splice(idx,1);writeTelegramLectures(latest);renderTelegramImport();toast("Telegram lecture removed. Chapter progress was not changed.");
+   }));
+  }
+ }
  telegramChapterOptions();
 }
 document.getElementById("psTelegramSubject")?.addEventListener("change",telegramChapterOptions);
