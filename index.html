@@ -1253,92 +1253,110 @@ function initialState(){
 }
 function plannerChapterKey(item){return String(item&&item.subject||"")+"::"+String(item&&item.chapter||"");}
 function plannerSlug(value){return String(value||"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")||"chapter";}
-const LEGACY_CHAPTER_ALIASES={"Physics":{"Motion in a Straight Line & Plane":["Motion in a Straight Line","Motion in a Plane"],"System of Particles & Rotational Motion":["Centre of Mass and Collisions","Rotational Motion"],"Mechanical Properties of Solids & Fluids":["Mechanical Properties of Solids","Mechanical Properties of Fluids"],"Thermal Physics, KTG & Thermodynamics":["Thermal Properties of Matter","Thermodynamics","Kinetic Theory of Gases"],"Oscillations and Waves":["Oscillations","Waves"],"Electrostatics & Capacitance":["Electric Charges and Fields","Electrostatic Potential and Capacitance"],"Moving Charges, Magnetism & Matter":["Moving Charges and Magnetism","Magnetism and Matter"],"EMI & Alternating Current":["Electromagnetic Induction","Alternating Current"],"Ray Optics & Wave Optics":["Ray Optics","Wave Optics"],"Dual Nature, Atoms & Nuclei (Modern Physics)":["Dual Nature of Matter and Radiation","Atoms","Nuclei"]},"Chemistry":{"Mole Concept & Stoichiometry":["Some Basic Concepts in Chemistry"],"Structure of Atom":["Atomic Structure"],"Chemical Bonding & Molecular Structure":["Chemical Bonding and Molecular Structure"],"Periodic Table & Periodicity":["Classification of Elements and Periodicity"],"Chemical & Ionic Equilibrium":["Chemical Equilibrium","Ionic Equilibrium"],"Purification & Characterisation of Organic Compounds":["Purification Methods","Qualitative and Quantitative Organic Analysis"],"GOC & Hydrocarbons":["General Organic Chemistry (GOC)","Nomenclature","Isomerism","Alkanes","Alkenes","Alkynes","Aromatic Hydrocarbons"],"Haloalkanes & Haloarenes":["Haloalkanes","Haloarenes"],"Alcohols, Phenols & Ethers":["Alcohols","Phenols","Ethers"],"Aldehydes, Ketones & Carboxylic Acids":["Aldehydes and Ketones","Carboxylic Acids"],"Amines & Biomolecules":["Amines","Biomolecules"]},"Mathematics":{"Sets, Relations & Functions":["Sets","Relations and Functions"],"Complex Numbers & Quadratic Equations":["Complex Numbers","Quadratic Equations"],"P&C and Binomial Theorem":["Permutations and Combinations","Binomial Theorem"],"Trigonometric Functions, Identities & Equations":["Trigonometric Functions and Identities","Trigonometric Equations"],"Straight Lines & Conic Sections":["Straight Lines and Coordinate Basics","Circle","Parabola","Ellipse","Hyperbola"],"Limits, Continuity & Derivatives":["Limits","Continuity and Differentiability","Methods of Differentiation"],"Statistics & Probability":["Statistics","Probability"],"Matrices and Determinants":["Matrices","Determinants"],"Definite Integrals & Application of Integrals":["Definite Integration","Area Under the Curve"],"Vectors & 3D Geometry":["Vectors","Three-Dimensional Geometry"]}};
-function legacyChapterTargets(subject,chapter){
-  const bySubject=LEGACY_CHAPTER_ALIASES[subject]||{};
-  return bySubject[chapter]||null;
+const LEGACY_CHAPTER_ALIASES={"Physics":{"Motion in a Straight Line":["Kinematics"],"Motion in a Plane":["Kinematics"],"Motion in a Straight Line & Plane":["Kinematics"],"Centre of Mass and Collisions":["Work, Energy and Power","Rotational Motion"],"System of Particles & Rotational Motion":["Rotational Motion"],"Mechanical Properties of Solids":["Properties of Solids and Liquids"],"Mechanical Properties of Fluids":["Properties of Solids and Liquids"],"Thermal Properties of Matter":["Properties of Solids and Liquids"],"Mechanical Properties of Solids & Fluids":["Properties of Solids and Liquids"],"Thermal Physics, KTG & Thermodynamics":["Properties of Solids and Liquids","Thermodynamics","Kinetic Theory of Gases"],"Oscillations":["Oscillations and Waves"],"Waves":["Oscillations and Waves"],"Electric Charges and Fields":["Electrostatics"],"Electrostatic Potential and Capacitance":["Electrostatics"],"Electrostatics & Capacitance":["Electrostatics"],"Moving Charges and Magnetism":["Magnetic Effects of Current and Magnetism"],"Magnetism and Matter":["Magnetic Effects of Current and Magnetism"],"Moving Charges, Magnetism & Matter":["Magnetic Effects of Current and Magnetism"],"Electromagnetic Induction":["Electromagnetic Induction and Alternating Currents"],"Alternating Current":["Electromagnetic Induction and Alternating Currents"],"EMI & Alternating Current":["Electromagnetic Induction and Alternating Currents"],"Ray Optics":["Optics"],"Wave Optics":["Optics"],"Ray Optics & Wave Optics":["Optics"],"Atoms":["Atoms and Nuclei"],"Nuclei":["Atoms and Nuclei"],"Semiconductor Electronics":["Electronic Devices"],"Dual Nature, Atoms & Nuclei (Modern Physics)":["Dual Nature of Matter and Radiation","Atoms and Nuclei"]},"Chemistry":{"Mole Concept & Stoichiometry":["Some Basic Concepts in Chemistry"],"Structure of Atom":["Atomic Structure"],"Chemical Bonding & Molecular Structure":["Chemical Bonding and Molecular Structure"],"Chemical Equilibrium":["Equilibrium"],"Ionic Equilibrium":["Equilibrium"],"Chemical & Ionic Equilibrium":["Equilibrium"],"Redox Reactions":["Redox Reactions and Electrochemistry"],"Electrochemistry":["Redox Reactions and Electrochemistry"],"Classification of Elements and Periodicity":["Classification of Elements and Periodicity in Properties"],"Periodic Table & Periodicity":["Classification of Elements and Periodicity in Properties"],"d and f Block Elements":["d- and f-Block Elements"],"Purification Methods":["Purification and Characterisation of Organic Compounds"],"Qualitative and Quantitative Organic Analysis":["Purification and Characterisation of Organic Compounds"],"Purification & Characterisation of Organic Compounds":["Purification and Characterisation of Organic Compounds"],"Nomenclature":["Some Basic Principles of Organic Chemistry"],"General Organic Chemistry (GOC)":["Some Basic Principles of Organic Chemistry"],"Isomerism":["Some Basic Principles of Organic Chemistry"],"Alkanes":["Hydrocarbons"],"Alkenes":["Hydrocarbons"],"Alkynes":["Hydrocarbons"],"Aromatic Hydrocarbons":["Hydrocarbons"],"Haloalkanes":["Organic Compounds Containing Halogens"],"Haloarenes":["Organic Compounds Containing Halogens"],"Haloalkanes & Haloarenes":["Organic Compounds Containing Halogens"],"Alcohols":["Organic Compounds Containing Oxygen"],"Phenols":["Organic Compounds Containing Oxygen"],"Ethers":["Organic Compounds Containing Oxygen"],"Aldehydes and Ketones":["Organic Compounds Containing Oxygen"],"Carboxylic Acids":["Organic Compounds Containing Oxygen"],"Alcohols, Phenols & Ethers":["Organic Compounds Containing Oxygen"],"Aldehydes, Ketones & Carboxylic Acids":["Organic Compounds Containing Oxygen"],"Amines":["Organic Compounds Containing Nitrogen"],"Diazonium Salts":["Organic Compounds Containing Nitrogen"],"Amines & Biomolecules":["Organic Compounds Containing Nitrogen","Biomolecules"],"GOC & Hydrocarbons":["Some Basic Principles of Organic Chemistry","Hydrocarbons"],"Practical Chemistry":["Principles Related to Practical Chemistry"]},"Mathematics":{"Sets":["Sets, Relations and Functions"],"Relations and Functions":["Sets, Relations and Functions"],"Sets, Relations & Functions":["Sets, Relations and Functions"],"Complex Numbers":["Complex Numbers and Quadratic Equations"],"Quadratic Equations":["Complex Numbers and Quadratic Equations"],"Complex Numbers & Quadratic Equations":["Complex Numbers and Quadratic Equations"],"Matrices":["Matrices and Determinants"],"Determinants":["Matrices and Determinants"],"Binomial Theorem":["Binomial Theorem and Its Simple Applications"],"Sequences and Series":["Sequence and Series"],"Trigonometric Functions and Identities":["Trigonometry"],"Trigonometric Equations":["Trigonometry"],"Inverse Trigonometry":["Trigonometry"],"Trigonometric Functions, Identities & Equations":["Trigonometry"],"Limits":["Limit, Continuity and Differentiability"],"Continuity and Differentiability":["Limit, Continuity and Differentiability"],"Methods of Differentiation":["Limit, Continuity and Differentiability"],"Application of Derivatives":["Limit, Continuity and Differentiability"],"Limits, Continuity & Derivatives":["Limit, Continuity and Differentiability"],"Straight Lines and Coordinate Basics":["Coordinate Geometry"],"Circle":["Coordinate Geometry"],"Parabola":["Coordinate Geometry"],"Ellipse":["Coordinate Geometry"],"Hyperbola":["Coordinate Geometry"],"Straight Lines & Conic Sections":["Coordinate Geometry"],"Statistics":["Statistics and Probability"],"Probability":["Statistics and Probability"],"Statistics & Probability":["Statistics and Probability"],"Indefinite Integration":["Integral Calculus"],"Definite Integration":["Integral Calculus"],"Area Under the Curve":["Integral Calculus"],"Definite Integrals & Application of Integrals":["Integral Calculus"],"Vectors":["Vector Algebra"],"Vectors & 3D Geometry":["Vector Algebra","Three-Dimensional Geometry"],"P&C and Binomial Theorem":["Permutations and Combinations","Binomial Theorem and Its Simple Applications"]}};
+function legacyChapterTargets(subject,chapter){const bySubject=LEGACY_CHAPTER_ALIASES[subject]||{};return bySubject[chapter]||null;}
+function aggregateLegacyChapter(rows){
+ const unique=[...new Map(rows.map(r=>[plannerChapterKey(r),r])).values()];
+ const statuses=unique.map(r=>r.prep||"Not Ready");
+ let prep="Not Ready";
+ if(statuses.length&&statuses.every(x=>x==="Exam Ready"))prep="Exam Ready";
+ else if(statuses.includes("Needs Work"))prep="Needs Work";
+ else if(statuses.includes("In Progress")||statuses.includes("Exam Ready"))prep="In Progress";
+ const result={prep};
+ ["r1","r2","r3","notes","pyq"].forEach(k=>result[k]=unique.length>0&&unique.every(r=>r[k]===true));
+ result.topicAttempted=unique.some(r=>r.topicAttempted===true);
+ const dated=unique.filter(r=>r.latestDate).sort((a,b)=>String(b.latestDate).localeCompare(String(a.latestDate)));
+ const scored=unique.filter(r=>r.marks!==""&&r.marks!==undefined&&r.marks!==null&&r.outOf!==""&&r.outOf!==undefined&&r.outOf!==null).sort((a,b)=>String(b.latestDate||"").localeCompare(String(a.latestDate||"")));
+ const latest=dated[0]||{},score=scored[0]||{};
+ result.latestDate=latest.latestDate||"";
+ result.marks=score.marks!==undefined?score.marks:"";
+ result.outOf=score.outOf!==undefined?score.outOf:"";
+ result.difficulty=score.difficulty||"";
+ return result;
 }
 function migrateState(saved){
-  const defaults=initialState();
-  if(!saved||!Array.isArray(saved.chapters))return defaults;
-  const oldChapters=Array.isArray(saved.chapters)?saved.chapters:[];
-  const oldTopics=Array.isArray(saved.topics)?saved.topics:[];
-  const defaultKeys=new Set(defaults.chapters.map(plannerChapterKey));
-  const oldByKey=new Map();
-  const legacyAliasKeys=new Set();
+ const defaults=initialState();
+ if(!saved||!Array.isArray(saved.chapters))return defaults;
+ const oldChapters=Array.isArray(saved.chapters)?saved.chapters:[];
+ const oldTopics=Array.isArray(saved.topics)?saved.topics:[];
+ const defaultKeys=new Set(defaults.chapters.map(plannerChapterKey));
+ const exact=new Map(),mapped=new Map(),legacyKeys=new Set();
+ oldChapters.forEach(ch=>{
+  const key=plannerChapterKey(ch);
+  if(defaultKeys.has(key)){if(!exact.has(key))exact.set(key,ch);return;}
+  const targets=legacyChapterTargets(ch.subject,ch.chapter);
+  if(!targets||!targets.length)return;
+  legacyKeys.add(key);
+  targets.forEach(target=>{
+   const targetKey=plannerChapterKey({subject:ch.subject,chapter:target});
+   if(!defaultKeys.has(targetKey))return;
+   if(!mapped.has(targetKey))mapped.set(targetKey,[]);
+   mapped.get(targetKey).push(ch);
+  });
+ });
+ const chapters=defaults.chapters.map(ch=>{
+  const key=plannerChapterKey(ch),savedExact=exact.get(key);
+  if(savedExact)return {...ch,...savedExact,subject:ch.subject,chapter:ch.chapter,class:ch.class,coverage:ch.coverage};
+  const records=mapped.get(key)||[];
+  return records.length?{...ch,...aggregateLegacyChapter(records),subject:ch.subject,chapter:ch.chapter,class:ch.class,coverage:ch.coverage}:ch;
+ });
+ oldChapters.filter(ch=>!defaultKeys.has(plannerChapterKey(ch))&&!legacyKeys.has(plannerChapterKey(ch))).forEach(ch=>chapters.push(ch));
 
-  // Exact chapter records take priority over migrated combined records.
-  oldChapters.forEach(ch=>{
-    const k=plannerChapterKey(ch);
-    if(defaultKeys.has(k)&&!oldByKey.has(k))oldByKey.set(k,ch);
+ const topics=oldTopics.map(t=>{
+  const names=Array.isArray(t.chapters)&&t.chapters.length?t.chapters:[t.chapter].filter(Boolean);
+  const mappedNames=[];
+  names.forEach(name=>{
+   if(defaultKeys.has(plannerChapterKey({subject:t.subject,chapter:name}))){mappedNames.push(name);return;}
+   const targets=legacyChapterTargets(t.subject,name);
+   if(targets&&targets.length){targets.forEach(target=>{if(defaultKeys.has(plannerChapterKey({subject:t.subject,chapter:target})))mappedNames.push(target);});}
+   else mappedNames.push(name);
   });
-
-  // Carry a retired combined chapter's status to each new component chapter it represented.
-  oldChapters.forEach(ch=>{
-    const k=plannerChapterKey(ch);
-    if(defaultKeys.has(k))return;
-    const targets=legacyChapterTargets(ch.subject,ch.chapter);
-    if(!targets||!targets.length)return;
-    legacyAliasKeys.add(k);
-    targets.forEach(target=>{
-      const targetKey=plannerChapterKey({subject:ch.subject,chapter:target});
-      if(!defaultKeys.has(targetKey)||oldByKey.has(targetKey))return;
-      oldByKey.set(targetKey,{...ch,chapter:target});
-    });
-  });
-
-  const chapters=defaults.chapters.map(ch=>{
-    const old=oldByKey.get(plannerChapterKey(ch));
-    return old?{...ch,...old,subject:ch.subject,chapter:ch.chapter,class:ch.class}:ch;
-  });
-  // Keep true custom chapters, but remove retired combined labels to avoid duplicates.
-  oldChapters.filter(ch=>!defaultKeys.has(plannerChapterKey(ch))&&!legacyAliasKeys.has(plannerChapterKey(ch))).forEach(ch=>chapters.push(ch));
-
-  // Preserve old test history on the first matching component chapter; new components get their own blank test entries.
-  const topics=oldTopics.map(t=>{
-    const targets=legacyChapterTargets(t&&t.subject,t&&t.chapter);
-    if(!targets||!targets.length)return t;
-    const oldChapter=t.chapter,chapter=targets[0];
-    const isDefaultName=t.custom!==true&&String(t.name||"")===oldChapter+" Topic Test";
-    return {...t,chapter,name:isDefaultName?chapter+" Topic Test":t.name};
-  });
-  const topicIds=new Set(topics.map(t=>String(t&&t.id||"")));
-  defaults.chapters.forEach(ch=>{
-    const hasDefault=topics.some(t=>t&&t.subject===ch.subject&&t.chapter===ch.chapter&&String(t.name||"")===ch.chapter+" Topic Test"&&t.custom!==true);
-    if(hasDefault)return;
-    let id="topic-syllabus-"+plannerSlug(ch.subject+"-"+ch.chapter),suffix=2;
-    while(topicIds.has(id)){id="topic-syllabus-"+plannerSlug(ch.subject+"-"+ch.chapter)+"-"+suffix++; }
-    topicIds.add(id);
-    const template=defaults.topics.find(t=>t.subject===ch.subject&&t.chapter===ch.chapter)||{};
-    topics.push({...template,id,subject:ch.subject,chapter:ch.chapter,name:ch.chapter+" Topic Test",source:"Chapter topic test",status:"Not Started",plannedDate:"",actualDate:"",marks:"",outOf:"100",difficulty:"",notes:"",custom:false});
-  });
-  const normalizedTopics=topics.map(t=>{
-    const oldMax=Number(t.outOf)||100,oldMarks=Number(t.marks);
-    let marks=t.marks;
-    if(oldMax>100&&t.marks!==""&&t.marks!==null&&t.marks!==undefined&&Number.isFinite(oldMarks)&&oldMarks>100){
-      marks=String(Math.round(oldMarks/oldMax*100*10)/10);
-    }
-    return {...t,marks,outOf:String(oldMax>100?100:(t.outOf||100))};
-  });
-  chapters.forEach(ch=>{
-    const oldMax=Number(ch.outOf),oldMarks=Number(ch.marks);
-    if(oldMax>100){
-      if(ch.marks!==""&&Number.isFinite(oldMarks)&&oldMarks>100)ch.marks=String(Math.round(oldMarks/oldMax*100*10)/10);
-      ch.outOf="100";
-    }
-  });
-  const defaultLitmusIds=new Set(defaults.litmus.map(t=>t.id));
-  const savedLitmus=Array.isArray(saved.litmus)?saved.litmus:[];
-  const litmus=defaults.litmus.map(def=>{
-    const old=savedLitmus.find(t=>t&&t.id===def.id);
-    return old?{...def,...old,syllabus:def.syllabus}:def;
-  });
-  savedLitmus.filter(t=>t&&!defaultLitmusIds.has(t.id)).forEach(t=>litmus.push(t));
-  const pyqs=(Array.isArray(saved.pyqs)?saved.pyqs:[]).map(p=>{
-    const targets=legacyChapterTargets(p&&p.subject,p&&p.chapter);
-    return targets&&targets.length?{...p,chapter:targets[0]}:p;
-  });
-  return {...defaults,...saved,chapters,topics:normalizedTopics,litmus,pyqs};
+  const unique=[...new Set(mappedNames)];
+  if(!unique.length)return t;
+  const oldChapter=t.chapter,oldDefaultName=t.custom!==true&&String(t.name||"")===oldChapter+" Topic Test";
+  return {...t,chapter:unique[0],chapters:unique,name:oldDefaultName&&unique.length===1?unique[0]+" Topic Test":t.name};
+ });
+ const topicIds=new Set(topics.map(t=>String(t&&t.id||"")));
+ defaults.chapters.forEach(ch=>{
+  const hasDefault=topics.some(t=>t&&t.subject===ch.subject&&topicChapters(t).includes(ch.chapter)&&String(t.name||"")===ch.chapter+" Topic Test"&&t.custom!==true);
+  if(hasDefault)return;
+  let id="topic-syllabus-"+plannerSlug(ch.subject+"-"+ch.chapter),suffix=2;
+  while(topicIds.has(id)){id="topic-syllabus-"+plannerSlug(ch.subject+"-"+ch.chapter)+"-"+suffix++;}
+  topicIds.add(id);
+  const template=defaults.topics.find(t=>t.subject===ch.subject&&t.chapter===ch.chapter)||{};
+  topics.push({...template,id,subject:ch.subject,chapter:ch.chapter,chapters:[ch.chapter],name:ch.chapter+" Topic Test",source:"Chapter topic test",status:"Not Started",plannedDate:"",actualDate:"",marks:"",outOf:"100",difficulty:"",notes:"",custom:false});
+ });
+ const normalizedTopics=topics.map(t=>{
+  const oldMax=Number(t.outOf)||100,oldMarks=Number(t.marks);
+  let marks=t.marks;
+  if(oldMax>100&&t.marks!==""&&t.marks!==null&&t.marks!==undefined&&Number.isFinite(oldMarks))marks=String(Math.round(oldMarks/oldMax*100*10)/10);
+  return {...t,marks,outOf:String(oldMax>100?100:(t.outOf||100))};
+ });
+ chapters.forEach(ch=>{
+  const oldMax=Number(ch.outOf),oldMarks=Number(ch.marks);
+  if(oldMax>100){if(ch.marks!==""&&Number.isFinite(oldMarks)&&oldMarks>100)ch.marks=String(Math.round(oldMarks/oldMax*100*10)/10);ch.outOf="100";}
+ });
+ chapters.forEach(ch=>{
+  const attempts=topics.filter(t=>t.subject===ch.subject&&t.status==="Attempted"&&topicChapters(t).includes(ch.chapter)).sort((a,b)=>String(b.actualDate||"").localeCompare(String(a.actualDate||"")));
+  ch.topicAttempted=attempts.length>0;
+  if(attempts[0]){ch.latestDate=attempts[0].actualDate||ch.latestDate;ch.marks=attempts[0].marks??ch.marks;ch.outOf=attempts[0].outOf??ch.outOf;ch.difficulty=attempts[0].difficulty||ch.difficulty;}
+ });
+ const defaultLitmusIds=new Set(defaults.litmus.map(t=>t.id));
+ const savedLitmus=Array.isArray(saved.litmus)?saved.litmus:[];
+ const litmus=defaults.litmus.map(def=>{const old=savedLitmus.find(t=>t&&t.id===def.id);return old?{...def,...old,syllabus:def.syllabus}:def;});
+ savedLitmus.filter(t=>t&&!defaultLitmusIds.has(t.id)).forEach(t=>litmus.push(t));
+ const pyqs=(Array.isArray(saved.pyqs)?saved.pyqs:[]).map(p=>{
+  const names=Array.isArray(p.chapters)&&p.chapters.length?p.chapters:[p.chapter].filter(Boolean);
+  let target;
+  for(const name of names){
+   if(defaultKeys.has(plannerChapterKey({subject:p.subject,chapter:name}))){target=name;break;}
+   const options=legacyChapterTargets(p.subject,name)||[];
+   target=options.find(ch=>defaultKeys.has(plannerChapterKey({subject:p.subject,chapter:ch})));
+   if(target)break;
+  }
+  return target?{...p,chapter:target}:p;
+ });
+ return {...defaults,...saved,chapters,topics:normalizedTopics,litmus,pyqs};
 }
 function loadState(){
  try{
