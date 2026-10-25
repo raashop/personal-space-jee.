@@ -1950,16 +1950,26 @@ td strong {
   </details>
  </section>
  <section class="page" id="page-chapters">
-  <div class="page-hero"><div><h2>Chapter tracker</h2><p>Work through your syllabus with preparation states, revision checkpoints and test results. Each subject has its own focused view.</p></div><button class="btn btn-secondary" onclick="resetChapterFilters()">Reset filters ↺</button></div>
-  <div class="subject-tabs" role="group" aria-label="Choose a subject" id="subjectTabs">
-   <button class="subject-tab active" data-subject="Physics" onclick="setChapterSubject('Physics')"><span class="tab-mark" style="--accent:#367fb9;--soft:#eaf3fb">ϟ</span><span>Physics<small id="physicsCount">20 chapters</small></span></button>
-   <button class="subject-tab" data-subject="Chemistry" onclick="setChapterSubject('Chemistry')"><span class="tab-mark" style="--accent:#218b68;--soft:#e5f5ed">⚗</span><span>Chemistry<small id="chemistryCount">20 chapters</small></span></button>
-   <button class="subject-tab" data-subject="Mathematics" onclick="setChapterSubject('Mathematics')"><span class="tab-mark" style="--accent:#7665bd;--soft:#f0edfb">∑</span><span>Mathematics<small id="mathsCount">14 chapters</small></span></button>
+  <div class="page-hero chapter-page-hero"><div><h2>Chapter Planner</h2><p>Track your progress chapter by chapter. Plan, study, revise, and test.</p></div><button class="btn btn-secondary" onclick="resetChapterFilters()">Reset filters ↺</button></div>
+  <div class="chapter-subject-row">
+   <div class="subject-tabs" role="group" aria-label="Choose a subject" id="subjectTabs">
+    <button class="subject-tab active" data-subject="Physics" onclick="setChapterSubject('Physics')"><span class="tab-mark" style="--accent:#2784d8;--soft:#e5f2ff">ϟ</span><span>Physics<small id="physicsCount">20 chapters</small></span></button>
+    <button class="subject-tab" data-subject="Chemistry" onclick="setChapterSubject('Chemistry')"><span class="tab-mark" style="--accent:#15966a;--soft:#e0f6ec">⚗</span><span>Chemistry<small id="chemistryCount">20 chapters</small></span></button>
+    <button class="subject-tab" data-subject="Mathematics" onclick="setChapterSubject('Mathematics')"><span class="tab-mark" style="--accent:#8064c7;--soft:#f0ebff">∑</span><span>Mathematics<small id="mathsCount">14 chapters</small></span></button>
+   </div>
+   <div class="chapter-filter-tools">
+    <div class="search-wrap"><input class="control search" id="chapterSearch" placeholder="Search chapters…" oninput="renderChapters()" autocomplete="off"></div>
+    <select class="control select-small" id="chapterYearSelect" aria-label="Class year" onchange="setChapterYear(this.value)"><option value="all">All classes</option><option value="Class 11">Class 11</option><option value="Class 12">Class 12</option></select>
+    <select class="control select-small" id="chapterStatus" aria-label="Preparation status" onchange="renderChapters()"><option value="all">All statuses</option><option value="Not Ready">Not started</option><option value="In Progress">In progress</option><option value="Needs Work">Revision</option><option value="Exam Ready">Completed</option></select>
+   </div>
   </div>
-  <div class="year-tabs" role="group" aria-label="Filter class"><button class="year-tab active" data-year="all" onclick="setChapterYear('all')">All classes</button><button class="year-tab" data-year="Class 11" onclick="setChapterYear('Class 11')">Class 11</button><button class="year-tab" data-year="Class 12" onclick="setChapterYear('Class 12')">Class 12</button></div>
-  <div class="tool-row"><div class="search-wrap"><input class="control search" id="chapterSearch" placeholder="Search chapters or topics…" oninput="renderChapters()" autocomplete="off"></div><select class="control select-small" id="chapterStatus" onchange="renderChapters()"><option value="all">Every status</option><option value="Not Ready">Not ready</option><option value="In Progress">In progress</option><option value="Needs Work">Needs work</option><option value="Exam Ready">✓ Done</option></select></div>
-  <div class="chapter-summary" id="chapterSummary"></div>
-  <div class="chapter-grid" id="chapterList"></div>
+  <div class="panel chapter-progress-banner">
+   <div class="chapter-progress-summary"><div><strong id="chapterProgressTitle">Class 11 Physics Progress</strong><span id="chapterProgressCount">0 / 20 chapters</span></div><div class="chapter-progress-value"><strong id="chapterProgressPercent">0%</strong><span id="chapterProgressRightLabel">Chapters completed</span></div></div>
+   <div class="chapter-overall-track"><div class="chapter-overall-fill" id="chapterProgressFill" style="width:0%"></div></div>
+   <div class="chapter-legend"><span><i class="legend-not-started"></i>Not Started</span><span><i class="legend-in-progress"></i>In Progress</span><span><i class="legend-revision"></i>Revision</span><span><i class="legend-testing"></i>Testing</span><span><i class="legend-completed"></i>Completed</span></div>
+  </div>
+  <div class="chapter-summary" id="chapterSummary" hidden></div>
+  <div class="table-card chapter-table-card"><div class="table-scroll"><table class="chapter-table"><thead><tr><th>#</th><th>Chapter</th><th>Status</th><th>Progress</th><th>Actions</th></tr></thead><tbody id="chapterList"></tbody></table></div></div>
  </section>
  <section class="page" id="page-topic">
   <div class="page-hero"><div><h2>Topic test planner</h2><p>Plan chapter tests, add a date, then log marks. Test names follow the chapters you select, and scores sync back into chapter details.</p></div><button class="btn btn-primary" onclick="openPlannedTopicModal()">＋ Plan a test</button></div>
@@ -2870,41 +2880,75 @@ renderChapters();
 }
 function setChapterYear(year){
 currentChapterYear=year;
+const select=document.getElementById("chapterYearSelect");
+if(select)select.value=year;
 renderChapters();
 }
 function resetChapterFilters(){
 document.getElementById("chapterStatus").value="all";
 document.getElementById("chapterSearch").value="";
 currentChapterYear="all";
+const yearSelect=document.getElementById("chapterYearSelect");
+if(yearSelect)yearSelect.value="all";
 renderChapters();
 }
 function renderChapters(){
  document.querySelectorAll(".subject-tab").forEach(b=>{
-const s=b.dataset.subject;
-b.classList.toggle("active",s===currentChapterSubject);
-b.setAttribute("aria-pressed",String(s===currentChapterSubject))
-}
-);
- document.querySelectorAll(".year-tab").forEach(b=>{
-const y=b.dataset.year;
-b.classList.toggle("active",y===currentChapterYear);
-b.setAttribute("aria-pressed",String(y===currentChapterYear))
-}
-);
+  const s=b.dataset.subject;
+  b.classList.toggle("active",s===currentChapterSubject);
+  b.setAttribute("aria-pressed",String(s===currentChapterSubject));
+ });
+ const yearSelect=document.getElementById("chapterYearSelect");
+ if(yearSelect)yearSelect.value=currentChapterYear;
  ["Physics","Chemistry","Mathematics"].forEach(s=>{
-const node=document.getElementById(s==="Mathematics"?"mathsCount":s.toLowerCase()+"Count");
-if(node)node.textContent=state.chapters.filter(c=>c.subject===s).length+" chapters"
-}
-);
- const all=state.chapters.filter(c=>c.subject===currentChapterSubject),group=all.filter(c=>currentChapterYear==="all"||c.class===currentChapterYear||c.class==="Both"),filter=document.getElementById("chapterStatus").value,q=document.getElementById("chapterSearch").value.toLowerCase().trim();
+  const node=document.getElementById(s==="Mathematics"?"mathsCount":s.toLowerCase()+"Count");
+  if(node)node.textContent=state.chapters.filter(c=>c.subject===s).length+" chapters";
+ });
+ const all=state.chapters.filter(c=>c.subject===currentChapterSubject);
+ const group=all.filter(c=>currentChapterYear==="all"||c.class===currentChapterYear||c.class==="Both");
+ const filter=document.getElementById("chapterStatus").value;
+ const q=document.getElementById("chapterSearch").value.toLowerCase().trim();
  const items=group.filter(c=>(filter==="all"||c.prep===filter)&&((c.chapter+" "+chapterDisplayName(c.subject,c.chapter)+" "+c.coverage).toLowerCase().includes(q)));
  const done=group.filter(c=>c.prep==="Exam Ready").length;
-document.getElementById("chapterSummary").innerHTML='<strong style="color:var(--green)">'+done+' / '+group.length+' done</strong><span>·</span><span>'+group.filter(c=>c.topicAttempted).length+' chapters with an attempted test</span><span>·</span><span>'+items.length+' shown</span>';
+ const progressPercent=pct(done,group.length);
+ const titleNode=document.getElementById("chapterProgressTitle");
+ const countNode=document.getElementById("chapterProgressCount");
+ const pctNode=document.getElementById("chapterProgressPercent");
+ const fillNode=document.getElementById("chapterProgressFill");
+ if(titleNode)titleNode.textContent=(currentChapterYear==="all"?"All Classes":currentChapterYear)+" "+currentChapterSubject+" Progress";
+ if(countNode)countNode.textContent=done+" / "+group.length+" chapters";
+ if(pctNode)pctNode.textContent=progressPercent+"%";
+ if(fillNode)fillNode.style.width=progressPercent+"%";
+ document.getElementById("chapterSummary").innerHTML='<strong>'+done+' / '+group.length+' done</strong><span>·</span><span>'+group.filter(c=>c.topicAttempted).length+' chapters with an attempted test</span><span>·</span><span>'+items.length+' shown</span>';
+ const statusMeta={
+  "Not Ready":{label:"Not Started",css:"not-started"},
+  "In Progress":{label:"In Progress",css:"in-progress"},
+  "Needs Work":{label:"Revision",css:"revision"},
+  "Exam Ready":{label:"Completed",css:"completed"}
+ };
+ const statusOptions=[["Not Ready","Not Started"],["In Progress","In Progress"],["Needs Work","Revision"],["Exam Ready","Completed"]];
+ const progressFor=function(c){
+  if(c.prep==="Exam Ready")return 100;
+  const checkpoints=["r1","r2","r3","notes","pyq"].filter(k=>Boolean(c[k])).length;
+  let value=checkpoints*20;
+  if(c.prep==="In Progress")value=Math.max(30,value);
+  if(c.prep==="Needs Work")value=Math.max(15,value);
+  if(c.topicAttempted)value=Math.max(65,value);
+  return Math.min(95,value);
+ };
  document.getElementById("chapterList").innerHTML=items.map((c,i)=>{
-const color=chapterColor(c.subject),soft=chapterSoft(c.subject),prep=[["Not Ready","not-ready"],["In Progress","in-progress"],["Needs Work","needs-work"],["Exam Ready","done"]],checkpoints=[["r1","Revision 1"],["r2","Revision 2"],["r3","Revision 3"],["notes","Short notes"],["pyq","PYQs"]];
-return '<article class="chapter-card" style="--i:'+i+';--accent:'+color+';--soft:'+soft+'"><div class="chapter-head"><div><h3>'+escapeHTML(chapterDisplayName(c.subject,c.chapter))+'</h3><p class="chapter-coverage">'+escapeHTML(c.coverage||"")+'</p><div class="chapter-meta"><span class="pill">'+escapeHTML(c.class||"JEE Main")+'</span><span class="pill subject">'+escapeHTML(c.subject)+'</span></div></div><button class="small-btn" onclick="editChapter(\''+escapeAttr(c.subject)+'\',\''+escapeAttr(c.chapter)+'\')">Details ⋯</button></div><div class="status-block">'+prep.map(([label,cls])=>'<button class="status-button '+(c.prep===label?'active '+cls:'')+'" onclick="setPrep(\''+escapeAttr(c.subject)+'\',\''+escapeAttr(c.chapter)+'\',\''+label+'\')">'+(label==="Exam Ready"?"✓ Done":label)+"</button>").join("")+'</div><div class="chapter-checks">'+checkpoints.map(([key,label])=>'<button class="check-button '+(c[key]?"checked":"")+'" onclick="toggleCheckpoint(\''+escapeAttr(c.subject)+'\',\''+escapeAttr(c.chapter)+'\',\''+key+'\')">'+(c[key]?"✓":"○")+' '+label+'</button>').join("")+'</div><div class="chapter-test"><small>'+(c.topicAttempted?'✓ Last test: '+escapeHTML(scoreLabel(c.marks,c.outOf)):'Topic test: not attempted')+'</small><button class="btn btn-secondary" style="padding:8px 10px" onclick="quickTopic(\''+escapeAttr(c.subject)+'\',\''+escapeAttr(c.chapter)+'\')">'+(c.topicAttempted?'Log another attempt':'Plan topic test')+' ↗</button></div></article>'
-}
-).join("")||'<div class="empty" style="grid-column:1/-1">No chapters match these filters. Try another status or search term.</div>';
+  const meta=statusMeta[c.prep]||statusMeta["Not Ready"];
+  const progress=progressFor(c);
+  const options=statusOptions.map(([value,label])=>'<option value="'+value+'" '+(c.prep===value?'selected':'')+'>'+label+'</option>').join("");
+  const subject=escapeAttr(c.subject),chapter=escapeAttr(c.chapter);
+  return '<tr class="chapter-table-row">'+
+   '<td class="chapter-row-number">'+(i+1)+'</td>'+
+   '<td class="chapter-row-name"><strong>'+escapeHTML(chapterDisplayName(c.subject,c.chapter))+'</strong><small>'+escapeHTML(c.class||"JEE Main")+' · '+escapeHTML(c.subject)+'</small></td>'+
+   '<td><select class="chapter-status-chip status-'+meta.css+'" aria-label="Preparation status for '+escapeHTML(c.chapter)+'" onchange="setPrep(\''+subject+'\',\''+chapter+'\',this.value)">'+options+'</select></td>'+
+   '<td class="chapter-progress-cell"><div class="chapter-row-progress"><div class="progress-track"><div class="progress-fill" style="width:'+progress+'%;--subject:'+(c.prep==="Exam Ready"?"#15966a":c.prep==="Needs Work"?"#d28a35":"#4a9be8")+'"></div></div><span>'+progress+'%</span></div></td>'+
+   '<td><div class="chapter-row-actions"><button class="chapter-open-btn" type="button" onclick="editChapter(\''+subject+'\',\''+chapter+'\')">Open</button><button class="chapter-test-btn" type="button" title="Plan a topic test for this chapter" onclick="quickTopic(\''+subject+'\',\''+chapter+'\')">＋</button></div></td>'+
+  '</tr>';
+ }).join("")||'<tr><td colspan="5"><div class="empty chapter-empty">No chapters match these filters. Try another status or search term.</div></td></tr>';
 }
 function setPrep(subject,chapter,prep){
 const c=state.chapters.find(x=>x.subject===subject&&x.chapter===chapter);
