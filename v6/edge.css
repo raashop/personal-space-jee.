@@ -2009,3 +2009,434 @@ html[data-edge-theme="daylight"] .dashboard-bottom {
     display: none;
   }
 }
+
+
+/* Reference dashboard + chapter planner: compact light panels, chart bars and clean table rows. */
+html[data-edge-theme="daylight"] .dashboard-kpis {
+  grid-template-columns: repeat(4,minmax(0,1fr));
+}
+html[data-edge-theme="daylight"] .dashboard-kpis .metric {
+  min-height: 105px;
+  padding: 15px 16px;
+}
+html[data-edge-theme="daylight"] .dashboard-kpis .metric-head {
+  justify-content: flex-start;
+}
+html[data-edge-theme="daylight"] .dashboard-kpis .metric label {
+  color: #73869a;
+  font-size: 8px;
+  letter-spacing: .095em;
+}
+html[data-edge-theme="daylight"] .dashboard-kpis .metric strong {
+  color: #17283f;
+  font-size: 25px;
+  margin: 10px 0 3px;
+}
+html[data-edge-theme="daylight"] .dashboard-kpis .metric small {
+  color: #74889d;
+  font-size: 9px;
+}
+html[data-edge-theme="daylight"] .dashboard-kpis .dashboard-countdown-card > strong {
+  color: #168b62;
+}
+html[data-edge-theme="daylight"] .dashboard-quick-content {
+  display: grid;
+  grid-template-columns: minmax(0,1.4fr) minmax(215px,.8fr);
+  gap: 12px;
+}
+html[data-edge-theme="daylight"] .dashboard-quick-grid {
+  align-content: stretch;
+}
+html[data-edge-theme="daylight"] .dashboard-quick-action {
+  align-items: flex-start;
+  min-height: 86px;
+  flex-direction: column;
+  gap: 8px;
+  padding: 11px 12px;
+  position: relative;
+}
+html[data-edge-theme="daylight"] .dashboard-quick-action .dashboard-quick-icon {
+  width: 31px;
+  height: 31px;
+}
+html[data-edge-theme="daylight"] .dashboard-quick-action > span:nth-child(2) {
+  gap: 3px;
+}
+html[data-edge-theme="daylight"] .dashboard-quick-action .quick-arrow {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+}
+html[data-edge-theme="daylight"] .dashboard-quote-card {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  min-height: 180px;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid #e2edf5;
+  border-radius: 14px;
+  padding: 16px 15px 0;
+  background: linear-gradient(140deg,#f3f9ff,#eaf5f5 75%,#e6f5ed);
+}
+html[data-edge-theme="daylight"] .dashboard-quote-copy {
+  position: relative;
+  z-index: 2;
+  max-width: 220px;
+  color: #42667d;
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 1.65;
+}
+html[data-edge-theme="daylight"] .dashboard-landscape {
+  display: block;
+  width: calc(100% + 30px);
+  max-height: 102px;
+  margin: 2px -15px 0;
+  flex: none;
+}
+
+/* Chapter Planner controls and table */
+html[data-edge-theme="daylight"] .chapter-page-hero {
+  margin-bottom: 18px;
+}
+html[data-edge-theme="daylight"] .chapter-subject-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 13px;
+}
+html[data-edge-theme="daylight"] .chapter-subject-row .subject-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+html[data-edge-theme="daylight"] .chapter-subject-row .subject-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 126px;
+  padding: 8px 12px;
+  border-radius: 11px;
+  border: 1px solid #e0e9f3;
+  background: #ffffff;
+  color: #3d536c;
+  text-align: left;
+}
+html[data-edge-theme="daylight"] .chapter-subject-row .subject-tab .tab-mark {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: var(--soft,#e5f2ff);
+  color: var(--accent,#2784d8);
+  box-shadow: none;
+}
+html[data-edge-theme="daylight"] .chapter-subject-row .subject-tab > span:last-child {
+  font-size: 10px;
+  font-weight: 800;
+}
+html[data-edge-theme="daylight"] .chapter-subject-row .subject-tab small {
+  display: block;
+  color: #8a9bae;
+  margin-top: 2px;
+  font-size: 8px;
+  font-weight: 600;
+}
+html[data-edge-theme="daylight"] .chapter-subject-row .subject-tab.active {
+  color: #ffffff;
+  background: linear-gradient(110deg,#15966a,#20a77b);
+  border-color: #15966a;
+  box-shadow: 0 4px 11px rgba(21,150,106,.15);
+}
+html[data-edge-theme="daylight"] .chapter-subject-row .subject-tab.active .tab-mark {
+  color: #ffffff;
+  background: rgba(255,255,255,.18);
+}
+html[data-edge-theme="daylight"] .chapter-subject-row .subject-tab.active small {
+  color: rgba(255,255,255,.78);
+}
+html[data-edge-theme="daylight"] .chapter-filter-tools {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 1;
+  min-width: 220px;
+  gap: 8px;
+}
+html[data-edge-theme="daylight"] .chapter-filter-tools .search-wrap {
+  flex: 1;
+  min-width: 125px;
+}
+html[data-edge-theme="daylight"] .chapter-filter-tools .control {
+  min-height: 35px;
+  padding: 8px 10px;
+  font-size: 10px;
+}
+html[data-edge-theme="daylight"] .chapter-progress-banner {
+  margin: 0 0 12px;
+  padding: 14px 16px;
+  border: 1px solid #e1eaf4;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 4px 13px rgba(35,74,118,.035);
+}
+html[data-edge-theme="daylight"] .chapter-progress-summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+html[data-edge-theme="daylight"] .chapter-progress-summary > div:first-child {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+html[data-edge-theme="daylight"] .chapter-progress-summary strong {
+  color: #1d3047;
+  font-size: 12px;
+  letter-spacing: -.02em;
+}
+html[data-edge-theme="daylight"] .chapter-progress-summary span {
+  color: #8799ab;
+  font-size: 9px;
+}
+html[data-edge-theme="daylight"] .chapter-progress-value {
+  text-align: right;
+}
+html[data-edge-theme="daylight"] .chapter-progress-value strong {
+  color: #168b62;
+  font-size: 12px;
+}
+html[data-edge-theme="daylight"] .chapter-progress-value span {
+  display: block;
+  margin-top: 2px;
+}
+html[data-edge-theme="daylight"] .chapter-overall-track {
+  width: 100%;
+  height: 7px;
+  overflow: hidden;
+  border-radius: 99px;
+  background: #e9eff6;
+}
+html[data-edge-theme="daylight"] .chapter-overall-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg,#20b87e,#15966a);
+  transition: width .35s ease;
+}
+html[data-edge-theme="daylight"] .chapter-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 13px;
+  margin-top: 10px;
+}
+html[data-edge-theme="daylight"] .chapter-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #788ca1;
+  font-size: 8px;
+}
+html[data-edge-theme="daylight"] .chapter-legend i {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+html[data-edge-theme="daylight"] .legend-not-started { background: #b8c5d2; }
+html[data-edge-theme="daylight"] .legend-in-progress { background: #4b9ce7; }
+html[data-edge-theme="daylight"] .legend-revision { background: #e0a046; }
+html[data-edge-theme="daylight"] .legend-testing { background: #8a75d6; }
+html[data-edge-theme="daylight"] .legend-completed { background: #15966a; }
+html[data-edge-theme="daylight"] .chapter-table-card {
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid #e2eaf4;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 4px 14px rgba(35,74,118,.035);
+}
+html[data-edge-theme="daylight"] .chapter-table-card .table-scroll {
+  border: 0;
+  border-radius: 0;
+  background: #ffffff;
+}
+html[data-edge-theme="daylight"] .chapter-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 10px;
+}
+html[data-edge-theme="daylight"] .chapter-table thead th {
+  padding: 11px 12px;
+  color: #6d8298;
+  background: #f5f8fc;
+  border-bottom: 1px solid #e8eef5;
+  font-size: 9px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+html[data-edge-theme="daylight"] .chapter-table tbody td {
+  padding: 10px 12px;
+  vertical-align: middle;
+  border-bottom: 1px solid #edf2f7;
+  color: #263b52;
+}
+html[data-edge-theme="daylight"] .chapter-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+html[data-edge-theme="daylight"] .chapter-table tbody tr:hover {
+  background: #f8fbff;
+}
+html[data-edge-theme="daylight"] .chapter-row-number {
+  width: 34px;
+  color: #90a1b3 !important;
+  font-size: 9px;
+}
+html[data-edge-theme="daylight"] .chapter-row-name {
+  min-width: 190px;
+}
+html[data-edge-theme="daylight"] .chapter-row-name strong {
+  display: block;
+  color: #20354d;
+  font-size: 10px;
+  font-weight: 750;
+}
+html[data-edge-theme="daylight"] .chapter-row-name small {
+  display: block;
+  margin-top: 4px;
+  color: #8799ab;
+  font-size: 8px;
+}
+html[data-edge-theme="daylight"] .chapter-status-chip {
+  width: 115px;
+  max-width: 130px;
+  min-width: 110px;
+  padding: 6px 8px !important;
+  border-radius: 8px !important;
+  border: 1px solid transparent !important;
+  font-size: 8px !important;
+  font-weight: 800;
+  cursor: pointer;
+  appearance: auto;
+  box-shadow: none !important;
+}
+html[data-edge-theme="daylight"] .chapter-status-chip.status-not-started {
+  color: #637488;
+  background: #f0f3f6 !important;
+  border-color: #e7edf3 !important;
+}
+html[data-edge-theme="daylight"] .chapter-status-chip.status-in-progress {
+  color: #277ec4;
+  background: #e8f3ff !important;
+  border-color: #d9eaff !important;
+}
+html[data-edge-theme="daylight"] .chapter-status-chip.status-revision {
+  color: #a96a22;
+  background: #fff3df !important;
+  border-color: #fae8c8 !important;
+}
+html[data-edge-theme="daylight"] .chapter-status-chip.status-completed {
+  color: #14774f;
+  background: #e0f6ea !important;
+  border-color: #cdeedc !important;
+}
+html[data-edge-theme="daylight"] .chapter-progress-cell {
+  min-width: 120px;
+}
+html[data-edge-theme="daylight"] .chapter-row-progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+html[data-edge-theme="daylight"] .chapter-row-progress .progress-track {
+  width: 94px;
+  height: 6px;
+  flex: 1;
+  min-width: 38px;
+  background: #e8edf3;
+}
+html[data-edge-theme="daylight"] .chapter-row-progress .progress-fill {
+  background: #4c9be8;
+}
+html[data-edge-theme="daylight"] .chapter-table-row:has(.status-completed) .progress-fill {
+  background: #15966a;
+}
+html[data-edge-theme="daylight"] .chapter-row-progress span {
+  color: #71869b;
+  font-size: 8px;
+  min-width: 26px;
+}
+html[data-edge-theme="daylight"] .chapter-row-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
+}
+html[data-edge-theme="daylight"] .chapter-open-btn,
+html[data-edge-theme="daylight"] .chapter-test-btn {
+  border: 1px solid #d8efe4;
+  border-radius: 7px;
+  color: #16784f;
+  background: #e4f7ed;
+  font-size: 9px;
+  font-weight: 800;
+  padding: 7px 10px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+html[data-edge-theme="daylight"] .chapter-test-btn {
+  width: 28px;
+  padding: 6px;
+  color: #2784d8;
+  background: #eaf4ff;
+  border-color: #dcecff;
+}
+html[data-edge-theme="daylight"] .chapter-open-btn:hover,
+html[data-edge-theme="daylight"] .chapter-test-btn:hover {
+  filter: brightness(.97);
+}
+@media (max-width: 1020px) {
+  html[data-edge-theme="daylight"] .dashboard-quick-content {
+    grid-template-columns: 1fr;
+  }
+  html[data-edge-theme="daylight"] .dashboard-quote-card {
+    min-height: 140px;
+  }
+}
+@media (max-width: 820px) {
+  html[data-edge-theme="daylight"] .chapter-filter-tools {
+    min-width: 100%;
+  }
+  html[data-edge-theme="daylight"] .chapter-filter-tools .search-wrap {
+    min-width: 100%;
+  }
+  html[data-edge-theme="daylight"] .chapter-filter-tools .control {
+    flex: 1;
+  }
+  html[data-edge-theme="daylight"] .chapter-table-card {
+    overflow: visible;
+  }
+}
+@media (max-width: 560px) {
+  html[data-edge-theme="daylight"] .dashboard-quick-grid {
+    grid-template-columns: repeat(2,minmax(0,1fr));
+  }
+  html[data-edge-theme="daylight"] .chapter-table thead th,
+  html[data-edge-theme="daylight"] .chapter-table tbody td {
+    padding: 8px 7px;
+  }
+  html[data-edge-theme="daylight"] .chapter-row-name {
+    min-width: 150px;
+  }
+  html[data-edge-theme="daylight"] .chapter-status-chip {
+    min-width: 100px;
+    width: 100px;
+  }
+}
