@@ -94,7 +94,10 @@
       return n.length>=4 && t.includes(n);
     }));
   }
+  const nearbyCaptionCache=new WeakMap();
   function findNearbyLectureCaption(video) {
+    const cached=nearbyCaptionCache.get(video);
+    if(cached && Date.now()-cached.at<5000) return cached.value;
     const vr=video.getBoundingClientRect();
     const cx=(vr.left+vr.right)/2, cy=(vr.top+vr.bottom)/2;
     let best=null, bestScore=Infinity;
@@ -116,6 +119,7 @@
       const score=distance + text.length*0.28 + areaPenalty + el.childElementCount*2;
       if(score<bestScore) { bestScore=score; best={element:el,text,score}; }
     }
+    nearbyCaptionCache.set(video,{at:Date.now(),value:best});
     return best;
   }
   function getContext(video) {
@@ -170,6 +174,9 @@
     report("player-found","Telegram video player found. Checking its message text for a JEE chapter.");
     const tick=async()=>{
       try{
+        const rect=video.getBoundingClientRect();
+        const visible=rect.width>50&&rect.height>50&&rect.bottom>0&&rect.right>0&&rect.top<window.innerHeight&&rect.left<window.innerWidth;
+        if(!visible){lastTime=video.currentTime||lastTime;return;}
         const context=getContext(video);
         const match=classify(context.sourceText);
         const now=video.currentTime||0;
