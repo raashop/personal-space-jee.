@@ -4557,10 +4557,11 @@ if(!confirm("Replace this browser's tracker with the cloud backup?"))return;
 cloudApplying=true;
 state=migrateState(r.data.data.state);
 localStorage.setItem(KEY,JSON.stringify(state));
-if(Array.isArray(r.data.data.youtubeLectures))mergeYoutubeLectureRows(r.data.data.youtubeLectures);
+const lectureMerge=Array.isArray(r.data.data.youtubeLectures)?mergeYoutubeLectureRows(r.data.data.youtubeLectures):null;
 localStorage.setItem(KEY,JSON.stringify(state));
 renderAll();
 cloudApplying=false;
+if(lectureMerge&&(lectureMerge.recordsChanged||lectureMerge.stateChanged))queueYoutubeCloudSave();
 toast("Cloud backup restored.");
 }
 catch(e){
