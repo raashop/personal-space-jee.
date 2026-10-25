@@ -1937,6 +1937,18 @@ td strong {
 <style id="personal-space-study-activity">
 /* Preserve the dashboard hero and four metric cards; only replace the content beneath them. */
 .study-activity-panel{margin:18px 0 20px;min-width:0}
+.upcoming-item{display:grid;gap:6px;min-width:0}
+.upcoming-chapter-links{display:flex;gap:6px;flex-wrap:wrap;padding:0 2px 8px}
+.upcoming-chapter-link{display:inline-flex;align-items:center;gap:7px;max-width:100%;border:1px solid var(--line);border-radius:9px;padding:6px 8px;background:var(--surface,#fff);text-align:left;cursor:pointer;color:var(--ink)}
+.upcoming-chapter-link span{font-size:10px;font-weight:750;overflow-wrap:anywhere}
+.upcoming-chapter-link small{font-size:9px;color:var(--muted);white-space:nowrap}
+.upcoming-chapter-link:hover{border-color:#8abca5;background:#f2f8f5}
+#page-chapters .chapter-table tr.status-row-not-started .progress-fill{background:#b8c5d2!important}
+#page-chapters .chapter-table tr.status-row-in-progress .progress-fill{background:#4a9be8!important}
+#page-chapters .chapter-table tr.status-row-completed .progress-fill{background:#15966a!important}
+#page-chapters .chapter-table tr.status-row-needs-work .progress-fill{background:#d28a35!important}
+#chapterAllocationPanel [hidden]{display:none!important}
+
 .study-activity-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:14px 0 18px}
 .study-activity-stat{display:grid;gap:6px;align-content:start;min-width:0;padding:14px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(145deg,#fff,#f8fbfa)}
 .study-activity-stat small{font-size:11px;color:var(--muted);line-height:1.35}
