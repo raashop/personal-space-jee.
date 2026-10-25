@@ -8,6 +8,14 @@
     if(!Array.isArray(state.dailyReviews)) state.dailyReviews=[];
     if(!Array.isArray(state.studyMistakes)) state.studyMistakes=[];
     if(!Array.isArray(state.weeklyReviews)) state.weeklyReviews=[];
+    if(!Array.isArray(state.notes)) state.notes=[];
+    if(!Array.isArray(state.habits)) state.habits=[
+      {id:"habit-pyq",title:"Solve a PYQ set",category:"Practice"},
+      {id:"habit-revision",title:"Revise one formula sheet",category:"Revision"},
+      {id:"habit-mistake",title:"Review one mistake",category:"Review"},
+      {id:"habit-focus",title:"Complete a focus block",category:"Focus"}
+    ];
+    if(!state.habitLogs||typeof state.habitLogs!=="object"||Array.isArray(state.habitLogs))state.habitLogs={};
     if(!state.studyGoals) state.studyGoals={dailyMinutes:300,weeklyDays:6,weeklyTopicTests:3,weeklyPyqQuestions:500};
     if(state.studyGoals.weeklyTopicTests===undefined)state.studyGoals.weeklyTopicTests=3;
     if(state.studyGoals.weeklyPyqQuestions===undefined)state.studyGoals.weeklyPyqQuestions=500;
@@ -50,6 +58,26 @@
       <section class="panel revision-queue-panel"><div class="daily-section-head"><div><h3>Smart revision queue</h3><p>Weak chapters and mistakes ready to revisit.</p></div><span class="badge orange" id="revisionQueueCount">0</span></div><div id="revisionQueue" class="revision-queue"></div></section>
       <section class="panel quick-note-panel"><h3>Quick note</h3><p class="panel-sub">Capture a formula, doubt or idea before it slips away.</p><textarea id="quickCapture" class="control" rows="4" placeholder="A formula to revise, a doubt to ask, a mistake to remember…"></textarea><button class="btn btn-secondary" style="margin-top:9px" onclick="saveQuickCapture()">Save note</button></section>
     </div></details>
+  </section>
+  <section class="page" id="page-notes">
+    <div class="page-hero notes-hero"><div><h2>Notes</h2><p>Keep formulas, doubts and useful reminders close to your study plan.</p></div><span class="notes-count-chip"><strong id="notesCount">0</strong> saved notes</span></div>
+    <div class="notes-layout">
+      <section class="panel notes-editor-panel"><div class="daily-section-head"><div><h3 id="noteEditorTitle">New note</h3><p>Save a concept while it is still fresh.</p></div></div><input id="noteEditId" type="hidden"><label class="form-field">Note title<input class="control" id="noteTitle" type="text" placeholder="e.g. Tollens' reagent — key points"></label><label class="form-field">Subject<select class="control" id="noteSubject"><option>General</option><option>Physics</option><option>Chemistry</option><option>Mathematics</option></select></label><label class="form-field">Your note<textarea class="control" id="noteBody" rows="7" placeholder="Formula, explanation, example, doubt to ask…"></textarea></label><div class="notes-editor-actions"><button class="btn btn-primary" id="saveNoteButton" onclick="saveStudyNote()">Save note</button><button class="btn btn-secondary" onclick="cancelStudyNoteEdit()">Clear</button></div></section>
+      <section class="panel notes-library-panel"><div class="daily-section-head"><div><h3>Your notebook</h3><p>Search the ideas you want to revisit.</p></div></div><div class="notes-filters"><select class="control" id="notesFilterSubject" onchange="renderNotes()"><option value="all">All subjects</option><option>Physics</option><option>Chemistry</option><option>Mathematics</option><option>General</option></select><input class="control search" id="notesSearch" placeholder="Search notes…" oninput="renderNotes()"></div><div id="notesList" class="notes-list"></div></section>
+    </div>
+  </section>
+  <section class="page" id="page-goals">
+    <div class="page-hero"><div><h2>Goals &amp; Habits</h2><p>Make consistent study feel manageable. Set targets and tick off the small habits that move you forward.</p></div></div>
+    <div class="goals-summary-grid">
+      <section class="panel goal-highlight"><span>STUDY TIME TODAY</span><strong id="goalTodayStudyTime">0h</strong><small id="goalTodayStudyTarget">Target · 5h</small><div class="progress-track"><div class="progress-fill" id="goalTodayProgressBar" style="width:0%"></div></div></section>
+      <section class="panel goal-highlight"><span>WEEKLY STUDY DAYS</span><strong id="goalWeeklyStudyDays">0 / 6</strong><small>Days with logged study or completed tasks</small><div class="progress-track"><div class="progress-fill" id="goalWeeklyDaysBar" style="width:0%;--subject:#2784d8"></div></div></section>
+      <section class="panel goal-highlight"><span>TOPIC TESTS THIS WEEK</span><strong id="goalTopicTestsDone">0 / 3</strong><small>Attempted tests</small><div class="progress-track"><div class="progress-fill" id="goalTopicTestsBar" style="width:0%"></div></div></section>
+      <section class="panel goal-highlight"><span>PYQ QUESTIONS THIS WEEK</span><strong id="goalPyqDone">0 / 500</strong><small>Questions logged in practice sessions</small><div class="progress-track"><div class="progress-fill" id="goalPyqBar" style="width:0%"></div></div></section>
+    </div>
+    <div class="goals-layout">
+      <section class="panel habits-panel"><div class="daily-section-head"><div><h3>Today's Habits</h3><p>Keep the list small enough to finish.</p></div><span class="badge green" id="habitsTodayCount">0 / 0 done</span></div><div id="habitsList" class="habits-list"></div><div class="add-habit-row"><input class="control" id="newHabitTitle" placeholder="Add a small daily habit…"><button class="btn btn-primary" onclick="addStudyHabit()">＋ Add</button></div></section>
+      <section class="panel goals-settings-panel"><div class="daily-section-head"><div><h3>Study Targets</h3><p>These targets are shared with Performance Studio.</p></div></div><div class="goal-settings-fields"><label class="form-field">Daily study time (minutes)<input class="control" id="goalDailyMinutes" type="number" min="15" max="900" step="15" value="300"></label><label class="form-field">Study days each week<select class="control" id="goalWeeklyDays"><option value="3">3 days</option><option value="4">4 days</option><option value="5">5 days</option><option value="6" selected>6 days</option><option value="7">7 days</option></select></label><label class="form-field">Topic tests per week<input class="control" id="goalWeeklyTopicTests" type="number" min="1" max="30" value="3"></label><label class="form-field">PYQ questions per week<input class="control" id="goalWeeklyPyqQuestions" type="number" min="10" max="5000" step="10" value="500"></label></div><button class="btn btn-primary" onclick="saveGoalSettings()">Save targets</button></section>
+    </div>
   </section>
   <section class="page" id="page-performance">
     <div class="page-hero performance-hero"><div><h2>Performance Studio</h2><p>Analyse your progress, find patterns and stay on track.</p></div><div class="performance-range-tabs" role="group" aria-label="Performance report range"><button type="button" class="active" data-performance-range="7" onclick="setPerformanceRange(7)">7 Days</button><button type="button" data-performance-range="14" onclick="setPerformanceRange(14)">14 Days</button><button type="button" data-performance-range="30" onclick="setPerformanceRange(30)">30 Days</button></div></div>
@@ -241,7 +269,6 @@
     const streakCursor=new Date(today+"T12:00:00");
     let currentStreak=0;
     if(!isStudyDay(today))streakCursor.setDate(streakCursor.getDate()-1);
-    while(currentStreak<366&&isStudyDay(addDays(today,-(Math.max(0,Math.round((new Date(today+"T12:00:00")-streakCursor)/86400000)))))){break;}
     const currentDayKey=streakCursor.toISOString().slice(0,10);
     let streakDate=currentDayKey;
     while(currentStreak<366&&isStudyDay(streakDate)){currentStreak++;streakDate=addDays(streakDate,-1);}
@@ -385,22 +412,97 @@
     saveState();go("daily");byId("dailyDate").value=todayISO();renderDailyLog();toast("Added to today's plan.");
   };
 
-  window.renderAllProductivity=function(){renderDailyLog();renderPerformance();renderMistakes();window.renderDailyPulse();window.renderRevisionQueue();};
+  function renderNotes(){
+    if(!byId("notesList"))return;
+    const notes=Array.isArray(state.notes)?state.notes:[];
+    const query=(byId("notesSearch")&&byId("notesSearch").value||"").toLowerCase().trim();
+    const subject=byId("notesFilterSubject")?byId("notesFilterSubject").value:"all";
+    const items=notes.filter(note=>(subject==="all"||note.subject===subject)&&(String(note.title)+" "+String(note.body)+" "+String(note.subject)).toLowerCase().includes(query)).sort((a,b)=>String(b.updatedAt||b.createdAt||"").localeCompare(String(a.updatedAt||a.createdAt||"")));
+    if(byId("notesCount"))byId("notesCount").textContent=notes.length;
+    byId("notesList").innerHTML=items.map(note=>'<article class="study-note-card"><div class="study-note-head"><div><strong>'+escapeHTML(note.title||"Untitled note")+'</strong><small>'+escapeHTML(note.subject||"General")+' · '+escapeHTML(niceDay(String(note.updatedAt||note.createdAt||todayISO()).slice(0,10)))+'</small></div><div class="study-note-actions"><button type="button" class="small-btn" onclick="editStudyNote(\''+escapeAttr(note.id)+'\')">Edit</button><button type="button" class="small-btn" onclick="deleteStudyNote(\''+escapeAttr(note.id)+'\')">Delete</button></div></div><p>'+escapeHTML(note.body||"").replace(/\n/g,"<br>")+'</p></article>').join("")||'<div class="empty notes-empty">No notes saved yet. Add a formula, doubt or concept to start your notebook.</div>';
+  }
+  window.renderNotes=renderNotes;
+  window.saveStudyNote=function(){
+    const title=(byId("noteTitle").value||"").trim(),bodyText=(byId("noteBody").value||"").trim(),subject=byId("noteSubject").value||"General",editId=byId("noteEditId").value;
+    if(!title||!bodyText){toast("Add a title and the note text first.");return;}
+    const now=new Date().toISOString();
+    if(editId){
+      const old=state.notes.find(note=>note.id===editId);
+      if(old)Object.assign(old,{title:title,body:bodyText,subject:subject,updatedAt:now});
+    }else state.notes.unshift({id:"note-"+Date.now(),title:title,body:bodyText,subject:subject,createdAt:now,updatedAt:now});
+    byId("noteTitle").value="";byId("noteBody").value="";byId("noteEditId").value="";byId("noteEditorTitle").textContent="New note";byId("saveNoteButton").textContent="Save note";
+    saveState();renderNotes();toast(editId?"Note updated.":"Note saved.");
+  };
+  window.editStudyNote=function(id){
+    const note=state.notes.find(item=>item.id===id);if(!note)return;
+    byId("noteEditId").value=note.id;byId("noteTitle").value=note.title||"";byId("noteBody").value=note.body||"";byId("noteSubject").value=note.subject||"General";byId("noteEditorTitle").textContent="Edit note";byId("saveNoteButton").textContent="Update note";
+    byId("noteTitle").focus();window.scrollTo({top:0,behavior:"smooth"});
+  };
+  window.cancelStudyNoteEdit=function(){
+    byId("noteEditId").value="";byId("noteTitle").value="";byId("noteBody").value="";byId("noteSubject").value="General";byId("noteEditorTitle").textContent="New note";byId("saveNoteButton").textContent="Save note";
+  };
+  window.deleteStudyNote=function(id){
+    if(!confirm("Delete this study note?"))return;
+    state.notes=state.notes.filter(item=>item.id!==id);saveState();renderNotes();toast("Note deleted.");
+  };
+  function renderGoals(){
+    if(!byId("habitsList"))return;
+    const goals=state.studyGoals||{},today=todayISO(),minutes=dayMinutes(today),dailyGoal=Number(goals.dailyMinutes)||300,daysGoal=Number(goals.weeklyDays)||6,topicGoal=Number(goals.weeklyTopicTests)||3,pyqGoal=Number(goals.weeklyPyqQuestions)||500;
+    const weekStart=addDays(today,-6),weekDays=Array.from({length:7},(_,i)=>addDays(today,i-6));
+    const studyDays=weekDays.filter(day=>isStudyDay(day)).length;
+    const topics=(state.topics||[]).filter(t=>t.status==="Attempted"&&String(t.actualDate||"")>=weekStart&&String(t.actualDate||"")<=today).length;
+    const pyqs=(state.pyqs||[]).filter(p=>String(p.date||"")>=weekStart&&String(p.date||"")<=today).reduce((n,p)=>n+(Number(p.attempted)||0),0);
+    byId("goalTodayStudyTime").textContent+(minutes/60).toFixed(minutes%60===0?0:1)+"h";
+    byId("goalTodayStudyTarget").textContent="Target · "+(dailyGoal/60).toFixed(dailyGoal%60===0?0:1)+"h";
+    byId("goalTodayProgressBar").style.width=Math.min(100,Math.round(minutes/dailyGoal*100))+"%";
+    byId("goalWeeklyStudyDays").textContent=studyDays+" / "+daysGoal;
+    byId("goalWeeklyDaysBar").style.width=Math.min(100,Math.round(studyDays/daysGoal*100))+"%";
+    byId("goalTopicTestsDone").textContent=topics+" / "+topicGoal;
+    byId("goalTopicTestsBar").style.width=Math.min(100,Math.round(topics/topicGoal*100))+"%";
+    byId("goalPyqDone").textContent=pyqs+" / "+pyqGoal;
+    byId("goalPyqBar").style.width=Math.min(100,Math.round(pyqs/pyqGoal*100))+"%";
+    if(byId("goalDailyMinutes"))byId("goalDailyMinutes").value=String(dailyGoal);
+    if(byId("goalWeeklyDays"))byId("goalWeeklyDays").value=String(daysGoal);
+    if(byId("goalWeeklyTopicTests"))byId("goalWeeklyTopicTests").value=String(topicGoal);
+    if(byId("goalWeeklyPyqQuestions"))byId("goalWeeklyPyqQuestions").value=String(pyqGoal);
+    const habits=Array.isArray(state.habits)?state.habits:[];
+    const logs=state.habitLogs&&state.habitLogs[today]?state.habitLogs[today]:{};
+    const done=habits.filter(h=>Boolean(logs[h.id])).length;
+    byId("habitsTodayCount").textContent=done+" / "+habits.length+" done";
+    byId("habitsList").innerHTML=habits.map(h=>'<div class="habit-row"><label class="habit-label"><input type="checkbox" '+(logs[h.id]?"checked":"")+' onchange="toggleStudyHabit(\''+escapeAttr(h.id)+'\',this.checked)"><span class="habit-checkmark">✓</span><span class="habit-text"><strong>'+escapeHTML(h.title)+'</strong><small>'+escapeHTML(h.category||"Daily habit")+'</small></span></label><button type="button" class="mini-delete" title="Delete habit" onclick="deleteStudyHabit(\''+escapeAttr(h.id)+'\')">×</button></div>').join("")||'<div class="empty">Add one small habit to begin.</div>';
+  }
+  window.renderGoals=renderGoals;
+  window.toggleStudyHabit=function(id,checked){
+    const today=todayISO();if(!state.habitLogs)state.habitLogs={};if(!state.habitLogs[today])state.habitLogs[today]={};state.habitLogs[today][id]=Boolean(checked);saveState();renderGoals();
+  };
+  window.addStudyHabit=function(){
+    const node=byId("newHabitTitle"),title=(node.value||"").trim();if(!title){toast("Give the habit a short name first.");return;}
+    state.habits.push({id:"habit-"+Date.now(),title:title,category:"Daily habit"});node.value="";saveState();renderGoals();toast("Habit added.");
+  };
+  window.deleteStudyHabit=function(id){
+    if(!confirm("Delete this habit?"))return;state.habits=state.habits.filter(h=>h.id!==id);Object.keys(state.habitLogs||{}).forEach(date=>{if(state.habitLogs[date])delete state.habitLogs[date][id];});saveState();renderGoals();toast("Habit deleted.");
+  };
+  window.saveGoalSettings=function(){
+    const daily=Math.max(15,Math.min(900,Number(byId("goalDailyMinutes").value)||300)),days=Math.max(3,Math.min(7,Number(byId("goalWeeklyDays").value)||6)),topics=Math.max(1,Math.min(30,Number(byId("goalWeeklyTopicTests").value)||3)),pyqs=Math.max(10,Math.min(5000,Number(byId("goalWeeklyPyqQuestions").value)||500));
+    state.studyGoals={...(state.studyGoals||{}),dailyMinutes:daily,weeklyDays:days,weeklyTopicTests:topics,weeklyPyqQuestions:pyqs};
+    saveState();renderGoals();renderPerformance();renderDailyLog();toast("Goals and targets saved.");
+  };
+  window.renderAllProductivity=function(){renderDailyLog();renderPerformance();renderMistakes();renderNotes();renderGoals();window.renderDailyPulse();window.renderRevisionQueue();};
   /* Preserve the original app handlers and route extra work through the same save/cloud layer. */
   const originalSaveState=saveState;
-  saveState=function(){originalSaveState();if(byId("page-daily"))renderDailyLog();if(byId("page-performance"))renderPerformance();if(byId("page-mistakes"))renderMistakes();window.renderDailyPulse();window.renderRevisionQueue();};
+  saveState=function(){originalSaveState();if(byId("page-daily"))renderDailyLog();if(byId("page-performance"))renderPerformance();if(byId("page-mistakes"))renderMistakes();if(byId("page-notes"))renderNotes();if(byId("page-goals"))renderGoals();window.renderDailyPulse();window.renderRevisionQueue();};
   const originalRenderDashboard=renderDashboard;
   renderDashboard=function(){originalRenderDashboard();window.renderDailyPulse();};
   const originalGo=go;
   go=function(page){
-    if(page!=="daily"&&page!=="performance"&&page!=="mistakes")return originalGo(page);
+    if(page!=="daily"&&page!=="performance"&&page!=="mistakes"&&page!=="notes"&&page!=="goals")return originalGo(page);
     currentPage=page;
     document.querySelectorAll(".page").forEach(n=>n.classList.toggle("active",n.id==="page-"+page));
     document.querySelectorAll("nav [data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
-    const title=page==="daily"?["YOUR DAY","Daily log","Plan, track and reflect on what you studied."]:page==="performance"?["YOUR PROGRESS","Performance studio","Weekly trends, goals and patterns from your study history."]:["ERROR REVIEW","Mistake bank","Turn wrong answers into scheduled revision."];
+    const title=page==="daily"?["YOUR DAY","Daily Study Journal","Log what you studied and build consistency."]:page==="performance"?["YOUR PROGRESS","Performance Studio","Analyse progress, goals and study patterns."]:page==="mistakes"?["ERROR REVIEW","Mistake Bank","Learn from mistakes, track and revise."]:page==="notes"?["YOUR NOTES","Notes","Save formulas, doubts and useful reminders."]:["YOUR HABITS","Goals & Habits","Set goals and build small daily habits."];
     byId("pageCrumb").textContent=title[0];byId("pageTitle").textContent=title[1];byId("pageSubtitle").textContent=title[2];
     window.scrollTo({top:0,behavior:"smooth"});
-    if(page==="daily")renderDailyLog();else if(page==="performance")renderPerformance();else renderMistakes();
+    if(page==="daily")renderDailyLog();else if(page==="performance")renderPerformance();else if(page==="mistakes")renderMistakes();else if(page==="notes")renderNotes();else renderGoals();
   };
   const originalSaveModal=saveModal;
   saveModal=function(e){
