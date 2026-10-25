@@ -11,9 +11,10 @@
   let lastSignature = "";
 
   function pageIsConfigured(config) {
-    return !!config && config.origin === location.origin &&
-      typeof config.pathPrefix === "string" &&
-      location.pathname.startsWith(config.pathPrefix);
+    if (!config || config.origin !== location.origin || typeof config.pathPrefix !== "string") return false;
+    const prefix = config.pathPrefix;
+    return !prefix || prefix === "/" || location.pathname === prefix ||
+      location.pathname.startsWith(prefix.endsWith("/") ? prefix : prefix + "/");
   }
 
   async function publishRecords() {
