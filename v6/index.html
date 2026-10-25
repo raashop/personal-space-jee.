@@ -4863,7 +4863,8 @@ function renderStudyActivitySummary(){
  }).join("")+(rendered.length>5?'<button type="button" class="study-chapter-more" onclick="go(\'chapters\')">+'+(rendered.length-5)+' more chapters · Open Chapter Planner ↗</button>':""):'<div class="empty">No chapters logged today yet. Watch a matched lecture or log a study session to see chapter progress here.</div>';
  const chapterCount=document.getElementById("studyActivityChapters");if(chapterCount)chapterCount.textContent=String(doneToday.length);
  const chapterMeta=document.getElementById("studyActivityChaptersMeta");if(chapterMeta)chapterMeta.textContent=chapterActivity.size+" chapter"+(chapterActivity.size===1?"":"s")+" touched today";
- renderDashboardDailySchedule();
+ const dailyPlanNode=document.getElementById("studyActivityDailyPlan");
+ if(dailyPlanNode&&!dailyPlanNode.querySelector(".study-daily-item"))renderDashboardDailySchedule();
  renderYoutubeCourseProgress();
 }
 async function addYoutubeCourse(event){
