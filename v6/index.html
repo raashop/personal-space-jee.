@@ -3431,7 +3431,7 @@ function saveChapterAllocationPrefs(){
  writeAllocationPrefs(prefs);
 }
 function saveAllocationMode(){const mode=document.getElementById("allocationPlanMode"),prefs=readAllocationPrefs();if(mode)prefs.mode=mode.value==="test"?"test":"chapters";writeAllocationPrefs(prefs);}
-function clearAllocationSelection(){const prefs=readAllocationPrefs();prefs.selected=[];writeAllocationPrefs(prefs);renderChapterAllocation();const status=document.getElementById("chapterAllocationAIStatus");if(status)status.textContent="Selection cleared. Choose any chapter, regardless of its current status, to create a new plan.";}
+function clearAllocationSelection(){const prefs=readAllocationPrefs();prefs.selected=[];writeAllocationPrefs(prefs);const result=document.getElementById("chapterAllocationResultView");if(result)result.hidden=true;const working=document.getElementById("allocationWorking");if(working)working.hidden=true;const manual=document.getElementById("allocationManualControls");if(manual)manual.hidden=false;const actions=document.getElementById("allocationInputActions");if(actions)actions.hidden=false;renderChapterAllocation();const status=document.getElementById("chapterAllocationAIStatus");if(status){status.hidden=false;status.textContent="Selection cleared. Choose any chapters to make a new plan."}}
 function allocationChapterKey(chapter){return String(chapter.subject||"")+"::"+String(chapter.chapter||"");}
 function setAllocationSubjectFilter(subject){const chosen=["all","Physics","Chemistry","Mathematics"].includes(subject)?subject:"all";const prefs=readAllocationPrefs();prefs.subjectFilter=chosen;writeAllocationPrefs(prefs);renderAllocationChapterPicker();}
 function selectVisibleAllocationChapters(){
@@ -3450,20 +3450,27 @@ function renderAllocationChapterPicker(){
   const subjectOk=filter==="all"||ch.subject===filter,searchable=(ch.subject+" "+ch.chapter+" "+chapterDisplayName(ch.subject,ch.chapter)+" "+String(ch.class||"")).toLowerCase();
   return subjectOk&&searchable.includes(query);
  }).sort((a,b)=>["Physics","Chemistry","Mathematics"].indexOf(a.subject)-["Physics","Chemistry","Mathematics"].indexOf(b.subject)||String(a.class||"").localeCompare(String(b.class||""))||chapterDisplayName(a.subject,a.chapter).localeCompare(chapterDisplayName(b.subject,b.chapter)));
+ const chosen=all.filter(ch=>selected.has(allocationChapterKey(ch)));
+ const chips=document.getElementById("allocationSelectedStrip");
+ if(chips)chips.innerHTML=chosen.map(ch=>'<button type="button" class="allocation-selected-chip '+(ch.subject==="Physics"?"physics":ch.subject==="Chemistry"?"chemistry":"maths")+'" data-remove-allocation-chapter="'+escapeAttr(allocationChapterKey(ch))+'" title="Remove '+escapeAttr(chapterDisplayName(ch.subject,ch.chapter))+'">'+escapeHTML(chapterDisplayName(ch.subject,ch.chapter))+' ×</button>').join("");
  picker.innerHTML=all.map(ch=>{
   const key=allocationChapterKey(ch),checked=selected.has(key),cls=ch.subject==="Physics"?"physics":ch.subject==="Chemistry"?"chemistry":"maths";
   return '<label class="allocation-chapter-choice '+cls+(checked?" is-selected":"")+'"><input type="checkbox" data-allocation-chapter value="'+escapeAttr(key)+'" '+(checked?"checked":"")+'><span class="allocation-choice-copy"><strong>'+escapeHTML(chapterDisplayName(ch.subject,ch.chapter))+'</strong><small>'+escapeHTML(ch.class||"JEE Main")+' · '+escapeHTML(ch.subject)+'</small></span><span class="allocation-choice-check" aria-hidden="true">✓</span></label>';
- }).join("")||'<div class="empty">No chapters match this subject/search. Try All subjects or clear the search.</div>';
+ }).join("")||'<div class="empty">No chapters match your search.</div>';
  document.querySelectorAll("[data-allocation-subject]").forEach(button=>{const active=button.getAttribute("data-allocation-subject")===filter;button.classList.toggle("active",active);button.setAttribute("aria-pressed",String(active));});
  picker.querySelectorAll("[data-allocation-chapter]").forEach(input=>input.addEventListener("change",()=>{
   const current=readAllocationPrefs(),key=input.value;
-  if(input.checked&&!current.selected.includes(key)&&current.selected.length>=20){input.checked=false;toast("Gemini accepts up to 20 chapters per plan. Clear or generate a plan before adding more.");return;}
+  if(input.checked&&!current.selected.includes(key)&&current.selected.length>=20){input.checked=false;toast("Gemini accepts up to 20 chapters per plan. Remove a selection before adding another.");return;}
+  if(input.checked)current.selected.push(key);else current.selected=current.selected.filter(value=>value!==key);
+  current.selected=Array.from(new Set(current.selected)).slice(0,20);writeAllocationPrefs(current);
   const card=input.closest(".allocation-chapter-choice");if(card)card.classList.toggle("is-selected",input.checked);
-  saveChapterAllocationPrefs();
-  const count=readAllocationPrefs().selected.length,meta=document.getElementById("allocationSelectionMeta");if(meta)meta.textContent=count+" selected · any chapter status allowed · up to 20 per plan.";
+  const count=document.getElementById("allocationSelectionMeta");if(count)count.textContent=current.selected.length+" selected";
   renderChapterAllocation();
  }));
- const meta=document.getElementById("allocationSelectionMeta");if(meta)meta.textContent=prefs.selected.length+" selected · any chapter status allowed · up to 20 per plan.";
+ if(chips)chips.querySelectorAll("[data-remove-allocation-chapter]").forEach(button=>button.addEventListener("click",()=>{
+  const current=readAllocationPrefs();current.selected=current.selected.filter(value=>value!==button.getAttribute("data-remove-allocation-chapter"));writeAllocationPrefs(current);renderChapterAllocation();
+ }));
+ const meta=document.getElementById("allocationSelectionMeta");if(meta)meta.textContent=prefs.selected.length+" selected";
 }
 function allocationDateAfterDays(days){
  const date=new Date();date.setHours(0,0,0,0);date.setDate(date.getDate()+Math.max(1,Number(days)||1));
