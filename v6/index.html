@@ -4746,6 +4746,8 @@ function renderStudyActivitySummary(){
  const sourceSeconds=(prefix)=>Object.entries(todayLedger).reduce((sum,entry)=>sum+(String(entry[0]).startsWith(prefix)?Math.max(0,Number(entry[1])||0):0),0);
  const youtubeSecondsToday=sourceSeconds("youtube:"),telegramSecondsToday=sourceSeconds("telegram:");
  const ytRows=readYoutubeLectures(),tgRows=typeof readTelegramLectures==="function"?readTelegramLectures():[];
+ const courseVideos=readYoutubeCourses().flatMap(course=>(Array.isArray(course.videos)?course.videos:[]));
+ const todayYoutubeIds=new Set(Object.keys(todayLedger).filter(key=>key.startsWith("youtube:")&&(Number(todayLedger[key])||0)>0).map(key=>key.slice(8)));
  const trackedLectureMinutes=Math.round((youtubeSecondsToday+telegramSecondsToday)/60);
  const minutes=sessionMinutes+trackedLectureMinutes;
  const sessionNode=document.getElementById("studyActivityHours");if(sessionNode)sessionNode.textContent=durationLabel(minutes);
@@ -4770,17 +4772,20 @@ function renderStudyActivitySummary(){
  const ytTodayRows=ytRows.filter(row=>(Number(row.watchedSeconds)||0)>0&&localDateKey(row.lastWatchedAt||"")===today);
  const tgTodayRows=tgRows.filter(row=>(Number(row.watchedSeconds)||0)>0&&localDateKey(row.lastWatchedAt||"")===today);
  ytTodayRows.forEach(row=>addChapter(row.subject,row.chapter));
+ courseVideos.filter(video=>todayYoutubeIds.has(String(video.videoId))&&video.subject&&video.chapter).forEach(video=>addChapter(video.subject,video.chapter));
  tgTodayRows.forEach(row=>addChapter(row.subject,row.chapter));
  const doneToday=(Array.isArray(state.chapters)?state.chapters:[]).filter(ch=>ch.prep==="Exam Ready"&&localDateKey(ch.prepUpdatedAt||"")===today);
  doneToday.forEach(ch=>{const record=addChapter(ch.subject,ch.chapter);if(record)record.doneToday=true;});
  const chapterList=document.getElementById("studyActivityChapterList");
  const rendered=Array.from(chapterActivity.values()).map(record=>{
   const ch=record.chapter;
-  const ytToday=ytRows.filter(row=>row.subject===ch.subject&&row.chapter===ch.chapter).reduce((sum,row)=>sum+(Number(todayLedger["youtube:"+String(row.videoId)])||0),0);
+  const youtubeChapterIds=new Set(ytRows.filter(row=>row.subject===ch.subject&&row.chapter===ch.chapter).map(row=>String(row.videoId)));
+  courseVideos.filter(video=>video.subject===ch.subject&&video.chapter===ch.chapter).forEach(video=>youtubeChapterIds.add(String(video.videoId)));
+  const ytToday=Array.from(youtubeChapterIds).reduce((sum,id)=>sum+(Number(todayLedger["youtube:"+id])||0),0);
   const tgToday=tgRows.filter(row=>row.subject===ch.subject&&row.chapter===ch.chapter).reduce((sum,row)=>sum+(Number(todayLedger["telegram:"+String(row.id)])||0),0);
   const studyMinutes=record.sessionMinutes+Math.round((ytToday+tgToday)/60);
   const lectureProgress=typeof getChapterLectureProgress==="function"?getChapterLectureProgress(ch.subject,ch.chapter):{total:0,watched:0,percent:0,tracked:false,telegramTracked:0};
-  const ytTracked=new Set(ytRows.filter(row=>row.subject===ch.subject&&row.chapter===ch.chapter&&(Number(row.watchedSeconds)||0)>0).map(row=>String(row.videoId))).size;
+  const ytTracked=lectureProgress.watched;
   const tgTracked=tgRows.filter(row=>row.subject===ch.subject&&row.chapter===ch.chapter&&(Number(row.watchedSeconds)||0)>0).length;
   const lectureLabel=lectureProgress.total
    ?lectureProgress.watched+" / "+lectureProgress.total+" YouTube lectures · "+lectureProgress.percent+"%"
