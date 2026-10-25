@@ -52,14 +52,14 @@
     ["Physics","Dual Nature of Matter and Radiation",["dual nature","photoelectric effect","de broglie"]],
     ["Physics","Atoms and Nuclei",["atoms and nuclei","radioactivity","bohr model","nuclear binding energy"]],
     ["Physics","Electronic Devices",["semiconductor","electronic devices","logic gates","diode"]],
-    ["Chemistry","Some Basic Concepts in Chemistry",["mole concept","some basic concepts in chemistry","stoichiometry"]],
+    ["Chemistry","Some Basic Concepts in Chemistry",["mole concept","some basic concepts in chemistry","some basic concepts of chemistry","stoichiometry"]],
     ["Chemistry","Atomic Structure",["structure of atom","atomic structure","quantum numbers","bohr model chemistry"]],
     ["Chemistry","Chemical Bonding and Molecular Structure",["chemical bonding","molecular structure","vsepr","hybridisation","molecular orbital theory"]],
     ["Chemistry","Chemical Thermodynamics",["chemical thermodynamics","enthalpy","gibbs free energy"]],
     ["Chemistry","Solutions",["solutions chemistry","solutions and colligative properties","colligative properties","raoult's law","osmotic pressure","elevation in boiling point","depression in freezing point","van't hoff factor"]],
     ["Chemistry","Equilibrium",["chemical equilibrium","ionic equilibrium","buffer solution","solubility product"]],
     ["Chemistry","Redox Reactions and Electrochemistry",["redox reactions","electrochemistry","nernst equation","electrochemical cell"]],
-    ["Chemistry","Chemical Kinetics",["chemical kinetics","rate law","order of reaction","half life","pseudo first order"]],
+    ["Chemistry","Chemical Kinetics",["chemical kinetics","kinetics","rate law","order of reaction","rate of reaction","half life","pseudo first order"]],
     ["Chemistry","Classification of Elements and Periodicity in Properties",["periodic table","periodicity in properties"]],
     ["Chemistry","p-Block Elements",["p block elements","p-block elements"]],
     ["Chemistry","d- and f-Block Elements",["d and f block","d-block elements","f-block elements"]],
@@ -68,7 +68,7 @@
     ["Chemistry","Hydrocarbons",["hydrocarbons","alkanes","alkenes","alkynes","aromatic hydrocarbons"]],
     ["Chemistry","Organic Compounds Containing Halogens",["haloalkanes","haloarenes","organic compounds containing halogens"]],
     ["Chemistry","Organic Compounds Containing Oxygen",["alcohols phenols ethers","alcohols phenols and ethers","alcohol phenol ether","phenols and ethers","aldehydes ketones carboxylic acids","aldehyde ketone carboxylic acid","carbonyl compounds","organic compounds containing oxygen"]],
-    ["Chemistry","Organic Compounds Containing Nitrogen",["amines chemistry","diazonium salts","organic compounds containing nitrogen"]],
+    ["Chemistry","Organic Compounds Containing Nitrogen",["amines chemistry","amines","diazonium salts","organic compounds containing nitrogen"]],
     ["Chemistry","Biomolecules",["biomolecules","carbohydrates","proteins","tollens reagent","fehling solution"]],
     ["Mathematics","Sets, Relations and Functions",["sets relations and functions","relations and functions"]],
     ["Mathematics","Complex Numbers and Quadratic Equations",["complex numbers","quadratic equations","argand plane"]],
@@ -87,7 +87,6 @@
   ].filter(item => Array.isArray(item) && Array.isArray(item[2]));
   CHAPTERS.sort((a, b) => Math.max(...b[2].map(term => term.length)) - Math.max(...a[2].map(term => term.length)));
 
-  const JEE_HINTS = ["jee","mains","main 2027","advanced","ncert","one shot","one-shot","lecture","class 11","class 12","chapter","pyq","revision","unacademy","physics wallah","pw","competishun","vedantu","mathongo","allen","akash"];
   const EXCLUDE = ["official music video","lyric video","full episode","anime episode","movie trailer","gameplay","reaction video","reaction channel","vlog","meme compilation"];
   const videoId = () => {
     try { return new URL(location.href).searchParams.get("v"); } catch { return null; }
