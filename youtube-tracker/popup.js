@@ -50,7 +50,7 @@ async function restoreConnection() {
     plannerUrlInput.value = config.url || "";
     disconnectButton.classList.remove("hidden");
     const last = data[LAST_SYNC_KEY];
-    if (last && last.origin === config.origin) showConnectionMessage("Connected · " + (last.count || 0) + " records last synced at " + new Date(last.syncedAt).toLocaleTimeString() + ".");
+    if (last && last.origin === config.origin) showConnectionMessage("Connected · " + (last.count || 0) + " YouTube + Telegram records synced at " + new Date(last.syncedAt).toLocaleTimeString() + ".");
     else showConnectionMessage("Connected to " + config.origin + ". Open or refresh your planner page to sync existing records.");
   } else showConnectionMessage("Not connected yet. Connect once; repeated export/import is not needed.");
 }
@@ -179,7 +179,7 @@ async function refresh() {
     plannerUrlInput.value = config.url || plannerUrlInput.value;
     disconnectButton.classList.remove("hidden");
     const last = data[LAST_SYNC_KEY];
-    if (last && last.origin === config.origin) showConnectionMessage("Connected · " + (last.count || 0) + " lecture records synced at " + new Date(last.syncedAt).toLocaleTimeString() + ".");
+    if (last && last.origin === config.origin) showConnectionMessage("Connected · " + (last.count || 0) + " YouTube + Telegram records synced at " + new Date(last.syncedAt).toLocaleTimeString() + ".");
     else showConnectionMessage("Connected to " + config.origin + ". Open or refresh your planner page to sync.");
   } else disconnectButton.classList.add("hidden");
 }
@@ -190,11 +190,23 @@ chrome.storage.onChanged.addListener((changes, area) => {
 connectButton.addEventListener("click", connectPlanner);
 disconnectButton.addEventListener("click", disconnectPlanner);
 document.getElementById("export").addEventListener("click", async () => {
-  const data = await chrome.storage.local.get(STORE);
+  const data = await chrome.storage.local.get([STORE, TELEGRAM_STORE]);
   const rows = Array.isArray(data[STORE]) ? data[STORE] : [];
-  const payload = { format: "personal-space-youtube-lectures-v1", exportedAt: new Date().toISOString(), lectures: rows };
+  const telegramRows = Array.isArray(data[TELEGRAM_STORE]) ? data[TELEGRAM_STORE] : [];
+  // Keep the legacy format/lectures field compatible with the planner importer,
+  // while also including Telegram rows so a single backup preserves everything.
+  const payload = {
+    format: "personal-space-youtube-lectures-v1",
+    backupVersion: 2,
+    exportedAt: new Date().toISOString(),
+    lectures: rows,
+    telegramLectures: telegramRows
+  };
   const url = URL.createObjectURL(new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" }));
-  const a = document.createElement("a"); a.href = url; a.download = "personal-space-youtube-lectures.json"; a.click();
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "personal-space-lecture-tracker-backup.json";
+  a.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 });
 refresh();
