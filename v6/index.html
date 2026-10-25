@@ -2364,6 +2364,68 @@ td strong {
 @media(max-width:1050px){#page-lectures .lecture-platform-grid{grid-template-columns:minmax(0,1fr);gap:16px}#page-lectures .lecture-history-panel #psLectureList,#page-lectures .telegram-history-panel #psTelegramList{max-height:420px}}
 @media(max-width:680px){#page-lectures .lecture-summary-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}#page-lectures .lecture-summary-grid .stat-card{padding:11px}#page-lectures .lecture-summary-grid .stat-card strong{font-size:20px}#page-lectures .lecture-summary-grid .stat-card small{font-size:9px}#page-lectures .lecture-platform-heading{flex-wrap:wrap}#page-lectures .lecture-import-button{margin-left:auto}#page-lectures .lecture-form-pair{grid-template-columns:minmax(0,1fr)}}
 </style>
+
+<style id="ps-v6-layout-recovery-20261026">
+/* Recovery-only fixes: keep inactive tabs hidden even when legacy navigation leaves inline display styles behind. */
+.page:not(.active){display:none!important}
+.page.active{display:block!important}
+.page{min-width:0;width:100%}
+
+/* Desktop sidebar stays in the viewport while the main content scrolls. */
+@media (min-width:721px){
+  .shell{position:relative;align-items:start}
+  .sidebar{
+    position:fixed!important;
+    top:0!important;
+    left:max(0px,calc((100vw - 1800px)/2))!important;
+    width:205px!important;
+    height:100vh!important;
+    height:100dvh!important;
+    max-height:100dvh;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    overscroll-behavior:contain;
+    align-self:start;
+  }
+  main{grid-column:2!important;min-width:0;width:100%}
+}
+@media (min-width:721px) and (max-width:1100px){
+  .sidebar{width:190px!important}
+}
+
+/* Keep the original compact top-navigation behaviour on narrow screens. */
+@media (max-width:720px){
+  .shell{display:block!important;grid-template-columns:1fr!important}
+  .sidebar{
+    position:sticky!important;top:0!important;left:auto!important;
+    width:auto!important;height:auto!important;max-height:none;
+    overflow:visible!important;
+  }
+  main{grid-column:1!important;min-width:0;width:100%}
+}
+
+/* Chapter titles are links/actions, not default browser buttons. */
+#page-chapters .chapter-row-name{min-width:0;vertical-align:middle}
+#page-chapters .chapter-name-link{
+  -webkit-appearance:none;appearance:none;
+  display:inline-flex;align-items:center;gap:5px;
+  max-width:100%;min-height:24px;
+  margin:0;padding:2px 0;
+  border:0!important;border-radius:0!important;
+  background:transparent!important;box-shadow:none!important;
+  color:#20354d!important;
+  font:inherit;font-size:12px;font-weight:780;line-height:1.4;
+  text-align:left;white-space:normal;overflow-wrap:anywhere;
+  cursor:pointer;
+}
+#page-chapters .chapter-name-link:hover{
+  color:#1977b8!important;text-decoration:underline;text-underline-offset:3px;
+}
+#page-chapters .chapter-name-link:focus-visible{
+  outline:2px solid #70a9d5!important;outline-offset:3px;border-radius:4px!important;
+}
+#page-chapters .chapter-row-name>small{display:block;margin-top:4px}
+</style>
 </head>
 <body>
 <div class="shell">
