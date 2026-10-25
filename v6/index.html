@@ -3501,47 +3501,44 @@ function renderAllocationAccordionSummary(){
  }
 }
 function renderChapterAllocation(){
- const modeSelect=document.getElementById("allocationPlanMode"),testSelect=document.getElementById("allocationTestSelect"),testControls=document.getElementById("allocationTestControls"),manualControls=document.getElementById("allocationManualControls"),results=document.getElementById("chapterAllocationResults");
+ const modeSelect=document.getElementById("allocationPlanMode"),testSelect=document.getElementById("allocationTestSelect"),testControls=document.getElementById("allocationTestControls"),manualControls=document.getElementById("allocationManualControls"),results=document.getElementById("chapterAllocationResults"),resultView=document.getElementById("chapterAllocationResultView"),inputActions=document.getElementById("allocationInputActions"),working=document.getElementById("allocationWorking");
  if(!results)return;
  const prefs=readAllocationPrefs();if(modeSelect)modeSelect.value=prefs.mode;
  const daysInput=document.getElementById("allocationDaysInput"),hoursInput=document.getElementById("allocationDailyHoursInput");
  if(daysInput)daysInput.value=prefs.days;if(hoursInput)hoursInput.value=prefs.dailyHours;
  const mode=modeSelect?modeSelect.value:prefs.mode;
  if(testControls)testControls.hidden=mode==="chapters";if(manualControls)manualControls.hidden=mode!=="chapters";
+ const daysField=document.getElementById("allocationDaysField");if(daysField)daysField.hidden=mode==="test";
  const tests=(state.topics||[]).filter(t=>t.status==="Planned"&&t.plannedDate&&topicChapters(t).length).sort((a,b)=>a.plannedDate.localeCompare(b.plannedDate));
  if(testSelect){const previous=testSelect.value;testSelect.innerHTML=tests.map(t=>'<option value="'+escapeAttr(t.id)+'">'+escapeHTML(topicDisplayName(t)+' · '+formatNiceDate(t.plannedDate))+'</option>').join("")||'<option value="">No planned topic tests</option>';if(tests.some(t=>t.id===previous))testSelect.value=previous;}
- renderAllocationAccordionSummary();
- if(mode==="chapters")renderAllocationChapterPicker();
  const context=getAllocationContext();
- if(!context.test){results.innerHTML='<div class="empty">Create a planned topic test or choose “Pick my chapters” to add chapters directly.</div>';return;}
- if(!context.chapters.length){results.innerHTML=mode==="chapters"?'<div class="empty allocation-empty-state"><strong>Build your chapter plan</strong><span>Search for any Physics, Chemistry or Mathematics chapter and select it. Current chapter status does not limit what you can add.</span></div>':'<div class="empty">This planned test has no selected chapters. Edit the test and choose chapters first.</div>';return;}
- if(context.chapters.length>20){results.innerHTML='<div class="allocation-warning">You selected '+context.chapters.length+' chapters. Gemini handles up to 20 chapters in one plan; reduce your selection or run it in batches.</div>';return;}
- const cached=chapterAllocationAIResults&&chapterAllocationAIResults.planKey===context.key?chapterAllocationAIResults.data:null;
- const chapters=context.chapters.map(ch=>({...ch,hours:chapterAllocationHours(ch)}));
- if(cached&&Array.isArray(cached.chapters))chapters.forEach(ch=>{const item=cached.chapters.find(a=>a.chapter===ch.chapter&&a.subject===ch.subject);if(item){ch.hours=Number(item.estimatedHours)||ch.hours;ch.focusDays=Number(item.focusDays)||1;ch.priority=item.priority||"Medium";ch.reason=item.reason||"";ch.focus=item.focus||"";}});
- chapters.sort((a,b)=>b.hours-a.hours);
- const total=Math.round(chapters.reduce((sum,ch)=>sum+ch.hours,0)*10)/10,daily=Math.round(total/context.daysRemaining*10)/10,priorities={High:"allocation-priority-high",Medium:"allocation-priority-medium",Low:"allocation-priority-low"},maxHours=Math.max.apply(null,chapters.map(item=>item.hours).concat([1]));
- results.innerHTML='<div class="allocation-summary-strip"><div class="allocation-summary-stat"><strong>'+context.daysRemaining+'</strong><small>days available</small></div><div class="allocation-summary-stat"><strong>'+total+'h</strong><small>estimated chapter work</small></div><div class="allocation-summary-stat"><strong>'+daily+'h/day</strong><small>average chapter workload</small></div></div>'+
- (cached?'<div class="allocation-ai-summary"><strong>Gemini recommendation</strong><p>'+escapeHTML(cached.summary||"Balance these chapters with ongoing JEE syllabus progress.")+'</p></div>':'<div class="allocation-note">Choose any chapter, then generate an AI workload plan. Click a chapter title below to open its planner details.</div>')+
- '<div class="allocation-result-grid">'+chapters.map(ch=>{
-  const focusDays=ch.focusDays||Math.max(1,Math.ceil(ch.hours/2.5)),subjectClass=ch.subject==="Physics"?"physics":ch.subject==="Chemistry"?"chemistry":"maths";
-  return '<article class="allocation-chapter '+subjectClass+'"><div class="allocation-chapter-top"><button type="button" class="allocation-chapter-name" data-open-chapter-subject="'+escapeAttr(ch.subject)+'" data-open-chapter-name="'+escapeAttr(ch.chapter)+'">'+escapeHTML(chapterDisplayName(ch.subject,ch.chapter))+'</button><span class="allocation-priority '+(priorities[ch.priority]||"")+'">'+escapeHTML(ch.priority||"Estimated")+'</span></div><div class="allocation-meta"><span>'+escapeHTML(ch.subject)+' · '+escapeHTML(ch.class||"JEE Main")+'</span><strong>'+ch.hours+'h · '+focusDays+' focus day'+(focusDays===1?"":"s")+'</strong></div><div class="allocation-bar"><span style="width:'+Math.round(ch.hours/maxHours*100)+'%"></span></div>'+
-  (ch.focus?'<div class="allocation-note allocation-focus">'+escapeHTML(ch.focus)+'</div>':'')+(ch.reason?'<div class="allocation-reason">'+escapeHTML(ch.reason)+'</div>':'')+'</article>';
- }).join("")+'</div>'+
- (cached&&Array.isArray(cached.warnings)&&cached.warnings.length?'<div class="allocation-warning">'+cached.warnings.map(w=>escapeHTML(w)).join("<br>")+'</div>':'')+
- '<div class="allocation-note"><strong>'+(cached?"AI balanced plan:":"Estimated plan:")+'</strong> spend about '+daily+' hours per day on these chapters. Keep time for the wider JEE syllabus too. Focus-day counts can overlap; this is a flexible workload plan, not an hourly timetable.</div>';
+ const summary=document.getElementById("chapterAllocationCollapsedSummary");
+ if(summary)summary.textContent=mode==="chapters"?(prefs.selected.length?prefs.selected.length+" chapters selected · "+prefs.days+" days · "+prefs.dailyHours+"h/day":"Choose chapters · "+prefs.days+" days · "+prefs.dailyHours+"h/day"):(tests.find(t=>t.id===(testSelect&&testSelect.value))?topicDisplayName(tests.find(t=>t.id===testSelect.value))+" · "+context.daysRemaining+" days left · "+context.dailyStudyHours+"h/day":"Select a planned test");
+ if(mode==="chapters")renderAllocationChapterPicker();
+ if(resultView&&resultView.hidden===false)return;
+ if(!context.test){results.innerHTML='<div class="empty">Select a planned topic test or choose chapters directly.</div>';return;}
+ if(!context.chapters.length){results.innerHTML=mode==="chapters"?'<div class="empty allocation-empty-state"><strong>Choose your chapters</strong><span>Search and tap any Physics, Chemistry or Mathematics chapter. Preparation status does not restrict selection.</span></div>':'<div class="empty">This planned test has no chapters selected.</div>';return;}
+ if(context.chapters.length>20){results.innerHTML='<div class="allocation-warning">Gemini handles up to 20 chapters in one plan. Reduce the selection and generate in batches.</div>';return;}
+ results.innerHTML='<div class="allocation-selection-ready"><strong>'+context.chapters.length+' chapters selected</strong><span>'+context.daysRemaining+' days · '+context.dailyStudyHours+' hours available per day</span></div>';
+}
+function editAllocationPlan(){
+ const resultView=document.getElementById("chapterAllocationResultView"),inputActions=document.getElementById("allocationInputActions"),working=document.getElementById("allocationWorking"),manual=document.getElementById("allocationManualControls"),top=document.querySelector("#chapterAllocationPanel .allocation-controls-top"),status=document.getElementById("chapterAllocationAIStatus");
+ if(resultView)resultView.hidden=true;if(working)working.hidden=true;if(inputActions)inputActions.hidden=false;if(manual)manual.hidden=false;if(top)top.hidden=false;if(status)status.hidden=false;
+ const button=document.getElementById("chapterAllocationAIButton");if(button)button.disabled=false;
+ renderChapterAllocation();
 }
 async function requestAIChapterAllocation(){
- const button=document.getElementById("chapterAllocationAIButton"),status=document.getElementById("chapterAllocationAIStatus");
+ const button=document.getElementById("chapterAllocationAIButton"),status=document.getElementById("chapterAllocationAIStatus"),resultView=document.getElementById("chapterAllocationResultView"),working=document.getElementById("allocationWorking"),inputActions=document.getElementById("allocationInputActions"),manual=document.getElementById("allocationManualControls"),top=document.querySelector("#chapterAllocationPanel .allocation-controls-top"),resultTitle=document.getElementById("allocationResultTitle"),resultSummary=document.getElementById("allocationResultSummary");
  if(chapterAllocationAIActive)return;
  saveChapterAllocationPrefs();
  const context=getAllocationContext();
- if(!context.test){if(status)status.textContent=context.mode==="chapters"?"Select chapters in the picker first.":"Create a planned topic test, or switch to My chapters.";return;}
+ if(!context.test){if(status)status.textContent=context.mode==="chapters"?"Choose at least one chapter first.":"Create a planned topic test, or switch to My chapters.";return;}
  if(!context.chapters.length){if(status)status.textContent="Select at least one chapter first.";return;}
- if(context.chapters.length>20){if(status)status.textContent="Select no more than 20 chapters for one AI allocation.";return;}
+ if(context.chapters.length>20){if(status)status.textContent="Select no more than 20 chapters for one AI plan.";return;}
  chapterAllocationAIActive=true;
- if(button){button.disabled=true;button.textContent="Gemini is planning…";}
- if(status)status.textContent="Gemini is weighing chapter size, preparation status, test timing and your available hours…";
+ if(manual)manual.hidden=true;if(inputActions)inputActions.hidden=true;if(status)status.hidden=true;if(top)top.hidden=true;if(working)working.hidden=false;if(resultView)resultView.hidden=true;
+ if(button){button.disabled=true;button.textContent="Planning…";}
+ const results=document.getElementById("chapterAllocationResults");if(results)results.innerHTML="";
  try{
   restoreCloudSettings();
   if(!cloudClient)cloudClient=cloudCreateClient();
@@ -3551,34 +3548,71 @@ async function requestAIChapterAllocation(){
   if(!session||!session.access_token)throw new Error("Sign in to Supabase first using Backup & Sync.");
   const cfg=cloudSettings();
   if(!cfg.url||!cfg.key)throw new Error("Open Backup & Sync and configure the Supabase Project URL and Publishable key first.");
-  const chapterInput=context.chapters.map(ch=>({
-   chapter:ch.chapter,subject:ch.subject,class:ch.class||"",preparation:ch.prep||"Not Ready",baselineHours:chapterAllocationHours(ch)
-  }));
+  const chapterInput=context.chapters.map(ch=>({chapter:ch.chapter,subject:ch.subject,class:ch.class||"",preparation:ch.prep||"Not Ready",baselineHours:chapterAllocationHours(ch)}));
   const response=await fetch(cfg.url+"/functions/v1/chapter-allocation",{
-   method:"POST",
-   headers:{"Content-Type":"application/json","apikey":cfg.key,"Authorization":"Bearer "+session.access_token},
-   body:JSON.stringify({
-    test:{name:topicDisplayName(context.test),date:context.test.plannedDate||context.test.date,subject:context.test.subject||"Multiple subjects"},
-    daysRemaining:context.daysRemaining,
-    dailyStudyHours:context.dailyStudyHours,
-    balancePreference:"Balance test or chapter preparation with the overall JEE syllabus. Reserve about 35% for broader syllabus progress.",
-    chapters:chapterInput
-   })
+   method:"POST",headers:{"Content-Type":"application/json","apikey":cfg.key,"Authorization":"Bearer "+session.access_token},
+   body:JSON.stringify({test:{name:topicDisplayName(context.test),date:context.test.plannedDate||context.test.date,subject:context.test.subject||"Multiple subjects"},daysRemaining:context.daysRemaining,dailyStudyHours:context.dailyStudyHours,balancePreference:"Create a practical day-by-day workload schedule. State hours needed per day, not just total hours across all days. Leave 35% time for broader JEE syllabus progress and revision.",chapters:chapterInput})
   });
   let payload={};try{payload=await response.json();}catch(e){}
   if(!response.ok)throw new Error(payload.error||("AI function returned HTTP "+response.status+". Make sure the latest Supabase deployment succeeded."));
   if(!Array.isArray(payload.chapters)||!payload.chapters.length)throw new Error("Gemini returned no chapter estimates. Try again.");
-  chapterAllocationAIResults={planKey:context.key,data:payload,generatedAt:new Date().toISOString()};
-  renderChapterAllocation();
-  if(status)status.textContent="Gemini allocation generated. Click a chapter title to open its planner details.";
-  if(button)button.textContent="Regenerate AI allocation ↻";
+  // Build an explicit daily schedule locally from Gemini's chapter priorities and hour estimates.
+  const detailed=buildDailyAllocationSchedule(payload,context);
+  chapterAllocationAIResults={planKey:context.key,data:{...payload,dailySchedule:detailed.dailySchedule,chapters:detailed.chapters,totalHours:detailed.totalHours},generatedAt:new Date().toISOString()};
+  const data=chapterAllocationAIResults.data;
+  if(resultTitle)resultTitle.textContent="Your day-by-day plan";
+  if(resultSummary)resultSummary.textContent=context.daysRemaining+" days · "+context.dailyStudyHours+"h/day available · "+detailed.totalHours+"h planned test/chapter work";
+  if(working)working.hidden=true;
+  if(resultView)resultView.hidden=false;
+  if(results)results.innerHTML=renderDailyAllocationResults(data,context);
+  if(status){status.textContent="AI study schedule generated.";status.hidden=false;}
  }catch(error){
   const msg=error&&error.message?error.message:"Unknown error";
-  if(status)status.textContent="AI not connected yet: "+msg;
-  if(button)button.textContent="Try AI allocation again ↻";
+  if(working)working.hidden=true;if(resultView)resultView.hidden=true;if(manual)manual.hidden=false;if(inputActions)inputActions.hidden=false;if(top)top.hidden=false;if(status){status.hidden=false;status.textContent="AI allocation failed: "+msg;}
+  if(button)button.textContent="Try again ✦";
  }finally{
   chapterAllocationAIActive=false;if(button)button.disabled=false;
  }
+}
+function buildDailyAllocationSchedule(payload,context){
+ const original=context.chapters.map((ch,index)=>{
+  const ai=(payload.chapters||[]).find(item=>item.chapter===ch.chapter&&item.subject===ch.subject)||{};
+  return {...ch,id:String(index),hours:Math.max(.5,Math.min(20,Math.round((Number(ai.estimatedHours)||chapterAllocationHours(ch))*2)/2)),priority:["High","Medium","Low"].includes(ai.priority)?ai.priority:"Medium",focusDays:Math.max(1,Math.min(context.daysRemaining,Math.round(Number(ai.focusDays)||1))),focus:String(ai.focus||"Revise concepts and solve JEE questions."),reason:String(ai.reason||"")};
+ }).sort((a,b)=>({High:0,Medium:1,Low:2}[a.priority]-({High:0,Medium:1,Low:2}[b.priority])||b.hours-a.hours));
+ const limit=Math.max(.5,context.dailyStudyHours*.65),days=Array.from({length:context.daysRemaining},(_,i)=>({day:i+1,chapters:[],hours:0}));
+ // Spread each chapter across enough days to revisit it, prioritising its highest-weight work.
+ for(const ch of original){
+  let remaining=ch.hours,visits=Math.min(ch.focusDays,context.daysRemaining);
+  for(let visit=0;visit<visits&&remaining>.01;visit++){
+   const candidates=days.filter(d=>d.chapters.every(x=>x.subject!==ch.subject||x.chapter!==ch.chapter)).sort((a,b)=>a.hours-b.hours);
+   const day=candidates[0]||days.slice().sort((a,b)=>a.hours-b.hours)[0];
+   const share=Math.round((remaining/(visits-visit))*2)/2;
+   const allocated=Math.min(remaining,Math.max(.5,share));
+   day.chapters.push({...ch,dayHours:allocated});
+   day.hours=Math.round((day.hours+allocated)*10)/10;
+   remaining=Math.round((remaining-allocated)*10)/10;
+  }
+  let guard=0;
+  while(remaining>.01&&guard++<context.daysRemaining*4){
+   const day=days.slice().sort((a,b)=>a.hours-b.hours)[0];
+   const add=Math.min(remaining,Math.max(.5,Math.round(Math.min(2.5,remaining)*2)/2));
+   const existing=day.chapters.find(x=>x.subject===ch.subject&&x.chapter===ch.chapter);
+   if(existing)existing.dayHours=Math.round((existing.dayHours+add)*10)/10;else day.chapters.push({...ch,dayHours:add});
+   day.hours=Math.round((day.hours+add)*10)/10;remaining=Math.round((remaining-add)*10)/10;
+  }
+ }
+ const dailyCap=limit;
+ const overloaded=days.some(day=>day.hours>dailyCap);
+ const dailySchedule=days.map(day=>({...day,chapters:day.chapters.sort((a,b)=>({High:0,Medium:1,Low:2}[a.priority]-({High:0,Medium:1,Low:2}[b.priority])||b.dayHours-a.dayHours),broaderHours:Math.max(0,Math.round((context.dailyStudyHours-day.hours)*10)/10)}));
+ return {chapters:original,totalHours:Math.round(original.reduce((sum,ch)=>sum+ch.hours,0)*10)/10,dailySchedule,overloaded};
+}
+function renderDailyAllocationResults(data,context){
+ const daily=Array.isArray(data.dailySchedule)?data.dailySchedule:[],chapters=Array.isArray(data.chapters)?data.chapters:[],total=Number(data.totalHours)||0,priorityClass={High:"allocation-priority-high",Medium:"allocation-priority-medium",Low:"allocation-priority-low"};
+ return '<div class="allocation-summary-strip"><div class="allocation-summary-stat"><strong>'+context.daysRemaining+'</strong><small>days available</small></div><div class="allocation-summary-stat"><strong>'+total+'h</strong><small>total chapter work</small></div><div class="allocation-summary-stat"><strong>'+Number(data.testPrepHoursPerDay||total/context.daysRemaining).toFixed(1)+'h/day</strong><small>chapter work per day</small></div></div>'+
+ '<div class="allocation-ai-summary"><strong>Gemini recommendation</strong><p>'+escapeHTML(data.summary||"Follow the daily focus below. Keep the wider JEE syllabus active alongside test preparation.")+'</p></div>'+
+ '<div class="allocation-day-list">'+daily.map(day=>'<article class="allocation-day-card"><div class="allocation-day-head"><div><strong>Day '+day.day+'</strong><small>'+day.chapters.length+' chapter focus'+(day.chapters.length===1?"":"es")+'</small></div><span>'+Number(day.hours||0).toFixed(1)+'h</span></div><div class="allocation-day-bar"><i style="width:'+Math.min(100,Math.round((Number(day.hours||0)/Math.max(context.dailyStudyHours,1))*100))+'%"></i></div><div class="allocation-day-chapters">'+(day.chapters.length?day.chapters.map(ch=>'<button type="button" class="allocation-day-chapter" data-open-chapter-subject="'+escapeAttr(ch.subject)+'" data-open-chapter-name="'+escapeAttr(ch.chapter)+'"><span class="allocation-day-dot '+(ch.subject==="Physics"?"physics":ch.subject==="Chemistry"?"chemistry":"maths")+'"></span><span class="allocation-day-chapter-copy"><strong>'+escapeHTML(chapterDisplayName(ch.subject,ch.chapter))+'</strong><small>'+escapeHTML(ch.focus)+'</small></span><b>'+Number(ch.dayHours||0).toFixed(1)+'h</b></button>').join(""):'<span class="allocation-day-empty">Use this day for spaced revision and broader JEE progress.</span>')+'</div><div class="allocation-day-footer"><span>Wider JEE syllabus + revision</span><strong>'+Math.max(0,Math.round((context.dailyStudyHours-Number(day.hours||0))*10)/10).toFixed(1)+'h remaining</strong></div></article>').join("")+'</div>'+
+ (Array.isArray(data.warnings)&&data.warnings.length?'<div class="allocation-warning">'+data.warnings.map(w=>escapeHTML(w)).join("<br>")+'</div>':'')+
+ '<button type="button" class="btn btn-secondary" style="margin-top:12px" onclick="editAllocationPlan()">Edit selected chapters / time</button>';
 }
 function renderDashboard(){
  renderChapterAllocation();
