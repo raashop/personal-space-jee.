@@ -38,7 +38,6 @@
     ["Chemistry","Hydrocarbons",["hydrocarbons","alkanes","alkenes","alkynes","aromatic hydrocarbons"]],
     ["Chemistry","Organic Compounds Containing Halogens",["haloalkanes","haloarenes","organic compounds containing halogens"]],
     ["Chemistry","Organic Compounds Containing Oxygen",["alcohols phenols ethers","phenols and ethers","aldehydes ketones carboxylic acids","carbonyl compounds","organic compounds containing oxygen"]],
-    ,
     ["Chemistry","Organic Compounds Containing Nitrogen",["amines chemistry","diazonium salts","organic compounds containing nitrogen"]],
     ["Chemistry","Biomolecules",["biomolecules","carbohydrates","proteins","tollens reagent","fehling solution"]],
     ["Mathematics","Sets, Relations and Functions",["sets relations and functions","relations and functions"]],
