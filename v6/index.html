@@ -1935,200 +1935,46 @@ td strong {
 </style>
 <link rel="stylesheet" href="./edge.css?v=20261025-layout3">
 <style id="personal-space-study-activity">
-/* Preserve the dashboard hero and four metric cards; only replace the content beneath them. */
-.study-activity-panel{margin:18px 0 20px;min-width:0}
-.upcoming-item{display:grid;gap:6px;min-width:0}
+/* Dashboard: preserve the countdown hero and the four metric cards above this section. */
+.study-activity-panel{margin:0!important;padding:15px!important;min-width:0;border-radius:16px!important}
+.study-activity-panel .dashboard-panel-head{margin-bottom:10px;align-items:center}
+.study-activity-panel .dashboard-panel-head h2{font-size:16px;letter-spacing:-.025em}
+.study-activity-panel .dashboard-panel-head p{font-size:10px;line-height:1.4;margin-top:3px}
+.study-activity-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:10px 0 12px}
+.study-activity-stat{display:grid;grid-template-columns:26px minmax(0,1fr);column-gap:8px;row-gap:2px;align-items:center;padding:9px;border:1px solid var(--line);border-radius:11px;background:var(--surface,#fff);min-height:70px}
+.study-activity-icon{grid-row:span 2;display:grid;place-items:center;width:26px;height:26px;border-radius:8px;background:#e8f2ff;color:#2784d8;font-weight:900}
+.study-activity-icon.yt{background:#ffe9e8;color:#d83e39}.study-activity-icon.tg{background:#e7f2ff;color:#2685c7}.study-activity-icon.done{background:#e1f6eb;color:#15966a}
+.study-activity-stat small{font-size:9px;color:var(--muted);line-height:1.3}
+.study-activity-stat strong{font-size:17px;line-height:1.1;letter-spacing:-.03em}
+.study-activity-stat>span:last-child{grid-column:2;font-size:9px;color:var(--muted);line-height:1.25;overflow-wrap:anywhere}
+.study-activity-lower{display:block}
+.study-activity-subhead{display:flex;justify-content:space-between;gap:8px;align-items:baseline;margin:0 0 8px}
+.study-activity-subhead strong{font-size:12px}.study-activity-subhead span{font-size:9px;color:var(--muted);text-align:right}
+.study-activity-chapter-list{display:grid;grid-template-columns:minmax(0,1fr);gap:7px;min-width:0}
+.study-chapter-card{appearance:none;display:grid;gap:6px;width:100%;min-width:0;padding:10px 11px;border:1px solid var(--line);border-radius:12px;background:linear-gradient(135deg,#fff,#f8fbfc);color:var(--ink);text-align:left;cursor:pointer;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;animation:study-chapter-in .28s ease both}
+.study-chapter-card:hover{transform:translateY(-1px);border-color:var(--chapter-accent);box-shadow:0 6px 18px rgba(26,65,86,.08)}
+.study-chapter-card:focus-visible,#chapterAllocationToggle:focus-visible{outline:3px solid rgba(39,132,216,.3);outline-offset:2px}
+.study-chapter-card-head,.study-chapter-title,.study-chapter-details,.study-chapter-footer{display:flex;justify-content:space-between;align-items:center;gap:8px;min-width:0}
+.study-chapter-title{justify-content:flex-start;flex:1;min-width:0}.study-chapter-title i{width:7px;height:7px;border-radius:50%;background:var(--chapter-accent);flex:0 0 auto}
+.study-chapter-title strong{font-size:11px;line-height:1.35;overflow-wrap:anywhere}
+.study-chapter-state{font-size:8px;font-weight:800;color:#8d6216;background:#fff4dc;padding:4px 6px;border-radius:99px;white-space:nowrap}.study-chapter-state.is-done{background:#e2f7eb;color:#17784e}
+.study-chapter-details{font-size:9px;color:var(--muted);line-height:1.35;align-items:flex-start}.study-chapter-details>span{min-width:0;overflow-wrap:anywhere}.study-chapter-details strong{font-size:10px;color:var(--ink);white-space:nowrap}
+.study-chapter-progress{height:5px;border-radius:99px;background:#eaf0f3;overflow:hidden}.study-chapter-progress span{display:block;height:100%;border-radius:99px;transition:width .45s cubic-bezier(.2,.7,.2,1)}
+.study-chapter-footer{font-size:8px;color:var(--muted)}.study-chapter-footer small{font-size:8px}
+#studyActivityPanel .study-chapter-more{justify-self:start;border:0;background:transparent;color:#24785b;font-size:10px;font-weight:800;cursor:pointer;padding:6px 2px;text-align:left}.study-chapter-more:hover{text-decoration:underline}
+/* Compact two-column dashboard: activity and upcoming tests beside the AI planner. */
+.dashboard-main-layout.dashboard-main-layout-optimized{display:grid!important;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr)!important;gap:16px;margin-top:16px;align-items:start}
+.dashboard-main-stack.dashboard-main-stack-optimized{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:12px;min-width:0;align-content:start}
+.dashboard-main-layout.dashboard-main-layout-optimized>.dashboard-main-stack{width:auto;min-width:0}
+.dashboard-main-layout-optimized .dashboard-coming-panel{min-width:0;padding:15px!important;border-radius:16px!important}
+.dashboard-main-layout-optimized .dashboard-coming-panel .upcoming-list{display:grid;grid-template-columns:minmax(0,1fr)!important;gap:8px}
+.dashboard-main-layout-optimized .upcoming-item{display:grid;gap:6px;min-width:0}
 .upcoming-chapter-links{display:flex;gap:6px;flex-wrap:wrap;padding:0 2px 8px}
 .upcoming-chapter-link{display:inline-flex;align-items:center;gap:7px;max-width:100%;border:1px solid var(--line);border-radius:9px;padding:6px 8px;background:var(--surface,#fff);text-align:left;cursor:pointer;color:var(--ink)}
-.upcoming-chapter-link span{font-size:10px;font-weight:750;overflow-wrap:anywhere}
-.upcoming-chapter-link small{font-size:9px;color:var(--muted);white-space:nowrap}
+.upcoming-chapter-link span{font-size:10px;font-weight:750;overflow-wrap:anywhere}.upcoming-chapter-link small{font-size:9px;color:var(--muted);white-space:nowrap}
 .upcoming-chapter-link:hover{border-color:#8abca5;background:#f2f8f5}
-#page-chapters .chapter-table tr.status-row-not-started .progress-fill{background:#b8c5d2!important}
-#page-chapters .chapter-table tr.status-row-in-progress .progress-fill{background:#4a9be8!important}
-#page-chapters .chapter-table tr.status-row-completed .progress-fill{background:#15966a!important}
-#page-chapters .chapter-table tr.status-row-needs-work .progress-fill{background:#d28a35!important}
-#chapterAllocationPanel [hidden]{display:none!important}
-
-.study-activity-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:14px 0 18px}
-.study-activity-stat{display:grid;gap:6px;align-content:start;min-width:0;padding:14px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(145deg,#fff,#f8fbfa)}
-.study-activity-stat small{font-size:11px;color:var(--muted);line-height:1.35}
-.study-activity-stat strong{font-size:23px;letter-spacing:-.04em}
-.study-activity-stat>span:last-child{font-size:10px;color:var(--muted)}
-.study-activity-icon{display:grid;place-items:center;width:30px;height:30px;border-radius:9px;background:#e8f2ff;color:#2784d8;font-weight:900}
-.study-activity-icon.yt{background:#ffe9e8;color:#d83e39}.study-activity-icon.tg{background:#e7f2ff;color:#2685c7}.study-activity-icon.done{background:#e1f6eb;color:#15966a}
-.study-activity-lower{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:18px}
-.study-activity-subhead{display:flex;justify-content:space-between;gap:8px;align-items:baseline;margin:0 0 10px}
-.study-activity-subhead strong{font-size:13px}.study-activity-subhead span{font-size:10px;color:var(--muted);text-align:right}
-.study-course-progress-list{display:grid;gap:10px;min-width:0}
-.study-course-card{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--surface,#fff);min-width:0}
-.study-course-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
-.study-course-top strong{font-size:12px;line-height:1.45;overflow-wrap:anywhere}.study-course-top small{display:block;color:var(--muted);font-size:10px;margin-top:3px}
-.study-course-count{font-size:11px;font-weight:800;white-space:nowrap}
-.study-course-bar{height:7px;background:#e9eef2;border-radius:99px;overflow:hidden;margin-top:10px}.study-course-bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#2784d8,#15966a)}
-.study-course-footer{display:flex;gap:8px;align-items:center;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:7px}
-.study-course-remove{border:0;background:transparent;color:var(--muted);font-size:11px;cursor:pointer;text-decoration:underline}
-.study-activity-chapter-list{display:flex;flex-wrap:wrap;gap:7px;align-content:start}
-.study-chapter-chip{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 10px;display:flex;align-items:center;gap:7px;text-align:left;cursor:pointer;color:var(--ink)}
-.study-chapter-chip small{font-size:10px;color:var(--muted)}.study-chapter-chip:hover,.chapter-name-link:hover{border-color:#8abca5;color:#14764d}
-.chapter-name-link{border:0;background:transparent;padding:0;color:var(--ink);font:inherit;text-align:left;font-weight:800;line-height:1.4;cursor:pointer;border-bottom:1px dashed transparent}
-.chapter-lecture-meta{display:block;font-size:10px;color:#19734e!important;margin-top:4px}
-.chapter-lecture-mini{height:4px;max-width:180px;background:#e6f2ea;border-radius:99px;overflow:hidden;margin-top:4px}.chapter-lecture-mini i{display:block;height:100%;background:linear-gradient(90deg,#2784d8,#15966a)}
-#page-lectures .course-add-form{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(160px,.8fr) auto;gap:10px;align-items:end}
-#page-lectures .course-add-form label,#chapterAllocationPanel .allocation-input-grid label{display:grid;gap:6px;font-size:11px;font-weight:750;color:var(--muted);min-width:0}
-#page-lectures .course-add-form .btn{min-height:42px}
-#chapterAllocationPanel .allocation-input-grid{display:grid;grid-template-columns:minmax(110px,.6fr) minmax(0,1.4fr);gap:9px}
-#chapterAllocationPanel .allocation-chapter-picker{display:grid;gap:5px;max-height:230px;overflow:auto;padding:7px;border:1px solid var(--line);border-radius:12px;background:var(--surface,#fff)}
-#chapterAllocationPanel .allocation-chapter-choice{display:flex;gap:8px;align-items:center;padding:7px 8px;border-radius:8px;cursor:pointer;font-size:11px;line-height:1.35}
-#chapterAllocationPanel .allocation-chapter-choice:hover{background:#f2f8f5}
-#chapterAllocationPanel .allocation-chapter-choice input{accent-color:#16845b}
-#chapterAllocationPanel .allocation-chapter-choice span{flex:1;min-width:0}
-#chapterAllocationPanel .allocation-chapter-choice small{display:block;color:var(--muted);font-size:10px;margin-top:2px}
-#chapterAllocationPanel .allocation-chapter-choice .alloc-check-status{font-size:9px;border-radius:99px;padding:3px 6px;background:#eef2f5;color:#637282;white-space:nowrap}
-#chapterAllocationPanel .allocation-chapter-choice .alloc-check-status.progress{background:#e7f1ff;color:#2676c4}
-#chapterAllocationPanel .allocation-chapter-choice .alloc-check-status.needs{background:#fff2d9;color:#94620e}
-#chapterAllocationPanel .allocation-chapter-name{border:0;background:transparent;padding:0;font:inherit;font-weight:800;color:var(--ink);text-align:left;cursor:pointer}
-#chapterAllocationPanel .allocation-chapter-name:hover{text-decoration:underline;color:#16784f}
-#chapterAllocationPanel .allocation-chapter-top{display:flex;justify-content:space-between;gap:10px;align-items:center}
-#chapterAllocationPanel .allocation-priority{font-size:10px;font-weight:800;border-radius:99px;padding:4px 8px;background:var(--surface-2,#f0f2f5)}
-#chapterAllocationPanel .allocation-priority-high{color:#ba493f;background:#fff0ed}
-#chapterAllocationPanel .allocation-priority-medium{color:#8a6418;background:#fff6db}
-#chapterAllocationPanel .allocation-priority-low{color:#18734e;background:#e5f7ed}
-#chapterAllocationPanel .allocation-ai-summary{padding:11px 12px;border:1px solid var(--line);border-radius:12px;margin-bottom:12px}
-#chapterAllocationPanel .allocation-ai-summary p{font-size:13px;line-height:1.5;margin:5px 0 0}
-#chapterAllocationPanel .allocation-reason{font-size:12px;color:var(--muted);line-height:1.45;margin-top:5px}
-#chapterAllocationPanel .allocation-warning{font-size:12px;line-height:1.5;background:#fff5e8;color:#87541a;border-radius:10px;padding:10px;margin-top:10px}
-#chapterAllocationPanel #chapterAllocationAIButton:disabled{opacity:.65;cursor:wait}
-#page-chapters .chapter-name-link{max-width:100%;word-break:normal}
-#page-chapters .chapter-table .status-row-needs-work{background:#fffaf0}
-#page-chapters .chapter-table tr.status-row-needs-work .progress-fill{background:#d28a35!important}
-#page-chapters .chapter-status-chip.status-needs-work{background:#fff0d5!important;color:#8e5a09!important;border-color:#e8c47e!important}
-#page-chapters .chapter-status-chip.status-not-started{background:#eef2f5!important;color:#64748b!important;border-color:#d8e0e7!important}
-#page-chapters .chapter-status-chip.status-in-progress{background:#e7f1ff!important;color:#1e67b1!important;border-color:#b8d4f5!important}
-#page-chapters .chapter-status-chip.status-completed{background:#e2f6eb!important;color:#16724b!important;border-color:#a9dfc2!important}
-.ring-subject-arc{stroke-width:9;stroke-linecap:butt;filter:none}
-.study-activity-panel .empty{padding:12px;border:1px dashed var(--line);border-radius:10px;color:var(--muted);font-size:11px}
-@media(max-width:1000px){.study-activity-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.study-activity-lower{grid-template-columns:1fr}#page-lectures .course-add-form{grid-template-columns:1fr 1fr}#page-lectures .course-add-form .btn{grid-column:1/-1}}
-@media(max-width:560px){.study-activity-grid{gap:7px}.study-activity-stat{padding:10px}.study-activity-stat strong{font-size:19px}#page-lectures .course-add-form{grid-template-columns:1fr}#chapterAllocationPanel .allocation-input-grid{grid-template-columns:1fr}}
-
-/* Dashboard allocation: full-width card stack, preserve the hero and four metric cards. */
-.dashboard-main-layout.dashboard-main-layout-optimized{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:16px;margin-top:16px;align-items:start}
-.dashboard-main-stack.dashboard-main-stack-optimized{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:16px;min-width:0}
-.dashboard-main-layout.dashboard-main-layout-optimized>.dashboard-main-stack{width:100%;min-width:0}
-.dashboard-main-layout-optimized .dashboard-coming-panel .upcoming-list{grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));align-items:start}
-#chapterAllocationPanel{position:relative;isolation:isolate;overflow:hidden;min-width:0;padding:clamp(16px,2.2vw,26px)!important;border:1px solid #dbe8e5!important;border-radius:20px!important;background:radial-gradient(ellipse at 8% 0%,rgba(39,132,216,.065),transparent 42%),radial-gradient(ellipse at 100% 5%,rgba(21,150,106,.075),transparent 40%),#fff!important;box-shadow:0 12px 34px rgba(25,67,78,.075)!important;animation:allocation-panel-in .45s cubic-bezier(.2,.75,.25,1) both}
+#chapterAllocationPanel{position:relative;isolation:isolate;overflow:hidden;min-width:0;padding:clamp(15px,2vw,23px)!important;border:1px solid #dbe8e5!important;border-radius:20px!important;background:radial-gradient(ellipse at 8% 0%,rgba(39,132,216,.065),transparent 42%),radial-gradient(ellipse at 100% 5%,rgba(21,150,106,.075),transparent 40%),#fff!important;box-shadow:0 12px 34px rgba(25,67,78,.075)!important;animation:allocation-panel-in .35s ease both;align-self:start}
 #chapterAllocationPanel:before{content:"";position:absolute;left:0;top:0;height:3px;width:100%;background:linear-gradient(90deg,#2784d8,#15966a,#8064c7);z-index:0}#chapterAllocationPanel>*{position:relative;z-index:1}
-#chapterAllocationPanel .dashboard-panel-head{align-items:center;margin-bottom:16px}
-#chapterAllocationPanel .dashboard-panel-head h2{font-size:clamp(17px,1.5vw,21px);letter-spacing:-.035em}
-#chapterAllocationPanel .dashboard-panel-head p{font-size:12px;line-height:1.5}
-#chapterAllocationPanel .allocation-mode-select{min-height:44px;border-radius:12px;font-weight:750}
-#chapterAllocationPanel .allocation-input-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;margin-top:10px}
-#chapterAllocationPanel .allocation-hours-grid{max-width:440px;margin-top:14px}
-#chapterAllocationPanel .allocation-input-grid label{display:grid;gap:6px;font-size:11px;font-weight:750;color:var(--muted);min-width:0}
-#chapterAllocationPanel .allocation-input-grid .control{min-height:42px}
-#chapterAllocationPanel #allocationChapterSearch{min-height:43px;border-radius:12px}
-#chapterAllocationPanel .allocation-subject-filters{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 9px}
-#chapterAllocationPanel .allocation-filter-pill{display:inline-flex;align-items:center;gap:7px;min-height:34px;padding:7px 12px;border:1px solid #e0e8ee;border-radius:999px;background:#f8fafb;color:#506273;font-size:11px;font-weight:800;cursor:pointer;transition:transform .18s ease,background .18s ease,border-color .18s ease,box-shadow .18s ease}
-#chapterAllocationPanel .allocation-filter-pill:hover{transform:translateY(-1px);box-shadow:0 5px 12px rgba(27,71,94,.08)}
-#chapterAllocationPanel .allocation-filter-pill.active{background:#203d54;color:#fff;border-color:#203d54;box-shadow:0 5px 13px rgba(32,61,84,.15)}
-#chapterAllocationPanel .allocation-filter-pill.physics.active{background:#2784d8;border-color:#2784d8}
-#chapterAllocationPanel .allocation-filter-pill.chemistry.active{background:#15966a;border-color:#15966a}
-#chapterAllocationPanel .allocation-filter-pill.maths.active{background:#8064c7;border-color:#8064c7}
-#chapterAllocationPanel .allocation-picker-tools{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin:10px 0}
-#chapterAllocationPanel .allocation-chapter-picker{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;max-height:310px;overflow:auto;padding:9px;border:1px solid #e3ebef;border-radius:15px;background:rgba(248,251,252,.85);overscroll-behavior:contain}
-#chapterAllocationPanel .allocation-chapter-choice{position:relative;display:flex;align-items:center;gap:9px;min-width:0;min-height:54px;padding:10px;border:1px solid #e2eaf0;border-radius:12px;background:linear-gradient(135deg,#fff,#fbfdff);cursor:pointer;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease,background .18s ease;animation:allocation-choice-in .25s ease both}
-#chapterAllocationPanel .allocation-chapter-choice:hover{transform:translateY(-2px);border-color:#a8cfc1;box-shadow:0 7px 18px rgba(31,83,75,.075)}
-#chapterAllocationPanel .allocation-chapter-choice.is-selected{border-color:#15966a;background:linear-gradient(135deg,#effaf4,#fff);box-shadow:inset 0 0 0 1px rgba(21,150,106,.14)}
-#chapterAllocationPanel .allocation-chapter-choice.physics.is-selected{border-color:#2784d8;background:linear-gradient(135deg,#edf6ff,#fff)}
-#chapterAllocationPanel .allocation-chapter-choice.maths.is-selected{border-color:#8064c7;background:linear-gradient(135deg,#f5f0ff,#fff)}
-#chapterAllocationPanel .allocation-chapter-choice input{width:15px;height:15px;flex:none;accent-color:#15966a;cursor:pointer}
-#chapterAllocationPanel .allocation-choice-copy{display:grid;gap:4px;flex:1;min-width:0}
-#chapterAllocationPanel .allocation-choice-copy strong{display:block;overflow-wrap:anywhere;color:#263d50;font-size:11px;line-height:1.35;font-weight:800}
-#chapterAllocationPanel .allocation-choice-copy small{font-size:9px;color:#7c8d9c;margin:0}
-#chapterAllocationPanel .allocation-choice-check{display:grid;place-items:center;width:22px;height:22px;flex:none;border-radius:50%;background:#e8eef2;color:transparent;font-size:11px;font-weight:900;transition:background .18s ease,color .18s ease,transform .18s ease}
-#chapterAllocationPanel .allocation-chapter-choice.is-selected .allocation-choice-check{background:#15966a;color:#fff;transform:scale(1.02)}
-#chapterAllocationPanel .allocation-chapter-choice.physics.is-selected .allocation-choice-check{background:#2784d8}
-#chapterAllocationPanel .allocation-chapter-choice.maths.is-selected .allocation-choice-check{background:#8064c7}
-#chapterAllocationPanel .allocation-summary-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:16px 0 13px}
-#chapterAllocationPanel .allocation-summary-stat{display:flex;flex-direction:column;gap:5px;min-width:0;padding:13px 14px;border:1px solid #dfebe7;border-radius:14px;background:linear-gradient(135deg,#fff,#f7fbfa)}
-#chapterAllocationPanel .allocation-summary-stat strong{font-size:clamp(19px,2.1vw,26px);font-weight:850;letter-spacing:-.04em;color:#203d50;line-height:1.1}
-#chapterAllocationPanel .allocation-summary-stat small{font-size:10px;color:#728797}
-#chapterAllocationPanel .allocation-result-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:14px 0}
-#chapterAllocationPanel .allocation-chapter{display:flex;flex-direction:column;gap:8px;min-width:0;min-height:142px;padding:13px;border:1px solid #e0e9ee;border-radius:15px;background:linear-gradient(145deg,#fff,#fbfdfe);box-shadow:0 3px 12px rgba(29,65,83,.035);animation:allocation-choice-in .3s ease both;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}
-#chapterAllocationPanel .allocation-chapter:hover{transform:translateY(-2px);border-color:#c1ddd1;box-shadow:0 10px 22px rgba(29,65,83,.07)}
-#chapterAllocationPanel .allocation-chapter.physics{border-top:3px solid #2784d8}
-#chapterAllocationPanel .allocation-chapter.chemistry{border-top:3px solid #15966a}
-#chapterAllocationPanel .allocation-chapter.maths{border-top:3px solid #8064c7}
-#chapterAllocationPanel .allocation-chapter-top{align-items:flex-start}
-#chapterAllocationPanel .allocation-chapter-name{min-width:0;flex:1;border:0;background:transparent;padding:0;color:#203d50;text-align:left;font-size:12px;line-height:1.45;font-weight:850;cursor:pointer;overflow-wrap:anywhere}
-#chapterAllocationPanel .allocation-chapter-name:hover{text-decoration:underline;text-decoration-color:#15966a;text-underline-offset:3px}
-#chapterAllocationPanel .allocation-priority{flex:none}
-#chapterAllocationPanel .allocation-meta{flex-wrap:wrap;align-items:flex-start;margin-top:0;font-size:10px;gap:6px}
-#chapterAllocationPanel .allocation-meta strong{color:#405b6e;font-size:10px}
-#chapterAllocationPanel .allocation-bar{margin-top:0;height:6px;background:#edf2f4}
-#chapterAllocationPanel .allocation-chapter.physics .allocation-bar span{background:linear-gradient(90deg,#2784d8,#68b4f4)}
-#chapterAllocationPanel .allocation-chapter.chemistry .allocation-bar span{background:linear-gradient(90deg,#15966a,#55c89a)}
-#chapterAllocationPanel .allocation-chapter.maths .allocation-bar span{background:linear-gradient(90deg,#8064c7,#b7a1f4)}
-#chapterAllocationPanel .allocation-focus{margin-top:0;font-size:11px;color:#4a6474;line-height:1.45;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-#chapterAllocationPanel .allocation-reason{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:10px;line-height:1.4;margin-top:auto}
-#chapterAllocationPanel .allocation-ai-summary{margin:10px 0;padding:14px 16px;border-color:#deebe6;border-radius:14px;background:linear-gradient(115deg,#f3fbf6,#f5f9ff)}
-#chapterAllocationPanel .allocation-ai-summary>strong{font-size:12px;color:#207151}
-#chapterAllocationPanel .allocation-ai-summary p{font-size:12px;line-height:1.55}
-#chapterAllocationPanel .allocation-note{font-size:11px;line-height:1.6}
-#chapterAllocationPanel .allocation-empty-state{display:grid;gap:7px;padding:20px;border:1px dashed #cfdfe4;border-radius:14px;background:#f9fcfb;text-align:left}
-#chapterAllocationPanel .allocation-empty-state strong{color:#2b5061}
-#chapterAllocationPanel .allocation-empty-state span{color:#708595;font-size:12px;line-height:1.5}
-#page-chapters .chapter-status-chip.status-needs-work{background:#fff2d8!important;color:#9a650f!important;border-color:#f0cb7b!important;box-shadow:inset 0 0 0 1px rgba(210,138,53,.08)}
-#page-chapters .chapter-status-chip.status-not-started{background:#eef2f5!important;color:#5e7181!important;border-color:#dbe3e9!important}
-#page-chapters .chapter-status-chip.status-in-progress{background:#e7f2ff!important;color:#226eb8!important;border-color:#b8d8fb!important}
-#page-chapters .chapter-status-chip.status-completed{background:#e4f7ed!important;color:#168052!important;border-color:#b9e6ce!important}
-@keyframes allocation-panel-in{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
-@keyframes allocation-choice-in{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-@media(min-width:1400px){#chapterAllocationPanel .allocation-result-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
-@media(max-width:1080px){#chapterAllocationPanel .allocation-chapter-picker{grid-template-columns:repeat(2,minmax(0,1fr))}#chapterAllocationPanel .allocation-result-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:680px){.study-activity-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.study-activity-lower{grid-template-columns:minmax(0,1fr);gap:16px}#chapterAllocationPanel .allocation-chapter-picker,#chapterAllocationPanel .allocation-result-grid{grid-template-columns:minmax(0,1fr)}#chapterAllocationPanel .allocation-summary-strip{gap:7px}#chapterAllocationPanel .allocation-summary-stat{padding:11px 9px}#chapterAllocationPanel .allocation-summary-stat strong{font-size:19px}#chapterAllocationPanel .allocation-summary-stat small{font-size:9px}#chapterAllocationPanel .allocation-input-grid{grid-template-columns:minmax(0,1fr)}.dashboard-main-layout.dashboard-main-layout-optimized{gap:12px}#chapterAllocationPanel{padding:15px!important}}
-@media(prefers-reduced-motion:reduce){#chapterAllocationPanel,#chapterAllocationPanel .allocation-chapter-choice,#chapterAllocationPanel .allocation-chapter{animation:none!important;transition:none!important}}
-
-/* Dashboard layout: compact activity + upcoming stack on the left, expandable AI on the right. */
-html[data-edge-theme] .dashboard-main-layout.dashboard-main-layout-optimized,
-.dashboard-main-layout.dashboard-main-layout-optimized{display:grid!important;grid-template-columns:minmax(0,.94fr) minmax(0,1.06fr)!important;gap:16px;margin-top:16px;align-items:start}
-html[data-edge-theme] .dashboard-main-stack.dashboard-main-stack-optimized,
-.dashboard-main-stack.dashboard-main-stack-optimized{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:14px;min-width:0;align-content:start}
-html[data-edge-theme] .dashboard-main-layout.dashboard-main-layout-optimized>.dashboard-main-stack,
-.dashboard-main-layout.dashboard-main-layout-optimized>.dashboard-main-stack{width:auto;min-width:0}
-#studyActivityPanel{margin:0!important;padding:15px!important;min-width:0;border-radius:16px!important}
-#studyActivityPanel .dashboard-panel-head{margin-bottom:10px;align-items:center}
-#studyActivityPanel .dashboard-panel-head h2{font-size:16px;letter-spacing:-.025em}
-#studyActivityPanel .dashboard-panel-head p{font-size:10px;line-height:1.4;margin-top:3px}
-#studyActivityPanel .dashboard-panel-head .small-btn{font-size:10px;padding:6px 8px;white-space:nowrap}
-#studyActivityPanel .study-activity-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:10px 0 12px}
-#studyActivityPanel .study-activity-stat{display:grid;grid-template-columns:26px minmax(0,1fr);column-gap:8px;row-gap:2px;align-items:center;padding:9px;border-radius:11px;background:var(--surface,#fff);min-height:74px}
-#studyActivityPanel .study-activity-icon{grid-row:span 2;width:26px;height:26px;border-radius:8px;font-size:12px}
-#studyActivityPanel .study-activity-stat small{font-size:9px;line-height:1.3}
-#studyActivityPanel .study-activity-stat strong{font-size:17px;line-height:1.1}
-#studyActivityPanel .study-activity-stat>span:last-child{grid-column:2;font-size:9px;line-height:1.25;overflow-wrap:anywhere}
-#studyActivityPanel .study-activity-lower{display:block}
-#studyActivityPanel .study-activity-subhead{margin:0 0 8px}
-#studyActivityPanel .study-activity-subhead strong{font-size:12px}
-#studyActivityPanel .study-activity-subhead span{font-size:9px}
-#studyActivityPanel .study-activity-chapter-list{display:grid;grid-template-columns:minmax(0,1fr);gap:7px;min-width:0}
-#studyActivityPanel .study-chapter-card{appearance:none;display:grid;gap:6px;width:100%;min-width:0;padding:10px 11px;border:1px solid var(--line);border-radius:12px;background:linear-gradient(135deg,#fff,#f8fbfc);color:var(--ink);text-align:left;cursor:pointer;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;animation:study-chapter-in .28s ease both}
-#studyActivityPanel .study-chapter-card:hover{transform:translateY(-1px);border-color:var(--chapter-accent);box-shadow:0 6px 18px rgba(26,65,86,.08)}
-#studyActivityPanel .study-chapter-card:focus-visible,#chapterAllocationToggle:focus-visible{outline:3px solid rgba(39,132,216,.3);outline-offset:2px}
-.study-chapter-card-head,.study-chapter-title,.study-chapter-details,.study-chapter-footer{display:flex;justify-content:space-between;align-items:center;gap:8px;min-width:0}
-.study-chapter-title{justify-content:flex-start;flex:1}
-.study-chapter-title i{width:7px;height:7px;border-radius:50%;background:var(--chapter-accent);flex:0 0 auto}
-.study-chapter-title strong{font-size:11px;line-height:1.35;overflow-wrap:anywhere}
-.study-chapter-state{font-size:8px;font-weight:800;color:#8d6216;background:#fff4dc;padding:4px 6px;border-radius:99px;white-space:nowrap}
-.study-chapter-state.is-done{background:#e2f7eb;color:#17784e}
-.study-chapter-details{font-size:9px;color:var(--muted);line-height:1.35;align-items:flex-start}
-.study-chapter-details>span{min-width:0;overflow-wrap:anywhere}
-.study-chapter-details strong{font-size:10px;color:var(--ink);white-space:nowrap}
-.study-chapter-progress{height:5px;border-radius:99px;background:#eaf0f3;overflow:hidden}
-.study-chapter-progress span{display:block;height:100%;border-radius:99px;transition:width .45s cubic-bezier(.2,.7,.2,1)}
-.study-chapter-footer{font-size:8px;color:var(--muted)}
-.study-chapter-footer small{font-size:8px}
-.study-chapter-more{justify-self:start;border:0;background:transparent;color:#24785b;font-size:10px;font-weight:800;cursor:pointer;padding:6px 2px;text-align:left}.study-chapter-more:hover{text-decoration:underline}
-#chapterAllocationPanel{align-self:start;transition:box-shadow .2s ease,border-color .2s ease}
 #chapterAllocationPanel.is-expanded{box-shadow:0 16px 42px rgba(25,67,78,.105)!important;border-color:#c5ddd4!important}
 #chapterAllocationPanel .allocation-accordion-trigger{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;border:0;padding:0;background:transparent;color:var(--ink);text-align:left;cursor:pointer}
 #chapterAllocationPanel .allocation-accordion-copy{display:grid;gap:5px;min-width:0}
@@ -2137,41 +1983,104 @@ html[data-edge-theme] .dashboard-main-layout.dashboard-main-layout-optimized>.da
 #chapterAllocationPanel .allocation-accordion-side{display:flex;align-items:center;gap:10px;flex:0 0 auto}
 #chapterAllocationPanel .allocation-accordion-chevron{display:grid;place-items:center;width:32px;height:32px;border:1px solid #dce8e5;border-radius:10px;background:#f6faf8;color:#216d53;font-size:17px;transition:transform .2s ease,background .2s ease}
 #chapterAllocationPanel.is-expanded .allocation-accordion-chevron{background:#e7f5ee}
-#chapterAllocationPanel .allocation-collapsed-summary{margin-top:13px;padding:10px 12px;border:1px solid #e2ece8;border-radius:11px;background:rgba(244,250,247,.8);font-size:10px;line-height:1.4;color:#5e736b}
-#chapterAllocationPanel #chapterAllocationBody{padding-top:16px;margin-top:14px;border-top:1px solid #e6efeb;animation:allocation-body-in .24s ease both}
-#chapterAllocationPanel #chapterAllocationBody[hidden]{display:none!important}
-#chapterAllocationPanel .allocation-result-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
-#chapterAllocationPanel .allocation-chapter{min-width:0;padding:12px;border:1px solid #e4ecea;border-radius:13px;background:rgba(255,255,255,.88);animation:allocation-body-in .28s ease both}
-#chapterAllocationPanel .allocation-chapter-name{overflow-wrap:anywhere}
-#chapterAllocationPanel .allocation-summary-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-#chapterAllocationPanel .allocation-summary-stat{min-width:0;padding:10px;border-radius:12px;background:#f6faf8;border:1px solid #e4eeea}
-#chapterAllocationPanel .allocation-summary-stat strong{display:block;font-size:18px;letter-spacing:-.04em}
-#chapterAllocationPanel .allocation-summary-stat small{display:block;margin-top:3px;font-size:9px;line-height:1.3;color:var(--muted)}
-#chapterAllocationPanel .allocation-note{font-size:10px;line-height:1.5}
-#chapterAllocationPanel .allocation-meta{flex-wrap:wrap;row-gap:4px;font-size:10px}
-#chapterAllocationPanel .allocation-priority{flex-shrink:0}
-#chapterAllocationPanel .allocation-bar{margin-top:8px}
-#chapterAllocationPanel .allocation-warning{overflow-wrap:anywhere}
-#chapterAllocationPanel .allocation-input-grid{grid-template-columns:minmax(0,1fr)}
-#chapterAllocationPanel .allocation-picker-tools{align-items:center;flex-wrap:wrap}
-#chapterAllocationPanel .allocation-chapter-picker{max-height:270px}
-#page-chapters .chapter-status-chip.status-needs-work{background:#fff0d5!important;color:#8e5a09!important;border-color:#e8c47e!important;box-shadow:inset 3px 0 #d28a35}
-#page-chapters .chapter-table tr.status-row-needs-work .chapter-status-chip{font-weight:800}
-@keyframes study-chapter-in{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-@keyframes allocation-body-in{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-@media(max-width:980px){
- html[data-edge-theme] .dashboard-main-layout.dashboard-main-layout-optimized,.dashboard-main-layout.dashboard-main-layout-optimized{grid-template-columns:minmax(0,1fr)!important}
- #chapterAllocationPanel .allocation-result-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-}
-@media(max-width:600px){
- #studyActivityPanel .study-activity-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
- #studyActivityPanel .dashboard-panel-head{align-items:flex-start}
- #studyActivityPanel .dashboard-panel-head .small-btn{font-size:9px;padding:5px 6px}
- #chapterAllocationPanel .allocation-result-grid{grid-template-columns:minmax(0,1fr)}
- #chapterAllocationPanel .allocation-summary-strip{grid-template-columns:repeat(3,minmax(0,1fr))}
- #chapterAllocationPanel .allocation-summary-stat strong{font-size:15px}
- #chapterAllocationPanel .allocation-accordion-copy small{max-width:230px}
-}
+#chapterAllocationPanel .allocation-collapsed-summary{margin-top:11px;padding:9px 11px;border:1px solid #e2ece8;border-radius:11px;background:rgba(244,250,247,.8);font-size:10px;line-height:1.4;color:#5e736b}
+#chapterAllocationPanel #chapterAllocationBody{padding-top:13px;margin-top:12px;border-top:1px solid #e6efeb;animation:allocation-body-in .24s ease both}
+#chapterAllocationPanel #chapterAllocationBody[hidden],#chapterAllocationPanel [hidden]{display:none!important}
+#chapterAllocationPanel .allocation-controls-top{display:grid;gap:10px;margin-bottom:13px}
+#chapterAllocationPanel .allocation-mode-row{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(90px,.75fr) minmax(115px,.9fr);gap:8px}
+#chapterAllocationPanel .allocation-field{display:grid;gap:6px;min-width:0;font-size:10px;font-weight:800;color:#647989}
+#chapterAllocationPanel .allocation-field .control{width:100%;min-width:0;min-height:42px;border:1px solid #dce7eb;border-radius:11px;background:#fff;padding:9px 10px;color:#233e50;font-weight:750}
+#chapterAllocationPanel .allocation-mode-select{min-height:42px;border-radius:11px;font-weight:750}
+#chapterAllocationPanel .allocation-picker-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:12px 0 8px}
+#chapterAllocationPanel .allocation-picker-heading>div{display:grid;gap:3px;min-width:0}
+#chapterAllocationPanel .allocation-picker-heading strong{font-size:12px;color:#284b5b}
+#chapterAllocationPanel .allocation-picker-heading span{font-size:10px;line-height:1.4;color:#748998}
+#chapterAllocationPanel .allocation-picker-toolbar{display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
+#chapterAllocationPanel #allocationChapterSearch{width:100%;min-width:0;min-height:42px;border-radius:11px}
+#chapterAllocationPanel .allocation-subject-filters{display:flex;flex-wrap:wrap;gap:6px;margin:0}
+#chapterAllocationPanel .allocation-filter-pill{display:inline-flex;align-items:center;justify-content:center;min-height:31px;padding:6px 11px;border:1px solid #e0e8ee;border-radius:999px;background:#f8fafb;color:#506273;font-size:10px;font-weight:800;cursor:pointer;transition:transform .16s ease,background .16s ease,border-color .16s ease,box-shadow .16s ease}
+#chapterAllocationPanel .allocation-filter-pill:hover{transform:translateY(-1px);box-shadow:0 5px 12px rgba(27,71,94,.08)}
+#chapterAllocationPanel .allocation-filter-pill.active{background:#203d54;color:#fff;border-color:#203d54}
+#chapterAllocationPanel .allocation-filter-pill.physics.active{background:#2784d8;border-color:#2784d8}
+#chapterAllocationPanel .allocation-filter-pill.chemistry.active{background:#15966a;border-color:#15966a}
+#chapterAllocationPanel .allocation-filter-pill.maths.active{background:#8064c7;border-color:#8064c7}
+#chapterAllocationPanel .allocation-selected-strip{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 9px;min-height:0}
+#chapterAllocationPanel .allocation-selected-chip{display:inline-flex;align-items:center;gap:6px;border:1px solid #d8e8e0;border-radius:99px;padding:5px 8px;background:#f1faf5;color:#247451;font-size:9px;font-weight:800;cursor:pointer;max-width:100%;animation:allocation-body-in .18s ease both}
+#chapterAllocationPanel .allocation-selected-chip.physics{background:#edf6ff;border-color:#d0e5fa;color:#226eb8}
+#chapterAllocationPanel .allocation-selected-chip.maths{background:#f5f0ff;border-color:#e2dafa;color:#7558ba}
+#chapterAllocationPanel .allocation-chapter-picker{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;max-height:250px;overflow:auto;padding:2px 3px 6px 0;overscroll-behavior:contain}
+#chapterAllocationPanel .allocation-chapter-choice{position:relative;display:flex;align-items:center;gap:8px;min-width:0;min-height:55px;padding:9px;border:1px solid #e2eaf0;border-radius:12px;background:linear-gradient(135deg,#fff,#fbfdff);cursor:pointer;transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease,background .16s ease;animation:allocation-choice-in .2s ease both}
+#chapterAllocationPanel .allocation-chapter-choice:hover{transform:translateY(-1px);border-color:#a8cfc1;box-shadow:0 6px 15px rgba(31,83,75,.07)}
+#chapterAllocationPanel .allocation-chapter-choice.is-selected{border-color:#15966a;background:linear-gradient(135deg,#effaf4,#fff);box-shadow:inset 0 0 0 1px rgba(21,150,106,.12)}
+#chapterAllocationPanel .allocation-chapter-choice.physics.is-selected{border-color:#2784d8;background:linear-gradient(135deg,#edf6ff,#fff)}
+#chapterAllocationPanel .allocation-chapter-choice.maths.is-selected{border-color:#8064c7;background:linear-gradient(135deg,#f5f0ff,#fff)}
+#chapterAllocationPanel .allocation-chapter-choice input{width:14px;height:14px;flex:none;accent-color:#15966a;cursor:pointer}
+#chapterAllocationPanel .allocation-choice-copy{display:grid;gap:3px;flex:1;min-width:0}
+#chapterAllocationPanel .allocation-choice-copy strong{display:block;overflow-wrap:anywhere;color:#263d50;font-size:10px;line-height:1.35;font-weight:800}
+#chapterAllocationPanel .allocation-choice-copy small{font-size:9px;color:#7c8d9c;margin:0}
+#chapterAllocationPanel .allocation-choice-check{display:grid;place-items:center;width:20px;height:20px;flex:none;border-radius:50%;background:#e8eef2;color:transparent;font-size:10px;font-weight:900;transition:background .16s ease,color .16s ease}
+#chapterAllocationPanel .allocation-chapter-choice.is-selected .allocation-choice-check{background:#15966a;color:#fff}
+#chapterAllocationPanel .allocation-chapter-choice.physics.is-selected .allocation-choice-check{background:#2784d8}
+#chapterAllocationPanel .allocation-chapter-choice.maths.is-selected .allocation-choice-check{background:#8064c7}
+#chapterAllocationPanel .allocation-summary-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 12px}
+#chapterAllocationPanel .allocation-summary-stat{display:flex;flex-direction:column;gap:4px;min-width:0;padding:11px 10px;border:1px solid #dfebe7;border-radius:12px;background:linear-gradient(135deg,#fff,#f7fbfa)}
+#chapterAllocationPanel .allocation-summary-stat strong{font-size:clamp(18px,1.8vw,23px);font-weight:850;letter-spacing:-.04em;color:#203d50;line-height:1.1}
+#chapterAllocationPanel .allocation-summary-stat small{font-size:9px;line-height:1.3;color:#728797}
+#chapterAllocationPanel .allocation-result-header{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:13px}
+#chapterAllocationPanel .allocation-result-kicker{font-size:9px;letter-spacing:.12em;font-weight:900;color:#16805a}
+#chapterAllocationPanel .allocation-result-header h3{font-size:19px;letter-spacing:-.04em;margin:4px 0}
+#chapterAllocationPanel .allocation-result-header p{font-size:10px;line-height:1.5;color:var(--muted);margin:0}
+#chapterAllocationPanel .allocation-result-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:9px;margin:12px 0}
+#chapterAllocationPanel .allocation-chapter{min-width:0;padding:12px;border:1px solid #e4ecea;border-radius:13px;background:linear-gradient(145deg,#fff,#fbfdfe);animation:allocation-body-in .28s ease both}
+#chapterAllocationPanel .allocation-chapter.physics{border-left:3px solid #2784d8}
+#chapterAllocationPanel .allocation-chapter.chemistry{border-left:3px solid #15966a}
+#chapterAllocationPanel .allocation-chapter.maths{border-left:3px solid #8064c7}
+#chapterAllocationPanel .allocation-chapter-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+#chapterAllocationPanel .allocation-chapter-name{min-width:0;flex:1;border:0;background:transparent;padding:0;color:#203d50;text-align:left;font-size:12px;line-height:1.45;font-weight:850;cursor:pointer;overflow-wrap:anywhere}
+#chapterAllocationPanel .allocation-chapter-name:hover{text-decoration:underline;text-decoration-color:#15966a;text-underline-offset:3px}
+#chapterAllocationPanel .allocation-priority{flex:none;font-size:9px;font-weight:850;border-radius:99px;padding:4px 7px;background:#f0f2f5}
+#chapterAllocationPanel .allocation-priority-high{color:#ba493f;background:#fff0ed}
+#chapterAllocationPanel .allocation-priority-medium{color:#8a6418;background:#fff6db}
+#chapterAllocationPanel .allocation-priority-low{color:#18734e;background:#e5f7ed}
+#chapterAllocationPanel .allocation-meta{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:7px;color:var(--muted);font-size:10px}
+#chapterAllocationPanel .allocation-meta strong{color:#405b6e;font-size:10px}
+#chapterAllocationPanel .allocation-bar{height:5px;background:#edf2f4;border-radius:99px;overflow:hidden;margin-top:8px}
+#chapterAllocationPanel .allocation-bar span{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#2784d8,#15966a)}
+#chapterAllocationPanel .allocation-note{font-size:10px;line-height:1.5;color:var(--muted);margin-top:8px}
+#chapterAllocationPanel .allocation-reason{font-size:10px;color:var(--muted);line-height:1.45;margin-top:5px}
+#chapterAllocationPanel .allocation-ai-summary{padding:12px;border:1px solid #deebe6;border-radius:13px;background:linear-gradient(115deg,#f3fbf6,#f5f9ff);margin-bottom:12px}
+#chapterAllocationPanel .allocation-ai-summary strong{font-size:11px;color:#207151}
+#chapterAllocationPanel .allocation-ai-summary p{font-size:11px;line-height:1.5;margin:5px 0 0}
+#chapterAllocationPanel .allocation-actions{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:14px}
+#chapterAllocationPanel .allocation-status{font-size:10px;color:var(--muted);line-height:1.45;margin-top:10px;overflow-wrap:anywhere}
+#chapterAllocationPanel .allocation-working{display:grid;justify-items:center;text-align:center;gap:9px;padding:clamp(24px,5vw,46px) 16px;border:1px solid #dcebe5;border-radius:16px;background:radial-gradient(ellipse at top,rgba(21,150,106,.09),transparent 62%),#fafdff;animation:allocation-body-in .24s ease both}
+#chapterAllocationPanel .allocation-working strong{font-size:15px;color:#23495b}
+#chapterAllocationPanel .allocation-working p{max-width:330px;margin:0;font-size:11px;line-height:1.55;color:#738795}
+#chapterAllocationPanel .allocation-loader-orbit{position:relative;width:54px;height:54px;border:2px solid #e3eee8;border-top-color:#15966a;border-right-color:#2784d8;border-radius:50%;animation:allocation-orbit .9s linear infinite}
+#chapterAllocationPanel .allocation-loader-orbit span{position:absolute;width:8px;height:8px;border-radius:50%;background:#15966a;top:2px;left:5px}
+#chapterAllocationPanel .allocation-loader-orbit span:nth-child(2){top:auto;left:auto;right:2px;bottom:11px;background:#2784d8}
+#chapterAllocationPanel .allocation-loader-orbit span:nth-child(3){top:auto;left:10px;bottom:0;background:#8064c7}
+#chapterAllocationPanel .allocation-loader-track{width:min(290px,100%);height:4px;border-radius:99px;background:#e4eee9;overflow:hidden;margin-top:5px}
+#chapterAllocationPanel .allocation-loader-track i{display:block;width:38%;height:100%;border-radius:99px;background:linear-gradient(90deg,#2784d8,#15966a,#8064c7);animation:allocation-load 1.2s ease-in-out infinite alternate}
+#chapterAllocationPanel .allocation-result-view{animation:allocation-body-in .3s ease both}
+#chapterAllocationPanel .allocation-input-actions .btn{min-height:42px}
+@keyframes allocation-panel-in{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+@keyframes allocation-choice-in{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
+@keyframes allocation-body-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes allocation-orbit{to{transform:rotate(360deg)}}
+@keyframes allocation-load{from{transform:translateX(-50%)}to{transform:translateX(230%)}}
+#page-chapters .chapter-table .status-row-not-started .progress-fill{background:#b8c5d2!important}
+#page-chapters .chapter-table .status-row-in-progress .progress-fill{background:#4a9be8!important}
+#page-chapters .chapter-table .status-row-completed .progress-fill{background:#15966a!important}
+#page-chapters .chapter-table .status-row-needs-work{background:#fffaf0}
+#page-chapters .chapter-table tr.status-row-needs-work .progress-fill{background:#d28a35!important}
+#page-chapters .chapter-status-chip.status-needs-work{background:#fff0d5!important;color:#8e5a09!important;border-color:#e8c47e!important}
+#page-chapters .chapter-status-chip.status-not-started{background:#eef2f5!important;color:#64748b!important;border-color:#d8e0e7!important}
+#page-chapters .chapter-status-chip.status-in-progress{background:#e7f1ff!important;color:#1e67b1!important;border-color:#b8d4f5!important}
+#page-chapters .chapter-status-chip.status-completed{background:#e2f6eb!important;color:#16724b!important;border-color:#a9dfc2!important}
+@media(max-width:980px){.dashboard-main-layout.dashboard-main-layout-optimized{grid-template-columns:minmax(0,1fr)!important}}
+@media(max-width:650px){.study-activity-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.dashboard-main-layout.dashboard-main-layout-optimized{gap:12px}.dashboard-main-stack.dashboard-main-stack-optimized{gap:10px}#chapterAllocationPanel{padding:14px!important}#chapterAllocationPanel .allocation-mode-row{grid-template-columns:repeat(2,minmax(0,1fr))}#chapterAllocationPanel .allocation-mode-row .allocation-field:first-child{grid-column:1/-1}#chapterAllocationPanel .allocation-chapter-picker{grid-template-columns:minmax(0,1fr)}#chapterAllocationPanel .allocation-summary-strip{gap:6px}#chapterAllocationPanel .allocation-summary-stat{padding:9px 7px}#chapterAllocationPanel .allocation-summary-stat strong{font-size:16px}#chapterAllocationPanel .allocation-result-header{align-items:flex-start}#chapterAllocationPanel .allocation-result-header h3{font-size:17px}}
+@media(prefers-reduced-motion:reduce){#chapterAllocationPanel,#chapterAllocationPanel .allocation-chapter-choice,#chapterAllocationPanel .allocation-chapter,#chapterAllocationPanel .allocation-loader-orbit,#chapterAllocationPanel .allocation-loader-track i,.study-chapter-card{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
@@ -2264,25 +2173,43 @@ html[data-edge-theme] .dashboard-main-layout.dashboard-main-layout-optimized>.da
      </button>
      <div class="allocation-collapsed-summary" id="chapterAllocationCollapsedSummary">Tap to select chapters and your available time.</div>
      <div id="chapterAllocationBody" hidden>
-     <label for="allocationPlanMode" class="field-label" style="display:block;margin:12px 0 6px">What are you planning for?</label>
-     <select id="allocationPlanMode" class="control allocation-mode-select" style="width:100%" onchange="saveAllocationMode();renderChapterAllocation()"><option value="chapters">Pick my chapters</option><option value="test">Plan for an upcoming topic test</option></select>
-     <div id="allocationTestControls" style="margin-top:10px"><label for="allocationTestSelect" class="field-label" style="display:block;margin:0 0 6px">Choose a planned topic test</label><select id="allocationTestSelect" class="control" style="width:100%" onchange="renderChapterAllocation()"><option value="">No planned topic tests</option></select></div>
-     <div id="allocationManualControls" hidden style="margin-top:10px">
-      <div class="allocation-input-grid"><label>Days available<input id="allocationDaysInput" class="control" type="number" min="1" max="90" step="1" value="5" onchange="saveChapterAllocationPrefs();renderChapterAllocation()"></label></div>
-      <label for="allocationChapterSearch" class="field-label" style="display:block;margin:12px 0 6px">Find any chapter</label><input id="allocationChapterSearch" class="control" type="search" placeholder="Search chapter names…" oninput="renderAllocationChapterPicker()">
-      <div class="allocation-subject-filters" role="group" aria-label="Filter chapters by subject">
-       <button type="button" class="allocation-filter-pill active" data-allocation-subject="all" aria-pressed="true" onclick="setAllocationSubjectFilter('all')">All subjects</button>
-       <button type="button" class="allocation-filter-pill physics" data-allocation-subject="Physics" aria-pressed="false" onclick="setAllocationSubjectFilter('Physics')">Physics</button>
-       <button type="button" class="allocation-filter-pill chemistry" data-allocation-subject="Chemistry" aria-pressed="false" onclick="setAllocationSubjectFilter('Chemistry')">Chemistry</button>
-       <button type="button" class="allocation-filter-pill maths" data-allocation-subject="Mathematics" aria-pressed="false" onclick="setAllocationSubjectFilter('Mathematics')">Mathematics</button>
+      <div class="allocation-controls-top">
+       <div class="allocation-mode-row">
+        <label class="allocation-field"><span>Plan type</span><select id="allocationPlanMode" class="control allocation-mode-select" onchange="saveAllocationMode();renderChapterAllocation()"><option value="chapters">My chapters</option><option value="test">Upcoming test</option></select></label>
+        <label class="allocation-field" id="allocationDaysField"><span>Days available</span><input id="allocationDaysInput" class="control" type="number" min="1" max="90" step="1" value="5" onchange="saveChapterAllocationPrefs();renderChapterAllocation()"></label>
+        <label class="allocation-field"><span>Hours per day</span><input id="allocationDailyHoursInput" class="control" type="number" min="0.5" max="14" step="0.5" value="6.5" onchange="saveChapterAllocationPrefs();renderChapterAllocation()"></label>
+       </div>
+       <div id="allocationTestControls" hidden><label class="allocation-field"><span>Planned topic test</span><select id="allocationTestSelect" class="control" onchange="renderChapterAllocation()"><option value="">No planned topic tests</option></select></label></div>
       </div>
-      <div class="allocation-picker-tools"><span id="allocationSelectionMeta" class="helper-note" style="margin:0">Select up to 20 chapters, regardless of status.</span><button type="button" class="small-btn" onclick="selectVisibleAllocationChapters()">Select visible</button></div>
-      <div id="allocationChapterPicker" class="allocation-chapter-picker"></div>
+      <div id="allocationManualControls">
+       <div class="allocation-picker-heading"><div><strong>Choose chapters</strong><span id="allocationSelectionMeta">Select chapters to build your plan.</span></div><button type="button" class="small-btn" onclick="selectVisibleAllocationChapters()">Select visible</button></div>
+       <div class="allocation-picker-toolbar">
+        <input id="allocationChapterSearch" class="control" type="search" placeholder="Search any chapter…" oninput="renderAllocationChapterPicker()" aria-label="Search chapters">
+        <div class="allocation-subject-filters" role="group" aria-label="Filter chapters by subject">
+         <button type="button" class="allocation-filter-pill active" data-allocation-subject="all" aria-pressed="true" onclick="setAllocationSubjectFilter('all')">All</button>
+         <button type="button" class="allocation-filter-pill physics" data-allocation-subject="Physics" aria-pressed="false" onclick="setAllocationSubjectFilter('Physics')">Physics</button>
+         <button type="button" class="allocation-filter-pill chemistry" data-allocation-subject="Chemistry" aria-pressed="false" onclick="setAllocationSubjectFilter('Chemistry')">Chemistry</button>
+         <button type="button" class="allocation-filter-pill maths" data-allocation-subject="Mathematics" aria-pressed="false" onclick="setAllocationSubjectFilter('Mathematics')">Maths</button>
+        </div>
+       </div>
+       <div class="allocation-selected-strip" id="allocationSelectedStrip"></div>
+       <div id="allocationChapterPicker" class="allocation-chapter-picker"></div>
+      </div>
+      <div id="allocationWorking" class="allocation-working" hidden aria-live="polite">
+       <div class="allocation-loader-orbit"><span></span><span></span><span></span></div>
+       <strong>Building your day-by-day plan</strong><p>Gemini is balancing chapter workload, practice and revision time.</p>
+       <div class="allocation-loader-track"><i></i></div>
+      </div>
+      <section id="chapterAllocationResultView" class="allocation-result-view" hidden aria-live="polite">
+       <div class="allocation-result-header"><div><span class="allocation-result-kicker">YOUR STUDY PLAN</span><h3 id="allocationResultTitle">Daily allocation</h3><p id="allocationResultSummary">Hours per day, chapter by chapter.</p></div><button type="button" class="small-btn" onclick="editAllocationPlan()">← Edit plan</button></div>
+       <div id="chapterAllocationResults"><div class="empty">Choose chapters, then generate your daily plan.</div></div>
+      </section>
+      <div class="allocation-actions" id="allocationInputActions">
+       <button type="button" class="btn btn-primary" id="chapterAllocationAIButton" onclick="requestAIChapterAllocation()">✦ Generate daily plan</button>
+       <button type="button" class="small-btn" onclick="clearAllocationSelection()">Clear selection</button>
+      </div>
+      <div id="chapterAllocationAIStatus" class="allocation-status" role="status" aria-live="polite">Choose chapters and set your available hours to generate a plan.</div>
      </div>
-     <div class="allocation-input-grid allocation-hours-grid"><label>Hours available per day<input id="allocationDailyHoursInput" class="control" type="number" min="0.5" max="14" step="0.5" value="6.5" onchange="saveChapterAllocationPrefs();renderChapterAllocation()"></label></div>
-     <div id="chapterAllocationResults" style="margin-top:14px"><div class="empty">Choose an upcoming test or select chapters to build a plan.</div></div>
-     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button type="button" class="btn btn-primary" id="chapterAllocationAIButton" onclick="requestAIChapterAllocation()">Generate AI allocation ✦</button><button type="button" class="small-btn" onclick="go('topic')">Manage topic tests ↗</button><button type="button" class="small-btn" onclick="clearAllocationSelection()">Clear chapter selection</button></div>
-     <div id="chapterAllocationAIStatus" class="allocation-note" role="status" aria-live="polite">Sign in through Backup &amp; Sync, choose a plan and set your available time.</div>
      </div>
     </section>
   </div>
