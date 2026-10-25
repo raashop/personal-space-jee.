@@ -295,7 +295,7 @@
     const title=page==="daily"?["YOUR DAY","Daily log","Plan, track and reflect on what you studied."]:page==="performance"?["YOUR PROGRESS","Performance studio","Weekly trends, goals and patterns from your study history."]:["ERROR REVIEW","Mistake bank","Turn wrong answers into scheduled revision."];
     byId("pageCrumb").textContent=title[0];byId("pageTitle").textContent=title[1];byId("pageSubtitle").textContent=title[2];
     window.scrollTo({top:0,behavior:"smooth"});
-    if(page==="daily")renderDailyLog();else if(page==="performance")renderPerformance();else renderMistakes();else renderMistakes();
+    if(page==="daily")renderDailyLog();else if(page==="performance")renderPerformance();else renderMistakes();
   };
   const originalSaveModal=saveModal;
   saveModal=function(e){
