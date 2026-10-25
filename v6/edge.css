@@ -3169,3 +3169,109 @@ html[data-edge-theme="daylight"] .performance-more-details > .panel {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* Compact profile footer and leaf identity from the reference. */
+html[data-edge-theme="daylight"] .brand {
+  gap: 8px;
+  padding: 0 3px;
+}
+html[data-edge-theme="daylight"] .brandmark {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 32px;
+  flex: none;
+  border-radius: 0;
+  border: 0;
+  color: #15966a;
+  background: transparent;
+  box-shadow: none;
+}
+html[data-edge-theme="daylight"] .brandmark svg {
+  display: block;
+  width: 28px;
+  height: 28px;
+}
+html[data-edge-theme="daylight"] .brand-name {
+  font-size: 11px;
+  letter-spacing: -.03em;
+  white-space: nowrap;
+}
+html[data-edge-theme="daylight"] .brand-sub {
+  font-size: 8px;
+  color: #758aa0;
+  margin-top: 2px;
+}
+html[data-edge-theme="daylight"] .sidebar {
+  display: flex;
+  flex-direction: column;
+}
+html[data-edge-theme="daylight"] .side-bottom {
+  margin-top: auto;
+  display: grid;
+  gap: 10px;
+}
+html[data-edge-theme="daylight"] .sidebar-sync-details {
+  color: #657b91;
+  font-size: 8px;
+}
+html[data-edge-theme="daylight"] .sidebar-sync-details > summary {
+  cursor: pointer;
+  padding: 7px 8px;
+  color: #8094a8;
+  border: 1px solid #e4edf5;
+  border-radius: 9px;
+  list-style-position: inside;
+}
+html[data-edge-theme="daylight"] .sidebar-sync-details[open] > .sync-state {
+  margin-top: 7px;
+}
+html[data-edge-theme="daylight"] .sidebar-sync-details > .btn {
+  margin-top: 7px;
+  padding: 7px 8px;
+  font-size: 8px;
+}
+html[data-edge-theme="daylight"] .sidebar-sync-details .side-foot {
+  margin-top: 7px;
+  color: #8397aa;
+  line-height: 1.45;
+}
+html[data-edge-theme="daylight"] .profile-mini {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 6px 2px;
+  border-top: 1px solid #e3ecf4;
+}
+html[data-edge-theme="daylight"] .profile-avatar {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  flex: none;
+  border-radius: 50%;
+  background: #2e83e2;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 850;
+}
+html[data-edge-theme="daylight"] .profile-mini > span:last-child {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+html[data-edge-theme="daylight"] .profile-mini strong {
+  color: #334c65;
+  font-size: 9px;
+}
+html[data-edge-theme="daylight"] .profile-mini small {
+  color: #7d91a5;
+  font-size: 7px;
+}
+@media (max-width: 820px) {
+  html[data-edge-theme="daylight"] .profile-mini,
+  html[data-edge-theme="daylight"] .sidebar-sync-details {
+    display: none;
+  }
+}
