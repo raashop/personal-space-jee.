@@ -14,6 +14,17 @@ A standalone JEE Main study workspace. The previous application remains on the `
 - Performance studio with daily activity charts, time by subject, previous-window comparison, goals and weekly review.
 - Mistake bank with error categories, correction notes, due dates and a smart revision queue.
 - Local autosave and JSON backup / restore. Supabase cloud sync is optional and requires a configured project URL, publishable key, authentication, and a `study_data` table with suitable row-level security.
+- Aurora Edge interface with Aurora neon, Ultraviolet and Daylight colour themes; interactive ambient particles; responsive glass panels; reduced-motion support; focus mode; and a searchable command centre.
+- Keyboard shortcuts: `Ctrl/⌘ + K` for the command centre, `Shift + F` for focus mode, `Ctrl/⌘ + Shift + E` for backup export, `1–8` for page navigation, and `?` for the shortcut guide.
+- A data-driven next-action signal on the home dashboard that prioritises due mistakes, planned tests, unfinished chapters, or a focus block.
+
+## V6 interface files
+
+- `index.html` — core planner, chapter/test/PYQ pages and app state.
+- `productivity.js` / `productivity.css` — study journal, focus timer, analytics, mistake bank and their styles.
+- `edge.js` / `edge.css` — theme system, interactive background, command centre, keyboard navigation and visual effects.
+
+The stylesheets and scripts are intentionally kept as separate, readable files. The Edge layer uses browser APIs only; it does not need an external JavaScript framework or third-party tracking.
 
 ## Publish with GitHub Pages
 
