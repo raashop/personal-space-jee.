@@ -8,7 +8,7 @@
   const root = doc.documentElement;
   const body = doc.body;
   const STORAGE = {
-    theme: "ps-v6-edge-theme",
+    theme: "ps-v6-edge-theme-v2",
     motion: "ps-v6-edge-motion",
     focus: "ps-v6-edge-focus-mode"
   };
@@ -45,7 +45,7 @@
     { id: "performance", label: "Performance studio", detail: "Study-time charts and weekly comparisons", group: "Navigate", key: "7" },
     { id: "mistakes", label: "Mistake bank", detail: "Errors, takeaways and revision queue", group: "Navigate", key: "8" }
   ];
-  let activeTheme = readStorage(STORAGE.theme, "aurora");
+  let activeTheme = readStorage(STORAGE.theme, "daylight");
   let selectedIndex = 0;
   let commandRows = [];
   let savedFocus = doc.activeElement;
@@ -93,7 +93,7 @@
   }
 
   function setTheme(theme, announce) {
-    activeTheme = THEMES.includes(theme) ? theme : "aurora";
+    activeTheme = THEMES.includes(theme) ? theme : "daylight";
     root.setAttribute("data-edge-theme", activeTheme);
     writeStorage(STORAGE.theme, activeTheme);
     const button = doc.getElementById("psThemeToggle");
@@ -864,7 +864,7 @@
 
   function initialise() {
     buildHeaderControls();
-    setTheme(THEMES.includes(activeTheme) ? activeTheme : "aurora", false);
+    setTheme(THEMES.includes(activeTheme) ? activeTheme : "daylight", false);
     body.classList.toggle("ps-edge-focus-mode", readStorage(STORAGE.focus, "off") === "on");
     setMotion(motionOn, false);
     buildCommandPalette();
