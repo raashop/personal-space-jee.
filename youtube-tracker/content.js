@@ -35,12 +35,12 @@
     ["Physics","Units and Measurements",["units and measurements","dimensional analysis","measurement errors"]],
     ["Physics","Kinematics",["kinematics","motion in a straight line","motion in a plane","projectile motion","relative velocity"]],
     ["Physics","Laws of Motion",["laws of motion","newton's laws","friction","free body diagram"]],
-    ["Physics","Work, Energy and Power",["work energy power","work-energy theorem","conservation of energy"]],
-    ["Physics","Rotational Motion",["rotational motion","moment of inertia","angular momentum","torque"]],
+    ["Physics","Work, Energy and Power",["work energy power","work power energy","wpe","work-energy theorem","conservation of energy"]],
+    ["Physics","Rotational Motion",["rotational motion","rotational dynamics","centre of mass","center of mass","moment of inertia","angular momentum","torque"]],
     ["Physics","Gravitation",["gravitation","kepler's laws","escape velocity","satellite motion"]],
     ["Physics","Properties of Solids and Liquids",["mechanical properties of solids","mechanical properties of fluids","surface tension","viscosity","thermal properties of matter"]],
     ["Physics","Thermodynamics",["thermodynamics","first law of thermodynamics","heat engine"]],
-    ["Physics","Kinetic Theory of Gases",["kinetic theory of gases","kinetic theory","degrees of freedom gas"]],
+    ["Physics","Kinetic Theory of Gases",["kinetic theory of gases","kinetic theory","ktg","degrees of freedom gas"]],
     ["Physics","Experimental Skills",["experimental skills physics","vernier calipers","screw gauge","meter bridge"]],
     ["Physics","Oscillations and Waves",["oscillations","simple harmonic motion","waves and sound","standing waves"]],
     ["Physics","Electrostatics",["electrostatics","electric charges and fields","electric potential","capacitance"]],
@@ -73,16 +73,16 @@
     ["Mathematics","Sets, Relations and Functions",["sets relations and functions","relations and functions"]],
     ["Mathematics","Complex Numbers and Quadratic Equations",["complex numbers","quadratic equations","argand plane"]],
     ["Mathematics","Matrices and Determinants",["matrices and determinants","matrices","determinants","inverse of a matrix"]],
-    ["Mathematics","Permutations and Combinations",["permutations and combinations","p and c"]],
+    ["Mathematics","Permutations and Combinations",["permutations and combinations","p and c","p c"]],
     ["Mathematics","Binomial Theorem and Its Simple Applications",["binomial theorem","general term binomial"]],
     ["Mathematics","Sequence and Series",["sequences and series","sequence and series","arithmetic progression","geometric progression","ap and gp"]],
-    ["Mathematics","Limit, Continuity and Differentiability",["limits continuity differentiability","limits and derivatives","continuity and differentiability"]],
-    ["Mathematics","Integral Calculus",["indefinite integration","definite integration","integral calculus","area under curves"]],
-    ["Mathematics","Differential Equations",["differential equations"]],
+    ["Mathematics","Limit, Continuity and Differentiability",["limits continuity differentiability","limits and derivatives","continuity and differentiability","differentiation","application of derivatives","aod"]],
+    ["Mathematics","Integral Calculus",["indefinite integration","definite integration","integral calculus","integration","area under curves"]],
+    ["Mathematics","Differential Equations",["differential equations","diff eq"]],
     ["Mathematics","Coordinate Geometry",["straight lines","circle maths","conic sections","parabola ellipse hyperbola"]],
     ["Mathematics","Three-Dimensional Geometry",["three dimensional geometry","three-dimensional geometry","3d geometry","direction cosines"]],
     ["Mathematics","Vector Algebra",["vector algebra","dot product","cross product"]],
-    ["Mathematics","Statistics and Probability",["statistics and probability","probability","mean variance","standard deviation"]],
+    ["Mathematics","Statistics and Probability",["statistics and probability","statistics","probability","mean variance","standard deviation"]],
     ["Mathematics","Trigonometry",["trigonometric functions","trigonometry","inverse trigonometric functions"]]
   ].filter(item => Array.isArray(item) && Array.isArray(item[2]));
   CHAPTERS.sort((a, b) => Math.max(...b[2].map(term => term.length)) - Math.max(...a[2].map(term => term.length)));
@@ -108,9 +108,11 @@
     for (const item of CHAPTERS) {
       for (const term of [...new Set([item[1], ...item[2]])]) {
         const needle = normalizeText(term);
-        if (needle.length >= 4 && sourceText.includes(needle)) {
-          matches.push({ item, score: needle.length });
-        }
+        const shortAlias = ["goc","ktg","wpe","aod","emi","p c"].includes(needle);
+        const present = needle.length >= 4
+          ? sourceText.includes(needle)
+          : shortAlias && (" " + sourceText + " ").includes(" " + needle + " ");
+        if (present) matches.push({ item, score: needle.length });
       }
     }
     if (!matches.length) return null;
