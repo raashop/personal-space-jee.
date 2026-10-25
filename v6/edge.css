@@ -4567,3 +4567,69 @@ html[data-edge-theme="daylight"] .topic-subject-tab[data-topic-subject="Mathemat
     padding: 8px;
   }
 }
+
+
+/* Round chapter rows into readable, tappable panels rather than sharp table stripes. */
+html[data-edge-theme="daylight"] .chapter-table {
+  border-collapse: separate;
+  border-spacing: 0 7px;
+  min-width: 760px;
+  background: transparent;
+}
+html[data-edge-theme="daylight"] .chapter-table thead th {
+  background: #f5f8fc;
+  border: 0;
+  padding: 10px 12px;
+}
+html[data-edge-theme="daylight"] .chapter-table tbody td {
+  background: #ffffff;
+  border-top: 1px solid #e5edf5;
+  border-bottom: 1px solid #e5edf5;
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+html[data-edge-theme="daylight"] .chapter-table tbody td:first-child {
+  border-left: 1px solid #e5edf5;
+  border-top-left-radius: 12px;
+  border-bottom-left-radius: 12px;
+}
+html[data-edge-theme="daylight"] .chapter-table tbody td:last-child {
+  border-right: 1px solid #e5edf5;
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+html[data-edge-theme="daylight"] .chapter-table tbody tr:hover td {
+  background: #f8fbff;
+  border-color: #d8e8f4;
+}
+html[data-edge-theme="daylight"] .chapter-table tbody tr:has(.status-completed) td {
+  background: #fbfefa;
+}
+html[data-edge-theme="daylight"] .chapter-table tbody tr:has(.status-completed) td:first-child {
+  border-left-color: #d8eee3;
+}
+html[data-edge-theme="daylight"] .chapter-table tbody tr:has(.status-completed) td:last-child {
+  border-right-color: #d8eee3;
+}
+html[data-edge-theme="daylight"] .chapter-row-name strong {
+  font-size: 12px;
+  line-height: 1.4;
+}
+html[data-edge-theme="daylight"] .chapter-row-number {
+  font-size: 10px;
+}
+html[data-edge-theme="daylight"] .chapter-open-btn {
+  border-radius: 999px;
+  padding: 7px 13px;
+}
+html[data-edge-theme="daylight"] .chapter-test-btn {
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+}
+@media (max-width: 560px) {
+  html[data-edge-theme="daylight"] .chapter-table {
+    border-spacing: 0 6px;
+    min-width: 730px;
+  }
+}
