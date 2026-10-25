@@ -1240,3 +1240,671 @@ html[data-edge-theme="daylight"] .mistake-detail small,
 html[data-edge-theme="daylight"] .mistake-takeaway small {
   color: #687b92;
 }
+
+
+/* Reference-matched Daily Journal, Performance Studio and Mistake Bank layouts. */
+html[data-edge-theme="daylight"] .daily-journal-hero {
+  align-items: center;
+  margin-bottom: 17px;
+}
+html[data-edge-theme="daylight"] .daily-journal-hero h2 {
+  color: #17283f;
+  font-size: 24px;
+  letter-spacing: -.045em;
+}
+html[data-edge-theme="daylight"] .daily-journal-hero p {
+  color: #6e8298;
+  font-size: 10px;
+}
+html[data-edge-theme="daylight"] .daily-journal-toolbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 15px;
+}
+html[data-edge-theme="daylight"] .daily-date-pick label {
+  display: block;
+  color: #74889d;
+  font-size: 8px;
+  letter-spacing: .13em;
+  font-weight: 900;
+  margin-bottom: 6px;
+}
+html[data-edge-theme="daylight"] .daily-date-pick .control {
+  min-width: 160px;
+  padding: 9px 10px;
+  font-size: 10px;
+}
+html[data-edge-theme="daylight"] .daily-journal-toolbar .daily-date-actions {
+  gap: 5px;
+}
+html[data-edge-theme="daylight"] .daily-journal-toolbar .btn {
+  padding: 8px 10px;
+  min-height: 34px;
+  font-size: 10px;
+}
+html[data-edge-theme="daylight"] .daily-journal-toolbar .daily-today-button {
+  color: #16794f;
+  background: #e7f7ef;
+  border-color: #d4eddf;
+}
+html[data-edge-theme="daylight"] .daily-reference-layout {
+  grid-template-columns: minmax(0,1.15fr) minmax(290px,.85fr);
+  gap: 14px;
+  align-items: start;
+  margin-top: 0;
+}
+html[data-edge-theme="daylight"] .daily-main-column,
+html[data-edge-theme="daylight"] .daily-side-column {
+  gap: 13px;
+}
+html[data-edge-theme="daylight"] .daily-section-panel,
+html[data-edge-theme="daylight"] .daily-summary-panel,
+html[data-edge-theme="daylight"] .daily-focus-timer {
+  padding: 15px;
+  border-radius: 15px;
+  border: 1px solid #e1eaf4;
+  background: #ffffff;
+  box-shadow: 0 5px 18px rgba(35,74,118,.045);
+}
+html[data-edge-theme="daylight"] .daily-section-head {
+  align-items: center;
+  margin-bottom: 12px;
+}
+html[data-edge-theme="daylight"] .daily-section-head h3 {
+  color: #1c3047;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: -.02em;
+}
+html[data-edge-theme="daylight"] .daily-section-head p {
+  color: #8295a9;
+  font-size: 9px;
+  line-height: 1.45;
+  margin-top: 4px;
+}
+html[data-edge-theme="daylight"] .daily-section-head .btn {
+  padding: 8px 10px;
+  font-size: 9px;
+  flex: none;
+}
+html[data-edge-theme="daylight"] .daily-section-head > div > #dailyTaskProgress {
+  display: block;
+  color: #7b8fa4;
+  font-size: 9px;
+  margin-top: 4px;
+}
+html[data-edge-theme="daylight"] .daily-task-list,
+html[data-edge-theme="daylight"] .study-session-list {
+  gap: 7px;
+}
+html[data-edge-theme="daylight"] .daily-task {
+  border: 1px solid #e6edf5;
+  background: #fbfdff;
+  border-radius: 10px;
+  padding: 9px;
+}
+html[data-edge-theme="daylight"] .daily-task.is-done {
+  background: #f0faf5;
+}
+html[data-edge-theme="daylight"] .task-copy strong {
+  color: #253b54;
+  font-size: 10px;
+}
+html[data-edge-theme="daylight"] .task-meta {
+  color: #8799ab;
+  font-size: 8px;
+}
+html[data-edge-theme="daylight"] .task-check {
+  width: 19px;
+  height: 19px;
+  border-radius: 6px;
+  border-color: #d5e3ee;
+  background: #ffffff;
+  color: #ffffff;
+}
+html[data-edge-theme="daylight"] .task-check.checked {
+  color: #ffffff;
+  background: #15966a;
+  border-color: #15966a;
+}
+html[data-edge-theme="daylight"] .task-priority {
+  font-size: 7px;
+  padding: 4px 6px;
+}
+html[data-edge-theme="daylight"] .daily-task-footer {
+  color: #7c8fa4;
+  border-color: #edf2f7;
+  font-size: 9px;
+  margin-top: 10px;
+}
+html[data-edge-theme="daylight"] .daily-task-footer .small-btn {
+  color: #2784d8;
+  background: transparent;
+  border: 0;
+  font-size: 8px;
+}
+html[data-edge-theme="daylight"] .daily-session-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  border-top: 1px solid #edf2f7;
+  padding-top: 10px;
+  margin-top: 10px;
+}
+html[data-edge-theme="daylight"] .daily-summary-note {
+  color: #8799ab;
+  font-size: 8px;
+}
+html[data-edge-theme="daylight"] .study-session {
+  border-color: #e6edf5;
+  background: #fbfdff;
+  border-radius: 10px;
+  padding: 10px;
+}
+html[data-edge-theme="daylight"] .session-kind {
+  color: #247cc3;
+  background: #eaf4ff;
+  font-size: 7px;
+  max-width: 84px;
+}
+html[data-edge-theme="daylight"] .session-main strong {
+  color: #253b54;
+  font-size: 10px;
+}
+html[data-edge-theme="daylight"] .session-main small,
+html[data-edge-theme="daylight"] .session-main p {
+  color: #8799ab;
+  font-size: 8px;
+}
+
+/* Circular timer and small, readable session controls */
+html[data-edge-theme="daylight"] .daily-focus-timer {
+  background: linear-gradient(145deg,#ffffff,#f6faff);
+}
+html[data-edge-theme="daylight"] .daily-focus-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+html[data-edge-theme="daylight"] .timer-kicker {
+  color: #168b62;
+  font-size: 8px;
+  letter-spacing: .13em;
+}
+html[data-edge-theme="daylight"] .timer-settings-button {
+  display: grid;
+  place-items: center;
+  width: 27px;
+  height: 27px;
+  border: 1px solid #e2eaf4;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #7a8fa4;
+  font-size: 12px;
+}
+html[data-edge-theme="daylight"] .daily-focus-timer h3 {
+  color: #1c3047;
+  font-size: 15px;
+  margin: 7px 0 0;
+}
+html[data-edge-theme="daylight"] .timer-circle {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 176px;
+  height: 176px;
+  margin: 14px auto 12px;
+  border-radius: 50%;
+  background: conic-gradient(from -90deg,#15966a 0deg,#44bd91 240deg,#dff2e8 240deg,#dff2e8 360deg);
+  box-shadow: 0 5px 16px rgba(21,150,106,.08);
+}
+html[data-edge-theme="daylight"] .timer-circle::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1px solid #e7f0f6;
+}
+html[data-edge-theme="daylight"] .timer-display {
+  position: relative;
+  z-index: 1;
+  color: #17283f;
+  font-size: 30px;
+  font-weight: 850;
+  letter-spacing: -.06em;
+  line-height: 1;
+  text-align: center;
+  padding: 0;
+}
+html[data-edge-theme="daylight"] .timer-circle-caption {
+  z-index: 1;
+  position: absolute;
+  top: calc(50% + 24px);
+  color: #8ca0b3;
+  font-size: 7px;
+  font-weight: 900;
+  letter-spacing: .12em;
+}
+html[data-edge-theme="daylight"] .daily-focus-timer .timer-presets {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  margin: 5px 0 10px;
+}
+html[data-edge-theme="daylight"] .daily-focus-timer .timer-presets .type-tab {
+  padding: 7px 8px;
+  border: 1px solid #e3ecf5;
+  border-radius: 8px;
+  font-size: 8px;
+  color: #71869b;
+  background: #ffffff;
+}
+html[data-edge-theme="daylight"] .daily-focus-timer .timer-presets .type-tab.active {
+  color: #14774f;
+  border-color: #caead9;
+  background: #e6f7ef;
+}
+html[data-edge-theme="daylight"] .daily-focus-timer .timer-actions {
+  margin-top: 7px;
+}
+html[data-edge-theme="daylight"] .daily-focus-timer .timer-actions .btn-primary {
+  color: #ffffff;
+  background: #15966a;
+  border-color: #15966a;
+}
+html[data-edge-theme="daylight"] .daily-focus-timer .timer-actions .btn-secondary {
+  flex: 0 0 40px;
+  background: #ffffff;
+  border-color: #e1eaf4;
+}
+html[data-edge-theme="daylight"] .daily-focus-timer .timer-footnote {
+  margin-top: 8px;
+  color: #8497aa;
+  font-size: 8px;
+}
+html[data-edge-theme="daylight"] .timer-options-details {
+  border-top: 1px solid #edf2f7;
+  margin-top: 10px;
+  padding-top: 8px;
+  color: #70849a;
+  font-size: 8px;
+}
+html[data-edge-theme="daylight"] .timer-options-details summary {
+  cursor: pointer;
+}
+html[data-edge-theme="daylight"] .timer-options-details .timer-form {
+  margin-top: 9px;
+}
+
+/* Today's Summary */
+html[data-edge-theme="daylight"] .daily-summary-main {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+}
+html[data-edge-theme="daylight"] .daily-summary-main > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 9px;
+  border: 1px solid #e4edf5;
+  border-radius: 10px;
+  background: #fbfdff;
+}
+html[data-edge-theme="daylight"] .summary-icon {
+  display: grid;
+  place-items: center;
+  width: 27px;
+  height: 27px;
+  flex: none;
+  border-radius: 8px;
+  font-size: 12px;
+}
+html[data-edge-theme="daylight"] .summary-time { color: #168b62; background: #e3f7ed; }
+html[data-edge-theme="daylight"] .summary-tasks { color: #2784d8; background: #e7f2ff; }
+html[data-edge-theme="daylight"] .daily-summary-main strong {
+  display: block;
+  color: #1c3047;
+  font-size: 15px;
+  letter-spacing: -.04em;
+}
+html[data-edge-theme="daylight"] .daily-summary-main small {
+  display: block;
+  color: #8295a9;
+  font-size: 8px;
+  margin-top: 2px;
+}
+html[data-edge-theme="daylight"] .daily-summary-meter {
+  margin-top: 13px;
+}
+html[data-edge-theme="daylight"] .daily-summary-meter-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 7px;
+  color: #7b8fa4;
+  font-size: 8px;
+}
+html[data-edge-theme="daylight"] .daily-summary-meter-head strong {
+  color: #526c84;
+  font-size: 8px;
+}
+html[data-edge-theme="daylight"] .daily-summary-meter .progress-track {
+  height: 6px;
+  background: #e9eff6;
+}
+html[data-edge-theme="daylight"] .daily-summary-bottom {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 10px;
+  color: #8195a9;
+  font-size: 8px;
+}
+html[data-edge-theme="daylight"] .journal-more-details {
+  margin-top: 14px;
+  color: #6e8298;
+  font-size: 10px;
+}
+html[data-edge-theme="daylight"] .journal-more-details > summary {
+  cursor: pointer;
+  padding: 11px 13px;
+  border: 1px solid #e1eaf4;
+  border-radius: 11px;
+  background: #ffffff;
+  font-weight: 800;
+  color: #536d84;
+  list-style-position: inside;
+}
+html[data-edge-theme="daylight"] .journal-more-details[open] > summary {
+  margin-bottom: 12px;
+}
+html[data-edge-theme="daylight"] .journal-extra-grid {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 13px;
+}
+
+/* Keep the reference-style KPI/charts as the first visual hierarchy in Performance Studio */
+html[data-edge-theme="daylight"] .performance-kpis {
+  gap: 10px;
+  margin: 10px 0 14px;
+}
+html[data-edge-theme="daylight"] .performance-kpi {
+  border: 1px solid #e1eaf4;
+  border-radius: 13px;
+  padding: 14px;
+  background: #ffffff;
+  box-shadow: 0 4px 14px rgba(35,74,118,.035);
+}
+html[data-edge-theme="daylight"] .performance-kpi small {
+  color: #7a8da2;
+  font-size: 8px;
+  letter-spacing: .1em;
+}
+html[data-edge-theme="daylight"] .performance-kpi strong {
+  color: #17283f;
+  font-size: 22px;
+  margin: 7px 0 3px;
+}
+html[data-edge-theme="daylight"] .performance-kpi span {
+  color: #7d91a5;
+  font-size: 8px;
+}
+html[data-edge-theme="daylight"] .performance-grid {
+  gap: 13px;
+  margin-bottom: 13px;
+}
+html[data-edge-theme="daylight"] .chart-track {
+  background: #edf3f8;
+}
+html[data-edge-theme="daylight"] .chart-bar {
+  background: linear-gradient(180deg,#35c18a,#15966a);
+}
+html[data-edge-theme="daylight"] .chart-bar.is-today {
+  background: linear-gradient(180deg,#5bb1f5,#2784d8);
+}
+html[data-edge-theme="daylight"] .comparison-pair > div {
+  background: #f7faff;
+  border-color: #e2ebf5;
+}
+html[data-edge-theme="daylight"] .mistake-toolbar {
+  display: grid;
+  grid-template-columns: minmax(130px,.9fr) minmax(130px,.9fr) minmax(150px,1fr) minmax(190px,1.4fr);
+  gap: 9px;
+  margin: 16px 0 13px;
+}
+html[data-edge-theme="daylight"] .mistake-toolbar .control {
+  min-width: 0;
+  width: 100%;
+  min-height: 37px;
+  padding: 9px 11px;
+  font-size: 10px;
+}
+html[data-edge-theme="daylight"] .mistake-tabs {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  border-bottom: 1px solid #e9eff6;
+  padding-bottom: 11px;
+  margin-bottom: 11px;
+  overflow-x: auto;
+}
+html[data-edge-theme="daylight"] .mistake-tab {
+  border: 1px solid transparent;
+  background: transparent;
+  color: #6d8197;
+  border-radius: 9px;
+  padding: 8px 12px;
+  font-size: 9px;
+  font-weight: 800;
+  white-space: nowrap;
+  cursor: pointer;
+}
+html[data-edge-theme="daylight"] .mistake-tab.active {
+  color: #16794f;
+  background: #e7f7ef;
+  border-color: #d7eee2;
+}
+html[data-edge-theme="daylight"] .mistake-due-details {
+  margin: 0 0 10px;
+  color: #667b91;
+  font-size: 9px;
+}
+html[data-edge-theme="daylight"] .mistake-due-details > summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 9px 11px;
+  border: 1px solid #e2eaf4;
+  border-radius: 10px;
+  background: #ffffff;
+}
+html[data-edge-theme="daylight"] .mistake-due-details[open] > div {
+  border: 1px solid #e2eaf4;
+  border-top: 0;
+  padding: 9px;
+  background: #ffffff;
+}
+html[data-edge-theme="daylight"] .mistake-table-card {
+  padding: 0;
+  border: 1px solid #e2eaf4;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #ffffff;
+}
+html[data-edge-theme="daylight"] .mistake-table-card .table-scroll {
+  border: 0;
+  border-radius: 0;
+  background: #ffffff;
+}
+html[data-edge-theme="daylight"] .mistake-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 9px;
+}
+html[data-edge-theme="daylight"] .mistake-table thead th {
+  padding: 11px 12px;
+  background: #f5f8fc;
+  color: #70849a;
+  border-bottom: 1px solid #e7eef6;
+  white-space: nowrap;
+  font-size: 8px;
+  font-weight: 850;
+}
+html[data-edge-theme="daylight"] .mistake-table tbody td {
+  padding: 10px 12px;
+  vertical-align: middle;
+  border-bottom: 1px solid #edf2f7;
+  color: #293e56;
+}
+html[data-edge-theme="daylight"] .mistake-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+html[data-edge-theme="daylight"] .mistake-table tbody tr:hover {
+  background: #f9fbff;
+}
+html[data-edge-theme="daylight"] .mistake-table tbody tr.is-due {
+  background: #fffdf9;
+}
+html[data-edge-theme="daylight"] .mistake-title-cell {
+  min-width: 170px;
+}
+html[data-edge-theme="daylight"] .mistake-title-cell strong {
+  display: block;
+  color: #223850;
+  font-size: 9px;
+}
+html[data-edge-theme="daylight"] .mistake-title-cell small {
+  display: block;
+  color: #8598ab;
+  font-size: 8px;
+  margin-top: 4px;
+}
+html[data-edge-theme="daylight"] .mistake-type-pill {
+  display: inline-block;
+  max-width: 100px;
+  border-radius: 7px;
+  padding: 5px 7px;
+  color: #b25362;
+  background: #ffedf0;
+  font-size: 7px;
+  font-weight: 850;
+  white-space: normal;
+}
+html[data-edge-theme="daylight"] .mistake-type-pill.type-formula-recall,
+html[data-edge-theme="daylight"] .mistake-type-pill.type-calculation {
+  color: #297fc5;
+  background: #eaf4ff;
+}
+html[data-edge-theme="daylight"] .mistake-type-pill.type-concept-gap {
+  color: #b25362;
+  background: #ffedf0;
+}
+html[data-edge-theme="daylight"] .mistake-type-pill.type-careless-error {
+  color: #a56a27;
+  background: #fff3e1;
+}
+html[data-edge-theme="daylight"] .mistake-notes-cell {
+  min-width: 180px;
+  max-width: 300px;
+  color: #6d8297 !important;
+  font-size: 8px;
+  line-height: 1.45;
+}
+html[data-edge-theme="daylight"] .mistake-review-date {
+  color: #657d94 !important;
+  font-size: 8px;
+  white-space: nowrap;
+}
+html[data-edge-theme="daylight"] .mistake-review-date small {
+  display: block;
+  color: #c26067;
+  font-weight: 800;
+  font-size: 7px;
+  margin-top: 4px;
+}
+html[data-edge-theme="daylight"] .mistake-status-chip {
+  min-width: 100px;
+  padding: 6px 7px !important;
+  border: 1px solid transparent !important;
+  border-radius: 7px !important;
+  font-size: 8px !important;
+  font-weight: 800;
+  box-shadow: none !important;
+}
+html[data-edge-theme="daylight"] .mistake-status-chip.to-review {
+  background: #fff0f1 !important;
+  color: #b9515b;
+  border-color: #f8dfe3 !important;
+}
+html[data-edge-theme="daylight"] .mistake-status-chip.reviewing {
+  background: #fff3e1 !important;
+  color: #a76a22;
+  border-color: #f8e5c6 !important;
+}
+html[data-edge-theme="daylight"] .mistake-status-chip.mastered {
+  background: #e3f7ec !important;
+  color: #14794f;
+  border-color: #d2efdf !important;
+}
+html[data-edge-theme="daylight"] .mistake-row-actions {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+html[data-edge-theme="daylight"] .mistake-edit-btn,
+html[data-edge-theme="daylight"] .mistake-delete-btn {
+  border: 1px solid #e1eaf4;
+  border-radius: 7px;
+  background: #ffffff;
+  color: #56718a;
+  padding: 6px 8px;
+  cursor: pointer;
+  font-size: 8px;
+  font-weight: 800;
+}
+html[data-edge-theme="daylight"] .mistake-edit-btn {
+  color: #2784d8;
+  background: #f0f7ff;
+  border-color: #e0edfc;
+}
+html[data-edge-theme="daylight"] .mistake-delete-btn {
+  color: #bb5963;
+  background: #fff6f7;
+  border-color: #f9e4e7;
+}
+@media (max-width: 950px) {
+  html[data-edge-theme="daylight"] .daily-reference-layout {
+    grid-template-columns: minmax(0,1fr);
+  }
+  html[data-edge-theme="daylight"] .daily-side-column {
+    grid-template-columns: repeat(2,minmax(0,1fr));
+  }
+  html[data-edge-theme="daylight"] .mistake-toolbar {
+    grid-template-columns: repeat(2,minmax(0,1fr));
+  }
+}
+@media (max-width: 620px) {
+  html[data-edge-theme="daylight"] .daily-journal-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  html[data-edge-theme="daylight"] .daily-side-column,
+  html[data-edge-theme="daylight"] .journal-extra-grid {
+    grid-template-columns: 1fr;
+  }
+  html[data-edge-theme="daylight"] .daily-focus-timer {
+    max-width: 100%;
+  }
+  html[data-edge-theme="daylight"] .mistake-toolbar {
+    grid-template-columns: 1fr;
+  }
+}
