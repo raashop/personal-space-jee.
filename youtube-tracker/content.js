@@ -49,7 +49,7 @@
     ["Physics","Current Electricity",["current electricity","kirchhoff","wheatstone bridge","drift velocity"]],
     ["Physics","Magnetic Effects of Current and Magnetism",["moving charges and magnetism","magnetic effects of current","magnetism and matter","biot savart","ampere's law","lorentz force"]],
     ["Physics","Electromagnetic Induction and Alternating Currents",["electromagnetic induction","alternating current","alternating currents","faraday's law","lenz's law","emi and ac","emi ac"]],
-    ["Physics","Electromagnetic Waves",["electromagnetic waves"]],
+    ["Physics","Electromagnetic Waves",["electromagnetic waves","em waves","properties of em waves","maxwell equations"]],
     ["Physics","Optics",["ray optics","wave optics","optical instruments","young's double slit"]],
     ["Physics","Dual Nature of Matter and Radiation",["dual nature","photoelectric effect","de broglie"]],
     ["Physics","Atoms and Nuclei",["atoms and nuclei","radioactivity","bohr model","nuclear binding energy"]],
