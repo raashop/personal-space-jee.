@@ -1,31 +1,133 @@
 const STORE = "psJeeLectureRecordsV1";
 const STATUS_KEY = "psJeeLectureTrackerStatusV1";
+const PLANNER_CONFIG_KEY = "psJeePlannerConfigV1";
+const LAST_SYNC_KEY = "psJeePlannerLastSyncV1";
+const SCRIPT_ID = "ps-jee-planner-auto-sync-v1";
+
 const count = document.getElementById("count");
 const list = document.getElementById("list");
 const statusPanel = document.getElementById("trackerStatus");
 const statusMessage = document.getElementById("statusMessage");
 const statusTitle = document.getElementById("statusTitle");
 const statusUpdated = document.getElementById("statusUpdated");
+const plannerUrlInput = document.getElementById("plannerUrl");
+const connectButton = document.getElementById("connectPlanner");
+const disconnectButton = document.getElementById("disconnectPlanner");
+const syncConnectionMessage = document.getElementById("syncConnectionMessage");
 
 const fmt = seconds => {
   seconds = Math.max(0, Math.floor(seconds || 0));
-  const m = Math.floor(seconds / 60), s = seconds % 60;
-  return m + "m " + s + "s watched";
+  return Math.floor(seconds / 60) + "m " + (seconds % 60) + "s watched";
 };
+function showConnectionMessage(message, isError = false) {
+  syncConnectionMessage.textContent = message;
+  syncConnectionMessage.classList.toggle("error", isError);
+}
+function pathPrefixFromUrl(url) {
+  const path = url.pathname || "/";
+  if (path.endsWith(".html") || path.endsWith(".htm")) return path.slice(0, path.lastIndexOf("/") + 1) || "/";
+  return path.endsWith("/") ? path : path + "/";
+}
+function matchPatternFor(url) {
+  if (url.protocol === "https:") return "https://" + url.hostname + "/*";
+  if (url.protocol === "http:" && ["localhost", "127.0.0.1"].includes(url.hostname)) return "http://" + url.hostname + "/*";
+  throw new Error("Use an https:// planner URL. http:// is allowed only for localhost testing.");
+}
+async function restoreConnection() {
+  const data = await chrome.storage.local.get([PLANNER_CONFIG_KEY, LAST_SYNC_KEY]);
+  const config = data[PLANNER_CONFIG_KEY];
+  if (config) {
+    plannerUrlInput.value = config.url || "";
+    disconnectButton.classList.remove("hidden");
+    const last = data[LAST_SYNC_KEY];
+    if (last && last.origin === config.origin) showConnectionMessage("Connected · " + (last.count || 0) + " records last synced at " + new Date(last.syncedAt).toLocaleTimeString() + ".");
+    else showConnectionMessage("Connected to " + config.origin + ". Open or refresh your planner page to sync existing records.");
+  } else showConnectionMessage("Not connected yet. Connect once; repeated export/import is not needed.");
+}
+async function connectPlanner() {
+  let url, pattern;
+  try {
+    url = new URL(plannerUrlInput.value.trim());
+    pattern = matchPatternFor(url);
+    if (!url.hostname || url.username || url.password) throw new Error("Paste the normal planner URL from the address bar.");
+  } catch (error) {
+    showConnectionMessage(error.message || "Enter a valid planner URL.", true);
+    return;
+  }
 
+  connectButton.disabled = true;
+  connectButton.textContent = "Requesting permission…";
+  try {
+    // Request permission directly from the click gesture so the browser can display its normal consent prompt.
+    const granted = await chrome.permissions.request({ origins: [pattern] });
+    if (!granted) throw new Error("Permission was not granted, so automatic sync is not connected.");
+    const config = {
+      url: url.href, origin: url.origin, pathPrefix: pathPrefixFromUrl(url),
+      matchPattern: pattern, connectedAt: new Date().toISOString()
+    };
+    await chrome.storage.local.set({ [PLANNER_CONFIG_KEY]: config });
+    const existing = await chrome.scripting.getRegisteredContentScripts({ ids: [SCRIPT_ID] });
+    if (existing.length) await chrome.scripting.unregisterContentScripts({ ids: [SCRIPT_ID] });
+    await chrome.scripting.registerContentScripts([{
+      id: SCRIPT_ID, matches: [pattern], js: ["planner-sync.js"],
+      runAt: "document_idle", persistAcrossSessions: true
+    }]);
+
+    let injected = false;
+    const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+    const tab = tabs && tabs[0];
+    if (tab?.id && tab.url) {
+      try {
+        const activeUrl = new URL(tab.url);
+        if (activeUrl.origin === config.origin && activeUrl.pathname.startsWith(config.pathPrefix)) {
+          await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ["planner-sync.js"] });
+          injected = true;
+        }
+      } catch {}
+    }
+    disconnectButton.classList.remove("hidden");
+    showConnectionMessage(injected
+      ? "Connected! Auto-sync is active on this planner tab. Watch a matched lecture; it should appear without exporting a file."
+      : "Connected! Open or refresh your planner page. It will sync automatically whenever you open it.");
+    await refresh();
+  } catch (error) {
+    showConnectionMessage(error.message || "Could not connect the planner.", true);
+  } finally {
+    connectButton.disabled = false;
+    connectButton.textContent = "Connect planner";
+  }
+}
+async function disconnectPlanner() {
+  try {
+    const data = await chrome.storage.local.get(PLANNER_CONFIG_KEY);
+    const config = data[PLANNER_CONFIG_KEY];
+    const registered = await chrome.scripting.getRegisteredContentScripts({ ids: [SCRIPT_ID] });
+    if (registered.length) await chrome.scripting.unregisterContentScripts({ ids: [SCRIPT_ID] });
+    await chrome.storage.local.remove([PLANNER_CONFIG_KEY, LAST_SYNC_KEY]);
+    if (config?.matchPattern) {
+      try { await chrome.permissions.remove({ origins: [config.matchPattern] }); } catch {}
+    }
+    plannerUrlInput.value = "";
+    disconnectButton.classList.add("hidden");
+    showConnectionMessage("Planner disconnected. Your extension records remain saved.");
+  } catch (error) {
+    showConnectionMessage(error.message || "Could not disconnect.", true);
+  }
+}
 async function refresh() {
-  const data = await chrome.storage.local.get([STORE, STATUS_KEY]);
+  const data = await chrome.storage.local.get([STORE, STATUS_KEY, PLANNER_CONFIG_KEY, LAST_SYNC_KEY]);
   const rows = Array.isArray(data[STORE]) ? data[STORE] : [];
   const status = data[STATUS_KEY];
   count.textContent = rows.length;
   document.getElementById("time").textContent = rows.length
     ? "Stored on this browser · " + fmt(rows.reduce((sum, row) => sum + (row.watchedSeconds || 0), 0)) + " total"
     : "No watched-time records saved yet.";
+
   list.innerHTML = "";
   if (!rows.length) {
     list.innerHTML = '<p class="empty">No matched lecture recorded yet. Check the tracker status above.</p>';
   } else {
-    rows.slice(0, 8).forEach(row => {
+    rows.slice().sort((a, b) => String(b.lastWatchedAt || "").localeCompare(String(a.lastWatchedAt || ""))).slice(0, 8).forEach(row => {
       const item = document.createElement("article");
       item.className = "lecture";
       const title = document.createElement("strong"); title.textContent = row.title || "Untitled lecture";
@@ -37,9 +139,8 @@ async function refresh() {
 
   if (!status) {
     statusPanel.className = "tracker-status type-waiting";
-    statusMessage.textContent = "No response from a YouTube tab yet. Open a direct video page (youtube.com/watch?v=…), refresh that tab, then play a JEE lecture.";
-    statusTitle.textContent = "";
-    statusUpdated.textContent = "";
+    statusMessage.textContent = "No response from a YouTube tab yet. Open a direct video page, refresh the tab, and play a JEE lecture.";
+    statusTitle.textContent = ""; statusUpdated.textContent = "";
   } else {
     statusPanel.className = "tracker-status type-" + String(status.type || "unknown").replace(/[^a-z0-9_-]/gi, "");
     statusMessage.textContent = status.message || "Tracker responded, but did not provide a status message.";
@@ -49,18 +150,28 @@ async function refresh() {
     const timeText = status.updatedAt ? "Last status: " + new Date(status.updatedAt).toLocaleTimeString() : "";
     statusUpdated.textContent = [pageHost, timeText].filter(Boolean).join(" · ");
   }
+  const config = data[PLANNER_CONFIG_KEY];
+  if (config) {
+    plannerUrlInput.value = config.url || plannerUrlInput.value;
+    disconnectButton.classList.remove("hidden");
+    const last = data[LAST_SYNC_KEY];
+    if (last && last.origin === config.origin) showConnectionMessage("Connected · " + (last.count || 0) + " lecture records synced at " + new Date(last.syncedAt).toLocaleTimeString() + ".");
+    else showConnectionMessage("Connected to " + config.origin + ". Open or refresh your planner page to sync.");
+  } else disconnectButton.classList.add("hidden");
 }
-
 document.getElementById("refresh").addEventListener("click", refresh);
 chrome.storage.onChanged.addListener((changes, area) => {
-  if (area === "local" && (changes[STORE] || changes[STATUS_KEY])) refresh();
+  if (area === "local" && (changes[STORE] || changes[STATUS_KEY] || changes[PLANNER_CONFIG_KEY] || changes[LAST_SYNC_KEY])) refresh();
 });
+connectButton.addEventListener("click", connectPlanner);
+disconnectButton.addEventListener("click", disconnectPlanner);
 document.getElementById("export").addEventListener("click", async () => {
   const data = await chrome.storage.local.get(STORE);
   const rows = Array.isArray(data[STORE]) ? data[STORE] : [];
   const payload = { format: "personal-space-youtube-lectures-v1", exportedAt: new Date().toISOString(), lectures: rows };
-  const url = URL.createObjectURL(new Blob([JSON.stringify(payload, null, 2)], {type:"application/json"}));
+  const url = URL.createObjectURL(new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" }));
   const a = document.createElement("a"); a.href = url; a.download = "personal-space-youtube-lectures.json"; a.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 });
 refresh();
+restoreConnection();
