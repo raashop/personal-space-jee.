@@ -1,5 +1,7 @@
 (() => {
   "use strict";
+  if (window.__psJeeYouTubeTrackerInstalled) return;
+  window.__psJeeYouTubeTrackerInstalled = true;
   const STORE = "psJeeLectureRecordsV1";
   const STATUS_KEY = "psJeeLectureTrackerStatusV1";
   let lastStatusSignature = "";
@@ -142,69 +144,71 @@
   }
 
   function waitForVideo() {
-    const video = document.querySelector("video");
     const id = videoId();
+    const video = document.querySelector("video");
     if (!video || !id) {
-      reportStatus("waiting", "Tracker script loaded, but it cannot see a YouTube watch player yet. Open a video URL and refresh that tab.", videoTitle());
-      setTimeout(waitForVideo, 1200);
+      reportStatus("waiting", "Tracker is ready. Open a YouTube video page to begin tracking.", videoTitle());
+      setTimeout(waitForVideo, 1800);
       return;
     }
 
-    const titleAtStart = videoTitle();
-    reportStatus("checking", "YouTube player found. Checking the title against JEE chapter names…", titleAtStart, null, id);
-    let lastTime = video.currentTime || 0;
+    let activeVideo = video;
+    let activeId = id;
     let lastUrl = location.href;
+    let lastTime = activeVideo.currentTime || 0;
     let busy = false;
+    reportStatus("checking", "YouTube player found. Checking the title against JEE chapter names…", videoTitle(), null, activeId);
 
-    setInterval(async () => {
-      // YouTube is a single-page app. Rebind to the new player when the URL changes;
-      // never reload the whole page from the content script (it can cause refresh loops).
-      if (location.href !== lastUrl) {
-        lastUrl = location.href;
-        lastTime = 0;
-        const nextId = videoId();
-        const nextVideo = document.querySelector("video");
-        if (!nextId || !nextVideo) {
-          reportStatus("waiting", "YouTube navigation detected. Waiting for the next video player…", videoTitle(), null, nextId || "");
+    // One lightweight polling loop per tab. Never change the page, player styles,
+    // playback state, or reload YouTube. Rebind the reference on SPA navigation.
+    const trackerTimer = setInterval(async () => {
+      const currentUrl = location.href;
+      if (currentUrl !== lastUrl) {
+        lastUrl = currentUrl;
+        activeId = videoId();
+        activeVideo = document.querySelector("video");
+        lastTime = activeVideo?.currentTime || 0;
+        if (!activeId || !activeVideo) {
+          reportStatus("waiting", "Waiting for YouTube's next video player…", videoTitle(), null, activeId || "");
           return;
         }
-        reportStatus("checking", "YouTube player found. Checking the title against JEE chapter names…", videoTitle(), null, nextId);
+        reportStatus("checking", "YouTube player found. Checking the title against JEE chapter names…", videoTitle(), null, activeId);
       }
-      if (busy) return;
+      if (busy || !activeVideo || !activeId || !activeVideo.isConnected) return;
       busy = true;
       try {
         const title = videoTitle();
         const channel = channelName();
         const match = classify(title, channel);
-        const now = video.currentTime || 0;
-        const delta = Math.max(0, Math.min(8, now - lastTime));
+        const now = activeVideo.currentTime || 0;
+        const delta = Math.max(0, Math.min(6, now - lastTime));
         lastTime = now;
 
         if (!match) {
-          reportStatus("unmatched", "Player found, but the title/channel did not match a known JEE chapter phrase. This tracker uses titles, not transcripts.", title, null, id);
+          reportStatus("unmatched", "Player found, but the title/channel did not match a known JEE chapter phrase. This tracker uses titles, not transcripts.", title, null, activeId);
           return;
         }
-        if (video.paused || video.ended) {
-          reportStatus("matched-paused", "Recognized " + match.subject + " · " + match.chapter + ". Press Play to record watch time.", title, match, id);
+        if (activeVideo.paused || activeVideo.ended) {
+          reportStatus("matched-paused", "Recognized " + match.subject + " · " + match.chapter + ". Press Play to record watch time.", title, match, activeId);
           return;
         }
         if (delta <= 0) {
-          reportStatus("matched-waiting", "Recognized " + match.subject + " · " + match.chapter + ". Waiting for playback time to advance…", title, match, id);
+          reportStatus("matched-waiting", "Recognized " + match.subject + " · " + match.chapter + ". Waiting for playback time to advance…", title, match, activeId);
           return;
         }
 
         const stored = await chrome.storage.local.get(STORE);
         const rows = Array.isArray(stored[STORE]) ? stored[STORE] : [];
-        const existing = rows.find(row => row.videoId === id);
+        const existing = rows.find(row => row.videoId === activeId);
         const record = existing || {
-          videoId: id,
-          url: "https://www.youtube.com/watch?v=" + id,
+          videoId: activeId,
+          url: "https://www.youtube.com/watch?v=" + activeId,
           title,
           channel,
           subject: match.subject,
           chapter: match.chapter,
           watchedSeconds: 0,
-          durationSeconds: Math.round(video.duration || 0),
+          durationSeconds: Math.round(activeVideo.duration || 0),
           firstWatchedAt: new Date().toISOString(),
           lastWatchedAt: new Date().toISOString(),
           classification: "title-match"
@@ -213,20 +217,21 @@
         record.channel = channel;
         record.subject = match.subject;
         record.chapter = match.chapter;
-        record.durationSeconds = Math.round(video.duration || record.durationSeconds || 0);
+        record.durationSeconds = Math.round(activeVideo.duration || record.durationSeconds || 0);
         record.watchedSeconds = Math.min(record.durationSeconds || Infinity, (record.watchedSeconds || 0) + delta);
         record.lastWatchedAt = new Date().toISOString();
-        const updated = [record, ...rows.filter(row => row.videoId !== id)].slice(0, 500);
+        const updated = [record, ...rows.filter(row => row.videoId !== activeId)].slice(0, 500);
         await chrome.storage.local.set({ [STORE]: updated });
-        reportStatus("tracking", "Tracking watch time for " + match.subject + " · " + match.chapter + ".", title, match, id);
+        reportStatus("tracking", "Tracking watch time for " + match.subject + " · " + match.chapter + ".", title, match, activeId);
       } catch (error) {
-        reportStatus("error", "Tracker error: " + String(error?.message || error), videoTitle(), null, id);
+        reportStatus("error", "Tracker error: " + String(error?.message || error), videoTitle(), null, activeId);
       } finally {
         busy = false;
       }
     }, 5000);
+    window.addEventListener("pagehide", () => clearInterval(trackerTimer), { once: true });
   }
 
-  reportStatus("loaded", "Tracker script loaded on a YouTube watch page. Looking for the video player…", videoTitle());
+  reportStatus("loaded", "Tracker script loaded on a YouTube page. Looking for the video player…", videoTitle());
   waitForVideo();
 })();
