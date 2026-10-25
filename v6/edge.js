@@ -642,98 +642,10 @@
     }
   }
 
-  function chooseRecommendation() {
-    const appState = typeof state !== "undefined" ? state : null;
-    const date = typeof todayISO === "function" ? todayISO() : new Date().toISOString().slice(0, 10);
-    const mistakes = appState && Array.isArray(appState.studyMistakes) ? appState.studyMistakes : [];
-    const dueMistake = mistakes.find(function (item) {
-      const status = String(item.status || "Needs Review").toLowerCase();
-      const reviewDate = String(item.reviewDate || item.nextReview || "");
-      return status !== "mastered" && (!reviewDate || reviewDate <= date);
-    });
-    if (dueMistake) {
-      return {
-        kicker: "Revision signal",
-        title: "Close one loop in your mistake bank",
-        detail: "A saved mistake is ready to review. Spend a short session fixing the reason behind the error, not just rereading the answer.",
-        button: "Review mistakes",
-        page: "mistakes",
-        icon: "↻"
-      };
-    }
-    const topics = appState && Array.isArray(appState.topics) ? appState.topics : [];
-    const planned = topics.find(function (item) {
-      const status = String(item.status || item.state || "").toLowerCase();
-      return status.includes("plan") || status.includes("upcoming");
-    });
-    if (planned) {
-      return {
-        kicker: "Practice signal",
-        title: "Turn a planned test into feedback",
-        detail: "Attempt one planned topic test, then log the score. The result is more valuable than leaving the test in your queue.",
-        button: "Open topic tests",
-        page: "topic",
-        icon: "◷"
-      };
-    }
-    const chapters = appState && Array.isArray(appState.chapters) ? appState.chapters : [];
-    const weak = chapters.find(function (item) {
-      return /weak|needs work|not started|in progress/i.test(String(item.prep || item.status || ""));
-    });
-    if (weak) {
-      return {
-        kicker: "Syllabus signal",
-        title: "Make one chapter less intimidating",
-        detail: "Pick a small concept, study it for 25 minutes, then update the chapter status. Aim for the next step, not a perfect chapter.",
-        button: "Open chapters",
-        page: "chapters",
-        icon: "▤"
-      };
-    }
-    return {
-      kicker: "Consistency signal",
-      title: "Protect a focused 25-minute block",
-      detail: "Choose one clear target, silence distractions, and use the focus timer. A finished block gives you a concrete win for today.",
-      button: "Start focus",
-      page: "daily",
-      icon: "⏱"
-    };
-  }
-
   function renderEdgeSignal() {
-    const dashboard = doc.getElementById("page-dashboard");
-    const hero = dashboard && dashboard.querySelector(".hero");
-    if (!dashboard || !hero) return;
-    let signal = doc.getElementById("psEdgeSignal");
-    if (!signal) {
-      signal = doc.createElement("section");
-      signal.id = "psEdgeSignal";
-      signal.className = "ps-edge-signal";
-      signal.setAttribute("aria-label", "Suggested next study action");
-      hero.insertAdjacentElement("afterend", signal);
-    }
-    const recommendation = chooseRecommendation();
-    signal.innerHTML =
-      '<div class="ps-edge-signal-copy">' +
-        '<div class="ps-edge-kicker"><span class="ps-edge-led"></span>' + safeText(recommendation.kicker) + '</div>' +
-        '<h3>' + safeText(recommendation.title) + '</h3>' +
-        '<p>' + safeText(recommendation.detail) + '</p>' +
-      '</div>' +
-      '<div class="ps-edge-signal-actions">' +
-        '<button class="btn btn-primary" type="button" id="psEdgeRecommendationButton">' + safeText(recommendation.button) + ' <span aria-hidden="true">↗</span></button>' +
-        '<span class="ps-edge-shortcut"><kbd>Ctrl</kbd><kbd>K</kbd> Commands</span>' +
-      '</div>';
-    const button = doc.getElementById("psEdgeRecommendationButton");
-    if (button) button.addEventListener("click", function () {
-      const page = recommendation.page;
-      goToPage(page);
-      if (page === "daily") {
-        window.setTimeout(function () {
-          const start = doc.getElementById("timerStartButton");
-          if (start && !/pause/i.test(start.textContent)) start.click();
-        }, 120);
-      }
-    });
+    // Kept as a safe no-op for existing render hooks; the dashboard has no recommendation card.
+    const signal = doc.getElementById("psEdgeSignal");
+    if (signal) signal.remove();
   }
 
   function wrapRenderFunctions() {
