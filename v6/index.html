@@ -2753,11 +2753,20 @@ function renderDashboardPlanPreview(){
  const meta=document.getElementById("dashboardPlanMeta");
  if(meta)meta.textContent=tasks.length?done+" of "+tasks.length+" tasks complete":"Build a small, realistic plan for today.";
  list.innerHTML=tasks.slice(0,4).map(t=>{
- const taskId=escapeAttr(t.id||"");
- const subject=String(t.subject||"General")+(t.chapter?" · "+chapterDisplayName(t.subject,t.chapter):"");
- return '<article class="dashboard-task-row '+(t.done?"is-done":"")+'"><button type="button" class="dashboard-task-toggle '+(t.done?"checked":"")+'" aria-label="'+(t.done?"Mark task incomplete":"Mark task complete")+'" onclick="toggleDailyTask(\\'"+taskId+"\\')">'+(t.done?"✓":"")+'</button><div class="dashboard-task-copy"><strong>'+escapeHTML(t.title||"Untitled task")+'</strong><small>'+escapeHTML(subject)+(t.estimate?" · "+Number(t.estimate)+" min":"")+'</small></div><span class="dashboard-task-state">'+(t.done?"Done":"To do")+'</span></article>';
+  const taskId=String(t.id||"");
+  const subject=String(t.subject||"General")+(t.chapter?" · "+chapterDisplayName(t.subject,t.chapter):"");
+  return '<article class="dashboard-task-row '+(t.done?"is-done":"")+'"><button type="button" class="dashboard-task-toggle '+(t.done?"checked":"")+'" data-dashboard-task-toggle data-task-id="'+escapeHTML(taskId)+'" aria-label="'+(t.done?"Mark task incomplete":"Mark task complete")+'">'+(t.done?"✓":"")+'</button><div class="dashboard-task-copy"><strong>'+escapeHTML(t.title||"Untitled task")+'</strong><small>'+escapeHTML(subject)+(t.estimate?" · "+Number(t.estimate)+" min":"")+'</small></div><span class="dashboard-task-state">'+(t.done?"Done":"To do")+'</span></article>';
  }).join("")||'<div class="dashboard-plan-empty"><strong>Your day is still open.</strong><span>Add one clear task and give yourself a next step.</span></div>';
- if(tasks.length>4)list.insertAdjacentHTML("beforeend",'<button type="button" class="dashboard-plan-more" onclick="go(\\'daily\\')">+'+(tasks.length-4)+' more tasks · Open daily journal ↗</button>');
+ if(tasks.length>4)list.insertAdjacentHTML("beforeend",'<button type="button" class="dashboard-plan-more" data-dashboard-open-daily>+'+(tasks.length-4)+' more tasks · Open daily journal ↗</button>');
+ list.querySelectorAll("[data-dashboard-task-toggle]").forEach(button=>{
+  button.addEventListener("click",function(){
+   const taskId=this.getAttribute("data-task-id")||"";
+   if(typeof window.toggleDailyTask==="function")window.toggleDailyTask(taskId);
+   else if(typeof go==="function")go("daily");
+  });
+ });
+ const more=list.querySelector("[data-dashboard-open-daily]");
+ if(more)more.addEventListener("click",function(){if(typeof go==="function")go("daily");});
 }
 function renderDashboard(){
  const chapters=state.chapters||[],ready=chapters.filter(c=>c.prep==="Exam Ready").length,total=chapters.length,work=chapters.filter(c=>c.prep==="Needs Work").length,active=chapters.filter(c=>c.prep==="In Progress").length;
