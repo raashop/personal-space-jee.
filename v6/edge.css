@@ -4401,3 +4401,169 @@ body.ps-readiness-open {
   .ps-readiness-subject-grid,
   .ps-readiness-status-grid { grid-template-columns:1fr; }
 }
+
+
+/* Final interaction fixes: custom timer controls, rollover notice and stable command centre. */
+html[data-edge-theme="daylight"] .daily-rollover-notice {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-wrap: wrap;
+  margin: 0 0 13px;
+  padding: 12px 13px;
+  border: 1px solid #f0dfc2;
+  border-radius: 12px;
+  background: #fff9ef;
+}
+html[data-edge-theme="daylight"] .daily-rollover-notice[hidden] {
+  display: none !important;
+}
+html[data-edge-theme="daylight"] .daily-rollover-notice > div {
+  display: grid;
+  gap: 4px;
+  flex: 1;
+  min-width: 210px;
+}
+html[data-edge-theme="daylight"] .daily-rollover-notice strong {
+  color: #8d5d25;
+  font-size: 10px;
+}
+html[data-edge-theme="daylight"] .daily-rollover-notice span {
+  color: #9a7b54;
+  font-size: 8px;
+  line-height: 1.45;
+}
+html[data-edge-theme="daylight"] .daily-rollover-notice .btn {
+  padding: 8px 10px;
+  font-size: 8px;
+}
+html[data-edge-theme="daylight"] .timer-custom-duration {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  align-items: end;
+  gap: 8px;
+  margin: 11px 0 13px;
+  padding: 10px;
+  border: 1px solid #e3ecf5;
+  border-radius: 10px;
+  background: #fbfdff;
+}
+html[data-edge-theme="daylight"] .timer-custom-duration .form-field {
+  display: grid;
+  gap: 5px;
+  color: #71869b;
+  font-size: 8px;
+  font-weight: 750;
+}
+html[data-edge-theme="daylight"] .timer-custom-duration .control {
+  width: 100%;
+  min-width: 0;
+  padding: 8px;
+  font-size: 10px;
+}
+html[data-edge-theme="daylight"] .timer-custom-duration .btn {
+  padding: 8px 10px;
+  font-size: 8px;
+  white-space: nowrap;
+}
+html[data-edge-theme="daylight"] .timer-custom-duration > small {
+  grid-column: 1 / -1;
+  color: #8296aa;
+  font-size: 8px;
+  line-height: 1.4;
+}
+html[data-edge-theme="daylight"] .topic-subject-tabs {
+  margin: 12px 0 8px;
+}
+html[data-edge-theme="daylight"] .topic-subject-tab {
+  border-radius: 999px;
+  padding: 8px 14px;
+  transition: background .12s ease,border-color .12s ease;
+}
+html[data-edge-theme="daylight"] .topic-subject-tab[data-topic-subject="all"].active {
+  color: #ffffff;
+  background: #168b62;
+  border-color: #168b62;
+}
+html[data-edge-theme="daylight"] .topic-subject-tab[data-topic-subject="Physics"] {
+  color: #277fc8;
+  background: #eef6ff;
+  border-color: #e0edfc;
+}
+html[data-edge-theme="daylight"] .topic-subject-tab[data-topic-subject="Physics"].active {
+  color: #ffffff;
+  background: #2784d8;
+  border-color: #2784d8;
+}
+html[data-edge-theme="daylight"] .topic-subject-tab[data-topic-subject="Chemistry"] {
+  color: #168052;
+  background: #eaf8f0;
+  border-color: #d9f0e3;
+}
+html[data-edge-theme="daylight"] .topic-subject-tab[data-topic-subject="Chemistry"].active {
+  color: #ffffff;
+  background: #15966a;
+  border-color: #15966a;
+}
+html[data-edge-theme="daylight"] .topic-subject-tab[data-topic-subject="Mathematics"] {
+  color: #7659bd;
+  background: #f2efff;
+  border-color: #e8e1ff;
+}
+html[data-edge-theme="daylight"] .topic-subject-tab[data-topic-subject="Mathematics"].active {
+  color: #ffffff;
+  background: #8064c7;
+  border-color: #8064c7;
+}
+
+/* Command centre is intentionally calm, bounded, and has a visible close control. */
+.ps-edge-backdrop {
+  backdrop-filter: blur(5px) !important;
+  -webkit-backdrop-filter: blur(5px) !important;
+  animation: none !important;
+  transition: opacity .12s ease !important;
+}
+.ps-edge-command {
+  animation: none !important;
+  transition: none !important;
+  transform: none !important;
+  max-height: min(78dvh,680px);
+  overscroll-behavior: contain;
+}
+.ps-edge-command-head {
+  align-items: center;
+}
+.ps-edge-command-close {
+  margin-left: 2px;
+  width: 30px;
+  height: 30px;
+  font-size: 20px;
+}
+.ps-edge-command-list {
+  overscroll-behavior: contain;
+  scroll-behavior: auto !important;
+}
+.ps-edge-command-item {
+  transition: background-color .08s ease,border-color .08s ease !important;
+  transform: none !important;
+}
+.ps-edge-command-item:hover,
+.ps-edge-command-item.is-active {
+  transform: none !important;
+}
+.ps-edge-command-group {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+@media (max-width: 560px) {
+  html[data-edge-theme="daylight"] .timer-custom-duration {
+    grid-template-columns: 1fr 1fr;
+  }
+  html[data-edge-theme="daylight"] .timer-custom-duration .btn {
+    grid-column: 1 / -1;
+  }
+  html[data-edge-theme="daylight"] .dashboard-quick-action {
+    padding: 8px;
+  }
+}
