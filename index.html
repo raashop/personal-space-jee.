@@ -1227,6 +1227,7 @@ function initialState(){
 }
 function plannerChapterKey(item){return String(item&&item.subject||"")+"::"+String(item&&item.chapter||"");}
 function plannerSlug(value){return String(value||"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")||"chapter";}
+const LEGACY_CHAPTER_ALIASES={"Physics":{"Motion in a Straight Line & Plane":["Motion in a Straight Line","Motion in a Plane"],"System of Particles & Rotational Motion":["Centre of Mass and Collisions","Rotational Motion"],"Mechanical Properties of Solids & Fluids":["Mechanical Properties of Solids","Mechanical Properties of Fluids"],"Thermal Physics, KTG & Thermodynamics":["Thermal Properties of Matter","Thermodynamics","Kinetic Theory of Gases"],"Oscillations and Waves":["Oscillations","Waves"],"Electrostatics & Capacitance":["Electric Charges and Fields","Electrostatic Potential and Capacitance"],"Moving Charges, Magnetism & Matter":["Moving Charges and Magnetism","Magnetism and Matter"],"EMI & Alternating Current":["Electromagnetic Induction","Alternating Current"],"Ray Optics & Wave Optics":["Ray Optics","Wave Optics"],"Dual Nature, Atoms & Nuclei (Modern Physics)":["Dual Nature of Matter and Radiation","Atoms","Nuclei"]},"Chemistry":{"Mole Concept & Stoichiometry":["Some Basic Concepts in Chemistry"],"Structure of Atom":["Atomic Structure"],"Chemical Bonding & Molecular Structure":["Chemical Bonding and Molecular Structure"],"Periodic Table & Periodicity":["Classification of Elements and Periodicity"],"Chemical & Ionic Equilibrium":["Chemical Equilibrium","Ionic Equilibrium"],"Purification & Characterisation of Organic Compounds":["Purification Methods","Qualitative and Quantitative Organic Analysis"],"GOC & Hydrocarbons":["General Organic Chemistry (GOC)","Nomenclature","Isomerism","Alkanes","Alkenes","Alkynes","Aromatic Hydrocarbons"],"Haloalkanes & Haloarenes":["Haloalkanes","Haloarenes"],"Alcohols, Phenols & Ethers":["Alcohols","Phenols","Ethers"],"Aldehydes, Ketones & Carboxylic Acids":["Aldehydes and Ketones","Carboxylic Acids"],"Amines & Biomolecules":["Amines","Biomolecules"]},"Mathematics":{"Sets, Relations & Functions":["Sets","Relations and Functions"],"Complex Numbers & Quadratic Equations":["Complex Numbers","Quadratic Equations"],"P&C and Binomial Theorem":["Permutations and Combinations","Binomial Theorem"],"Trigonometric Functions, Identities & Equations":["Trigonometric Functions and Identities","Trigonometric Equations"],"Straight Lines & Conic Sections":["Straight Lines and Coordinate Basics","Circle","Parabola","Ellipse","Hyperbola"],"Limits, Continuity & Derivatives":["Limits","Continuity and Differentiability","Methods of Differentiation"],"Statistics & Probability":["Statistics","Probability"],"Matrices and Determinants":["Matrices","Determinants"],"Definite Integrals & Application of Integrals":["Definite Integration","Area Under the Curve"],"Vectors & 3D Geometry":["Vectors","Three-Dimensional Geometry"]}};
 function legacyChapterTargets(subject,chapter){
   const bySubject=LEGACY_CHAPTER_ALIASES[subject]||{};
   return bySubject[chapter]||null;
@@ -1240,14 +1241,13 @@ function migrateState(saved){
   const oldByKey=new Map();
   const legacyAliasKeys=new Set();
 
-  // Exact chapter records win, so progress already saved against a newly split chapter is never overwritten.
+  // Exact chapter records take priority over migrated combined records.
   oldChapters.forEach(ch=>{
     const k=plannerChapterKey(ch);
     if(defaultKeys.has(k)&&!oldByKey.has(k))oldByKey.set(k,ch);
   });
 
-  // Spread progress from retired combined entries across their new component chapters.
-  // This preserves the user's earlier status for the material they were tracking as one unit.
+  // Carry a retired combined chapter's status to each new component chapter it represented.
   oldChapters.forEach(ch=>{
     const k=plannerChapterKey(ch);
     if(defaultKeys.has(k))return;
@@ -1265,10 +1265,10 @@ function migrateState(saved){
     const old=oldByKey.get(plannerChapterKey(ch));
     return old?{...ch,...old,subject:ch.subject,chapter:ch.chapter,class:ch.class}:ch;
   });
-  // Keep true custom chapters, but do not retain retired combined labels as duplicate rows.
+  // Keep true custom chapters, but remove retired combined labels to avoid duplicates.
   oldChapters.filter(ch=>!defaultKeys.has(plannerChapterKey(ch))&&!legacyAliasKeys.has(plannerChapterKey(ch))).forEach(ch=>chapters.push(ch));
 
-  // Keep prior topic-test history associated with the first matching new chapter instead of leaving stale labels.
+  // Preserve old test history on the first matching component chapter; new components get their own blank test entries.
   const topics=oldTopics.map(t=>{
     const targets=legacyChapterTargets(t&&t.subject,t&&t.chapter);
     if(!targets||!targets.length)return t;
@@ -1313,51 +1313,6 @@ function migrateState(saved){
     return targets&&targets.length?{...p,chapter:targets[0]}:p;
   });
   return {...defaults,...saved,chapters,topics:normalizedTopics,litmus,pyqs};
-}s":["Definite Integration","Area Under the Curve"],"Vectors & 3D Geometry":["Vectors","Three-Dimensional Geometry"]}};
-function migrateState(saved){
- const defaults=initialState();
- if(!saved||!Array.isArray(saved.chapters))return defaults;
- const oldChapters=Array.isArray(saved.chapters)?saved.chapters:[];
- const oldTopics=Array.isArray(saved.topics)?saved.topics:[];
- const defaultKeys=new Set(defaults.chapters.map(plannerChapterKey));
- const oldByKey=new Map();
- oldChapters.forEach(ch=>{const k=plannerChapterKey(ch);if(!oldByKey.has(k))oldByKey.set(k,ch);});
- const chapters=defaults.chapters.map(ch=>({...ch,...(oldByKey.get(plannerChapterKey(ch))||{})}));
- oldChapters.filter(ch=>!defaultKeys.has(plannerChapterKey(ch))).forEach(ch=>chapters.push(ch));
- const topics=oldTopics.slice();
- const topicIds=new Set(topics.map(t=>String(t&&t.id||"")));
- defaults.chapters.forEach(ch=>{
-  const hasDefault=topics.some(t=>t&&t.subject===ch.subject&&t.chapter===ch.chapter&&String(t.name||"")===ch.chapter+" Topic Test"&&t.custom!==true);
-  if(hasDefault)return;
-  let id="topic-syllabus-"+plannerSlug(ch.subject+"-"+ch.chapter),suffix=2;
-  while(topicIds.has(id)){id="topic-syllabus-"+plannerSlug(ch.subject+"-"+ch.chapter)+"-"+suffix++; }
-  topicIds.add(id);
-  const template=defaults.topics.find(t=>t.subject===ch.subject&&t.chapter===ch.chapter)||{};
-  topics.push({...template,id,subject:ch.subject,chapter:ch.chapter,name:ch.chapter+" Topic Test",source:"Chapter topic test",status:"Not Started",plannedDate:"",actualDate:"",marks:"",outOf:"",difficulty:"",notes:"",custom:false});
- });
- const normalizedTopics=topics.map(t=>{
-  const oldMax=Number(t.outOf)||100,oldMarks=Number(t.marks);
-  let marks=t.marks;
-  if(oldMax>100&&t.marks!==""&&t.marks!==null&&t.marks!==undefined&&Number.isFinite(oldMarks)&&oldMarks>100){
-   marks=String(Math.round(oldMarks/oldMax*100*10)/10);
-  }
-  return {...t,marks,outOf:String(oldMax>100?100:(t.outOf||100))};
- });
- chapters.forEach(ch=>{
-  const oldMax=Number(ch.outOf),oldMarks=Number(ch.marks);
-  if(oldMax>100){
-   if(ch.marks!==""&&Number.isFinite(oldMarks)&&oldMarks>100)ch.marks=String(Math.round(oldMarks/oldMax*100*10)/10);
-   ch.outOf="100";
-  }
- });
- const defaultLitmusIds=new Set(defaults.litmus.map(t=>t.id));
- const savedLitmus=Array.isArray(saved.litmus)?saved.litmus:[];
- const litmus=defaults.litmus.map(def=>{
-  const old=savedLitmus.find(t=>t&&t.id===def.id);
-  return old?{...def,...old,syllabus:def.syllabus}:def;
- });
- savedLitmus.filter(t=>t&&!defaultLitmusIds.has(t.id)).forEach(t=>litmus.push(t));
- return {...defaults,...saved,chapters,topics:normalizedTopics,litmus,pyqs:Array.isArray(saved.pyqs)?saved.pyqs:[]};
 }
 function loadState(){
  try{
