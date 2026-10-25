@@ -1860,7 +1860,7 @@ td strong {
 <body>
 <div class="shell">
 <aside class="sidebar">
- <div class="brand"><div class="brandmark">P<span style="font-size:12px">✳</span></div><div><div class="brand-name">Personal Space</div><div class="brand-sub">JEE workspace · V6 EDGE</div></div></div>
+ <div class="brand"><div class="brandmark" aria-hidden="true"><svg viewBox="0 0 32 32" role="img"><path d="M16 26V12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M16 17C5 17 4 7 4 5c10 0 15 4 12 12Z" fill="currentColor" opacity=".94"/><path d="M16 13C17 5 24 4 28 4c0 9-5 13-12 9Z" fill="currentColor" opacity=".7"/><path d="M16 26c-2-4-5-6-8-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><div><div class="brand-name">Personal Space V6</div><div class="brand-sub">JEE Main 2027</div></div></div>
  <div class="nav-label">YOUR WORKSPACE</div>
  <nav id="nav">
   <button class="active" data-page="dashboard"><span class="nav-icon">⌂</span>Home</button>
@@ -1876,9 +1876,8 @@ td strong {
   <button type="button" data-page="backup" onclick="openCloudSettings()"><span class="nav-icon">☁</span>Backup &amp; Sync</button>
  </nav>
  <div class="side-bottom">
-  <div class="sync-state"><span class="sync-dot"></span><div><strong id="syncStatus" style="color:#466657">Saved on this device</strong><div id="syncDetail">Your progress autosaves as you work.</div></div></div>
-  <button class="btn btn-secondary" style="width:100%" onclick="openCloudSettings()">☁ Cloud sync settings</button>
-  <div class="side-foot">Your study data stays in this browser unless you connect cloud sync. Export a backup anytime.</div>
+  <details class="sidebar-sync-details"><summary>Cloud sync status</summary><div class="sync-state"><span class="sync-dot"></span><div><strong id="syncStatus">Saved on this device</strong><div id="syncDetail">Your progress autosaves as you work.</div></div></div><button class="btn btn-secondary" style="width:100%" onclick="openCloudSettings()">Manage cloud sync</button><div class="side-foot">Your study data stays in this browser unless you connect cloud sync. Export a backup anytime.</div></details>
+  <div class="profile-mini"><span class="profile-avatar">R</span><span><strong>Raash</strong><small>Stay consistent ✦</small></span></div>
  </div>
 </aside>
 <main>
