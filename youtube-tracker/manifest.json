@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Personal Space — JEE Lecture Tracker",
+  "name": "Personal Space — Lecture Tracker",
   "version": "1.3.0",
   "description": "Tracks recognized JEE lecture playback on YouTube and Telegram Web and syncs records to Personal Space.",
   "permissions": [
