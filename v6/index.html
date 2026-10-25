@@ -4656,6 +4656,8 @@ function renderYoutubeLectures(){
  if(count)count.textContent=rows.length;
  if(minutes)minutes.textContent=Math.round(watched/60)+" min";
  if(chapterCount)chapterCount.textContent=chapters.size;
+ renderYoutubeCourseProgress();
+ if(typeof renderStudyActivitySummary==="function")renderStudyActivitySummary();
  const list=document.getElementById("psLectureList");
  if(!list)return;
  if(!rows.length){list.className="empty-state";list.textContent="No lecture records yet. Connect the extension once above, then play a recognized JEE lecture. Import backup is optional.";return;}
@@ -4715,7 +4717,7 @@ function mergeYoutubeLectureRows(incomingRows){
  if(recordsChanged)writeYoutubeLectures(Array.from(byId.values()).slice(-1000));
  if(stateChanged)saveState();
  else if(recordsChanged&&typeof queueYoutubeCloudSave==="function")queueYoutubeCloudSave();
- if(recordsChanged||stateChanged)renderYoutubeLectures();
+ if(recordsChanged||stateChanged){renderYoutubeLectures();renderChapters();renderDashboard();}
  return {added,updated,chaptersStarted,recordsChanged,stateChanged,count:byId.size};
 }
 function mergeTelegramPlaybackRows(incomingRows){
@@ -4737,7 +4739,7 @@ function mergeTelegramPlaybackRows(incomingRows){
  }
  if(recordsChanged)writeTelegramLectures(Array.from(byId.values()).slice(-1000));
  if(stateChanged)saveState();
- if(recordsChanged||stateChanged)renderTelegramImport();
+ if(recordsChanged||stateChanged){renderTelegramImport();renderChapters();renderDashboard();}
  return {added,updated,chaptersStarted,recordsChanged,stateChanged,count:byId.size};
 }
 function setYoutubeSyncStatus(message,isError=false){
@@ -5072,6 +5074,8 @@ if(confirm("A cloud backup exists. Press OK to restore it, or Cancel to upload t
 state=migrateState(payload.state);
 if(payload.countdownTarget)localStorage.setItem("jee-countdown-target",payload.countdownTarget);
 if(Array.isArray(payload.youtubeLectures))mergeYoutubeLectureRows(payload.youtubeLectures);
+if(Array.isArray(payload.youtubeCourses))mergeYoutubeCourses(payload.youtubeCourses);
+if(Array.isArray(payload.telegramLectures))mergeTelegramPlaybackRows(payload.telegramLectures);
 }
 else{
 await cloudWriteNow();
@@ -5115,7 +5119,7 @@ error
 }
 =await cloudClient.from("study_data").upsert({
 user_id:cloudUser.id,data:{
-state,countdownTarget:getCountdownTarget(),youtubeLectures:readYoutubeLectures()
+state,countdownTarget:getCountdownTarget(),youtubeLectures:readYoutubeLectures(),youtubeCourses:readYoutubeCourses(),telegramLectures:readTelegramLectures()
 }
 ,updated_at:new Date().toISOString()
 }
@@ -5153,6 +5157,8 @@ cloudApplying=true;
 state=migrateState(r.data.data.state);
 localStorage.setItem(KEY,JSON.stringify(state));
 const lectureMerge=Array.isArray(r.data.data.youtubeLectures)?mergeYoutubeLectureRows(r.data.data.youtubeLectures):null;
+if(Array.isArray(r.data.data.youtubeCourses))mergeYoutubeCourses(r.data.data.youtubeCourses);
+if(Array.isArray(r.data.data.telegramLectures))mergeTelegramPlaybackRows(r.data.data.telegramLectures);
 localStorage.setItem(KEY,JSON.stringify(state));
 renderAll();
 cloudApplying=false;
@@ -5192,6 +5198,8 @@ if(!r.error&&r.data?.data?.state){
 cloudBackupAvailable=true;
 const cloudLectures=Array.isArray(r.data.data.youtubeLectures)?r.data.data.youtubeLectures:[];
 const cloudLectureMerge=cloudLectures.length?mergeYoutubeLectureRows(cloudLectures):null;
+if(Array.isArray(r.data.data.youtubeCourses))mergeYoutubeCourses(r.data.data.youtubeCourses);
+if(Array.isArray(r.data.data.telegramLectures))mergeTelegramPlaybackRows(r.data.data.telegramLectures);
 cloudReady=true;
 document.getElementById("syncStatus").textContent="Cloud sync enabled";
 if(cloudLectureMerge&&(cloudLectureMerge.recordsChanged||cloudLectureMerge.stateChanged))queueYoutubeCloudSave();
