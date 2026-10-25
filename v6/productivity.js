@@ -35,7 +35,7 @@
   const dayMinutes = date => sum(sessionsFor(date));
   const isStudyDay = date => dayMinutes(date)>0 || tasksFor(date).some(t=>t.done);
   const subjectNames = ["Physics","Chemistry","Mathematics"];
-  let timerInterval=null,timerEnd=0,timerInitial=0,timerStarted=0,timerChosen=25,timerRunning=false,activeMistakeTab="all";
+  let timerInterval=null,timerEnd=0,timerInitial=0,timerStarted=0,timerChosen=25,timerRunning=false,activeMistakeTab="all",followsToday=true;
 
   const dailyMarkup = `
   <section class="page" id="page-daily">
@@ -187,7 +187,7 @@
     byId("quickCapture").value=review.tomorrow||"";
   }
   window.renderDailyLog=renderDailyLog;
-  window.setDailyDate=function(delta){const input=byId("dailyDate");input.value=delta===0?todayISO():addDays(input.value||todayISO(),delta);renderDailyLog();};
+  window.setDailyDate=function(delta){const input=byId("dailyDate");input.value=delta===0?todayISO():addDays(input.value||todayISO(),delta);followsToday=input.value===todayISO();renderDailyLog();};
   window.openYesterday=function(){byId("dailyDate").value=addDays(todayISO(),-1);go("daily");renderDailyLog();};
   window.openDailyTaskModal=function(){
     const date=(byId("dailyDate")&&byId("dailyDate").value)||todayISO(),sub=currentChapterSubject||"Physics";
@@ -595,7 +595,7 @@
     chapter.innerHTML='<option value="">General / multiple chapters</option>'+opts.map(c=>'<option value="'+escapeAttr(c.chapter)+'">'+escapeHTML(chapterDisplayName(c.subject,c.chapter))+'</option>').join("");
     if(opts.some(c=>c.chapter===picked))chapter.value=picked;
   });
-  byId("dailyDate").value=todayISO();updateTimerChapters();paintTimerRing(0);
+  byId("dailyDate").value=todayISO();followsToday=true;byId("dailyDate").addEventListener("change",function(){followsToday=byId("dailyDate").value===todayISO();});updateTimerChapters();paintTimerRing(0);
   /* Daily review prompt: gently surface the previous day without blocking the workspace. */
   const reviewDate=sessionStorage.getItem("ps-v6-last-open-date");
   if(reviewDate!==todayISO()){
@@ -614,7 +614,7 @@
     const previousDate=observedLocalDate;
     observedLocalDate=nextDate;
     const dailyDateInput=byId("dailyDate");
-    if(dailyDateInput&&dailyDateInput.value===previousDate)dailyDateInput.value=nextDate;
+    if(dailyDateInput&&followsToday)dailyDateInput.value=nextDate;
     renderDailyLog();
     renderPerformance();
     renderMistakes();
