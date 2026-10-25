@@ -5,6 +5,12 @@
 
   const STORE = "psJeeTelegramLectureRecordsV1";
   const STATUS = "psJeeTelegramTrackerStatusV1";
+  let recordWriteQueue=Promise.resolve();
+  function queueRecordWrite(task){
+    const pending=recordWriteQueue.then(task,task);
+    recordWriteQueue=pending.catch(()=>{});
+    return pending;
+  }
   const normalize = value => String(value || "").toLowerCase().replace(/&/g," and ").replace(/[^a-z0-9]+/g," ").trim().replace(/\s+/g," ");
   const CHAPTERS = [
     ["Physics","Units and Measurements",["units and measurements","dimensional analysis","measurement errors"]],
@@ -229,26 +235,29 @@
 
         secondsToSave=pendingSeconds;
         pendingSeconds=0;
-        const data=await chrome.storage.local.get(STORE);
-        const rows=Array.isArray(data[STORE])?data[STORE]:[];
-        const old=rows.find(row=>row.id===recordId);
-        const row={
-          ...(old||{}),
-          id:recordId,
-          title:context.title,
-          url:context.url,
-          messageId:context.msgId,
-          source:"Telegram Web",
-          subject:match.subject,
-          chapter:match.chapter,
-          matchedPhrase:match.matchedPhrase,
-          watchedSeconds:Math.min(86400,(Number(old?.watchedSeconds)||0)+secondsToSave),
-          firstWatchedAt:old?.firstWatchedAt||new Date().toISOString(),
-          lastWatchedAt:new Date().toISOString(),
-          durationSeconds:Math.round(video.duration||old?.durationSeconds||0)
-        };
-        const next=[row,...rows.filter(item=>item.id!==recordId)].slice(0,1000);
-        await chrome.storage.local.set({[STORE]:next});
+        const row=await queueRecordWrite(async()=>{
+          const data=await chrome.storage.local.get(STORE);
+          const rows=Array.isArray(data[STORE])?data[STORE]:[];
+          const old=rows.find(item=>item.id===recordId);
+          const updatedRow={
+            ...(old||{}),
+            id:recordId,
+            title:context.title,
+            url:context.url,
+            messageId:context.msgId,
+            source:"Telegram Web",
+            subject:match.subject,
+            chapter:match.chapter,
+            matchedPhrase:match.matchedPhrase,
+            watchedSeconds:Math.min(86400,(Number(old?.watchedSeconds)||0)+secondsToSave),
+            firstWatchedAt:old?.firstWatchedAt||new Date().toISOString(),
+            lastWatchedAt:new Date().toISOString(),
+            durationSeconds:Math.round(video.duration||old?.durationSeconds||0)
+          };
+          const next=[updatedRow,...rows.filter(item=>item.id!==recordId)].slice(0,1000);
+          await chrome.storage.local.set({[STORE]:next});
+          return updatedRow;
+        });
         report(paused?"matched-paused":"tracking",
           paused
             ? "Recognized "+match.subject+" · "+match.chapter+". Playback paused; final watch time saved."
