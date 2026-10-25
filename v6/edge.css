@@ -2,28 +2,28 @@
    High contrast, high energy, reduced-motion aware, and responsive. */
 html[data-edge-theme="aurora"]  {
   color-scheme: dark;
-  --bg: #071117;
-  --paper: #0d1b23;
-  --ink: #e9f8f4;
-  --muted: #91a9ad;
-  --line: rgba(143, 197, 205, .17);
-  --soft: #12262e;
-  --blue: #5bdcff;
-  --blue-soft: rgba(91, 220, 255, .13);
-  --green: #65f3b2;
-  --green-soft: rgba(101, 243, 178, .13);
-  --violet: #c1a3ff;
-  --violet-soft: rgba(193, 163, 255, .14);
+  --bg: #080b16;
+  --paper: #101629;
+  --ink: #f1f5ff;
+  --muted: #9aa8c2;
+  --line: rgba(154, 177, 230, .17);
+  --soft: #151d33;
+  --blue: #71d8ff;
+  --blue-soft: rgba(113, 216, 255, .13);
+  --green: #6af5c2;
+  --green-soft: rgba(106, 245, 194, .13);
+  --violet: #b8a0ff;
+  --violet-soft: rgba(184, 160, 255, .14);
   --orange: #ffc16d;
   --orange-soft: rgba(255, 193, 109, .13);
   --red: #ff8499;
   --red-soft: rgba(255, 132, 153, .13);
   --shadow: 0 22px 70px rgba(0, 0, 0, .28);
   --radius: 22px;
-  --edge-glow: rgba(91, 220, 255, .22);
-  --edge-panel: rgba(12, 28, 36, .86);
-  --edge-panel-solid: #0d1b23;
-  --edge-grid: rgba(92, 219, 255, .045);
+  --edge-glow: rgba(113, 216, 255, .22);
+  --edge-panel: rgba(15, 22, 41, .88);
+  --edge-panel-solid: #101629;
+  --edge-grid: rgba(113, 145, 255, .05);
 }
 html[data-edge-theme="ultraviolet"]  {
   color-scheme: dark;
@@ -1192,4 +1192,86 @@ html[data-edge-theme="daylight"] .brandmark  {
     animation-iteration-count: 1 !important;
     transition-duration: .001ms !important;
   }
+}
+
+
+/* Dashboard polish: visible JEE countdown and calm, non-clickable progress ring. */
+.hero-progress-wrap {
+  gap: 24px;
+  align-items: center;
+}
+.hero-mini {
+  min-width: 168px;
+  gap: 12px;
+}
+.hero-mini > div {
+  min-width: 142px;
+  padding: 13px 15px;
+  border: 1px solid var(--line);
+  border-radius: 17px;
+  background: linear-gradient(145deg, color-mix(in srgb, var(--paper) 90%, var(--blue) 10%), var(--edge-panel));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.04), 0 10px 26px rgba(0,0,0,.14);
+}
+.hero-mini .countdown-stat {
+  border-color: color-mix(in srgb, var(--green) 30%, var(--line));
+  background: linear-gradient(145deg, color-mix(in srgb, var(--green) 10%, var(--paper)), color-mix(in srgb, var(--blue) 8%, var(--edge-panel-solid)));
+}
+.hero-mini .countdown-label {
+  color: var(--green);
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: .13em;
+  margin: 0 0 7px;
+}
+.hero-mini .countdown-stat strong {
+  font-size: 42px;
+  line-height: 1;
+  letter-spacing: -.07em;
+  color: var(--ink);
+  text-shadow: 0 0 24px color-mix(in srgb, var(--green) 14%, transparent);
+}
+.hero-mini .countdown-stat .countdown-unit {
+  display: inline-block;
+  color: var(--ink);
+  font-size: 10px;
+  font-weight: 800;
+  margin-top: 4px;
+}
+.hero-mini .countdown-stat .countdown-date {
+  display: block;
+  color: var(--muted);
+  font-size: 9px;
+  margin-top: 7px;
+}
+.countdown-edit {
+  display: inline-flex;
+  border: 0;
+  padding: 5px 0 0;
+  margin-top: 5px;
+  color: var(--blue);
+  background: transparent;
+  font-size: 9px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.countdown-edit:hover {
+  color: var(--green);
+}
+.hero-mini .hero-chapters-stat strong {
+  font-size: 24px;
+}
+#overallRing {
+  cursor: default;
+  pointer-events: none;
+}
+@media (max-width: 1100px) {
+  .hero-progress-wrap { gap: 14px; }
+  .hero-mini { min-width: 145px; }
+  .hero-mini > div { min-width: 125px; padding: 11px 12px; }
+}
+@media (max-width: 720px) {
+  .hero-progress-wrap { justify-content: flex-start; }
+  .hero-mini { grid-template-columns: repeat(2, minmax(0,1fr)); min-width: 0; }
+  .hero-mini > div { min-width: 0; }
+  .hero-mini .countdown-stat { grid-column: 1 / -1; }
 }
