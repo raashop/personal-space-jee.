@@ -2824,6 +2824,70 @@ function renderDashboardPlanPreview(){
  const todayFocus=document.getElementById("dailyFocusNotice");
  if(todayFocus)todayFocus.textContent=tasks.length?done+" tasks completed · "+(tasks.length-done)+" remaining":"Create a plan with chapter selections, then tick off each task as you finish.";
 }
+function openReadinessReport(){
+ const chapters=Array.isArray(state.chapters)?state.chapters:[];
+ const count=status=>chapters.filter(ch=>ch.prep===status).length;
+ const ready=count("Exam Ready"),work=count("Needs Work"),active=count("In Progress"),notReady=count("Not Ready");
+ const pctReady=pct(ready,chapters.length);
+ let backdrop=document.getElementById("psReadinessBackdrop");
+ if(!backdrop){
+  backdrop=document.createElement("div");
+  backdrop.id="psReadinessBackdrop";
+  backdrop.className="ps-readiness-backdrop";
+  backdrop.innerHTML='<section class="ps-readiness-modal" role="dialog" aria-modal="true" aria-labelledby="psReadinessTitle"><header class="ps-readiness-head"><div><span>YOUR SYLLABUS</span><h2 id="psReadinessTitle">Chapter readiness</h2><p id="psReadinessSubtitle">See the status of every subject at a glance.</p></div><button type="button" class="ps-readiness-close" aria-label="Close readiness report" title="Close">×</button></header><div class="ps-readiness-body" id="psReadinessBody"></div></section>';
+  backdrop.addEventListener("click",event=>{if(event.target===backdrop)closeReadinessReport();});
+  backdrop.querySelector(".ps-readiness-close").addEventListener("click",closeReadinessReport);
+  document.body.appendChild(backdrop);
+ }
+ const subjectCards=["Physics","Chemistry","Mathematics"].map(subject=>{
+  const list=chapters.filter(ch=>ch.subject===subject),done=list.filter(ch=>ch.prep==="Exam Ready").length,needs=list.filter(ch=>ch.prep==="Needs Work").length,activeCount=list.filter(ch=>ch.prep==="In Progress").length,percent=pct(done,list.length),color=subject==="Physics"?"#2784d8":subject==="Chemistry"?"#15966a":"#8064c7";
+  return '<button type="button" class="ps-readiness-subject '+subject.toLowerCase()+'" onclick="openReadinessSubject(\''+subject+'\')"><span><strong>'+subject+'</strong><small>'+done+' of '+list.length+' chapters done</small></span><b>'+percent+'%</b><div class="ps-readiness-progress"><i style="width:'+percent+'%;background:'+color+'"></i></div><small class="ps-readiness-submeta">'+activeCount+' in progress · '+needs+' need work</small></button>';
+ }).join("");
+ const statuses=[["Exam Ready","Completed",ready,"ready"],["In Progress","In progress",active,"active"],["Needs Work","Need work",work,"work"],["Not Ready","Not started",notReady,"todo"]];
+ const statusTiles=statuses.map(([key,label,num,cls])=>{
+  const names=chapters.filter(ch=>ch.prep===key).slice(0,4).map(ch=>'<button type="button" class="ps-readiness-chapter" onclick="openReadinessChapter(\''+escapeAttr(ch.subject)+'\',\''+escapeAttr(ch.chapter)+'\')"><span>'+escapeHTML(chapterDisplayName(ch.subject,ch.chapter))+'</span><small>'+escapeHTML(ch.subject)+' ↗</small></button>').join("");
+  return '<section class="ps-readiness-status '+cls+'"><div class="ps-readiness-status-head"><strong>'+label+'</strong><span>'+num+'</span></div><div class="ps-readiness-chapters">'+(names||'<small class="ps-readiness-none">No chapters here yet.</small>')+'</div>'+(chapters.filter(ch=>ch.prep===key).length>4?'<button type="button" class="ps-readiness-showall" onclick="openReadinessStatus(\''+key+'\')">Show all '+num+' →</button>':'')+'</section>';
+ }).join("");
+ const body=document.getElementById("psReadinessBody");
+ body.innerHTML='<div class="ps-readiness-kpis"><div><small>Chapters done</small><strong>'+ready+' / '+chapters.length+'</strong><span>'+pctReady+'% of syllabus</span></div><div><small>Need focused work</small><strong>'+work+'</strong><span>Prioritise these next</span></div><div><small>In progress</small><strong>'+active+'</strong><span>Work already underway</span></div><div><small>Not started</small><strong>'+notReady+'</strong><span>First-pass work remaining</span></div></div><div class="ps-readiness-section-title"><strong>Subject-by-subject progress</strong><span>Click a subject to open its planner.</span></div><div class="ps-readiness-subject-grid">'+subjectCards+'</div><div class="ps-readiness-section-title"><strong>Chapter status</strong><span>Open a chapter directly.</span></div><div class="ps-readiness-status-grid">'+statusTiles+'</div>';
+ document.getElementById("psReadinessSubtitle").textContent=ready+" ready · "+work+" need work · "+active+" in progress · "+notReady+" not started";
+ backdrop.classList.add("is-open");
+ document.body.classList.add("ps-readiness-open");
+ const close=backdrop.querySelector(".ps-readiness-close");if(close)close.focus({preventScroll:true});
+}
+function closeReadinessReport(){
+ const backdrop=document.getElementById("psReadinessBackdrop");
+ if(backdrop)backdrop.classList.remove("is-open");
+ document.body.classList.remove("ps-readiness-open");
+}
+function openReadinessSubject(subject){
+ closeReadinessReport();
+ setChapterSubject(subject);
+ currentChapterYear="all";
+ const search=document.getElementById("chapterSearch");if(search)search.value="";
+ const status=document.getElementById("chapterStatus");if(status)status.value="all";
+ setChapterYear("all");
+ go("chapters");
+ renderChapters();
+}
+function openReadinessChapter(subject,chapter){
+ openReadinessSubject(subject);
+ const search=document.getElementById("chapterSearch");if(search)search.value=chapter;
+ renderChapters();
+}
+function openReadinessStatus(status){
+ closeReadinessReport();
+ const first=(state.chapters||[]).find(ch=>ch.prep===status);
+ if(first)setChapterSubject(first.subject);
+ const search=document.getElementById("chapterSearch");if(search)search.value="";
+ const filter=document.getElementById("chapterStatus");if(filter)filter.value=status;
+ setChapterYear("all");
+ go("chapters");
+ renderChapters();
+}
+document.addEventListener("keydown",event=>{
+ if(event.key==="Escape")closeReadinessReport();
+});
 function renderDashboard(){
  const chapters=Array.isArray(state.chapters)?state.chapters:[];
  const ready=chapters.filter(c=>c.prep==="Exam Ready").length;
@@ -2869,7 +2933,7 @@ function renderDashboard(){
  const testMetric=document.getElementById("testMetric");
  if(testMetric)testMetric.textContent=attempts.length;
  const testHint=document.getElementById("testMetricHint");
- if(testHint)testHint.textContent+(state.topics||[]).filter(t=>t.status==="Attempted").length+" topic · "+(state.litmus||[]).filter(t=>t.status==="Attempted").length+" LITMUS";
+ if(testHint)testHint.textContent=(state.topics||[]).filter(t=>t.status==="Attempted").length+" topic · "+(state.litmus||[]).filter(t=>t.status==="Attempted").length+" LITMUS · open scores";
  const workNode=document.getElementById("needsWorkMetric");
  if(workNode)workNode.textContent=work;
  const planned=(Array.isArray(state.topics)?state.topics:[]).filter(t=>t.status==="Planned").sort((a,b)=>String(a.plannedDate||"9999-12-31").localeCompare(String(b.plannedDate||"9999-12-31")));
