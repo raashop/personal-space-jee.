@@ -4,3 +4,8 @@ project_id = "personal-space-jee"
 enabled = true
 verify_jwt = true
 entrypoint = "./functions/chapter-allocation/index.ts"
+
+[functions.course-progress]
+enabled = true
+verify_jwt = true
+entrypoint = "./functions/course-progress/index.ts"
