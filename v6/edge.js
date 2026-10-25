@@ -863,10 +863,10 @@
   }
 
   function initialise() {
+    buildHeaderControls();
     setTheme(THEMES.includes(activeTheme) ? activeTheme : "aurora", false);
     body.classList.toggle("ps-edge-focus-mode", readStorage(STORAGE.focus, "off") === "on");
     setMotion(motionOn, false);
-    buildHeaderControls();
     buildCommandPalette();
     buildFloatingButton();
     buildAmbientCanvas();
