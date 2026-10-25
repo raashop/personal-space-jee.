@@ -6,6 +6,7 @@
     if(!Array.isArray(state.studySessions)) state.studySessions=[];
     if(!Array.isArray(state.dailyTasks)) state.dailyTasks=[];
     if(!Array.isArray(state.dailyReviews)) state.dailyReviews=[];
+    if(!Array.isArray(state.studyMistakes)) state.studyMistakes=[];
     if(!Array.isArray(state.weeklyReviews)) state.weeklyReviews=[];
     if(!state.studyGoals) state.studyGoals={dailyMinutes:180,weeklyDays:6};
   };
@@ -40,6 +41,7 @@
       <div class="daily-side-column">
         <section class="panel focus-timer-panel"><div class="timer-kicker">FOCUS ROOM · NO DISTRACTIONS</div><h3>One thing at a time.</h3><p class="panel-sub">Run a focus block; when it ends, the time is added to your study log.</p><div class="timer-display" id="focusTimerDisplay">25:00</div><div class="timer-presets"><button class="type-tab active" data-timer-min="25" onclick="setTimerPreset(25)">25 min</button><button class="type-tab" data-timer-min="50" onclick="setTimerPreset(50)">50 min</button><button class="type-tab" data-timer-min="90" onclick="setTimerPreset(90)">90 min</button></div><div class="timer-form"><label class="form-field">Subject<select class="control" id="timerSubject" onchange="updateTimerChapters()"><option>Physics</option><option>Chemistry</option><option>Mathematics</option></select></label><label class="form-field">Chapter<select class="control" id="timerChapter"></select></label><label class="form-field">Session type<select class="control" id="timerKind"><option value="Study">Study</option><option value="Revision">Revision</option><option value="PYQ practice">PYQ practice</option><option value="Test review">Test review</option></select></label></div><div class="timer-actions"><button class="btn btn-primary" id="timerStartButton" onclick="toggleFocusTimer()">Start focus ↗</button><button class="btn btn-secondary" id="timerResetButton" onclick="resetFocusTimer()">Reset</button></div><div class="timer-footnote" id="timerFootnote">Timer entries are saved locally with your other study data.</div></section>
         <section class="panel yesterday-panel"><div class="daily-section-head"><div><h3>Yesterday, in review</h3><p id="yesterdayLabel">A quick look back.</p></div></div><div id="yesterdaySummary" class="yesterday-summary"></div><button class="btn btn-secondary" style="width:100%;margin-top:12px" onclick="openYesterday()">Open yesterday's log ↗</button></section>
+        <section class="panel revision-queue-panel"><div class="daily-section-head"><div><h3>Smart revision queue</h3><p>Weak chapters and mistakes that are ready to revisit.</p></div><span class="badge orange" id="revisionQueueCount">0</span></div><div id="revisionQueue" class="revision-queue"></div></section>
         <section class="panel"><h3>Quick note</h3><p class="panel-sub">A quick capture is better than losing a useful thought.</p><textarea id="quickCapture" class="control" rows="4" placeholder="A formula to revise, a doubt to ask, a mistake to remember…"></textarea><button class="btn btn-secondary" style="margin-top:9px" onclick="saveQuickCapture()">Save to today's reflection</button></section>
       </div>
     </div>
@@ -52,7 +54,16 @@
     <div class="performance-grid"><section class="panel"><div class="daily-section-head"><div><h3>This week vs last week</h3><p>Compare tracked work for the last two 7-day windows.</p></div></div><div id="weekComparison" class="week-comparison"></div></section><section class="panel"><div class="daily-section-head"><div><h3>Your patterns</h3><p>Helpful suggestions from the numbers you've logged.</p></div></div><div id="performanceInsights" class="performance-insights"></div></section></div>
     <section class="panel weekly-table-panel"><div class="daily-section-head"><div><h3>Daily breakdown</h3><p id="performanceTableHint">Each day adds up from your study sessions and tasks.</p></div><button class="small-btn" onclick="go('daily')">Open daily log ↗</button></div><div class="table-scroll"><table><thead><tr><th>Date</th><th>Study time</th><th>Sessions</th><th>Tasks done</th><th>Task completion</th><th>Reflection</th></tr></thead><tbody id="performanceRows"></tbody></table></div></section>
     <section class="panel weekly-review-card"><div class="daily-section-head"><div><h3>Weekly review</h3><p>Review your wins, friction and one change for next week.</p></div><span class="badge green" id="weeklyReviewStatus">Not written yet</span></div><div id="weeklyReviewContent" class="weekly-review-content"></div><button class="btn btn-primary" onclick="openWeeklyReviewModal()">Write / update weekly review</button></section>
-  </section>`;
+  </section>
+
+  <section class="page" id="page-mistakes">
+    <div class="page-hero"><div><h2>Mistake bank</h2><p>Every wrong answer can become a future mark. Save what went wrong, the correct takeaway, and when to revisit it. Your due reviews feed the smart revision queue.</p></div><button class="btn btn-primary" onclick="openMistakeModal()">＋ Log a mistake</button></div>
+    <div class="mistake-stats" id="mistakeStats"></div>
+    <div class="panel due-review-panel"><div class="daily-section-head"><div><h3>Due for review</h3><p>Unmastered mistakes whose review date has arrived.</p></div><span class="badge orange" id="mistakeDueBadge">0 due</span></div><div id="mistakeDueList" class="mistake-due-list"></div></div>
+    <div class="tool-row"><select class="control" id="mistakeStatusFilter" onchange="renderMistakes()"><option value="all">All statuses</option><option>Needs Review</option><option>Reviewing</option><option>Mastered</option></select><select class="control" id="mistakeSubjectFilter" onchange="renderMistakes()"><option value="all">All subjects</option><option>Physics</option><option>Chemistry</option><option>Mathematics</option></select><input class="control search" id="mistakeSearch" placeholder="Search question, concept or takeaway…" oninput="renderMistakes()"></div>
+    <div class="mistake-list" id="mistakeList"></div>
+  </section>
+  `;
 
   const nav = document.getElementById("nav");
   if(nav && !document.querySelector('[data-page="daily"]')){
@@ -210,26 +221,85 @@
     byId("weeklyReviewStatus").textContent=wr?"Saved · week of "+niceDay(weekStart):"Not written yet";
     byId("weeklyReviewContent").innerHTML=wr?'<div class="weekly-review-quotes"><div><small>WINS</small><p>'+escapeHTML(wr.wins||"—")+'</p></div><div><small>FRICTION</small><p>'+escapeHTML(wr.friction||"—")+'</p></div><div><small>LEARNED</small><p>'+escapeHTML(wr.learned||"—")+'</p></div><div><small>NEXT WEEK</small><p>'+escapeHTML(wr.next||"—")+'</p></div></div>':'<p class="helper-note">Your next weekly reflection will be saved here. Review the numbers first, then write what you want to keep or change.</p>';
   };
-  window.renderAllProductivity=function(){renderDailyLog();renderPerformance();window.renderDailyPulse();};
+
+  function mistakeDue(m){return m.status!=="Mastered"&&m.reviewDate&&m.reviewDate<=todayISO();}
+  function renderMistakeCard(m){
+    const due=mistakeDue(m);
+    return '<article class="mistake-card '+(due?'mistake-overdue':'')+'"><div class="mistake-card-head"><span class="mistake-type">'+escapeHTML(m.errorType||"Concept gap")+'</span><span class="badge '+(m.status==="Mastered"?"green":due?"orange":"blue")+'">'+escapeHTML(m.status||"Needs Review")+'</span></div><h3>'+escapeHTML(m.title||"Untitled mistake")+'</h3><div class="mistake-meta">'+escapeHTML(m.subject||"General")+(m.chapter?' · '+escapeHTML(chapterDisplayName(m.subject,m.chapter)):'')+' · Logged '+escapeHTML(niceDay(m.date||todayISO()))+'</div>'+(m.prompt?'<div class="mistake-detail"><small>QUESTION / CONTEXT</small><p>'+escapeHTML(m.prompt)+'</p></div>':'')+(m.reason?'<div class="mistake-detail"><small>WHY I MISSED IT</small><p>'+escapeHTML(m.reason)+'</p></div>':'')+(m.takeaway?'<div class="mistake-takeaway"><small>CORRECT TAKEAWAY</small><p>'+escapeHTML(m.takeaway)+'</p></div>':'')+'<div class="mistake-card-footer"><span class="mistake-next-review">'+(m.status==="Mastered"?"Mastered ✓":due?"Review now · "+niceDay(m.reviewDate):"Next review · "+niceDay(m.reviewDate||addDays(todayISO(),1)))+'</span><div class="actions-cell"><select class="control mistake-status-control" aria-label="Mistake status" onchange="quickMistakeStatus(\''+escapeAttr(m.id)+'\',this.value)">'+["Needs Review","Reviewing","Mastered"].map(x=>'<option '+(m.status===x?'selected':'')+'>'+x+'</option>').join("")+'</select><button class="small-btn" onclick="openMistakeModal(\''+escapeAttr(m.id)+'\')">Edit</button><button class="small-btn" onclick="deleteMistake(\''+escapeAttr(m.id)+'\')">Delete</button></div></div></article>';
+  }
+  window.openMistakeModal=function(id){
+    const old=id?state.studyMistakes.find(m=>m.id===id):null,sub=old&&old.subject||currentChapterSubject,chapterOpts=state.chapters.filter(c=>c.subject===sub);
+    openModal(old?"Edit mistake":"Log a mistake for review",[
+      {name:"date",label:"Date noticed",type:"date",value:old&&old.date||todayISO(),required:true},
+      {name:"subject",label:"Subject",type:"select",value:sub,options:[{value:"General",label:"General"}].concat(subjectNames.map(x=>({value:x,label:x})))},
+      {name:"chapter",label:"Chapter",type:"select",value:old&&old.chapter||"",options:[{value:"",label:"No chapter"}].concat(chapterOpts.map(c=>({value:c.chapter,label:chapterDisplayName(c.subject,c.chapter)})))},
+      {name:"errorType",label:"Type of mistake",type:"select",value:old&&old.errorType||"Concept gap",options:["Concept gap","Formula recall","Calculation","Careless error","Time pressure","Misread question","Guesswork","Other"].map(x=>({value:x,label:x}))},
+      {name:"title",label:"Question / concept name",type:"text",value:old&&old.title||"",required:true,full:true},
+      {name:"prompt",label:"Question or source (optional)",type:"textarea",value:old&&old.prompt||"",full:true},
+      {name:"reason",label:"Why did I get it wrong?",type:"textarea",value:old&&old.reason||"",full:true},
+      {name:"takeaway",label:"Correct idea to remember",type:"textarea",value:old&&old.takeaway||"",full:true},
+      {name:"reviewDate",label:"Next review date",type:"date",value:old&&old.reviewDate||addDays(todayISO(),1),required:true},
+      {name:"status",label:"Review status",type:"select",value:old&&old.status||"Needs Review",options:["Needs Review","Reviewing","Mastered"].map(x=>({value:x,label:x}))}
+    ],{type:"mistake",id:id||null});
+    const subInput=document.querySelector('#modalFields [name="subject"]');
+    if(subInput)subInput.addEventListener("change",function(){
+      const selected=this.value,chapter=byId("modalFields").querySelector('[name="chapter"]'),opts=state.chapters.filter(c=>c.subject===selected);
+      if(chapter)chapter.innerHTML='<option value="">No chapter</option>'+opts.map(c=>'<option value="'+escapeAttr(c.chapter)+'">'+escapeHTML(chapterDisplayName(c.subject,c.chapter))+'</option>').join("");
+    });
+  };
+  window.quickMistakeStatus=function(id,status){
+    const m=state.studyMistakes.find(x=>x.id===id);if(!m)return;m.status=status;
+    if(status==="Mastered")m.reviewDate="";
+    else if(status==="Reviewing")m.reviewDate=addDays(todayISO(),3);
+    else if(status==="Needs Review"&&(!m.reviewDate||m.reviewDate<todayISO()))m.reviewDate=todayISO();
+    saveState();renderMistakes();toast(status==="Mastered"?"Mistake marked mastered.":"Next review updated.");
+  };
+  window.deleteMistake=function(id){if(!confirm("Delete this mistake entry?"))return;state.studyMistakes=state.studyMistakes.filter(x=>x.id!==id);saveState();renderMistakes();toast("Mistake removed.");};
+  window.renderMistakes=function(){
+    ensure();const all=state.studyMistakes||[],f=byId("mistakeStatusFilter").value,sub=byId("mistakeSubjectFilter").value,q=byId("mistakeSearch").value.toLowerCase().trim(),today=todayISO();
+    const due=all.filter(m=>mistakeDue(m)).sort((a,b)=>String(a.reviewDate).localeCompare(String(b.reviewDate)));
+    byId("mistakeStats").innerHTML=[["Mistakes logged",all.length],["Due for review",due.length],["Being reviewed",all.filter(m=>m.status==="Reviewing").length],["Mastered",all.filter(m=>m.status==="Mastered").length]].map((x,i)=>'<div class="daily-stat"><small>'+x[0]+'</small><strong>'+x[1]+'</strong><div class="daily-stat-foot"><span>'+(i===0?"Every error becomes useful data":i===1?"Date arrived or passed":i===2?"Keep practising recall":"Cleared from the queue")+'</span></div></div>').join("");
+    byId("mistakeDueBadge").textContent=due.length+" due";
+    byId("mistakeDueList").innerHTML=due.slice(0,5).map(m=>'<div class="due-mistake-row"><div><strong>'+escapeHTML(m.title)+'</strong><small>'+escapeHTML(m.subject||"General")+(m.chapter?' · '+escapeHTML(chapterDisplayName(m.subject,m.chapter)):'')+' · '+niceDay(m.reviewDate)+'</small></div><button class="btn btn-quiet" onclick="quickMistakeStatus(\''+escapeAttr(m.id)+'\',\'Reviewing\')">Review now ↗</button></div>').join("")||'<div class="empty">Nothing is due right now. Log a mistake after your next test, then revisit it on its scheduled date.</div>';
+    const items=all.filter(m=>(f==="all"||m.status===f)&&(sub==="all"||m.subject===sub)&&(String(m.title)+" "+String(m.prompt)+" "+String(m.reason)+" "+String(m.takeaway)+" "+String(m.subject)+" "+String(m.chapter)).toLowerCase().includes(q)).sort((a,b)=>String(a.reviewDate||"9999").localeCompare(String(b.reviewDate||"9999")));
+    byId("mistakeList").innerHTML=items.map(renderMistakeCard).join("")||'<div class="empty"><strong>Your mistake bank is empty.</strong>After a topic test or PYQ set, record the question, why you missed it, and the one idea you want to remember.</div>';
+  };
+  window.renderRevisionQueue=function(){
+    const holder=byId("revisionQueue");if(!holder)return;
+    const mistakes=(state.studyMistakes||[]).filter(m=>mistakeDue(m)).slice(0,3).map(m=>({title:m.title,sub:"Mistake review · "+(m.subject||"General"),subject:m.subject,chapter:m.chapter,id:m.id,kind:"mistake"}));
+    const weak=(state.chapters||[]).filter(c=>c.prep==="Needs Work"||(!c.topicAttempted&&c.prep==="In Progress")).sort((a,b)=>(a.prep==="Needs Work"?0:1)-(b.prep==="Needs Work"?0:1)).slice(0,4).map(c=>({title:chapterDisplayName(c.subject,c.chapter),sub:c.subject+" · "+(c.prep==="Needs Work"?"Marked needs work":"No topic test yet"),subject:c.subject,chapter:c.chapter,kind:"chapter"}));
+    const queue=mistakes.concat(weak).slice(0,6);byId("revisionQueueCount").textContent=queue.length+" items";
+    holder.innerHTML=queue.map(x=>'<div class="revision-queue-item"><div><strong>'+escapeHTML(x.title)+'</strong><small>'+escapeHTML(x.sub)+'</small></div><button class="small-btn" onclick="addQueueItemToToday(\''+escapeAttr(x.kind)+'\',\''+escapeAttr(x.id||"")+'\',\''+escapeAttr(x.subject||"")+'\',\''+escapeAttr(x.chapter||"")+'\')">Add to today ＋</button></div>').join("")||'<div class="empty">No urgent revisions found. Keep logging sessions and mistakes to build a helpful queue.</div>';
+  };
+  window.addQueueItemToToday=function(kind,id,subject,chapter){
+    const date=todayISO();let title;
+    if(kind==="mistake"){const m=state.studyMistakes.find(x=>x.id===id);if(!m)return;title="Review mistake: "+m.title;}
+    else title="Revise chapter: "+chapterDisplayName(subject,chapter);
+    if(state.dailyTasks.some(t=>t.date===date&&t.title===title)){toast("That item is already on today's plan.");return;}
+    state.dailyTasks.push({id:"task-"+Date.now(),date:date,title:title,subject:subject||"General",chapter:chapter||"",estimate:30,priority:"High",done:false,completedAt:"",createdAt:new Date().toISOString()});
+    saveState();go("daily");byId("dailyDate").value=todayISO();renderDailyLog();toast("Added to today's plan.");
+  };
+
+  window.renderAllProductivity=function(){renderDailyLog();renderPerformance();renderMistakes();window.renderDailyPulse();window.renderRevisionQueue();};
   /* Preserve the original app handlers and route extra work through the same save/cloud layer. */
   const originalSaveState=saveState;
-  saveState=function(){originalSaveState();if(byId("page-daily"))renderDailyLog();if(byId("page-performance"))renderPerformance();window.renderDailyPulse();};
+  saveState=function(){originalSaveState();if(byId("page-daily"))renderDailyLog();if(byId("page-performance"))renderPerformance();if(byId("page-mistakes"))renderMistakes();window.renderDailyPulse();window.renderRevisionQueue();};
   const originalRenderDashboard=renderDashboard;
   renderDashboard=function(){originalRenderDashboard();window.renderDailyPulse();};
   const originalGo=go;
   go=function(page){
-    if(page!=="daily"&&page!=="performance")return originalGo(page);
+    if(page!=="daily"&&page!=="performance"&&page!=="mistakes")return originalGo(page);
     currentPage=page;
     document.querySelectorAll(".page").forEach(n=>n.classList.toggle("active",n.id==="page-"+page));
     document.querySelectorAll("nav [data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
-    const title=page==="daily"?["YOUR DAY","Daily log","Plan, track and reflect on what you studied."]:["YOUR PROGRESS","Performance studio","Weekly trends, goals and patterns from your study history."];
+    const title=page==="daily"?["YOUR DAY","Daily log","Plan, track and reflect on what you studied."]:page==="performance"?["YOUR PROGRESS","Performance studio","Weekly trends, goals and patterns from your study history."]:["ERROR REVIEW","Mistake bank","Turn wrong answers into scheduled revision."];
     byId("pageCrumb").textContent=title[0];byId("pageTitle").textContent=title[1];byId("pageSubtitle").textContent=title[2];
     window.scrollTo({top:0,behavior:"smooth"});
-    if(page==="daily")renderDailyLog();else renderPerformance();
+    if(page==="daily")renderDailyLog();else if(page==="performance")renderPerformance();else renderMistakes();else renderMistakes();
   };
   const originalSaveModal=saveModal;
   saveModal=function(e){
-    if(!modalContext||!["studySession","dailyTask","weeklyReview"].includes(modalContext.type))return originalSaveModal(e);
+    if(!modalContext||!["studySession","dailyTask","weeklyReview","mistake"].includes(modalContext.type))return originalSaveModal(e);
     e.preventDefault();const v=valuesFromForm(),ctx=modalContext;
     if(ctx.type==="studySession"){
       const mins=Number(v.minutes);if(!v.title.trim()||!Number.isFinite(mins)||mins<1||mins>600){toast("Add a session title and a duration between 1 and 600 minutes.");return;}
@@ -237,11 +307,16 @@
     }else if(ctx.type==="dailyTask"){
       if(!v.title.trim()){toast("Give your task a clear name.");return;}
       state.dailyTasks.push({id:"task-"+Date.now(),date:v.date||todayISO(),title:v.title.trim(),subject:v.subject||"General",chapter:v.chapter||"",estimate:Math.max(0,Number(v.estimate)||0),priority:v.priority||"Normal",done:false,completedAt:"",createdAt:new Date().toISOString()});
+    }else if(ctx.type==="mistake"){
+      const old=ctx.id?state.studyMistakes.find(x=>x.id===ctx.id):null;
+      const record={id:old?old.id:"mistake-"+Date.now(),date:v.date||todayISO(),subject:v.subject||"General",chapter:v.chapter||"",errorType:v.errorType||"Concept gap",title:(v.title||"").trim(),prompt:v.prompt||"",reason:v.reason||"",takeaway:v.takeaway||"",reviewDate:v.status==="Mastered"?"":(v.reviewDate||addDays(todayISO(),1)),status:v.status||"Needs Review",updatedAt:new Date().toISOString()};
+      if(!record.title){toast("Give this mistake a short, recognizable name.");return;}
+      if(old)Object.assign(old,record);else state.studyMistakes.unshift(record);
     }else{
       const record={weekStart:ctx.weekStart,wins:v.wins||"",friction:v.friction||"",learned:v.learned||"",next:v.next||"",updatedAt:new Date().toISOString()};
       const i=state.weeklyReviews.findIndex(x=>x.weekStart===ctx.weekStart);if(i<0)state.weeklyReviews.unshift(record);else state.weeklyReviews[i]=record;
     }
-    closeModal();saveState();toast(ctx.type==="studySession"?"Study session logged.":ctx.type==="dailyTask"?"Task added to your plan.":"Weekly review saved.");
+    closeModal();saveState();toast(ctx.type==="studySession"?"Study session logged.":ctx.type==="dailyTask"?"Task added to your plan.":ctx.type==="mistake"?"Mistake saved to your review queue.":"Weekly review saved.");
   };
   /* Wire cross-subject chapter pickers after the base modal has rendered. */
   document.getElementById("modalForm").addEventListener("change",function(e){
