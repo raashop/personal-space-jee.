@@ -104,6 +104,36 @@ Use only the exact supplied subject and chapter names. Identify the chapter a le
   return mapped;
 }
 
+
+function parseYouTubeIsoDuration(value: string): number {
+  const match = /^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/.exec(String(value || ""));
+  if (!match) return 0;
+  return (Number(match[1] || 0) * 3600) + (Number(match[2] || 0) * 60) + Number(match[3] || 0);
+}
+async function addVideoDurations(videos: Array<{videoId:string;title:string;position:number}>, apiKey: string) {
+  const seconds = new Map<string, number>();
+  try {
+    for (let offset = 0; offset < videos.length; offset += 50) {
+      const batch = videos.slice(offset, offset + 50);
+      if (!batch.length) continue;
+      const url = new URL("https://www.googleapis.com/youtube/v3/videos");
+      url.searchParams.set("part", "contentDetails");
+      url.searchParams.set("id", batch.map(video => video.videoId).join(","));
+      url.searchParams.set("key", apiKey);
+      const payload = await fetchYouTubeJson(url);
+      for (const item of (Array.isArray(payload.items) ? payload.items : [])) {
+        const id = String(item?.id || "");
+        if (!id) continue;
+        seconds.set(id, parseYouTubeIsoDuration(String(item?.contentDetails?.duration || "")));
+      }
+    }
+  } catch (error) {
+    // Duration is helpful for "time left" but should not prevent tracking the playlist.
+    console.error("YouTube duration lookup unavailable:", String(error).slice(0, 400));
+  }
+  return videos.map(video => ({ ...video, durationSeconds: seconds.get(video.videoId) || 0 }));
+}
+
 Deno.serve(async (req: Request) => {
   const origin = req.headers.get("origin");
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders(origin) });
@@ -170,9 +200,10 @@ Deno.serve(async (req: Request) => {
       if (!pageToken || !(page.items || []).length) break;
     }
 
+    const videosWithDurations = await addVideoDurations(videos, youtubeKey);
     const model = Deno.env.get("GEMINI_MODEL") || "gemini-3.1-flash-lite";
-    const map = geminiKey ? await mapVideoTitles(videos, chapters, geminiKey, model) : new Map();
-    const mappedVideos = videos.map(video => ({
+    const map = geminiKey ? await mapVideoTitles(videosWithDurations, chapters, geminiKey, model) : new Map();
+    const mappedVideos = videosWithDurations.map(video => ({
       ...video,
       subject: map.get(video.videoId)?.subject || "",
       chapter: map.get(video.videoId)?.chapter || "",
@@ -188,7 +219,8 @@ Deno.serve(async (req: Request) => {
         videos: mappedVideos,
         mappedCount,
         fetchedVideoCount: videos.length,
-        truncated: videos.length < totalLectures,
+        truncated: videosWithDurations.length < totalLectures,
+        durationMetadataCount: videosWithDurations.filter(video => Number(video.durationSeconds) > 0).length,
         updatedAt: new Date().toISOString(),
       },
       notice: videos.length < totalLectures
