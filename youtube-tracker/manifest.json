@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Personal Space — JEE Lecture Tracker",
-  "version": "1.2.0",
-  "description": "Automatically tracks recognized JEE lecture playback and syncs records to your Personal Space planner.",
+  "version": "1.3.0",
+  "description": "Tracks recognized JEE lecture playback on YouTube and Telegram Web and syncs records to Personal Space.",
   "permissions": [
     "storage",
     "activeTab",
@@ -11,7 +11,8 @@
   "host_permissions": [
     "https://www.youtube.com/*",
     "https://youtube.com/*",
-    "https://m.youtube.com/*"
+    "https://m.youtube.com/*",
+    "https://web.telegram.org/*"
   ],
   "optional_host_permissions": [
     "https://*/*",
@@ -27,6 +28,15 @@
       ],
       "js": [
         "content.js"
+      ],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://web.telegram.org/*"
+      ],
+      "js": [
+        "telegram-content.js"
       ],
       "run_at": "document_idle"
     }
