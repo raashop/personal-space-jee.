@@ -65,8 +65,21 @@
     statusSignature=sig;
     chrome.storage.local.set({[STATUS]:payload}).catch(()=>{});
   }
+  // A chapter-name match by itself is not enough: ordinary Telegram clips can
+  // mention a chapter. Require clear study/lecture wording in the same post too.
+  function isLecturePost(text) {
+    const t=" "+normalize(text)+" ";
+    const cues=[
+      "lecture","lectures","lec","class","one shot","oneshot","revision",
+      "revise","pyq","previous year questions","question practice","practice session",
+      "jee","neet","ncert","dpp","problem solving","concepts","chapterwise",
+      "chapter wise","part 1","part 2","part 3","part 4","session"
+    ];
+    return cues.some(cue=>t.includes(" "+normalize(cue)+" "));
+  }
   function classify(text) {
     const t=normalize(text);
+    if(!isLecturePost(text)) return null;
     for(const item of CHAPTERS) {
       const terms=[item[1],...item[2]].map(normalize).sort((a,b)=>b.length-a.length);
       const hit=terms.find(term=>term.length>=4?t.includes(term):(["goc","ktg","wpe","aod","emi","p c"].includes(term)&&(" "+t+" ").includes(" "+term+" ")));
@@ -111,7 +124,7 @@
         const delta=Math.max(0,Math.min(8,now-lastTime));
         lastTime=now;
         if(!match){
-          report("unmatched","Telegram video found, but its nearby message text did not match a known JEE chapter. Try a post with the chapter name in its caption.",{title:context.title});
+          report("unmatched","Not recorded: this post needs both a recognizable JEE chapter name and a lecture/study cue (such as Lecture, One Shot, Revision, PYQ, JEE or NEET).",{title:context.title});
           return;
         }
         const signature=context.msgId+"|"+context.title+"|"+match.chapter;
