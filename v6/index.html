@@ -3674,7 +3674,7 @@ async function renderDashboardDailySchedule(){
  (focus.length?focus.slice(0,3).map(item=>'<button type="button" class="study-daily-item" data-open-chapter-subject="'+escapeAttr(item.subject)+'" data-open-chapter-name="'+escapeAttr(item.chapter)+'"><i class="'+(item.subject==="Physics"?"physics":item.subject==="Chemistry"?"chemistry":"maths")+'"></i><span><strong>'+escapeHTML(chapterDisplayName(item.subject,item.chapter))+'</strong><small>'+escapeHTML(item.task||"Review concepts and practice questions")+'</small></span><b>'+Number(item.hours||0).toFixed(1)+'h</b></button>').join(""):'<div class="study-daily-emptyline">Use today for spaced revision and broader JEE progress.</div>')+
  '<button type="button" class="study-daily-open" onclick="toggleChapterAllocation()">View full '+result.dailySchedule.length+'-day plan ↗</button>';
 }
-function requestAIChapterAllocation(){
+async function requestAIChapterAllocation(){
  const button=document.getElementById("chapterAllocationAIButton"),status=document.getElementById("chapterAllocationAIStatus"),resultView=document.getElementById("chapterAllocationResultView"),working=document.getElementById("allocationWorking"),inputActions=document.getElementById("allocationInputActions"),manual=document.getElementById("allocationManualControls"),top=document.querySelector("#chapterAllocationPanel .allocation-controls-top"),resultTitle=document.getElementById("allocationResultTitle"),resultSummary=document.getElementById("allocationResultSummary");
  if(chapterAllocationAIActive)return;
  saveChapterAllocationPrefs();
