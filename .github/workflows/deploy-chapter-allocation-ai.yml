@@ -1,0 +1,42 @@
+name: Deploy Chapter Allocation AI
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Check required secrets
+        shell: bash
+        run: |
+          test -n "$SUPABASE_ACCESS_TOKEN" || (echo "::error::Add SUPABASE_ACCESS_TOKEN in repository Actions secrets." && exit 1)
+          test -n "$SUPABASE_PROJECT_REF" || (echo "::error::Add SUPABASE_PROJECT_REF in repository Actions secrets." && exit 1)
+          test -n "$OPENAI_API_KEY" || (echo "::error::Add OPENAI_API_KEY in repository Actions secrets." && exit 1)
+
+      - name: Install Supabase CLI
+        run: npm install --no-save supabase@latest
+
+      - name: Link Supabase project
+        run: npx supabase link --project-ref "$SUPABASE_PROJECT_REF"
+
+      - name: Store AI API key as a Supabase secret
+        run: npx supabase secrets set OPENAI_API_KEY="$OPENAI_API_KEY" OPENAI_MODEL="gpt-4.1-mini"
+
+      - name: Deploy authenticated AI Edge Function
+        run: npx supabase functions deploy chapter-allocation
