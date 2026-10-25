@@ -264,10 +264,33 @@ Only use supplied chapter ids/titles/subjects. estimatedHours must be 0.5 to 20 
     }
   }
 
+  let normalizedDaily = dailySchedule;
+  if (rawDaily.length) {
+    normalizedDaily = rawDaily.slice(0, Math.floor(daysRemaining)).map((day: any, index: number) => {
+      const focus = Array.isArray(day?.focus) ? day.focus.map((item: any) => {
+        const match = safeChapters.find((c: any) => c.chapter === String(item?.chapter || "") && c.subject === String(item?.subject || ""));
+        if (!match) return null;
+        const rawHours = Number(item?.hours);
+        return {
+          chapter: match.chapter,
+          subject: match.subject,
+          hours: Math.max(0.5, Math.min(6, Math.round((Number.isFinite(rawHours) ? rawHours : 1) * 2) / 2)),
+          task: String(item?.task || "Review concepts and solve JEE questions.").slice(0, 180),
+        };
+      }).filter(Boolean).slice(0, 8) : [];
+      const totalHoursForDay = Math.round(focus.reduce((sum: number, item: any) => sum + item.hours, 0) * 10) / 10;
+      return {
+        day: Math.max(1, Math.min(Math.floor(daysRemaining), Math.round(Number(day?.day) || index + 1))),
+        focus,
+        totalHours: totalHoursForDay,
+        broaderJeeHours: Math.max(0, Math.round((hoursPerDay - totalHoursForDay) * 10) / 10),
+      };
+    });
+  }
   return json({
     summary: String(parsed.summary || "Prioritize the highest-workload chapters, and keep time for the rest of your JEE syllabus.").slice(0, 500),
     chapters: allocations,
-    dailySchedule,
+    dailySchedule: normalizedDaily,
     totalHours,
     daysRemaining: Math.floor(daysRemaining),
     testPrepHoursPerDay: Math.round((totalHours / Math.max(1, Math.floor(daysRemaining))) * 10) / 10,
