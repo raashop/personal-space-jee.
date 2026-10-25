@@ -1,30 +1,34 @@
-# Personal Space — YouTube & Telegram JEE lecture tracking
+# Personal Space — JEE Lecture Tracker
 
-This repository has a local-first Brave extension for YouTube. Telegram support is planned as a user-triggered import flow rather than attempting to read your entire Telegram account or scrape channels.
+This is a local-first Brave extension prototype. It uses YouTube video titles and channel names to guess the JEE chapter, records playback time on this browser, and exports records for import into Personal Space. It does not use transcripts or sync directly to the website.
 
-## YouTube (Brave desktop)
-1. Download the repository ZIP and extract it.
-2. Open `brave://extensions`, enable Developer mode, and choose Load unpacked.
-3. Select the `youtube-tracker` folder containing `manifest.json`.
-4. Play a likely JEE lecture; open the extension popup and export its JSON file.
-5. In Personal Space V6, open **YouTube Lectures** and import the JSON.
+## Install or update in Brave
 
-## Telegram (recommended first version)
-Telegram Bot API bots do not have access to your personal account's entire chat history. They receive private messages sent to the bot and messages from channels where the bot is a member; group visibility depends on bot permissions/privacy mode. See the [official Bot FAQ](https://core.telegram.org/bots/faq).
+1. Download the ZIP for the `personal-space-v6` branch and extract it.
+2. Open `brave://extensions` and enable **Developer mode**.
+3. If the old extension is installed from an older extracted folder, export any records you need first. Then remove the old extension and choose **Load unpacked**.
+4. Select the new `youtube-tracker` folder containing `manifest.json`.
 
-A safe and simple option is **Share to Personal Space**:
-1. In Telegram, open the JEE lecture post or video message.
-2. Use Forward/Share or copy its message/video link.
-3. On Personal Space's Telegram import page, paste the link and title (or upload a small JSON/CSV export that you intentionally created).
-4. Confirm the matched JEE subject/chapter before it changes chapter status.
+## Quick troubleshooting test
 
-This will not silently read private Telegram chats. Do not share your Telegram login code, password, session string, bot token, or API hash.
+1. Open a direct YouTube video page whose title clearly names a JEE chapter, for example a lecture on **Biomolecules**, **Electrostatics**, or **Chemical Kinetics**.
+2. Refresh the YouTube tab once after installing/reloading the extension.
+3. Play the lecture for 30–60 seconds. Keep it playing; paused time is not counted.
+4. Click the extension icon. The **Tracker status** panel should say whether the player was found, the lecture title matched a chapter, or the title was not recognized. Click **Refresh list** if needed.
+5. If a lecture is recorded, click **Export for Personal Space**. In Personal Space V6, open **YouTube Lectures** and import that JSON file.
 
-## Why not automate full Telegram scanning?
-Reading a Telegram user's private chats requires a user-account client/API session, not a regular Bot API token. This introduces substantial account access and credential risks. For a study tracker, explicit share/import is safer and adequate. A Telegram bot is useful if you deliberately forward selected lecture messages to that bot; it cannot inspect every message in other chats.
+If the popup says **No response from a YouTube tab yet**, ensure you are on a direct `youtube.com/watch?v=...` video page, then refresh the tab and reopen the popup. If it says the title did not match, send the exact YouTube title and the status message so the chapter keyword list can be improved.
 
-## Current implementation status
-- YouTube: browser-local detection based on title/channel chapter keywords, actual playback-time accumulation, export JSON.
-- Planner: YouTube Lectures dashboard and JSON import; matching chapters move only from **Not Ready** to **In Progress**.
-- Telegram: documented safe workflow; native Telegram integration is not yet implemented.
-- Automatic cloud sync: not configured by this repo itself. Static GitHub Pages cannot store or run private backend credentials safely.
+## What currently works
+
+- Detects likely JEE lectures by title/channel keyword matching; it does not read a transcript.
+- Records watched time locally in the browser on supported YouTube watch pages.
+- Exports a JSON file to import manually into the planner.
+- Imported matched chapters can move from **Not Ready** to **In Progress**, but never directly to mastered.
+- The website does **not** update automatically from the extension yet. Export and import are required.
+
+## Telegram
+
+Telegram support is not implemented as a live browser tracker yet. Current planner support is a manual import flow, where you choose a Telegram lecture post and confirm the subject/chapter. Telegram Web playback tracking needs a separate test and implementation.
+
+Do not share your Telegram login code, password, session string, bot token, or API hash.
