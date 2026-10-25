@@ -3426,7 +3426,7 @@ return '<div class="multi-picker"><strong>'+escapeHTML(f.label)+'</strong><div c
 let el='';
 if(f.type==="select")el='<select class="control" name="'+escapeAttr(f.name)+'" '+(f.required?'required':'')+'>'+f.options.map(o=>'<option value="'+escapeAttr(o.value)+'" '+(String(o.value)===String(f.value)?'selected':'')+'>'+escapeHTML(o.label)+'</option>').join("")+'</select>';
 else if(f.type==="textarea")el='<textarea class="control" name="'+escapeAttr(f.name)+'" rows="4" '+(f.required?'required':'')+'>'+escapeHTML(f.value||"")+'</textarea>';
-else el='<input class="control" name="'+escapeAttr(f.name)+'" type="'+(f.type||"text")+'" value="'+escapeHTML(f.value??"")+'" '+(f.required?'required':'')+' '+(f.min!==undefined?'min="'+f.min+'"':'')+' '+(f.max!==undefined?'max="'+f.max+'"':'')+' '+(f.step?'step="'+f.step+'"':'')+'>';
+else el='<input class="control" name="'+escapeAttr(f.name)+'" type="'+(f.type||"text")+'" value="'+escapeHTML(f.value??"")+'" '+(f.placeholder?'placeholder="'+escapeAttr(f.placeholder)+'"':'')+' '+(f.required?'required':'')+' '+(f.min!==undefined?'min="'+f.min+'"':'')+' '+(f.max!==undefined?'max="'+f.max+'"':'')+' '+(f.step?'step="'+f.step+'"':'')+'>';
 return '<label class="form-field '+(f.full?'full':'')+'">'+escapeHTML(f.label)+el+'</label>'
 }
 ).join("");
