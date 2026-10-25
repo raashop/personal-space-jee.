@@ -129,7 +129,8 @@ Deno.serve(async (req: Request) => {
     return json({ error: "Gemini returned invalid course groups. Click Analyze courses to retry." }, 502, origin);
   }
 
-  const byId = new Map(lectures.map((row: any) => [row.id, row]));
+  const byId = new Map<string, any>();
+  for (const row of lectures) byId.set(row.id, row);
   const assigned = new Set<string>();
   const groups = Array.isArray(parsed.courses) ? parsed.courses : [];
   const courses: any[] = [];
