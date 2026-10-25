@@ -25,6 +25,8 @@
   <button data-page="topic"><span class="nav-icon">◷</span>Topic tests</button>
   <button data-page="litmus"><span class="nav-icon">▦</span>LITMUS</button>
   <button data-page="pyq"><span class="nav-icon">✎</span>PYQ practice</button>
+   <button data-page="daily"><span class="nav-icon">✎</span>Daily log</button>
+  <button data-page="performance"><span class="nav-icon">↗</span>Performance</button>
  </nav>
  <div class="side-bottom">
   <div class="sync-state"><span class="sync-dot"></span><div><strong id="syncStatus" style="color:#466657">Saved on this device</strong><div id="syncDetail">Your progress autosaves as you work.</div></div></div>
@@ -59,6 +61,12 @@
    <section class="panel"><h3>Coming up</h3><div class="panel-sub">Your next planned chapter tests and the nearest LITMUS deadline.</div><div class="upcoming-list" id="upcomingList"></div></section>
    <section class="panel focus-panel"><span class="focus-chip">YOUR NEXT FOCUS</span><h3 id="focusTitle">Start with one chapter.</h3><p id="focusBody">Choose a chapter you want to move forward today. A small, specific goal is easier to begin.</p><div class="focus-stats"><div class="focus-stat"><strong id="focusNeeds">0</strong><small>need work</small></div><div class="focus-stat"><strong id="focusActive">0</strong><small>in progress</small></div></div><button class="btn btn-primary" onclick="go('chapters')">Open chapter tracker ↗</button></section>
   </div>
+  
+  <section class="pulse-panel" id="dailyPulse">
+    <div><div class="pulse-top"><div><h3>Yesterday, in review</h3><p id="pulseYesterdayMeta">Look back on your last study day.</p></div><span class="badge blue">DAILY RECAP</span></div><div class="pulse-number" id="pulseYesterdayTitle">Yesterday is ready to review</div><button class="pulse-link" onclick="openYesterday()">Open yesterday's log ↗</button></div>
+    <div><div class="pulse-top"><div><h3>Today, so far</h3><p id="pulseTodayMeta">Your tasks and actual study time.</p></div><span class="badge green">TODAY</span></div><div class="pulse-number" id="pulseTodayTitle">Set your first task</div><div id="dailyPulseTasks"></div><button class="pulse-link" onclick="go('daily')">Open daily plan ↗</button></div>
+  </section>
+  
   <div class="section-head"><div><h2>Progress backup</h2><p>Your records belong to you. Keep a copy outside this browser too.</p></div></div>
   <section class="panel"><div class="settings-row"><div style="flex:1;min-width:190px"><h3>Local data backup</h3><div class="panel-sub" style="margin-bottom:0">Export chapter status, topic tests, LITMUS results and PYQ sessions as JSON.</div></div><button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">Restore backup</button><button class="btn btn-primary" onclick="exportData()">Download backup ↓</button></div></section>
  </section>
@@ -92,6 +100,7 @@
   <div class="tool-row"><select class="control" id="pyqFilter" onchange="renderPyq()"><option value="all">All statuses</option><option>Not Started</option><option>In Progress</option><option>Completed</option><option>Redo</option></select><select class="control" id="pyqSubjectFilter" onchange="renderPyq()"><option value="all">All subjects</option><option>Physics</option><option>Chemistry</option><option>Mathematics</option></select><div class="search-wrap"><input class="control search" id="pyqSearch" placeholder="Search practice records…" oninput="renderPyq()"></div></div>
   <div class="table-card"><div class="table-scroll"><table><thead><tr><th>Date</th><th>Subject / chapter</th><th>Year / source</th><th>Attempted</th><th>Correct</th><th>Accuracy</th><th>Status</th><th>Actions</th></tr></thead><tbody id="pyqRows"></tbody></table></div></div>
  </section>
+ <section class="page" id="page-daily"></section><section class="page" id="page-performance"></section>
  <div class="footer-line">Personal Space 6.0 · Built for steady progress, not pressure.</div>
 </main>
 </div>
@@ -503,5 +512,6 @@ document.getElementById("modalForm").addEventListener("change",e=>{if(e.target.n
 document.addEventListener("change",e=>{if(e.target.matches('#modalFields [name="subject"]')&&["topic","newtopic"].includes(modalContext?.type)){/* handled by picker listener */}});
 renderAll();
 </script>
+<script src="./productivity.js"></script>
 </body>
 </html>
