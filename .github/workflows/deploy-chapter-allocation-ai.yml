@@ -1,0 +1,36 @@
+name: Deploy Chapter Allocation AI
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Check required secrets
+        shell: bash
+        run: |
+          test -n "$SUPABASE_ACCESS_TOKEN" || (echo "::error::Add SUPABASE_ACCESS_TOKEN in repository Actions secrets." && exit 1)
+          test -n "$SUPABASE_PROJECT_REF" || (echo "::error::Add SUPABASE_PROJECT_REF in repository Actions secrets." && exit 1)
+          test -n "$GEMINI_API_KEY" || (echo "::error::Add GEMINI_API_KEY in repository Actions secrets." && exit 1)
+
+      - name: Store Gemini API key as a Supabase secret
+        run: supabase secrets set --project-ref "$SUPABASE_PROJECT_REF" GEMINI_API_KEY="$GEMINI_API_KEY" GEMINI_MODEL="gemini-3.5-flash-lite"
+
+      - name: Deploy authenticated Gemini Edge Function
+        run: supabase functions deploy chapter-allocation --project-ref "$SUPABASE_PROJECT_REF"
