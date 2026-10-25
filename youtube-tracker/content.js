@@ -94,7 +94,9 @@
   };
   const videoTitle = () => (
     document.querySelector("h1.ytd-watch-metadata yt-formatted-string")?.textContent ||
+    document.querySelector("#title h1 yt-formatted-string")?.textContent ||
     document.querySelector("h1")?.textContent ||
+    window.ytInitialPlayerResponse?.videoDetails?.title ||
     document.title.replace(/\s*-\s*YouTube$/, "")
   ).trim();
   const channelName = () => (
