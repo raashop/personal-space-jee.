@@ -2644,6 +2644,51 @@ main{min-width:0;max-width:none}
 #page-chapters button.chapter-name-link:hover{color:#1977b8!important;text-decoration:underline;text-underline-offset:3px}
 #page-chapters button.chapter-name-link:focus-visible{outline:2px solid #70a9d5!important;outline-offset:3px}
 </style>
+
+<style id="v6-mobile-layout-cascade-fix">
+/* Higher-specificity mobile overrides for the dashboard grid. Desktop remains unchanged. */
+@media (max-width:720px){
+  html #page-dashboard .dashboard-top-grid{
+    display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+    grid-auto-flow:row!important;align-items:stretch!important;gap:10px!important;
+    width:100%!important;min-width:0!important;
+  }
+  html #page-dashboard .dashboard-top-grid > .dashboard-countdown-hero,
+  html #page-dashboard .dashboard-top-grid > .dashboard-metrics{
+    grid-column:1/-1!important;width:100%!important;min-width:0!important;
+    max-width:100%!important;justify-self:stretch!important;
+  }
+  html #page-dashboard .dashboard-top-grid > .dashboard-countdown-hero{
+    display:grid!important;grid-template-columns:minmax(0,1fr) 86px!important;
+    min-height:0!important;align-items:center!important;
+  }
+  html #page-dashboard .dashboard-top-grid > .dashboard-metrics{
+    display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    grid-auto-flow:row!important;align-items:stretch!important;align-content:start!important;
+    gap:8px!important;margin:0 0 14px!important;
+  }
+  html #page-dashboard .dashboard-metrics > .metric{
+    width:100%!important;min-width:0!important;min-height:112px!important;
+    height:auto!important;align-self:stretch!important;padding:11px!important;
+  }
+  html #page-dashboard .dashboard-metrics .metric-top,
+  html #page-dashboard .dashboard-metrics .metric-head{
+    min-width:0!important;align-items:center!important;gap:7px!important;
+  }
+  html #page-dashboard .dashboard-metrics .metric label{
+    min-width:0!important;font-size:8px!important;line-height:1.35!important;
+    white-space:normal!important;overflow-wrap:anywhere!important;
+  }
+  html #page-dashboard .dashboard-metrics .metric strong{
+    font-size:clamp(18px,5.4vw,24px)!important;line-height:1.1!important;
+  }
+}
+@media (max-width:390px){
+  html #page-dashboard .dashboard-top-grid > .dashboard-countdown-hero{
+    grid-template-columns:minmax(0,1fr) 76px!important;
+  }
+}
+</style>
 </head>
 <body>
 <div class="shell">
