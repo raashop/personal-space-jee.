@@ -2480,9 +2480,11 @@ td strong {
 #page-chapters .chapter-row-name>small{display:block;margin-top:4px}
 </style>
 
+
 <style id="v6-final-mobile-layout-fix">
-/* Final layout correction: fixed sidebar occupies a single column, never a second main offset. */
-html,body{width:100%;max-width:100%;overflow-x:hidden}
+/* Personal Space V6 — mobile-first layout hardening.
+   Keep desktop geometry untouched; contain all narrow-screen content in the viewport. */
+html,body{width:100%;max-width:100%;overflow-x:clip}
 *,*::before,*::after{box-sizing:border-box}
 .shell{width:100%;max-width:none;margin:0;min-width:0}
 main{min-width:0;max-width:none}
@@ -2501,64 +2503,87 @@ main{min-width:0;max-width:none}
 }
 
 @media (max-width:720px){
-  html,body{height:auto;min-height:100%;overflow-x:hidden}
+  html,body{height:auto;min-height:100%;overflow-x:clip}
   .shell{display:block!important;position:relative!important;width:100%!important;min-width:0!important;max-width:none!important;margin:0!important}
   .sidebar{position:sticky!important;inset:0 0 auto!important;left:auto!important;width:100%!important;height:auto!important;max-height:none!important;overflow:visible!important;padding:9px 10px 7px!important;gap:8px!important;z-index:100;background:rgba(249,252,255,.97);backdrop-filter:blur(14px)}
   .brand{display:flex;align-items:center;gap:8px;padding:0 3px!important}
   .brandmark{width:30px!important;height:30px!important;flex:none}
   .brand-name{font-size:12px!important}
   .brand-sub,.nav-label,.side-bottom{display:none!important}
-  #nav{display:flex!important;flex-flow:row nowrap!important;gap:5px!important;width:100%!important;max-width:100%!important;min-width:0!important;overflow-x:auto!important;overflow-y:hidden!important;white-space:nowrap!important;padding:2px 0 4px!important;scrollbar-width:thin;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
-  #nav button{flex:0 0 auto!important;width:auto!important;min-width:max-content!important;padding:8px 10px!important;font-size:11px!important;white-space:nowrap!important}
+  #nav{display:flex!important;flex-flow:row nowrap!important;gap:5px!important;width:100%!important;max-width:100%!important;min-width:0!important;overflow-x:auto!important;overflow-y:hidden!important;white-space:nowrap!important;padding:2px 0 4px!important;scrollbar-width:none;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
+  #nav::-webkit-scrollbar{display:none}
+  #nav button{flex:0 0 auto!important;width:auto!important;min-width:max-content!important;max-width:none!important;padding:8px 10px!important;font-size:11px!important;white-space:nowrap!important}
   #nav button:hover{transform:none!important}
   main{display:block!important;grid-column:auto!important;width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important;padding:16px 12px 30px!important;box-sizing:border-box!important}
   .topbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px;min-width:0}
-  .topbar>*{min-width:0}
-  .top-actions{max-width:100%;flex-wrap:wrap}
+  .topbar>div:first-child{flex:1 1 190px;min-width:0}
+  #pageTitle{font-size:clamp(22px,6vw,30px);line-height:1.1;overflow-wrap:anywhere}
+  .page-subtitle{font-size:12px;line-height:1.5;overflow-wrap:anywhere}
+  .top-actions{display:flex;gap:6px;max-width:100%;flex-wrap:wrap}
+  .today-chip{max-width:100%;font-size:10px}
   .dashboard-top-grid{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:10px!important;min-width:0}
-  .dashboard-countdown-hero{grid-template-columns:minmax(0,1fr) 100px!important;gap:8px!important;padding:15px 12px!important;border-radius:18px!important;min-width:0}
-  .dashboard-countdown-hero .countdown{gap:8px!important}
-  .dashboard-countdown-hero .countdown>strong{font-size:clamp(48px,14vw,64px)!important;line-height:.95}
-  .dashboard-countdown-hero .countdown-labels{min-width:0}
-  .dashboard-countdown-hero .ring.ring-action{width:96px!important;height:96px!important}
-  .dashboard-countdown-hero .ring-inner{width:72px!important;height:72px!important}
-  .dashboard-countdown-hero .ring-inner strong{font-size:18px!important}
-  .hero-actions{gap:6px!important;flex-wrap:wrap}
-  .hero-actions .btn{padding:8px 10px!important;font-size:10px!important}
+  .dashboard-countdown-hero{display:grid!important;grid-template-columns:minmax(0,1fr) 86px!important;gap:8px!important;padding:15px 12px!important;border-radius:18px!important;min-width:0;align-items:center}
+  .dashboard-countdown-hero .countdown{gap:7px!important;min-width:0}
+  .dashboard-countdown-hero .countdown>strong{font-size:clamp(42px,13vw,58px)!important;line-height:.95;min-width:0}
+  .dashboard-countdown-hero .countdown-labels{min-width:0;padding-left:7px}
+  .dashboard-countdown-hero .days-caption{font-size:8px}
+  .dashboard-countdown-hero .countdown-target{max-width:100%;font-size:9px;white-space:normal;overflow-wrap:anywhere}
+  .dashboard-countdown-hero .countdown-context{display:block;max-width:100%;font-size:8px!important;line-height:1.35;overflow-wrap:anywhere}
+  .dashboard-countdown-hero .ring.ring-action{width:78px!important;height:78px!important}
+  .dashboard-countdown-hero .ring-inner{width:62px!important;height:62px!important}
+  .dashboard-countdown-hero .ring-inner strong{font-size:17px!important}
+  .dashboard-countdown-hero .hero-ring-caption{font-size:8px;text-align:center;line-height:1.35}
+  .hero-actions{gap:6px!important;flex-wrap:wrap;margin-top:13px}
+  .hero-actions .btn{padding:8px 9px!important;font-size:10px!important;white-space:normal}
   .dashboard-metrics,.metric-grid.dashboard-metrics{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important;min-width:0}
-  .dashboard-metrics .metric{min-width:0!important;padding:10px!important}
-  .dashboard-metrics .metric strong{font-size:clamp(18px,5.6vw,24px)!important}
-  .dashboard-metrics .metric label{font-size:8px!important;overflow-wrap:anywhere}
+  .dashboard-metrics .metric{display:block;min-width:0!important;width:100%;padding:10px!important;overflow-wrap:anywhere}
+  .dashboard-metrics .metric-top,.dashboard-metrics .metric-head{display:flex;align-items:center;justify-content:flex-start;gap:7px;min-width:0}
+  .dashboard-metrics .metric-icon{flex:0 0 28px}
+  .dashboard-metrics .metric label{font-size:8px!important;line-height:1.35;letter-spacing:.06em;overflow-wrap:anywhere;min-width:0}
+  .dashboard-metrics .metric strong{font-size:clamp(17px,5.4vw,23px)!important;line-height:1.1;overflow-wrap:anywhere}
+  .dashboard-metrics .metric small{font-size:9px;line-height:1.4;overflow-wrap:anywhere}
   .dashboard-main-layout.dashboard-main-layout-optimized{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:12px!important;margin-top:12px!important;min-width:0}
   .dashboard-main-stack.dashboard-main-stack-optimized,.dashboard-side-stack{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:10px!important;min-width:0}
   .dashboard-main-layout-optimized #chapterAllocationPanel{grid-column:auto!important;min-width:0!important}
+  .study-activity-panel,.dashboard-coming-panel,.dashboard-progress-panel,.dashboard-plan-panel,.dashboard-quick-panel{min-width:0;max-width:100%}
+  .dashboard-panel-head{align-items:flex-start!important;flex-wrap:wrap}
+  .dashboard-panel-head>div{min-width:0;flex:1 1 170px}
+  .dashboard-panel-head>.btn,.dashboard-panel-head>button{max-width:100%;white-space:normal}
   .study-activity-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important}
   .study-activity-stat{min-width:0!important;padding:8px!important;grid-template-columns:22px minmax(0,1fr)!important}
   .study-activity-stat strong,.study-activity-stat small,.study-activity-stat span{min-width:0;overflow-wrap:anywhere}
-  #chapterAllocationPanel{padding:12px!important;min-width:0!important}
+  .study-activity-subhead{align-items:flex-start;flex-wrap:wrap}
+  .study-chapter-card-head,.study-chapter-details,.study-chapter-footer{min-width:0;flex-wrap:wrap}
+  .study-chapter-title{min-width:0}
+  .study-chapter-title strong{overflow-wrap:anywhere}
+  .dashboard-main-layout-optimized .dashboard-coming-panel .upcoming-list{max-height:none;overflow:visible}
+  #chapterAllocationPanel{padding:12px!important;min-width:0!important;max-width:100%}
   #chapterAllocationPanel .allocation-accordion-trigger{gap:8px!important;min-width:0!important}
-  #chapterAllocationPanel .allocation-accordion-copy{min-width:0!important}
+  #chapterAllocationPanel .allocation-accordion-copy{min-width:0!important;flex:1}
   #chapterAllocationPanel .allocation-accordion-copy strong{font-size:15px!important}
-  #chapterAllocationPanel .allocation-accordion-copy small{font-size:10px!important;line-height:1.4}
+  #chapterAllocationPanel .allocation-accordion-copy small{font-size:10px!important;line-height:1.4;overflow-wrap:anywhere}
   #chapterAllocationPanel .allocation-accordion-side{flex:none;gap:6px!important}
   #chapterAllocationPanel .allocation-mode-row{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
   #chapterAllocationPanel .allocation-mode-row .allocation-field:first-child{grid-column:1/-1}
   #chapterAllocationPanel .allocation-field,.allocation-picker-toolbar,.allocation-selected-strip,#allocationChapterPicker{min-width:0!important;max-width:100%!important}
   #chapterAllocationPanel .allocation-picker-toolbar{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:8px!important}
   #chapterAllocationPanel .allocation-subject-filters{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:5px!important}
-  #chapterAllocationPanel .allocation-filter-pill{min-width:0!important;padding:7px 4px!important;font-size:10px!important}
+  #chapterAllocationPanel .allocation-filter-pill{min-width:0!important;padding:7px 4px!important;font-size:10px!important;overflow-wrap:anywhere}
   #chapterAllocationPanel .allocation-chapter-picker{display:grid!important;grid-template-columns:minmax(0,1fr)!important;max-height:270px!important;overflow-y:auto!important;overflow-x:hidden!important}
   #chapterAllocationPanel .allocation-summary-strip{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important}
   #chapterAllocationPanel .allocation-summary-stat{min-width:0!important;padding:8px 5px!important}
   #chapterAllocationPanel .allocation-summary-stat strong{font-size:15px!important}
-  #chapterAllocationPanel .allocation-result-header{align-items:flex-start!important;gap:8px!important}
+  #chapterAllocationPanel .allocation-result-header{align-items:flex-start!important;gap:8px!important;flex-wrap:wrap}
   #chapterAllocationPanel .allocation-result-header>div{min-width:0}
   #chapterAllocationPanel .allocation-result-header h3{font-size:17px!important}
   #chapterAllocationPanel .allocation-day-tabs{display:flex!important;max-width:100%;overflow-x:auto!important;gap:5px!important}
   #chapterAllocationPanel .allocation-day-tab{flex:0 0 auto!important}
   #chapterAllocationPanel .allocation-day-card,#chapterAllocationPanel .allocation-day-chapter{min-width:0!important}
-  .page-hero,.chapter-page-hero{display:flex!important;flex-wrap:wrap!important;align-items:flex-start!important;gap:12px!important;min-width:0}
-  .page-hero>div,.chapter-page-hero>div{min-width:0;flex:1 1 220px}
+  .section-head,.page-hero,.chapter-page-hero{display:flex!important;flex-wrap:wrap!important;align-items:flex-start!important;gap:10px!important;min-width:0}
+  .section-head>div,.page-hero>div,.chapter-page-hero>div{min-width:0;flex:1 1 180px}
+  .section-head h2,.section-head h3{font-size:16px;overflow-wrap:anywhere}
+  .section-head p{font-size:10px;line-height:1.5;overflow-wrap:anywhere}
+  .section-head>.btn,.section-head>button{max-width:100%;white-space:normal}
   .chapter-subject-row{display:block!important;min-width:0!important}
   .subject-tabs{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important;min-width:0!important}
   .subject-tab{min-width:0!important;padding:8px 5px!important;gap:5px!important}
@@ -2566,8 +2591,8 @@ main{min-width:0;max-width:none}
   .chapter-filter-tools{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:8px!important;min-width:0!important}
   .chapter-filter-tools>*{width:100%!important;min-width:0!important;max-width:100%!important}
   .search-wrap{min-width:0!important;width:100%!important}
-  .control,input,select,textarea{max-width:100%}
-  .table-wrap,.chapter-table-wrap,.topic-table-wrap,.test-table-wrap,.performance-table-wrap{max-width:100%!important;overflow-x:auto!important;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
+  .control,input,select,textarea{max-width:100%;min-width:0}
+  .table-wrap,.table-scroll,.chapter-table-wrap,.topic-table-wrap,.test-table-wrap,.performance-table-wrap{width:100%;max-width:100%!important;overflow-x:auto!important;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
   #page-chapters .chapter-table{min-width:680px}
   #page-topic table{min-width:680px}
   #page-litmus table{min-width:620px}
@@ -2576,18 +2601,33 @@ main{min-width:0;max-width:none}
   #page-lectures .lecture-summary-grid .stat-card{min-width:0!important}
   #page-lectures .lecture-platform-heading{flex-wrap:wrap;min-width:0}
   #page-lectures .lecture-import-button{margin-left:0}
+  #page-lectures .panel-head{align-items:flex-start;flex-wrap:wrap}
+  #page-lectures .panel-head>div:last-child{display:flex;flex-wrap:wrap;gap:6px;max-width:100%}
+  #page-lectures .panel-head>div:last-child .btn{flex:1 1 auto}
   .daily-stats,.performance-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
   .daily-layout,.goals-layout,.notes-layout,.litmus-layout,.topic-layout{grid-template-columns:minmax(0,1fr)!important}
-  .modal-card,.modal,.cloud-card{max-width:calc(100vw - 20px)!important}
+  .topic-filters{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .topic-filters>*{min-width:0!important;width:100%!important}
+  .topic-tabs{max-width:100%;overflow-x:auto;overscroll-behavior-x:contain}
+  .chapter-status-strip,.chapter-actions,.toolbar,.tool-row,.settings-row,.modal-actions{flex-wrap:wrap;min-width:0}
+  .modal-card,.modal,.cloud-card{width:100%!important;max-width:calc(100vw - 20px)!important;max-height:calc(100dvh - 24px)!important;overflow:auto}
+  .modal-backdrop,.cloud-gate{padding:12px!important;align-items:flex-start!important;overflow-y:auto}
+  .toast{right:12px;left:12px;bottom:12px;max-width:none}
 }
 @media (max-width:390px){
   main{padding-left:9px!important;padding-right:9px!important}
-  .dashboard-countdown-hero{grid-template-columns:minmax(0,1fr) 86px!important}
-  .dashboard-countdown-hero .ring.ring-action{width:84px!important;height:84px!important}
-  .dashboard-countdown-hero .ring-inner{width:64px!important;height:64px!important}
-  .dashboard-countdown-hero .hero-ring-caption{font-size:9px}
+  .dashboard-countdown-hero{grid-template-columns:minmax(0,1fr) 76px!important}
+  .dashboard-countdown-hero .ring.ring-action{width:70px!important;height:70px!important}
+  .dashboard-countdown-hero .ring-inner{width:56px!important;height:56px!important}
+  .dashboard-countdown-hero .hero-ring-caption{font-size:8px}
   .dashboard-metrics .metric{padding:8px!important}
+  .dashboard-metrics .metric label{font-size:7.5px!important}
   #chapterAllocationPanel .allocation-subject-filters{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .subject-tabs{gap:4px!important}
+  .subject-tab{font-size:10px!important}
+}
+@media (prefers-reduced-motion:reduce){
+  .page.active{animation:none!important}
 }
 
 /* Restore a clean, clickable chapter name style; prevent the browser's default button border. */
